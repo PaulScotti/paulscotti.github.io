@@ -1,7 +1,9 @@
 # Site
 title:              Paul Scotti
-bio:                '<p> Cognitive Neuroscience PhD Student 
-                    <br>Email: scotti.5@osu.edu </p>'
+bio:                <p> Cognitive Neuroscience PhD Student
+                    <br>The Ohio State University
+                    <br>Email: scotti.5@osu.edu 
+                    </p>
 description:        "[Insert stuff here later]"
 reading_time:       true
 words_per_minute:   200
