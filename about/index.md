@@ -7,6 +7,6 @@
 * Task-irrelevant Object Category Information Guides Attentional Allocation
 <br> <i> Paul S. Scotti, Andrew J. Collegio, Sarah Shomstein </i>
 * Does Orientation Matter? The Effects of Target Orientation in Multiple Target Visual Search
-<br> <i> Stephen H. Adamo, Joseph C. Nah, Andrew J. Collegio, Paul Scotti, Sarah Shomstein </i>
+<br> <i> Stephen H. Adamo, Joseph C. Nah, Andrew J. Collegio, Paul S. Scotti, Sarah Shomstein </i>
 * Real-World Object Size Affects Attentional Allocation
-<br> <i> Andrew J. Collegio, Joseph C. Nah, Paul Scotti, Sarah Shomstein </i>
+<br> <i> Andrew J. Collegio, Joseph C. Nah, Paul S. Scotti, Sarah Shomstein </i>
