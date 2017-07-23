@@ -1,5 +1,4 @@
-## Publications
-### In Prep (in no particular order)
+### In Prep
 * Reality vs. Simplicity: The Effects of Real-World Objects on Attentional Selection
 <br> <i> Paul S. Scotti, George L. Malcolm, Mary A. Peterson, Sarah Shomstein </i>
 * Repetition Priming Preferentially Benefits Infrequent Targets
