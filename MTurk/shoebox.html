@@ -1,0 +1,75 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<style type="text/css">.trialDiv {
+	border: 2px solid gray;
+	padding: 20px;
+	width: 200px;
+	margin: 0 auto;
+	font-family: Arial, Helvetica;
+	font-size: 14pt;
+	display: none;
+}
+
+#submitButton {
+	display: none;
+}
+</style>
+<p>Judge whether this object is bigger or smaller than a <b>shoebox</b>. <a href="#" id="startExperiment">Start Experiment</a></p>
+
+<div class="trialDiv" id="trial1">
+<p><img src="http://timbrady.org/turk/images/lock.jpg" width="100" /></p>
+
+<p><input class="responseButton" name="question1" type="radio" value="-1" /> smaller</p>
+
+<p><input class="responseButton" name="question1" type="radio" value="1" /> bigger</p>
+<input id="reactionTime1" name="question1RT" type="hidden" value="0" /></div>
+
+<div class="trialDiv" id="trial2">
+<p><img src="http://timbrady.org/turk/images/car.jpg" width="100" /></p>
+
+<p><input class="responseButton" name="question2" type="radio" value="-1" /> smaller</p>
+
+<p><input class="responseButton" name="question2" type="radio" value="1" /> bigger</p>
+<input id="reactionTime2" name="question2RT" type="hidden" value="0" /></div>
+
+<div class="trialDiv" id="trial3">
+<p><img src="http://timbrady.org/turk/images/tissues.jpg" width="100" /></p>
+
+<p><input class="responseButton" name="question3" type="radio" value="-1" /> smaller</p>
+
+<p><input class="responseButton" name="question3" type="radio" value="1" /> bigger</p>
+<input id="reactionTime3" name="question3RT" type="hidden" value="0" /></div>
+
+<div class="trialDiv" id="trial4">
+<p><img src="http://timbrady.org/turk/images/microwave.jpg" width="100" /></p>
+
+<p><input class="responseButton" name="question4" type="radio" value="-1" /> smaller</p>
+
+<p><input class="responseButton" name="question4" type="radio" value="1" /> bigger</p>
+<input id="reactionTime4" name="question4RT" type="hidden" value="0" /></div>
+<script>
+var curTrial = 1;
+var nTrials = 4;
+var startTrialTime;
+function buttonClicked() {
+	var curTime = new Date();
+	var rt = curTime - startTrialTime;
+	console.log(rt);
+	$('#trial' + curTrial).hide();
+	curTrial++;
+	if (curTrial > nTrials) {
+		$('#submitButton').show();
+	} else {
+		$('#trial' + curTrial).show();
+		startTrialTime = new Date();
+	}
+}
+
+function showFirstTrial() {
+	$('#trial1').show();
+	startTrialTime = new Date();
+	$('#startExperiment').hide();
+}
+
+$('#startExperiment').click(showFirstTrial);
+$('.responseButton').click(buttonClicked);
+</script>
