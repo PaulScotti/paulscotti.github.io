@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<p> "HI!"</p>
+</head>
+<body>
+  <div id="mturk"></div>
+  <div style="display:none" id="moon-els"></div>
+
+  <script src="../MTurk/mturk.js" type="text/javascript"></script>
+
+</body>
+</html>
