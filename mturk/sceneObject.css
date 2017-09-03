@@ -1,0 +1,89 @@
+body {
+  font-family: Arial;
+}
+
+#canvas {
+	border: 2px solid gray;
+}
+
+#box {
+  display: none;
+  margin: 0px auto;
+  padding: 10px;
+  width: 540px;
+  height: 420px;
+  border:1px solid gray;
+}
+
+#intrucBox {
+  display: none;
+  margin: 30px auto;
+  margin-bottom: 0px;
+  width: 560px;
+  height: 24px;
+}
+
+#trialNum {
+  float: left;
+  margin-bottom: 5px;
+  width: 200px;
+}
+
+#instruc {
+  float: right;
+  width: 300px;
+  text-align:right;
+}
+
+.maskImg {
+  display: none;
+  margin-top: 40px;
+}
+
+.showImg {
+  display: none;
+  margin-top: 40px;
+}
+
+.inputBox {
+  display: none;
+  font-size: 18pt;
+  width: 100px;
+  clear: both;
+  text-align: center;
+  margin-top: 40px;
+}
+
+select {
+	margin-top: 5px;
+	font-size: 18pt;
+}
+
+#wordBox {
+  display: none;
+  font-size: 26pt;
+  margin: 0 auto;
+  width: 350px;
+  clear: both;
+  padding-top: 40px;
+}
+
+#feedback {
+  display: none;
+  font-size: 16pt;
+  margin: 0 auto;
+  width: 450px;
+  clear: both;
+  padding-top: 12px;
+  margin-bottom: -30px;
+}
+
+#goodAnswer {
+  font-weight: bold;
+}
+
+#startTrial {
+  font-size: 16pt;
+  clear: both;
+  padding-top: 140px;
+}

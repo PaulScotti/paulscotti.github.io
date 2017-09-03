@@ -1,0 +1,88 @@
+body {
+  font-family: Arial, Helvetica; 
+}
+
+#startExperimentButton {
+  display: inline-block;
+  color: black; 
+  border: 3px outset gray; 
+  background-color: #CCCCCC; 
+  padding: 8px; 
+  text-decoration: none; 
+  font-family: Arial, Helvetica; 
+  font-weight: bold;
+}
+
+#startExperimentButton:hover {
+  border: 3px inset gray; 
+}
+
+#startExperimentButton:active {
+  border: 3px inset gray; 
+}
+
+#loading {
+  font-size: 14pt;
+  font-style: italic;
+}
+
+#consentDiv {
+  font-size:9pt; 
+  font-family: Arial, Helvetica; 
+  padding:10px; 
+  border:1px dashed gray; 
+  max-width: 600px; 
+  margin: 0 auto; 
+  margin-top: 30px;
+}
+
+#instructions {
+  max-width: 600px; 
+  margin: 0 auto; 
+  margin-top: 30px; 
+}
+
+
+#done {
+  display: none;
+  width: 600px; 
+  height: 600px;
+  margin: 0 auto; 
+  margin-top: 30px; 
+}
+
+
+#doneText {
+  position: absolute;
+  width: 600px;
+  top: 55px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#saving {
+  display: none;
+  position: absolute;
+  width: 600px;
+  top: 235px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#timSubmit {
+  font-weight: bold; 
+  color: black; 
+  border: 3px outset gray; 
+  background: #CCC; 
+  padding: 5px; 
+  text-decoration: none;
+}
+
+#timSubmit:hover {
+  border: 3px solid gray; 
+}
+
+#timSubmit:active {
+  border: 3px inset gray; 
+}
