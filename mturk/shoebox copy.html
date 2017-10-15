@@ -1,4 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- All stuff in this style division are in CSS -->
 <style type="text/css">.trialDiv {
 	border: 2px solid gray;
 	padding: 20px;
@@ -9,30 +11,93 @@
 	display: none;
 }
 
+#instructions {
+	width: 300px;
+	margin: 0 auto;
+	text-align: center;
+	margin-top: 50px;
+}
+
+#startExperimentButton {
+	width: 150px;
+	border: 2px outset gray;
+	background: rgb(150,150,150);
+	padding: 10px;
+	text-align: center;
+	margin: 0 auto;
+}
+
+#startExperiment {
+	color: white;
+	text-decoration: none;
+}
+
+#startExperiment:hover {
+	color: rgb(200,200,200);
+}
+
 #submitButton {
 	display: none;
 }
+
 </style>
-<p>Judge whether this object is bigger or smaller than a <b>shoebox</b>. <a href="#" id="startExperiment">Start Experiment</a></p>
 
+<!-- STEPS
+EXP 1
+2. Upload repository of hundred scenes
+3. Display one of the scenes at random
+4. Red dot ALWAYS appears in center of image
+5. Make a slider to determine how far away the red dot is perceived to be
+5b. Record their input so we can later look at it along with what scene it was they judged
+6. Continue until all scenes have gotten distance measurement
+7. Add instructions to beginning where we inform S to task and give example as to what far ends and middle of slider represent
+
+EXP 2
+1. Present one of the random hundred scenes for 1 sec
+2. Present red dot
+3. At random time between 1s to 5s, change color from red to green
+4. Task is to press spacebar as soon as red dot changes color
+5. Record RTs and the associated scene
+-->
+
+<!-- Now using html!!! -->
+
+<div id="instructions">
+<p>Judge whether this object is bigger or smaller than a <b>shoebox</b>.</p>
+	<div id="startExperimentButton">
+		<a href="#" id="startExperiment">Start Experiment</a>
+	</div>
+</div>
+
+<!-- FIRST TRIAL -->
 <div class="trialDiv" id="trial1">
-<p><img src="http://timbrady.org/turk/images/lock.jpg" width="100" /></p>
+<p><img src="http://timbrady.org/turk/images/lock.jpg" width="100" id="trialImage1"/></p>
+<!-- Eventually will be paulscotti.github.io/mturk/images/scene1.jpg */ -->
 
-<p><input class="responseButton" name="question1" type="radio" value="-1" /> smaller</p>
+<!-- in real exp you dont want width = 100 you want it to be a class that said this is the trialimage and in CSS set .trialimage to have width of 100 -->
+<p><input class="slider" name="question1" type="range" min="1" max="100" value="50" /> smaller</p>
 
-<p><input class="responseButton" name="question1" type="radio" value="1" /> bigger</p>
-<input id="reactionTime1" name="question1RT" type="hidden" value="0" /></div>
+<p><input class="responseButton" name="done" type="radio" value="0" />Done?</p>
+</div>
+
+
 
 <div class="trialDiv" id="trial2">
-<p><img src="http://timbrady.org/turk/images/car.jpg" width="100" /></p>
+<p><img src="http://timbrady.org/turk/images/car.jpg" width="100" id="trialImage2"/></p>
 
 <p><input class="responseButton" name="question2" type="radio" value="-1" /> smaller</p>
 
 <p><input class="responseButton" name="question2" type="radio" value="1" /> bigger</p>
+
 <input id="reactionTime2" name="question2RT" type="hidden" value="0" /></div>
 
+
+
+
+
+
 <div class="trialDiv" id="trial3">
-<p><img src="http://timbrady.org/turk/images/tissues.jpg" width="100" /></p>
+<p><img src="http://timbrady.org/turk/images/tissues.jpg" width="100" id="trialImage3"/></p>
 
 <p><input class="responseButton" name="question3" type="radio" value="-1" /> smaller</p>
 
@@ -40,36 +105,76 @@
 <input id="reactionTime3" name="question3RT" type="hidden" value="0" /></div>
 
 <div class="trialDiv" id="trial4">
-<p><img src="http://timbrady.org/turk/images/microwave.jpg" width="100" /></p>
+<p><img src="http://timbrady.org/turk/images/microwave.jpg" width="100" id="trialImage4"/></p>
 
 <p><input class="responseButton" name="question4" type="radio" value="-1" /> smaller</p>
 
 <p><input class="responseButton" name="question4" type="radio" value="1" /> bigger</p>
 <input id="reactionTime4" name="question4RT" type="hidden" value="0" /></div>
+
+<!-- script can only access stuff that the browser has already figured out, so put last
+$ is the function for jQuery
+Below code is javascript now!!! -->
+
 <script>
-var curTrial = 1;
+var trialOrder = shuffle([1,2,3,4])
+var curTrial = 0;
 var nTrials = 4;
 var startTrialTime;
+
+// Fisher-Yates shuffle
+function shuffle(o) {
+    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
+
+/*function buttonClicked() {
+	// $('curTrialImage').attr('src','newImage') but this leads to problems
+	$('#trial' + curTrial).hide();
+	curTrial++;
+  $('#trial' + curTrial).show();
+} */
+
 function buttonClicked() {
-	var curTime = new Date();
+  var curTime = new Date();
 	var rt = curTime - startTrialTime;
 	console.log(rt);
-	$('#trial' + curTrial).hide();
+	$('#trial' + trialOrder[curTrial]).hide();
 	curTrial++;
 	if (curTrial > nTrials) {
 		$('#submitButton').show();
 	} else {
-		$('#trial' + curTrial).show();
+		showTrial('#trial' + curTrial);
 		startTrialTime = new Date();
 	}
 }
 
+function showTrial(whichImage) {
+	$(whichImage).show('#trialImage' + whichImage);
+	setTimeout(function() {
+		$('#trialImage' + whichImage).hide();
+			setTimeout(function() {
+				$('#trialImage' + whichImage).show();
+			}, 600);
+	}, 600);
+
+	//Listen for keys
+	$(document).bind("keydown.listenforKeys"), function(event) {
+		console.log(event.which);
+		$(document).unbind("keydown.listenforKeys");
+	});
+}
+
 function showFirstTrial() {
-	$('#trial1').show();
+	showTrial('#trial' + trialOrder[curTrial]);
 	startTrialTime = new Date();
-	$('#startExperiment').hide();
+	$('#instructions').hide();
 }
 
 $('#startExperiment').click(showFirstTrial);
 $('.responseButton').click(buttonClicked);
+
 </script>
+
+<!-- do not put this on turk -->
+<input type="submit" id="submitButton">
