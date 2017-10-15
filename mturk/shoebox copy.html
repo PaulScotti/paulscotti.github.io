@@ -69,6 +69,7 @@ EXP 2
 	</div>
 </div>
 
+
 <!-- FIRST TRIAL -->
 <div class="trialDiv" id="trial1">
 <p><img src="http://timbrady.org/turk/images/lock.jpg" width="100" id="trialImage1"/></p>
@@ -89,10 +90,8 @@ EXP 2
 
 <p><input class="responseButton" name="question2" type="radio" value="1" /> bigger</p>
 
-<input id="reactionTime2" name="question2RT" type="hidden" value="0" /></div>
-
-
-
+<input id="reactionTime2" name="question2RT" type="hidden" value="0" />
+</div>
 
 
 
@@ -102,7 +101,8 @@ EXP 2
 <p><input class="responseButton" name="question3" type="radio" value="-1" /> smaller</p>
 
 <p><input class="responseButton" name="question3" type="radio" value="1" /> bigger</p>
-<input id="reactionTime3" name="question3RT" type="hidden" value="0" /></div>
+<input id="reactionTime3" name="question3RT" type="hidden" value="0" />
+</div>
 
 <div class="trialDiv" id="trial4">
 <p><img src="http://timbrady.org/turk/images/microwave.jpg" width="100" id="trialImage4"/></p>
@@ -110,7 +110,8 @@ EXP 2
 <p><input class="responseButton" name="question4" type="radio" value="-1" /> smaller</p>
 
 <p><input class="responseButton" name="question4" type="radio" value="1" /> bigger</p>
-<input id="reactionTime4" name="question4RT" type="hidden" value="0" /></div>
+<input id="reactionTime4" name="question4RT" type="hidden" value="0" />
+</div>
 
 <!-- script can only access stuff that the browser has already figured out, so put last
 $ is the function for jQuery
@@ -144,29 +145,29 @@ function buttonClicked() {
 	if (curTrial > nTrials) {
 		$('#submitButton').show();
 	} else {
-		showTrial('#trial' + curTrial);
+		$('#trial' + trialOrder[curTrial]).show();
 		startTrialTime = new Date();
 	}
 }
 
-function showTrial(whichImage) {
+/* function showTrial(whichImage) {
 	$(whichImage).show('#trialImage' + whichImage);
 	setTimeout(function() {
 		$('#trialImage' + whichImage).hide();
 			setTimeout(function() {
 				$('#trialImage' + whichImage).show();
 			}, 600);
-	}, 600);
+	}, 600); */
 
-	//Listen for keys
+	/*Listen for keys
 	$(document).bind("keydown.listenforKeys"), function(event) {
 		console.log(event.which);
 		$(document).unbind("keydown.listenforKeys");
-	});
-}
+	}
+} */
 
 function showFirstTrial() {
-	showTrial('#trial' + trialOrder[curTrial]);
+	$('#trial' + trialOrder[curTrial]).show();
 	startTrialTime = new Date();
 	$('#instructions').hide();
 }
