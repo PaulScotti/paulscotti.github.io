@@ -1,5 +1,3 @@
-clc; clear;
-
 nTrials = 100;
 code = [];
 preset = ['<div class=''trialDiv'' id=''trial_up1''>' ...
@@ -28,9 +26,9 @@ preset = ['<div class=''trialDiv'' id=''trial_up1''>' ...
 
 for i = 1:100
     preset = strrep(preset,['trial_up',num2str(i-2)],['trial_up',num2str(i-1)]);
-    preset = strrep(preset,['trial_down',num2str(i-2)],['trial_down',num2str(i-1)]);
-    preset = strrep(preset,['scene',num2str(i+98)],['scene',num2str(i+99)]);
-    preset = strrep(preset,['trialImage',num2str(i-2)],['trialImage',num2str(i-1)]);
-    preset = strrep(preset,['question',num2str(i-2)],['question',num2str(i-1)]);
+    preset = strrep(preset,['trial_down',num2str(i-2)],['trial_down',num2str(i)]);
+    preset = strrep(preset,['scene',num2str(i+98)],['scene',num2str(i+100)]);
+    preset = strrep(preset,['trialImage',num2str(i-2)],['trialImage',num2str(i)]);
+    preset = strrep(preset,['question',num2str(i-2)],['question',num2str(i)]);
     code = strcat(code,preset);
 end
