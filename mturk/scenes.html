@@ -9,6 +9,7 @@
 	font-family: Arial, Helvetica;
 	font-size: 14pt;
 	display: none;
+	position: relative;
 }
 
 #instructions {
@@ -36,6 +37,31 @@
 	color: rgb(200,200,200);
 }
 
+#circle_up {
+	width: 10px;
+	height: 10px;
+	-webkit-border-radius: 25px;
+	-moz-border-radius: 25px;
+	border-radius: 25px;
+	background: red;
+	position: absolute;
+	bottom: 260; left: 114px;
+}
+
+#circle_down {
+	width: 10px;
+	height: 10px;
+	-webkit-border-radius: 25px;
+	-moz-border-radius: 25px;
+	border-radius: 25px;
+	background: red;
+	position: absolute;
+	bottom: 160; left: 114px;
+}
+
+.slider
+{width: 200px;}
+
 #submitButton {
 	display: none;
 }
@@ -46,9 +72,9 @@
 EXP 1
 2. Upload repository of hundred scenes
 3. Display one of the scenes at random
-4. Red dot ALWAYS appears in center of image
+4. Red dot can appear in upper middle of screen or lower middle of screen
 5. Make a slider to determine how far away the red dot is perceived to be
-5b. Record their input so we can later look at it along with what scene it was they judged
+5b. Record their input (which scene and what dot location) so we can later look at it along with what scene it was they judged
 6. Continue until all scenes have gotten distance measurement
 7. Add instructions to beginning where we inform S to task and give example as to what far ends and middle of slider represent
 
@@ -63,7 +89,7 @@ EXP 2
 <!-- Now using html!!! -->
 
 <div id="instructions">
-<p>Judge whether this object is bigger or smaller than a <b>shoebox</b>.</p>
+<p>Judge the perceived distance of the red dot.</p>
 	<div id="startExperimentButton">
 		<a href="#" id="startExperiment">Start Experiment</a>
 	</div>
@@ -71,46 +97,54 @@ EXP 2
 
 
 <!-- FIRST TRIAL -->
-<div class="trialDiv" id="trial1">
-<p><img src="http://timbrady.org/turk/images/lock.jpg" width="100" id="trialImage1"/></p>
-<!-- Eventually will be paulscotti.github.io/mturk/images/scene1.jpg */ -->
+<div class="trialDiv" id="trial1_up">
+<p><img src="http://paulscotti.github.io/mturk/scenes/scene101.jpg" height="200" width="200" id="trialImage1"/></p>
+<input class="slider" name="question1" width="200" type="range" min="1" max="100" value="50"/>
+	<br>
+		<div style="float: left">closer</div>
+		<div style="float: right">farther</div>
+	</br>
+<div id="circle_up">
+</div>
 
-<!-- in real exp you dont want width = 100 you want it to be a class that said this is the trialimage and in CSS set .trialimage to have width of 100 -->
+<center>
+	<a href="#" class="responseButton">>Next</a>
+</center>
+
+</div>
+
+
+
+<div class="trialDiv" id="trial1_down">
+<p><img src="http://paulscotti.github.io/mturk/scenes/scene101.jpg" height="200" width="200" id="trialImage1"/></p>
 <p><input class="slider" name="question1" type="range" min="1" max="100" value="50" /> smaller</p>
+
+<div id="circle_down">
+</div>
+
+<p><input class="responseButton" name="done" type="radio" value="0" />Done?</p>
+</div>
+
+<div class="trialDiv" id="trial2_up">
+<p><img src="http://paulscotti.github.io/mturk/scenes/scene102.jpg" height="200" width="200" id="trialImage2"/></p>
+<p><input class="slider" name="question2" type="range" min="1" max="100" value="50" /> smaller</p>
+
+<div id="circle_up">
+</div>
 
 <p><input class="responseButton" name="done" type="radio" value="0" />Done?</p>
 </div>
 
 
 
-<div class="trialDiv" id="trial2">
-<p><img src="http://timbrady.org/turk/images/car.jpg" width="100" id="trialImage2"/></p>
+<div class="trialDiv" id="trial2_down">
+<p><img src="http://paulscotti.github.io/mturk/scenes/scene102.jpg" height="200" width="200" id="trialImage2"/></p>
+<p><input class="slider" name="question2" type="range" min="1" max="100" value="50" /> smaller</p>
 
-<p><input class="responseButton" name="question2" type="radio" value="-1" /> smaller</p>
-
-<p><input class="responseButton" name="question2" type="radio" value="1" /> bigger</p>
-
-<input id="reactionTime2" name="question2RT" type="hidden" value="0" />
+<div id="circle_down">
 </div>
 
-
-
-<div class="trialDiv" id="trial3">
-<p><img src="http://timbrady.org/turk/images/tissues.jpg" width="100" id="trialImage3"/></p>
-
-<p><input class="responseButton" name="question3" type="radio" value="-1" /> smaller</p>
-
-<p><input class="responseButton" name="question3" type="radio" value="1" /> bigger</p>
-<input id="reactionTime3" name="question3RT" type="hidden" value="0" />
-</div>
-
-<div class="trialDiv" id="trial4">
-<p><img src="http://timbrady.org/turk/images/microwave.jpg" width="100" id="trialImage4"/></p>
-
-<p><input class="responseButton" name="question4" type="radio" value="-1" /> smaller</p>
-
-<p><input class="responseButton" name="question4" type="radio" value="1" /> bigger</p>
-<input id="reactionTime4" name="question4RT" type="hidden" value="0" />
+<p><input class="responseButton" name="done" type="radio" value="0" />Done?</p>
 </div>
 
 <!-- script can only access stuff that the browser has already figured out, so put last
@@ -118,10 +152,11 @@ $ is the function for jQuery
 Below code is javascript now!!! -->
 
 <script>
-var trialOrder = shuffle([1,2,3,4])
+var trialOrder = shuffle([1,2]);
 var curTrial = 0;
-var nTrials = 4;
+var nTrials = 2;
 var startTrialTime;
+var dot_array = shuffle([0,0,1,1]);
 
 // Fisher-Yates shuffle
 function shuffle(o) {
@@ -140,12 +175,22 @@ function buttonClicked() {
   var curTime = new Date();
 	var rt = curTime - startTrialTime;
 	console.log(rt);
-	$('#trial' + trialOrder[curTrial]).hide();
+
+	if (dot_array[curTrial] == 0) {
+		$('#trial' + trialOrder[curTrial] + '_up').hide();
+	} else {
+		$('#trial' + trialOrder[curTrial] + '_down').hide();
+	}
+
 	curTrial++;
-	if (curTrial > nTrials) {
+	if (curTrial >= nTrials) {
 		$('#submitButton').show();
 	} else {
-		$('#trial' + trialOrder[curTrial]).show();
+		if (dot_array[curTrial] == 0) {
+			$('#trial' + trialOrder[curTrial] + '_up').show();
+		} else {
+			$('#trial' + trialOrder[curTrial] + '_down').show();
+	}
 		startTrialTime = new Date();
 	}
 }
@@ -167,7 +212,11 @@ function buttonClicked() {
 } */
 
 function showFirstTrial() {
-	$('#trial' + trialOrder[curTrial]).show();
+	if (dot_array[curTrial] == 0) {
+		$('#trial' + trialOrder[curTrial] + '_up').show();
+	} else {
+		$('#trial' + trialOrder[curTrial] + '_down').show();
+	}
 	startTrialTime = new Date();
 	$('#instructions').hide();
 }
