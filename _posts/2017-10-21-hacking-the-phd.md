@@ -28,4 +28,12 @@ Unfortunately, books are also included in the list and I cannot figure out a way
 
 Yeah, these results aren't helpful at all are they. We need to be much more specific.
 
-Let's try restricting the earliest year to 2015
+Let's try restricting the earliest year to 2015 and searching for "visual attention fmri". Top 5 results:
+
+1. Humphreys & Riddoch (2016) A Reader in Visual Agnosia
+2. Clayton, Yeung, Kadosh (2015) The roles of cortical oscillations in sustained attention
+3. Elmer (2015) The control of attention in visual search: Cognitive and neural mechanisms
+4. Leibovich, Vogel, Henik, Ansari (2015): Asymmetric processing of numerical and nonnumerical magnitudes in the brain: an fMRI study 
+5. Kay, Weiner, Grill-Spector (2015): Attention reduces spatial uncertainty in human ventral temporal cortex
+
+That's more like it! So now all I have to do is pick one that's pretty interesting, and have a fun stroll through the rabbit hole. In this case I took a closer look at (3) and (5).
