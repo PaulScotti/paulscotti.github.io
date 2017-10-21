@@ -14,7 +14,7 @@ How does one identify a novel research question that may be most likely to attai
 ## Step One: Web crawl the Literature
 I recently discovered and modified a web crawler built for google scholar. You feed it some key words and a year range and it spits out the most related papers it finds ordered by citation count. This allows one to sort through "hot" research topics that may be the a good stepping stone in deciding on a novel research question.
 
-As a first step, let's use the keyword "Cognitive Psychology" and limit the year range to papers published after 2010.
+As a first step, let's use the keyword "Cognitive Psychology" and limit the year range to papers published after 2010 (because of course papers would be more cited the more time they have been around, which is not the best indicator for a "hot" topic).
 
 <img src="https://puu.sh/y3B4b/29003c94d4.png">
 
@@ -26,4 +26,6 @@ Unfortunately, books are also included in the list and I cannot figure out a way
 4. Wyer (2014) The automaticity of everyday life: Advances in social cognition
 5. Ellis & Young (2013): Human cognitive neuropsychology: A textbook with readings
 
-Yeah, these results aren't helpful at all are they.
+Yeah, these results aren't helpful at all are they. We need to be much more specific.
+
+Let's try restricting the earliest year to 2015
