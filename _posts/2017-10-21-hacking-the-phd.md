@@ -12,6 +12,6 @@ I've put a decent amount of thought into how I can best propel myself into acade
 How does one identify a novel research question that may be most likely to attain high citation counts?
 
 ## Step One: Web crawl the Literature
-I've found and modified a web crawler for google scholar. You feed it some key words and a year range and it spits out the most related papers found on google scholar, ordered by citation count. This allows one to sort through "hot" research topics that may be the best first stepping stone in deciding on a novel research avenue.
+I recently discovered and modified a web crawler built for google scholar. You feed it some key words and a year range and it spits out the most related papers found on google scholar, ordered by citation count. This allows one to sort through "hot" research topics that may be the best first stepping stone in deciding on a novel research avenue.
 
 I am principally interested in attention, memory, cognitive control, and fMRI. ...
