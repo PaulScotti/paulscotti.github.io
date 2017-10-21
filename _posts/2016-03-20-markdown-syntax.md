@@ -1,14 +1,8 @@
 ---
 layout: post
-title:  "Markdown Syntax"
-date:   2016-03-15
-excerpt: "Just about everything you'll need to style in the theme: headings, paragraphs, blockquotes, tables, code blocks, and more."
-tag:
-- markdown 
-- syntax
-- sample
-- test
-- jekyll
+title:  "Hacking the PhD"
+date:   2017-10-21
+excerpt: "My experience so far trying to formulate the recipe for high impact publications."
 comments: true
 ---
 

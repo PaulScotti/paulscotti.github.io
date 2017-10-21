@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "Sample post"
-date: 2017-10-21
-excerpt: "Trends in Cognitive Psychology/Neuroscience."
-tags: [post]
+title:  "Hacking the PhD"
+date:   2017-10-21
+excerpt: "My experience so far trying to formulate the recipe for high impact publications."
 comments: true
 ---
 
