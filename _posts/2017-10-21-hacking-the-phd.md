@@ -7,9 +7,9 @@ comments: false
 ---
 
 # Hacking the PhD by Identifying Gaps in Literature
-I've put a decent amount of thought into how I can best propel myself into academia. I am in a good situation at the moment in that I am free to come up with essentially any idea that interests me and there is a good chance I can pursue it if either of my two advisors are interested.
+I've put a decent amount of thought into how I can best propel myself into academia. One problem is that what often may happen is someone slaves away on a single focus for 5 years and only produces marginal results from it. Or someone spreads themselves way too thin and never finishes any of their projects. The first step is arguably the most important: what is the research question you wish to devote hundreds of hours into?
 
-But does one identify a novel research question that may be most likely to attain high citation counts?
+How does one identify a novel research question that may be most likely to attain high citation counts?
 
 ## Step One: Web crawl the Literature
 I've found and modified a web crawler for google scholar. You feed it some key words and a year range and it spits out the most related papers found on google scholar, ordered by citation count. This allows one to sort through "hot" research topics that may be the best first stepping stone in deciding on a novel research avenue.
