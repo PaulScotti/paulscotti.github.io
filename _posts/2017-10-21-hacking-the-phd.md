@@ -20,7 +20,7 @@ As a first step, let's use the keyword "Cognitive Psychology" and limit the year
 
 <img src="https://puu.sh/y3B4b/29003c94d4.png">
 
-Unfortunately, books are also included in the list and I cannot figure out a way to exclude them. However, books a still an important insight into what the current trends in research may be. And if we exclude overly general titles like "Cognitive Psychology", maybe these results are still worthwile? Here are the top 5 results:
+Unfortunately, books are also included in the list and I cannot figure out a way to exclude them. However, books can still be an important insight into what the current trends in research may be. Here are the top 5 results:
 
 1. Neisser (2014): Cognitive psychology: Classic edition
 2. Chi (2014) The nature of expertise
@@ -28,7 +28,7 @@ Unfortunately, books are also included in the list and I cannot figure out a way
 4. Wyer (2014) The automaticity of everyday life: Advances in social cognition
 5. Ellis & Young (2013): Human cognitive neuropsychology: A textbook with readings
 
-Yeah, these results aren't helpful at all are they. We need to be much more specific.
+Yeah, these results aren't helpful at all are they? We need to be much more specific.
 
 Let's try restricting the earliest year to 2015 and searching for "visual attention fmri". Top 5 results:
 
@@ -38,4 +38,25 @@ Let's try restricting the earliest year to 2015 and searching for "visual attent
 4. Leibovich, Vogel, Henik, Ansari (2015): Asymmetric processing of numerical and nonnumerical magnitudes in the brain: an fMRI study
 5. Kay, Weiner, Grill-Spector (2015): Attention reduces spatial uncertainty in human ventral temporal cortex
 
-That's more like it! So now all I have to do is pick one that's interesting, and have a fun stroll through the rabbit hole. In this case I took a closer look at (3) and (5).
+That's more like it! So now all I have to do is pick one that's most interesting, and have a fun stroll through the rabbit hole. Although I found all of these articles interesting, I chose to take a closer look at (5).
+
+## Step 2: Digging the Rabbit Hole
+The takeaway message from this article was that one can use a pRF model to determine how spatial uncertainty influences VTC activity, and once that becomes measurable they used different attentional tasks to see how this can modulate activation. So whenever I read an article, I ask 2 major questions:
+
+1. What is the high-level takeaway (why does this matter)?
+2. What is the mechanism involved?
+
+An easy way to digest this is to list off your high-level points and then support them with evidence, thinking critically about whether this evidence is enough to convince you of their conclusions.
+
+* Surprisingly, the "what" pathway is modulated by changes in spatial characteristics (position, size)
+    * Explanation
+* Top-down demands (i.e., attention tasks) modulates pRFs in hV4 and higher-level areas
+  * Testing
+
+
+## Step 3: Traversing the Rabbit hole
+It's obviously not enough to one high-impact paper and have an epiphany about some amazing research question that nobody else has explored. We need to do some other reading.
+
+
+
+## Supplementary Step: Organizing Previously Read Articles
