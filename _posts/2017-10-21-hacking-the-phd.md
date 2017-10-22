@@ -46,17 +46,54 @@ The takeaway message from this article was that one can use a pRF model to deter
 1. What is the high-level takeaway (why does this matter)?
 2. What is the mechanism involved?
 
-An easy way to digest this is to list off your high-level points and then support them with evidence, thinking critically about whether this evidence is enough to convince you of their conclusions.
+An easy way to digest this is to list off your high-level points and then support them with evidence, thinking critically about whether this evidence is enough to convince you of their conclusions. Skip to the bullet points for how I applied this to the current article.
+
+First, it's important to first understand what their method is...
+In this case, the pRF encoding model fits a model for the pRFs of each voxel (standard phase-encoded retinotopy does not do this). It characterizes the relation between contrast image (location of stimulus) and response from local population. For instance, the model may include a simple 2D gaussian with x and y (center of gaussian, location that drives best activity), as well as sigma (std deviation corresponding to size of pRF). This allows for improved measurements of retinotopic maps in areas with larger receptive fields and allows for analyses looking at changes in receptive field size or laterality.
+
+The authors of this article go a step further by employing compressive spatial summation (CSS; Kay et al. 2013) to account for subadditive summation. In contrast to linear summation, subadditive summation means that the two interacting elements (i.e., stimulus contrast and neural response) return something less than the sum of the values of each element. One would not expect linear summation especially since negative weighting should be applied to stimuli that appear in the surround of a receptive field.
+
+CSS basically says that a model with a small Gaussian can still respond strongly to a stimulus far from the Gaussian if the static nonlinearity is highly compressive. Being highly compressive means that the exponent of the power-law nonlinearity is <1. Therefore, the elements in this model are contrast image (location) and neural responses <i> weighted </i> according to this power-law nonlinearity criteria.
+
+This method does not simply sum contrasts linearly across the visual field. Instead, it more accurately models pRFs via the following steps: stimulus -> convert to contrast image -> project onto 2D Gaussian (x,y,sigma) -> Apply static nonlinearity -> percent change in neural response. Failing to use CSS (i.e., using linear pRF models) can overestimate pRF size when the underlying system exhibits nonlinear subadditive behavior; BOLD response to a contrast pattern is less than the sum of the BOLD responses to individual parts of the contrast pattern.
 
 * Surprisingly, the "what" pathway is modulated by changes in spatial characteristics (position, size)
-    * Explanation
-* Top-down demands (i.e., attention tasks) modulates pRFs in hV4 and higher-level areas
-  * Testing
+  * Shown through pRF modeling utilizing not just spatial summation but also compressive nonlinearity (see above)
+* Top-down demands (i.e., attention tasks) modulate pRFs in hV4 and higher-level areas. I.e., task-dependent pRFs in VTC.
+  * Explicit attention to faces lead to larger response enhancement than implicit attention to faces.
+* The common thought that larger pRFs degrade spatial information is misleading.
+  * Subjects with good attention to the stimulus induced larger pRFs, and yet their spatial precision with which the location of the stimulus is represented improves, not worsens.
+    * This is not counter-intuitive: local scale the information is worse (each voxel is less sensitive) but on global scale sensitivity improves due to increased coverage
 
+These authors were also nice enough to suggest some further avenues of research, namely, how does the demonstrated impact of attention on cortical responses reflect behavior? May affect judgments of spatial position or specifically, reduction of spatial uncertainty during the dot and face tasks compared to the digit task would suggest that behavioral judgments of face position would be more accurate during the dot and face tasks, testable in behavioral studies.
 
-## Step 3: Traversing the Rabbit hole
-It's obviously not enough to one high-impact paper and have an epiphany about some amazing research question that nobody else has explored. We need to do some other reading.
+## Step 3: Navigating the Rabbit hole
+It's obviously not enough to read one high-impact paper and have an epiphany about some amazing research question that nobody else has explored. We need to do some other reading. But where to look next? Well if we again turn to google scholar, and this time look at studies that cited the study we just read, we might find something a new perspective through related readings.
 
+One interesting article to come up from this lit search:
+1. Watson, Young, & Andrews (2016): Spatial properties of objects predict patterns of neural response in the ventral visual pathway
+  * Distinct neural patterns to different object categories in VTC
+  * Previous studies have suggested VTC may be sensitive to spatial properties of the visual scene, but this has not been clear if this reflects modification of the underlying categorical organization based on the way natural object categories are viewed or whether spatial properties themselves represent a fundamental organizing principles in the ventral pathway.
+  * Retinal size of objects has sig effect on fMRI response in ventral pathway.
+      * Variance in spatial properties of images can explain patterns of response and that the influence of spatial properties was still evident when only between-category comparisons were analysed.
+  * The importance of spatial properties on the topographic patterns of response varied systematically across ventral pathway.
 
+Their task was to press a button whenever a red dot appeared on an image (same as 1 of the 3 tasks from the Kay et al. study).
+
+So now for the fun part. How can we combine the Watson et al. findings with the Kay et al. findings in order to come up with a novel research question? Let's take two of their bullet points:
+* Attention induces larger pRFs that are also more spatially specific (Kay et al.)
+* Distinct neural patterns to different object categories
+
+<i> Buzz, whirl, clank ... </i>
+### Can different task-demands induce differential category-selectivity decoding, despite same stimuli presentation?
+
+For instance, if attention is not specific to high-level information, perhaps category-selectivity will depend more on low-level image statistics. In fact, Watson et al. found that low-level information may more accurately be the root cause of category-selectivity. However, what if the task involves the category of the stimulus? What if the task depended on different attributes of category (e.g., is it natural or artificial vs. is it the same subcategory might lead to a difference).
+
+Do spatial properties represent a fundamental organizing principle of the ventral pathway, or do spatial properties modify the underlying categorical organization?
+Well this study could look at how activation in LOC reflects larger pRFs and thereby more specialized activity if top-down demands are relevant to category.
+
+High-level impacts: Making claims about category specificity strongly depends on the task used to study it. Decoding may be biased by top-down attention. We <i> learn </i> what things constitute a category not just via low-level image statistics but also from learned associations when category information was relevant to our demands.
+
+First behavioral, then fMRI
 
 ## Supplementary Step: Organizing Previously Read Articles
