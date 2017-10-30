@@ -1,6 +1,6 @@
 ---
-layout: postx
-title:  "Hacking the PhD"
+layout: postxxx
+title:  "Hacking the PhD (x)"
 date:   2017-10-21
 excerpt: "My experience so far trying to formulate the recipe for high impact publications."
 comments: false
