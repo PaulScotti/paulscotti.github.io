@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: postx
 title:  "Hacking the PhD"
 date:   2017-10-21
 excerpt: "My experience so far trying to formulate the recipe for high impact publications."
@@ -80,6 +80,8 @@ One interesting article to come up from this lit search:
 
 Their task was to press a button whenever a red dot appeared on an image (same as 1 of the 3 tasks from the Kay et al. study).
 
+They suggest that we know what category objects are based on low-level image properties, but obviously low-level properties are not the most important defining factor in an object belonging to a category, right? So there must be a way to showcase specific activity based on higher-level properties.
+
 So now for the fun part. How can we combine the Watson et al. findings with the Kay et al. findings in order to come up with a novel research question? Let's take two of their bullet points:
 * Attention induces larger pRFs that are also more spatially specific (Kay et al.)
 * Distinct neural patterns to different object categories
@@ -92,8 +94,19 @@ For instance, if attention is not specific to high-level information, perhaps ca
 Do spatial properties represent a fundamental organizing principle of the ventral pathway, or do spatial properties modify the underlying categorical organization?
 Well this study could look at how activation in LOC reflects larger pRFs and thereby more specialized activity if top-down demands are relevant to category.
 
-High-level impacts: Making claims about category specificity strongly depends on the task used to study it. Decoding may be biased by top-down attention. We <i> learn </i> what things constitute a category not just via low-level image statistics but also from learned associations when category information was relevant to our demands.
+High-level impacts: Making claims about category specificity strongly depends on the task used to study it. Decoding may be biased by top-down attention. We <i> learn </i> what things constitute a category not just via low-level image statistics but also from learned associations when category information is relevant to our demands.
 
-First behavioral, then fMRI
+See how differences in low-level image computation in ventral pathway may arise from how they process information differently dependent on the task.
+
+Essentially a way to look at how low-level information may be more or less deprioritized in the ventral pathway dependent on attentional task.
+
+How specific are pRFs for each task, how much does low-level info explain patterns of response for each task. Each task being attention to dot, one-back, or category selection. Intermixed tasks maybe?
+
+methods
+MVPA
+pRFs mapping (w CSS)
+GIST
+
+First behavioral? ... eh
 
 ## Supplementary Step: Organizing Previously Read Articles
