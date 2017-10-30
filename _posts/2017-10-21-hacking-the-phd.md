@@ -1,6 +1,6 @@
----
-layout: postxxx
-title:  "Hacking the PhD (x)"
+<!---
+layout: post
+title:  "Hacking the PhD"
 date:   2017-10-21
 excerpt: "My experience so far trying to formulate the recipe for high impact publications."
 comments: false
@@ -110,3 +110,4 @@ GIST
 First behavioral? ... eh
 
 ## Supplementary Step: Organizing Previously Read Articles
+-->
