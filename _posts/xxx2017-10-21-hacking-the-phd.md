@@ -1,11 +1,11 @@
-<!---
+---
 layout: post
 title:  "Hacking the PhD"
 date:   2017-10-21
 excerpt: "My experience so far trying to formulate the recipe for high impact publications."
 comments: false
 ---
-
+<!---
 # Hacking the PhD by Identifying Gaps in Literature
 I've put a decent amount of thought into how I can best propel myself into academia. One problem is that may often  happen is someone slaves away on a single focus for 5 years and only produces marginal results from it. Or someone spreads themselves too thin and never finishes any of their projects.
 
