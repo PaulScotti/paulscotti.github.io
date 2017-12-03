@@ -1,5 +1,5 @@
-<!-- Paul Scotti 2017
-originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdiff/e9/ -->
+
+<!-- originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdiff/e9/ -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <script src="./Cont_LTM_101_files/jquery.min.js"></script>
 <script src="./Cont_LTM_101_files/seedrandom.js"></script>
@@ -12,7 +12,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [3, 60];
+var numTrialsPerPart = [3, 3, 60, 60];
 
 /* Choose which to start with before we seed the random number
     generator so it really is random across subjects */
@@ -53,7 +53,14 @@ function GenerateTrials() {
                         'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
      }
   }
-
+  // emotionTrials = Shuffle(emotionTrials);
+  // for (var i=0; i<numTrialsPerPart[0]; i++) { /* Always 3 practice trials */
+  //   var curMean = Math.floor(Math.random()*360);
+  //   practiceTriTrials.push({'mean': curMean,
+  //                   'type': 'color',
+  //                   'isPractice': 1,
+  //                   'items': wrap([curMean-15, curMean-5, curMean+5, curMean+15])});
+  // }
   for (var i=0; i<numTrialsPerPart[1]; i++) { /* Always 3 practice trials */
     var curMean = Math.floor(Math.random()*360);
     practiceEmotionTrials.push({'mean': curMean,

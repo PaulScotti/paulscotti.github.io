@@ -1,13 +1,13 @@
-<!-- Paul Scotti 2017
-originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdiff/e9/ -->
+
+<!-- originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdiff/e9/ -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<script src="./Cont_LTM_101_files/jquery.min.js"></script>
-<script src="./Cont_LTM_101_files/seedrandom.js"></script>
-<script src="./Cont_LTM_101_files/colors.js"></script>
-<script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
-<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
-<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
-<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css">
+<script src="./Gist_files/jquery.min.js"></script>
+<script src="./Gist_files/seedrandom.js"></script>
+<script src="./Gist_files/colors.js"></script>
+<script src="./Gist_files/TimTurkTools.js"></script>
+<link rel="stylesheet" type="text/css" href="./Gist_files/contReport.css">
+<link rel="stylesheet" type="text/css" href="./Gist_files/showTrials.css">
+<link rel="stylesheet" type="text/css" href="./Gist_files/experiment.css">
 <script>
 /* Options: */
 var displayTime = 1000;
@@ -16,12 +16,10 @@ var numTrialsPerPart = [3, 60];
 
 /* Choose which to start with before we seed the random number
     generator so it really is random across subjects */
-var startWithFaces = Math.random()<0.50;
+var startWithGist = Math.random()<0.50;
 
-var practiceEmotionTrials = [];
 var practiceTriTrials = [];
 var triTrials = [];
-var emotionTrials = [];
 var totalTrials = [];
 
 /* Pointers for where we are in the experiment: */
@@ -33,7 +31,7 @@ var setItem;
 /* Generate trials: Do it the same for each subject by seeding the
    random number generator the same every time. */
 function GenerateTrials() {
-  Math.seedrandom('jasonhaberman');
+  Math.seedrandom('penguinsarecute');
   for (var i=0; i<numTrialsPerPart[2]/3; i++) {
     var curMean = Math.floor(Math.random()*360);
     for (var j=0; j<3; j++) {
@@ -44,24 +42,7 @@ function GenerateTrials() {
     }
   }
   triTrials = Shuffle(triTrials);
-  for (var i=0; i<numTrialsPerPart[3]/3; i++) {
-    var curMean = Math.floor(Math.random()*360);
-    for (var j=0; j<3; j++) {
-      emotionTrials.push({'mean': curMean,
-                        'type': 'emotion',
-                        'isPractice': 0,
-                        'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
-     }
-  }
-
-  for (var i=0; i<numTrialsPerPart[1]; i++) { /* Always 3 practice trials */
-    var curMean = Math.floor(Math.random()*360);
-    practiceEmotionTrials.push({'mean': curMean,
-                      'type': 'emotion',
-                      'isPractice': 1,
-                      'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
-  }
-}
+ }
 
 /* Start the experiment. Show the trials for either faces or emotions
    first (at random) */
@@ -72,15 +53,9 @@ function StartExperiment() {
   }
   GenerateTrials();
   ChangeToTri();
-  if (startWithFaces) {
-    totalTrials = [practiceTriTrials, practiceEmotionTrials, triTrials, emotionTrials];
-    setTo = [ChangeToTri, ChangeToEmotions, ChangeToTri, ChangeToEmotions];
-    setItem = [SetTri, SetEmotion, SetTri, SetEmotion];
-  } else {
-    totalTrials = [practiceTriTrials, practiceEmotionTrials, emotionTrials, triTrials];
-    setTo = [ChangeToTri, ChangeToEmotions, ChangeToEmotions, ChangeToTri];
-    setItem = [SetTri, SetEmotion, SetEmotion, SetTri];
-  }
+    totalTrials = [practiceTriTrials, triTrials];
+    setTo = [ChangeToTri, ChangeToTri];
+    setItem = [SetTri, setTri];
   $('#instructions').hide();
   NextTrial();
 }
@@ -174,7 +149,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
 	});
 
   $(document).bind('click.curTrial', function(e) {
-		trialStruct.reportedAngle = Math.round(angleDeg);
+    trialStruct.reportedAngle = Math.round(angleDeg);
     trialStruct.rt = (new Date()) - startTime;
     $(document).unbind('click.curTrial');
     $(document).unbind('mousemove.curTrial');
@@ -249,45 +224,14 @@ function SendToServer(id, curData) {
 }
 
 /* Helper functions to change the stimuli between emotions and faces: */
-function ChangeToEmotions() {
-	$('.itemDiv').removeClass("itemDivTri").addClass("itemDivEmotion").removeClass("arrowRight");
-  $('#continuousStimulus').removeClass("continuousStimulusTri").addClass("continuousStimulusEmotion").removeClass("arrowRight");
-	$('#feedbackCorrect').removeClass("feedbackCorrectTri").addClass("feedbackCorrectEmotion").removeClass("arrowRight");
-	$('#feedbackReported').removeClass("feedbackReportedTri").addClass("feedbackReportedEmotion").removeClass("arrowRight");
-	$('#item1').removeClass("item1Tri").addClass("item1Emotion");
-	$('#item2').removeClass("item2Tri").addClass("item2Emotion");
-	$('#item3').removeClass("item3Tri").addClass("item3Emotion");
-	$('#item4').removeClass("item4Tri").addClass("item4Emotion");
-  $('.itemDiv').css({'background-color': '#6c6c6c'});
-  $('#item1').css({'background-color': '#6c6c6c'});
-  $('#item2').css({'background-color': '#6c6c6c'});
-  $('#item3').css({'background-color': '#6c6c6c'});
-  $('#item4').css({'background-color': '#6c6c6c'});
-  $('#feedbackCorrect').css({'background-color': '#6c6c6c'});
-  $('#feedbackReported').css({'background-color': '#6c6c6c'});
-  $('#continuousStimulus').css({'background-color': '#6c6c6c'});
-  $('#continuousReport').css({'background-color': '#6c6c6c'});
-  $('#showTrial').css({'background-color': '#6c6c6c'});
-  $('#feedback').css({'background-color': '#6c6c6c'});
-
-  $('.itemDiv').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item1').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item2').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item3').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item4').css({'background-image': "url('combinedEmotions.png')"});
-  $('#feedbackCorrect').css({'background-image': "url('combinedEmotions.png')"});
-  $('#feedbackReported').css({'background-image': "url('combinedEmotions.png')"});
-  $('#continuousStimulus').css({'background-image': "url('combinedEmotions.png')"});
-}
-
 function ChangeToTri() {
-  $('.itemDiv').addClass("itemDivTri").removeClass("itemDivEmotion").addClass("arrowRight");
-  $('#continuousStimulus').addClass("continuousStimulusTri").removeClass("continuousStimulusEmotion").addClass("arrowRight");
-	$('#feedbackCorrect').addClass("feedbackCorrectTri").removeClass("feedbackCorrectEmotion").addClass("arrowRight");
-	$('#feedbackReported').addClass("feedbackReportedTri").removeClass("feedbackReportedEmotion").addClass("arrowRight");
-	$('#item1').addClass("item1Tri").removeClass("item1Emotion");
-	$('#item2').addClass("item2Tri").removeClass("item2Emotion");
-	$('#item3').addClass("item3Tri").removeClass("item3Emotion");
+  $('.itemDiv').addClass("itemDivTri").addClass("arrowRight");
+  $('#continuousStimulus').addClass("continuousStimulusTri").addClass("arrowRight");
+	$('#feedbackCorrect').addClass("feedbackCorrectTri").addClass("arrowRight");
+	$('#feedbackReported').addClass("feedbackReportedTri").addClass("arrowRight");
+	$('#item1').addClass("item1Tri");
+	$('#item2').addClass("item2Tri");
+	$('#item3').addClass("item3Tri");
 	$('#item4').addClass("item4Tri").removeClass("item4Emotion");
   $('.itemDiv').css({'background-image': 'none'});
   $('#item1').css({'background-image': 'none'});
@@ -307,20 +251,6 @@ function SetTri(id, deg) {
   deg=(deg<0)?deg+360:deg;
   var col=colors.colors[deg];
   $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'});
-}
-
-function SetEmotion(id, num) {
-  xOffset = num*250;
-  yOffset = 0;
-  while (xOffset >= 250*30) {
-    yOffset += 250;
-    xOffset -= 250*30;
-  }
-	var deg = 0;
-	$(id).css({'transform':'rotate('+deg+'deg)',
-		'-ms-transform':'rotate('+deg+'deg)',
-		'-webkit-transform':'rotate('+deg+'deg)'});
-  $(id).css({"background-position": -xOffset+"px " + -yOffset+"px"});
 }
 
 /* Make sure all numbers in an array are between 0 and 360: */
@@ -355,42 +285,9 @@ $(function() {
   background-color: black;
 }
 
-.continuousStimulusEmotion {
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-	margin: 175px;
-}
-
 .continuousStimulusTri {
 	margin-left: 235px;
   margin-top:  235px;
-}
-
-.itemDivEmotion {
-  width: 250px;
-  height: 250px;
-  position: absolute;
-  background: #6c6c6c url('combinedEmotions.png') no-repeat;
-	background-position:0px 0px;
-}
-
-.item1Emotion {
-  top: 25px;
-  left: 25px;
-}
-.item2Emotion {
-  top: 25px;
-  left: 325px;
-}
-.item3Emotion {
-  top: 325px;
-  left: 25px;
-}
-.item4Emotion {
-  top: 325px;
-  left: 325px;
 }
 
 .itemDivTri {
@@ -427,44 +324,20 @@ $(function() {
   right: 80px;
 }
 
-.feedbackReportedEmotion {
-  position: absolute;
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-  top: 80px;
-  left: 50px;
-}
-
-.feedbackCorrectEmotion {
-  position: absolute;
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-  top: 80px;
-  right: 50px;
-}
 </style>
 </head>
 <body style="">
 
 <!-- Instructions: -->
 <div id="instructions">
-  <p>In this HIT, you will have to perform 2 separate tasks. It should take about 15-20 minutes total. Both tasks will require you to report the perceptual average of a set of items. </p>
-  <p>In one part, you'll see several circles, like this:</p>
-  <p align="center"><img src="./Cont_LTM_101_files/instrucTriangles.png" width="400" border="1"></p>
-  <p>Notice how the color of the circles are all slightly different. These circles will be shown briefly, and then disappear, and you'll then be asked to report what the <strong>average color</strong> of these circles was. To do so, you'll use your mouse to change the color of a new circle (moving the mouse around the circle will change the color using a color wheel). In this case, you should report that the average color was something like this:</p>
-  <p align="center"><img src="./Cont_LTM_101_files/instrucTriangles2.png" width="400" border="1"></p>
-  <p>Once you've decided what the average is, you'll click your mouse to lock your answer in and move onto the next trial. <em>It is important that you report the <strong>average</strong> of <strong>all</strong> of the circles, and that you not just pick one or two circles. </em></p>
-  <p>In the second part, you will perform a similiar perceptual averaging task, but instead of circles you will see emotional faces, like this:</p>
-  <p align="center"><img src="./Cont_LTM_101_files/instrucEmotions.png" width="400" border="1"></p>
-  <p>And will then have to report, with the mouse, what the <strong>average</strong> of these emotions looked like. The faces will be different emotions (sad, happy, etc) and so on one particular trial, 3 faces might be somewhat happy and one might be more sad, making the average of the faces 'mostly happy'. To report the average emotion of the faces, you'll use a circle with different emotions on it and many subtle variations between those emotions present. As you move your mouse, the emotion of the faces will change between more happy, more neutal and more sad:</p>
-  <p align="center"><img src="./Cont_LTM_101_files/instrucEmotions2.png" width="400" border="1"></p>
-	<p>You'll have to select the average emotion that you saw in the first display, and then click when you think you've come as close as possible.</p>
-  <p>To start off with, we'll give you <strong>3 practice trials</strong> of each type. During the practice trials, you'll get feedback on how far off you are. <strong>An error value close to 0 is better</strong>; further from 0 means you are far off.</p>
-  <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
+  <p>In this HIT, you will have to perform a change detection task involving colored circles. It should take about 15-20 minutes total. </p>
+  <p>Every trial you will see several circles, like this:</p>
+  <p align="center"><img src="./Gist_files/instrucTriangles.png" width="400" border="1"></p>
+  <p>Notice how the color of the circles are all slightly different. These circles will be shown briefly, and then disappear, and then be shown again. You will be asked to <strong>report whether any circle changed color.</strong> To do so, you'll use the arrow keys (up left right) to select which color changed color. Alternatively, if no color changed, press the down arrow key.</p>
+  <p>You will then indicate how confident you are in your response by using the number keys. Please respond on a scale of 1 (uncertain) to 5 (certain).</p>
+  <p>The amount of time the colors stay displayed after they have reappeared is variable, meaning that on some trials the color will only reappear for a brief moment. The task is always the same no matter how long the circles appear on the screen.</p>
+    <p>To start off with, we'll give you <strong>30 practice trials</strong>. <strong>During the practice trials, you'll get feedback on how far off you are.</strong></p>
+  <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./Gist_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
   <!-- Consent statement at bottom: -->
   <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p> <p>By answering the following questions, you are participating in a study being performed by cognitive scientists in the Harvard University Psychology Department.  The purpose of this research is to examine human visual performance.</p><p>By participating you are confirming that you are over 18 years of age and have normal or corrected-to-normal vision.</p><p>If you have questions about this research, or if you would like to receive a report of this research when it is completed please contact Timothy Brady at tbrady@wjh.harvard.edu.</p><p>Your participation in this research is completely voluntary.  If you choose to participate, you may change your mind and leave the study at any time.  Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>For questions, concerns, or complaints that are not being addressed by the researcher, or research-related harm contact:  Committee on the Use of Human Subjects in Research at Harvard University, 1414 Massachusetts Avenue, Second Floor, Cambridge, MA  02138. Phone: 617-496-CUHS (2847).  Email: cuhs@fas.harvard.edu</p><p>By continuing, you are confirming that you understand these instructions and conditions of participation.</p></div>
 </div>
@@ -495,9 +368,5 @@ https://www.mturk.com/mturk/externalSubmit
 <!-- feedback -->
 <div id="feedback"><div id="feedbackReportedText">You choose:</div><div id="feedbackReported"></div><div id="feedbackCorrectText">Correct answer:</div><div id="feedbackCorrect"></div><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
 
-<!-- preload images -->
-<img src="./Cont_LTM_101_files/combinedEmotions.png" style="width: 100px; margin-left:-1000px">
-</form>
-
-
+    
 <script type="text/javascript">( function(){ window.SIG_EXT = {}; } )()</script></body></html>
