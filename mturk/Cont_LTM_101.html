@@ -15,12 +15,10 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [3, 3, 60, 60];
+var numTrialsPerPart = [3, 1, 1, 1];
 
-var practiceEmotionTrials = [];
 var practiceTriTrials = [];
 var triTrials = [];
-var emotionTrials = [];
 var totalTrials = [];
 
 /* Pointers for where we are in the experiment: */
@@ -64,9 +62,9 @@ function StartExperiment() {
   GenerateTrials();
   ChangeToTri();
 
-    totalTrials = [practiceTriTrials, practiceEmotionTrials, emotionTrials, triTrials];
-    setTo = [ChangeToTri, ChangeToEmotions, ChangeToEmotions, ChangeToTri];
-    setItem = [SetTri, SetEmotion, SetEmotion, SetTri];
+    totalTrials = [practiceTriTrials, triTrials];
+    setTo = [ChangeToTri, ChangeToTri];
+    setItem = [SetTri, SetTri];
 
   $('#instructions').hide();
   NextTrial();
@@ -95,7 +93,7 @@ function NextTrial() {
   then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct, howToSet) {
   for (var i=0; i<4; i++) {
-    howToSet('#item' + (i+1), trialStruct.items[i]);
+    howToSet('#item1', trialStruct.items[i]);
   }
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
@@ -139,35 +137,33 @@ function ShowContinuousReport(trialStruct, howToSet) {
   var curError = 360;
   var startTime = new Date();
   
-	$(document).bind('mousemove.curTrial', function(e) {
-		var parentOffset = $('#continuousReport').offset(); 
-   	var relX = e.pageX - parentOffset.left - centerX;
-  	var relY = e.pageY - parentOffset.top - centerY;
-		var curAngle = Math.atan2(relY,relX);
-		angleDeg = curAngle / Math.PI * 180.0;
+    $(document).bind('mousemove.curTrial', function(e) {
+    var parentOffset = $('#continuousReport').offset(); 
+    var relX = e.pageX - parentOffset.left - centerX;
+    var relY = e.pageY - parentOffset.top - centerY;
+    var curAngle = Math.atan2(relY,relX);
+    angleDeg = curAngle / Math.PI * 180.0;
     angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
-		var imgNum = Math.round(angleDeg);
+    var imgNum = Math.round(angleDeg);
     howToSet('#continuousStimulus', imgNum);
-		$('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
+    $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                        'top': centerY + Math.sin(curAngle)*ringSize-9});
     if (trialStruct.isPractice) {
-        curError = Math.min(Math.abs(angleDeg-trialStruct.mean), 
-          Math.abs((angleDeg+360)-trialStruct.mean), 
-          Math.abs((angleDeg-360)-trialStruct.mean));
+          curError = changeErr;
     }
     if (e.isFakeTrigger) {
       trialStruct.startedAngle = Math.round(angleDeg);
     }
-	});
+    });
   
-  $(document).bind('click.curTrial', function(e) {
-		trialStruct.reportedAngle = Math.round(angleDeg);
+    $(document).bind('click.curTrial', function(e) {
+    trialStruct.reportedAngle = Math.round(angleDeg);
     trialStruct.rt = (new Date()) - startTime;
     $(document).unbind('click.curTrial');
     $(document).unbind('mousemove.curTrial');
     $("#continuousReport").hide();
     if (trialStruct.isPractice) {
-      $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
+      $('#feedbackError').html("Your error was: " + changeErr + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
       var imgNum = Math.round(angleDeg);
       howToSet('#feedbackReported', imgNum);
       imgNum = Math.round(trialStruct.mean);
@@ -181,7 +177,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
     } else {
       NextTrial();
      }
-	});
+    });
   
   $("#continuousReport").show();
   e = $.Event('mousemove');
@@ -196,6 +192,35 @@ function Done() {
   $('#done').show();
 }
 
+/* RGB to HSV */
+function rgb2hsv(r, g, b) {
+    var
+        min = Math.min(r, g, b),
+        max = Math.max(r, g, b),
+        delta = max - min,
+        h, s, v = max;
+
+    v = Math.floor(max / 255 * 100);
+    if ( max != 0 )
+        s = Math.floor(delta / max * 100);
+    else {
+        // black
+        return [0, 0, 0];
+    }
+
+    if( r == max )
+        h = ( g - b ) / delta;         // between yellow & magenta
+    else if( g == max )
+        h = 2 + ( b - r ) / delta;     // between cyan & yellow
+    else
+        h = 4 + ( r - g ) / delta;     // between magenta & cyan
+
+    h = Math.floor(h * 60);            // degrees
+    if( h < 0 ) h += 360;
+
+    return [h, s, v];
+}
+    
 /* Save the data to the server (choose what to save) */
 function SaveData() {
   $('#done').children().hide();
@@ -225,7 +250,7 @@ function SendToServer(id, curData) {
     'experimentName': 'EnsembleIndivDifference9',
     'curData': JSON.stringify(curData)
   }; 
-  $.post("https://timbrady.org/turk/save.pl",
+  $.post("https://timbrady.org/turk/savexxx.pl",
     dataToServer,
     function(data) { 
       document.forms[0].submit();
@@ -235,56 +260,14 @@ function SendToServer(id, curData) {
   });
 }
 
-/* Helper functions to change the stimuli between emotions and faces: */
-function ChangeToEmotions() {
-	$('.itemDiv').removeClass("itemDivTri").addClass("itemDivEmotion").removeClass("arrowRight");
-  $('#continuousStimulus').removeClass("continuousStimulusTri").addClass("continuousStimulusEmotion").removeClass("arrowRight");
-	$('#feedbackCorrect').removeClass("feedbackCorrectTri").addClass("feedbackCorrectEmotion").removeClass("arrowRight");
-	$('#feedbackReported').removeClass("feedbackReportedTri").addClass("feedbackReportedEmotion").removeClass("arrowRight");
-	$('#item1').removeClass("item1Tri").addClass("item1Emotion");
-	$('#item2').removeClass("item2Tri").addClass("item2Emotion");
-	$('#item3').removeClass("item3Tri").addClass("item3Emotion");
-	$('#item4').removeClass("item4Tri").addClass("item4Emotion");	
-  $('.itemDiv').css({'background-color': '#6c6c6c'});
-  $('#item1').css({'background-color': '#6c6c6c'});
-  $('#item2').css({'background-color': '#6c6c6c'});
-  $('#item3').css({'background-color': '#6c6c6c'});
-  $('#item4').css({'background-color': '#6c6c6c'});
-  $('#feedbackCorrect').css({'background-color': '#6c6c6c'});
-  $('#feedbackReported').css({'background-color': '#6c6c6c'});
-  $('#continuousStimulus').css({'background-color': '#6c6c6c'});
-  $('#continuousReport').css({'background-color': '#6c6c6c'});
-  $('#showTrial').css({'background-color': '#6c6c6c'});
-  $('#feedback').css({'background-color': '#6c6c6c'});
-  
-  $('.itemDiv').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item1').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item2').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item3').css({'background-image': "url('combinedEmotions.png')"});
-  $('#item4').css({'background-image': "url('combinedEmotions.png')"});
-  $('#feedbackCorrect').css({'background-image': "url('combinedEmotions.png')"});
-  $('#feedbackReported').css({'background-image': "url('combinedEmotions.png')"});
-  $('#continuousStimulus').css({'background-image': "url('combinedEmotions.png')"});
-}
 
 function ChangeToTri() {
-  $('.itemDiv').addClass("itemDivTri").removeClass("itemDivEmotion").addClass("arrowRight");
-  $('#continuousStimulus').addClass("continuousStimulusTri").removeClass("continuousStimulusEmotion").addClass("arrowRight");
-	$('#feedbackCorrect').addClass("feedbackCorrectTri").removeClass("feedbackCorrectEmotion").addClass("arrowRight");
-	$('#feedbackReported').addClass("feedbackReportedTri").removeClass("feedbackReportedEmotion").addClass("arrowRight");
-	$('#item1').addClass("item1Tri").removeClass("item1Emotion");
-	$('#item2').addClass("item2Tri").removeClass("item2Emotion");
-	$('#item3').addClass("item3Tri").removeClass("item3Emotion");
-	$('#item4').addClass("item4Tri").removeClass("item4Emotion");
-  $('.itemDiv').css({'background-image': 'none'});
-  $('#item1').css({'background-image': 'none'});
-  $('#item2').css({'background-image': 'none'});
-  $('#item3').css({'background-image': 'none'});
-  $('#item4').css({'background-image': 'none'});
-  $('#feedbackCorrect').css({'background-image': 'none'});
-  $('#feedbackReported').css({'background-image': 'none'});
-  $('#continuousStimulus').css({'background-image': 'none'});
-  
+  $('.itemDiv').addClass("itemDivTri").addClass("arrowRight");
+  $('#continuousStimulus').addClass("continuousStimulusTri").addClass("arrowRight");
+	$('#feedbackCorrect').addClass("feedbackCorrectTri").addClass("arrowRightfeed");
+	$('#feedbackReported').addClass("feedbackReportedTri").addClass("arrowRightfeed");
+	$('#item1').addClass("item1Tri");
+
   $('#continuousReport').css({'background-color': '#DDDDDD'});
   $('#showTrial').css({'background-color': '#DDDDDD'});
 }
@@ -293,23 +276,24 @@ function SetTri(id, deg) {
   deg=(deg>=360)?deg-360:deg;
   deg=(deg<0)?deg+360:deg;
   var col=colors.colors[deg];
-  $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'});
+    
+  origColor=colors.colors[0];
+  origColorHSV=rgb2hsv(origColor[0],origColor[1],origColor[2]);
+  newColor=[Math.round(col[0]),Math.round(col[1]),Math.round(col[2])];
+  newColorHSV=rgb2hsv(newColor[0],newColor[1],newColor[2]);
+  hue_change=(origColorHSV[0] - newColorHSV[0]);
+  sat_change=(origColorHSV[1] - newColorHSV[1]) + 100;
+  lum_change=(origColorHSV[2] - newColorHSV[2]) + 100;
+    
+  $(id).css({'-webkit-filter': 'hue-rotate('+hue_change+'deg) saturate('+sat_change+'%) brightness('+lum_change+'%)',
+		});
+  /* $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'}); */
+  boop = deg;
+  changeErr = wrap([boop - hue_change]);
+  
+  return changeErr, boop;
 }
-
-function SetEmotion(id, num) {
-  xOffset = num*250;
-  yOffset = 0;
-  while (xOffset >= 250*30) {
-    yOffset += 250;
-    xOffset -= 250*30;
-  }
-	var deg = 0;
-	$(id).css({'transform':'rotate('+deg+'deg)', 
-		'-ms-transform':'rotate('+deg+'deg)', 
-		'-webkit-transform':'rotate('+deg+'deg)'});
-  $(id).css({"background-position": -xOffset+"px " + -yOffset+"px"});
-}
-
+    
 /* Make sure all numbers in an array are between 0 and 360: */
 function wrap(v) {
   for (var i=0; i<v.length; i++) {
@@ -333,106 +317,52 @@ $(function() {
 </script>
 <style>
 .arrowRight { 
-  width: 130px;
-  height: 130px;
-  -webkit-border-radius: 65px;
-  -moz-border-radius: 65px;
-  border-radius: 65px;
+  width: 250px;
+  height: 250px;
+  background-image: none;
+  background-color: black;
+}
+    
+.arrowRightfeed { 
+  width: 150px;
+  height: 150px;
   background-image: none;
   background-color: black;
 }
 
-.continuousStimulusEmotion {
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-	margin: 175px;
-}
-
 .continuousStimulusTri {
-	margin-left: 235px;
-  margin-top:  235px;
+  margin: 175px;
+  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-size: 250px 250px;
 }
 
-.itemDivEmotion {
-  width: 250px;
-  height: 250px;
-  position: absolute;
-  background: #6c6c6c url('combinedEmotions.png') no-repeat;
-	background-position:0px 0px;
-}
-
-.item1Emotion {
-  top: 25px;
-  left: 25px;
-}
-.item2Emotion {
-  top: 25px;
-  left: 325px;
-}
-.item3Emotion {
-  top: 325px;
-  left: 25px;
-}
-.item4Emotion {
-  top: 325px;
-  left: 325px;
-}
 
 .itemDivTri {
   position: absolute;
-	background-position:0px 0px;
 }
 
 .item1Tri {
-  top: 85px;
-  left: 85px;
-}
-.item2Tri {
-  top: 85px;
-  left: 385px;
-}
-.item3Tri {
-  top: 385px;
-  left: 85px;
-}
-.item4Tri {
-  top: 385px;
-  left: 385px;
+  margin: 175px;
+  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-size: 250px 250px;
 }
 
 .feedbackReportedTri {
   position: absolute;
   top: 120px;
   left: 80px;
+  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-size: 150px 150px;
 }
 
 .feedbackCorrectTri {
   position: absolute;
   top: 120px;
   right: 80px;
+  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-size: 150px 150px;
 }
 
-.feedbackReportedEmotion {
-  position: absolute;
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-  top: 80px;
-  left: 50px;
-}
-
-.feedbackCorrectEmotion {
-  position: absolute;
-	width: 250px;
-	height: 250px;
-	background-image: url('combinedEmotions.png');
-	background-position:0px 0px;
-  top: 80px;
-  right: 50px;
-}
 </style>
 </head>
 <body style="">
@@ -474,7 +404,8 @@ https://www.mturk.com/mturk/externalSubmit
 </div><div id="saving">Saving . . .</div></div>
 
 <!-- Basic structure for a trial: -->
-<div id="showTrial"><div id="allItems"><div id="item1" class="itemDiv item1Tri"></div><div id="item2" class="itemDiv item2Tri"></div><div id="item3" class="itemDiv item3Tri"></div><div id="item4" class="itemDiv item4Tri"></div></div><div id="fixation">+</div><div id="pressKey">Click anywhere to start this trial.</div></div>
+<div id="showTrial"><div id="allItems">
+    <div id="item1" class="itemDiv item1Tri"></div></div><div id="pressKey">Click anywhere to start this trial.</div></div>
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport"><div id="continuousStimulus"></div><div id="ring"></div><div id="pointer">&nbsp;</div></div>

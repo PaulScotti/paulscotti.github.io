@@ -30,7 +30,7 @@ function CheckBlockList(blockListName, funcForBlocked) {
 			dataType: 'jsonp',	
 			url: 'https://timbrady.org/turk/checkDuplicates.pl', 
 			data:{'workerId': GetWorkerId(), 
-            'blockListName': blockListName}, 
+			 'blockListName': blockListName}, 
 			success: function(data) {
 				$('#serverContacted').val(1);
 				if (data.blocked == 1) {

@@ -1,10 +1,10 @@
 
 <!-- saved from url=(0046)http://timbrady.org/turk/ensembleindivdiff/e9/ -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<script src="./timbrady.org_files/jquery.min.js.download"></script>
-<script src="./timbrady.org_files/seedrandom.js.download"></script>
-<script src="./timbrady.org_files/colors.js.download"></script>
-<script src="./timbrady.org_files/TimTurkTools.js.download"></script>
+<script src="./timbrady.org_files/jquery.min.js"></script>
+<script src="./timbrady.org_files/seedrandom.js"></script>
+<script src="./timbrady.org_files/colors.js"></script>
+<script src="./timbrady.org_files/TimTurkTools.js"></script>
 <link rel="stylesheet" type="text/css" href="./timbrady.org_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./timbrady.org_files/showTrials.css">
 <link rel="stylesheet" type="text/css" href="./timbrady.org_files/experiment.css">
@@ -13,6 +13,10 @@
 var displayTime = 1000;
 var isiTime = 1000;
 var numTrialsPerPart = [3, 3, 60, 60];
+
+/* Choose which to start with before we seed the random number
+    generator so it really is random across subjects */
+var startWithFaces = Math.random()<0.50; 
 
 var practiceEmotionTrials = [];
 var practiceTriTrials = [];
@@ -40,7 +44,16 @@ function GenerateTrials() {
     }
   }
   triTrials = Shuffle(triTrials);
-
+  for (var i=0; i<numTrialsPerPart[3]/3; i++) {
+    var curMean = Math.floor(Math.random()*360);
+    for (var j=0; j<3; j++) {
+      emotionTrials.push({'mean': curMean, 
+                        'type': 'emotion',
+                        'isPractice': 0,
+                        'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
+     }
+  }  
+  emotionTrials = Shuffle(emotionTrials);
   for (var i=0; i<numTrialsPerPart[0]; i++) { /* Always 3 practice trials */
     var curMean = Math.floor(Math.random()*360);
     practiceTriTrials.push({'mean': curMean, 
@@ -48,7 +61,13 @@ function GenerateTrials() {
                     'isPractice': 1,
                     'items': wrap([curMean-15, curMean-5, curMean+5, curMean+15])});
   }
-
+  for (var i=0; i<numTrialsPerPart[1]; i++) { /* Always 3 practice trials */
+    var curMean = Math.floor(Math.random()*360);
+    practiceEmotionTrials.push({'mean': curMean, 
+                      'type': 'emotion',
+                      'isPractice': 1,
+                      'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
+  }   
 }
 
 /* Start the experiment. Show the trials for either faces or emotions
@@ -60,11 +79,15 @@ function StartExperiment() {
   }
   GenerateTrials();
   ChangeToTri();
-
+  if (startWithFaces) {
+    totalTrials = [practiceTriTrials, practiceEmotionTrials, triTrials, emotionTrials];
+    setTo = [ChangeToTri, ChangeToEmotions, ChangeToTri, ChangeToEmotions];
+    setItem = [SetTri, SetEmotion, SetTri, SetEmotion];
+  } else {
     totalTrials = [practiceTriTrials, practiceEmotionTrials, emotionTrials, triTrials];
     setTo = [ChangeToTri, ChangeToEmotions, ChangeToEmotions, ChangeToTri];
     setItem = [SetTri, SetEmotion, SetEmotion, SetTri];
-
+  }
   $('#instructions').hide();
   NextTrial();
 }
