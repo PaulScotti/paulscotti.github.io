@@ -10,8 +10,8 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css">
+    
 <script>
-
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
@@ -220,6 +220,50 @@ function rgb2hsv(r, g, b) {
 
     return [h, s, v];
 }
+/* HSV to RGB */
+var hsv2rgb = function(hsv) {
+  var h = hsv.hue, s = hsv.sat, v = hsv.val;
+  var rgb, i, data = [];
+  if (s === 0) {
+    rgb = [v,v,v];
+  } else {
+    h = h / 60;
+    i = Math.floor(h);
+    data = [v*(1-s), v*(1-s*(h-i)), v*(1-s*(1-(h-i)))];
+    switch(i) {
+      case 0:
+        rgb = [v, data[2], data[0]];
+        break;
+      case 1:
+        rgb = [data[1], v, data[0]];
+        break;
+      case 2:
+        rgb = [data[0], v, data[2]];
+        break;
+      case 3:
+        rgb = [data[0], data[1], v];
+        break;
+      case 4:
+        rgb = [data[2], data[0], v];
+        break;
+      default:
+        rgb = [v, data[0], data[1]];
+        break;
+    }
+  }
+  return '#' + rgb.map(function(x){ 
+    return ("0" + Math.round(x*255).toString(16)).slice(-2);
+  }).join('');
+};
+    
+/* Adjusting between rgb and hsv */
+function hueadjust(img, deg) {
+    hsv = rgb2hsv(img);
+    hue = 360*hsv(:,:,1);
+    hsv(:,:,1) = ((hue + deg) % 360) / 360;
+    newImage = hsv2rgb(hsv);
+    return newImage;
+}
     
 /* Save the data to the server (choose what to save) */
 function SaveData() {
@@ -287,6 +331,7 @@ function SetTri(id, deg) {
     
   $(id).css({'-webkit-filter': 'hue-rotate('+hue_change+'deg) saturate('+sat_change+'%) brightness('+lum_change+'%)',
 		});
+    
   /* $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'}); */
   boop = deg;
   changeErr = wrap([boop - hue_change]);
@@ -315,6 +360,7 @@ $(function() {
 });
 
 </script>
+    
 <style>
 .arrowRight { 
   width: 250px;
@@ -332,7 +378,7 @@ $(function() {
 
 .continuousStimulusTri {
   margin: 175px;
-  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 250px 250px;
 }
 
@@ -343,7 +389,7 @@ $(function() {
 
 .item1Tri {
   margin: 175px;
-  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 250px 250px;
 }
 
@@ -351,7 +397,7 @@ $(function() {
   position: absolute;
   top: 120px;
   left: 80px;
-  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 150px 150px;
 }
 
@@ -359,7 +405,7 @@ $(function() {
   position: absolute;
   top: 120px;
   right: 80px;
-  background-image: url('Cont_LTM_101_files/objects/Objects107.jpg');
+  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 150px 150px;
 }
 
