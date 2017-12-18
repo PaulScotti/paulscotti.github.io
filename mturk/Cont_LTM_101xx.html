@@ -10,16 +10,16 @@ var ctx = canvas.getContext("2d");
 var img = new Image();
 img.crossOrigin = "anonymous";
 img.onload = start;
-img.src = "https://puu.sh/yHWhd/3d41b29ba0.png";
+img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object111.jpg";
 
 function start() {
     ctx.drawImage(img, 0, 0);
     ctx.drawImage(img, 150, 0);
     // shift blueish colors to greenish colors
-    recolorPants(-.33);
+    recolorPants(30,50,50);
 }
 
-function recolorPants(colorshift) {
+function recolorPants(newR,newG,newB) {
 
     var imgData = ctx.getImageData(150, 0, canvas.width, canvas.height);
     var data = imgData.data;
@@ -29,10 +29,15 @@ function recolorPants(colorshift) {
         green = data[i + 1];
         blue = data[i + 2];
 
-        if (red != 254) {
-            data[i + 0] = 92;
-            data[i + 1] = 141;
-            data[i + 2] = 81;
+        var hsl = rgbToHsl(red, green, blue);
+        var hue = hsl.h * 360;
+
+        if (hue > 0) {
+            var temp = rgbToHsl(newR,newG,newB);
+            var newRgb = hslToRgb(temp.h, hsl.s, hsl.l);
+            data[i + 0] = newRgb.r;
+            data[i + 1] = newRgb.g;
+            data[i + 2] = newRgb.b;
         }
     }
     ctx.putImageData(imgData, 150, 0);
@@ -102,6 +107,8 @@ function hslToRgb(h, s, l) {
 }
     </script>
 <style>
+    
+    
 /*CSS*/
 body{ background-color: ivory; }
 canvas{border:1px solid red;}
