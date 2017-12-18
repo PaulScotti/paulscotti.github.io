@@ -11,7 +11,13 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css">
     
+<canvas id="canvas" width=300 height=300></canvas>    
+    
 <script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var img = new Image();
+    
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
@@ -191,79 +197,6 @@ function ShowContinuousReport(trialStruct, howToSet) {
 function Done() {
   $('#done').show();
 }
-
-/* RGB to HSV */
-function rgb2hsv(r, g, b) {
-    var
-        min = Math.min(r, g, b),
-        max = Math.max(r, g, b),
-        delta = max - min,
-        h, s, v = max;
-
-    v = Math.floor(max / 255 * 100);
-    if ( max != 0 )
-        s = Math.floor(delta / max * 100);
-    else {
-        // black
-        return [0, 0, 0];
-    }
-
-    if( r == max )
-        h = ( g - b ) / delta;         // between yellow & magenta
-    else if( g == max )
-        h = 2 + ( b - r ) / delta;     // between cyan & yellow
-    else
-        h = 4 + ( r - g ) / delta;     // between magenta & cyan
-
-    h = Math.floor(h * 60);            // degrees
-    if( h < 0 ) h += 360;
-
-    return [h, s, v];
-}
-/* HSV to RGB */
-var hsv2rgb = function(hsv) {
-  var h = hsv.hue, s = hsv.sat, v = hsv.val;
-  var rgb, i, data = [];
-  if (s === 0) {
-    rgb = [v,v,v];
-  } else {
-    h = h / 60;
-    i = Math.floor(h);
-    data = [v*(1-s), v*(1-s*(h-i)), v*(1-s*(1-(h-i)))];
-    switch(i) {
-      case 0:
-        rgb = [v, data[2], data[0]];
-        break;
-      case 1:
-        rgb = [data[1], v, data[0]];
-        break;
-      case 2:
-        rgb = [data[0], v, data[2]];
-        break;
-      case 3:
-        rgb = [data[0], data[1], v];
-        break;
-      case 4:
-        rgb = [data[2], data[0], v];
-        break;
-      default:
-        rgb = [v, data[0], data[1]];
-        break;
-    }
-  }
-  return '#' + rgb.map(function(x){ 
-    return ("0" + Math.round(x*255).toString(16)).slice(-2);
-  }).join('');
-};
-    
-/* Adjusting between rgb and hsv */
-function hueadjust(img, deg) {
-    hsv = rgb2hsv(img);
-    hue = 360*hsv(:,:,1);
-    hsv(:,:,1) = ((hue + deg) % 360) / 360;
-    newImage = hsv2rgb(hsv);
-    return newImage;
-}
     
 /* Save the data to the server (choose what to save) */
 function SaveData() {
@@ -316,27 +249,93 @@ function ChangeToTri() {
   $('#showTrial').css({'background-color': '#DDDDDD'});
 }
 
+function recolor(newR,newG,newB) {
+    var imgData = ctx.getImageData(150, 0, canvas.width, canvas.height);
+    var data = imgData.data;
+    for (var i = 0; i < data.length; i += 4) {
+        red = data[i + 0];
+        green = data[i + 1];
+        blue = data[i + 2];
+        var hsv = RGBtoHSV(red, green, blue);
+        var hue = hsv.h * 360;
+        if (hue > 0) {
+            var temp = RGBtoHSV(newR,newG,newB);
+            var newRgb = HSVtoRGB(temp.h, hsv.s, hsv.v);
+            data[i + 0] = newRgb.r;
+            data[i + 1] = newRgb.g;
+            data[i + 2] = newRgb.b;
+        }
+    }
+    ctx.putImageData(imgData, 150, 0);
+}
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
+function RGBtoHSV(r, g, b) {
+    if (arguments.length === 1) {
+        g = r.g, b = r.b, r = r.r;
+    }
+    var max = Math.max(r, g, b), min = Math.min(r, g, b),
+        d = max - min,
+        h,
+        s = (max === 0 ? 0 : d / max),
+        v = max / 255;
+
+    switch (max) {
+        case min: h = 0; break;
+        case r: h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d; break;
+        case g: h = (b - r) + d * 2; h /= 6 * d; break;
+        case b: h = (r - g) + d * 4; h /= 6 * d; break;
+    }
+
+    return {
+        h: h,
+        s: s,
+        v: v
+    };
+}
+    
+function start(newR,newG,newB) {
+    ctx.drawImage(img, 120, 0);
+    recolor(newR,newG,newB);
+}
+
 function SetTri(id, deg) {
-  deg=(deg>=360)?deg-360:deg;
-  deg=(deg<0)?deg+360:deg;
-  var col=colors.colors[deg];
+    deg=(deg>=360)?deg-360:deg;
+    deg=(deg<0)?deg+360:deg;
+    var col=colors.colors[deg];
+
+    img.crossOrigin = "anonymous";
+    img.onload = start(Math.round(col[0]),Math.round(col[1]),Math.round(col[2]));
     
-  origColor=colors.colors[0];
-  origColorHSV=rgb2hsv(origColor[0],origColor[1],origColor[2]);
-  newColor=[Math.round(col[0]),Math.round(col[1]),Math.round(col[2])];
-  newColorHSV=rgb2hsv(newColor[0],newColor[1],newColor[2]);
-  hue_change=(origColorHSV[0] - newColorHSV[0]);
-  sat_change=(origColorHSV[1] - newColorHSV[1]) + 100;
-  lum_change=(origColorHSV[2] - newColorHSV[2]) + 100;
-    
-  $(id).css({'-webkit-filter': 'hue-rotate('+hue_change+'deg) saturate('+sat_change+'%) brightness('+lum_change+'%)',
-		});
-    
-  /* $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'}); */
-  boop = deg;
-  changeErr = wrap([boop - hue_change]);
-  
-  return changeErr, boop;
+    img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object103.jpg";
+
+    changeErr = 2;
+
+    /* $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'}); */
+
+    return changeErr, img;
 }
     
 /* Make sure all numbers in an array are between 0 and 360: */
