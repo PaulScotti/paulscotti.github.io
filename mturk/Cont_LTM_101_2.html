@@ -7,16 +7,14 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/seedrandom.js"></script>
 <script src="./Cont_LTM_101_files/colors.js"></script>
 <script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
+
+<script src="./Cont_LTM_101_files/jcanvas.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
-<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css">
-    
-<canvas id="canvas" width=300 height=300></canvas>    
+<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css"> 
     
 <script>
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-var img = new Image();
     
 /* Options: */
 var displayTime = 1000;
@@ -99,7 +97,7 @@ function NextTrial() {
   then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct, howToSet) {
   for (var i=0; i<4; i++) {
-    howToSet('#item1', trialStruct.items[i]);
+    howToSet('#item1', trialStruct.items[i], ctx);
   }
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
@@ -151,7 +149,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
     angleDeg = curAngle / Math.PI * 180.0;
     angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
     var imgNum = Math.round(angleDeg);
-    howToSet('#continuousStimulus', imgNum);
+    howToSet('#continuousStimulus', imgNum, ctx2);
     $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                        'top': centerY + Math.sin(curAngle)*ringSize-9});
     if (trialStruct.isPractice) {
@@ -174,9 +172,9 @@ function ShowContinuousReport(trialStruct, howToSet) {
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + curError + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
       var imgNum = Math.round(angleDeg);
-      howToSet('#feedbackReported', imgNum);
+      howToSet('#feedbackReported', imgNum, ctx);
       imgNum = Math.round(trialStruct.mean);
-      howToSet('#feedbackCorrect', imgNum);
+      howToSet('#feedbackCorrect', imgNum, ctx2);
       $('#feedback').show();
       $(document).bind('click.feedback', function(e) {
         $('#feedback').hide(); 
@@ -252,8 +250,8 @@ function ChangeToTri() {
   $('#showTrial').css({'background-color': '#DDDDDD'});
 }
 
-function recolor(newR,newG,newB) {
-    var imgData = ctx.getImageData(150, 0, canvas.width, canvas.height);
+function recolor(context,newR,newG,newB) {
+    var imgData = context.getImageData(200, 200, item.width, item.height);
     var data = imgData.data;
     for (var i = 0; i < data.length; i += 4) {
         red = data[i + 0];
@@ -269,7 +267,7 @@ function recolor(newR,newG,newB) {
             data[i + 2] = newRgb.b;
         }
     }
-    ctx.putImageData(imgData, 150, 0);
+    context.putImageData(imgData, 200, 200);
 }
 function HSVtoRGB(h, s, v) {
     var r, g, b, i, f, p, q, t;
@@ -319,26 +317,20 @@ function RGBtoHSV(r, g, b) {
     };
 }
     
-function start(newR,newG,newB) {
-    ctx.drawImage(img, 120, 0);
-    recolor(newR,newG,newB);
+function start(context,newR,newG,newB) {
+    context.drawImage(img, 200, 200);
+    recolor(context,newR,newG,newB);
 }
 
-function SetTri(id, deg) {
+function SetTri(id, deg, context) {
     deg=(deg>=360)?deg-360:deg;
     deg=(deg<0)?deg+360:deg;
     var col=colors.colors[deg];
 
     img.crossOrigin = "anonymous";
-    img.onload = start(Math.round(col[0]),Math.round(col[1]),Math.round(col[2]));
+    img.onload = start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]));
     
-    img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object103.jpg";
-
-    changeErr = 2;
-
-    /* $(id).css({'background-color':'rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')'}); */
-
-    return changeErr, img;
+    img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object108.jpg";
 }
     
 /* Make sure all numbers in an array are between 0 and 360: */
@@ -378,18 +370,18 @@ $(function() {
   background-color: black;
 }
 
-.continuousStimulusTri {
+canvas.continuousStimulusTri {
   margin: 175px;
   background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 250px 250px;
 }
 
 
-.itemDivTri {
+canvas.itemDivTri {
   position: absolute;
 }
 
-.item1Tri {
+canvas.item1Tri {
   margin: 175px;
   background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
   background-size: 250px 250px;
@@ -399,7 +391,7 @@ $(function() {
   position: absolute;
   top: 120px;
   left: 80px;
-  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
+  background-image: url('Cont_LTM_101_files/objects/Object101.jpg');
   background-size: 150px 150px;
 }
 
@@ -451,13 +443,25 @@ https://www.mturk.com/mturk/externalSubmit
 <a href="javascript:SaveData()" id="timSubmit">Submit</a>
 </div><div id="saving">Saving . . .</div></div>
 
-<!-- Basic structure for a trial: -->
+<!-- Basic structure for a trial: -->  
 <div id="showTrial"><div id="allItems">
-    <div id="item1" class="itemDiv item1Tri"></div></div><div id="pressKey">Click anywhere to start this trial.</div></div>
-
+<div id="item1"></div>
+    <canvas id="item"  width=400 height=400></canvas></div>
+    <div id="pressKey">Click anywhere to start this trial.</div></div>
+    
 <!-- Structure for continuous report after the trial: -->
-<div id="continuousReport"><div id="continuousStimulus"></div><div id="ring"></div><div id="pointer">&nbsp;</div></div>
+<div id="continuousReport"> 
+    <canvas id="contItem"  width=400 height=400></canvas>
+    <div id="ring"></div><div id="pointer">&nbsp;</div></div>
 
+
+<script>var item = document.getElementById("item");
+var ctx = item.getContext("2d");
+var img = new Image();
+contItem = document.getElementById("contItem");
+var ctx2 = contItem.getContext("2d");
+var img2 = new Image();</script>
+    
 <!-- feedback -->
 <div id="feedback"><div id="feedbackReportedText">You choose:</div><div id="feedbackReported"></div><div id="feedbackCorrectText">Correct answer:</div><div id="feedbackCorrect"></div><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
 
