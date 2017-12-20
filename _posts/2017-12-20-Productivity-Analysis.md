@@ -19,7 +19,8 @@ Now that I have been doing this method for the past half a year, I thought I wou
 One hand hand, meditation and going to the gym consume valuable time from a productive day. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>lead to more energy</i> or be a sign that these days I had surplus energy to do more activities.
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
-<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001. Results were consistent even when excluding data from weekends.</i>
+<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.
+Results were consistent even when excluding data from weekends.</i>
 
 No matter the cause, this is good evidence in support of living a more healthy lifestyle.
 
@@ -47,3 +48,5 @@ I also wish that I had more data from sleeping less than say, 5 hours, where det
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
 
 It certainly seems like the "hump-day" phenomenon is true for me. As well as generally less productive Fridays and weekends. Thursday was my most productive day, perhaps a side effect of getting to take things a little lighter on Wednesdays.
+
+##
