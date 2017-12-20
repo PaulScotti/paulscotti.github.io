@@ -24,7 +24,7 @@ On one hand, meditation and going to the gym consume valuable time. On the other
 
 No matter the cause, this is good evidence in support of living a more healthy lifestyle.
 
-<b>Conclusion: Productivity <i>increases</i> on days including going to the gym or meditating.</b>
+<b>Conclusion: Productivity <i>increases</i> on days involving the gym or meditation.</b>
 
 ## Waking up early = more productive?
 I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7 hours of sleep, waking up at 5:30am. However, I very frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
