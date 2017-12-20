@@ -11,7 +11,7 @@ For the past few years I have been keeping track of all sorts of things in a Goo
 
 <img src = "https://puu.sh/yKr7P/72d5c2de60.png">
 
-Essentially, I have a list of daily goals that I wish to accomplish, and I get points every time I do that task. These points get tallied across the week, and if I fail to meet a minimum weekly cutoff (35 points), then my most frugal friend alerts me of my tardiness and I have to venmo him 10 bucks (has happened 4 times, so he very much encourages this activity). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
+Essentially, I have a list of daily goals that I wish to accomplish, and I get points every time I do that task. These points get tallied across the week, and if I fail to meet a minimum weekly cutoff (35 points), then my most frugal friend tells me I'm a lazy POS and I am required to venmo him 10 bucks (has happened 4 times, he very much encourages this activity). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
 
 Now that I have been doing this method for the past half a year, I thought I would document the data so far. Perhaps I can learn what factors lead me to have the most productive day?
 
@@ -20,5 +20,9 @@ I should note that I have already conducted a similar study on myself during und
 ## Sleeping less = More productive?
 I try to get a little over 7 hours of sleep a night, but that's just my subjective account of what feels best when I wake up. Perhaps I actually work much better with 8 hours of sleep, or with 6 hours of sleep. Here is a plot of number of hours of sleep against number of points accrued.
 
-<img src = "/images/prod1.jpg" style="height:400px">
-<i>Err bars = 1 std. dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
+<img src = "/images/prod1.jpg" style="width:auto; height:400px">
+<i>Error bars represent 1 std dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
+
+Strangely, it seems that as long as I sleep less than 8 hours, I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity (considering I already know I get most work done in the mornings), but I thought that getting too little sleep would also negatively impact me. Curious about this result, I recreated the same graph given that the y-axis now plotted to the <i>next day's</i> accrued points. The idea being that after sleeping so little, the ramifications might hit me the following day.
+
+<img src = "/images/prod2.jpg" style="width:auto; height:300px">
