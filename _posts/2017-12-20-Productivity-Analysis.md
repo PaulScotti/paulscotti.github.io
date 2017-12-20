@@ -20,5 +20,5 @@ I should note that I have already conducted a similar study on myself during und
 ## Sleeping less = More productive?
 I try to get a little over 7 hours of sleep a night, but that's just my subjective account of what feels best when I wake up. Perhaps I actually work much better with 8 hours of sleep, or with 6 hours of sleep. Here is a plot of number of hours of sleep against number of points accrued.
 
-<img src = "/images/prod1.jpg" "height:400px">
+<img src = "/images/prod1.jpg" style="height:400px">
 <i>Err bars = 1 std. dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
