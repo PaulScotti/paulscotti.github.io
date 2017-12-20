@@ -36,7 +36,7 @@ I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm mos
 It seems that as long as I wake up before 8am (~9.5 hrs of sleep), productivity remains fairly constant. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting less sleep than normal would also be detrimental. Curious, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day (I also know subjectively that it <i>feels</i> worse to get up earlier in the morning).
 
 <img src = "/images/prod2b.jpg" style="height:60%; width: 60%">
-<figcaption><i>Data from weekends were removed in the above plot (looked similar either way)</figcaption></i>
+<figcaption><i>Data from weekends were removed in the above plot (looked similar either way)</i></figcaption>
 
 There is little data to suggest that sleeping around 6 hours negatively impairs my productivity at all. I also thought that perhaps on days where I sleep little, I also tend to oversleep the following day. On average, however, I slept only 30 minutes more. On the contrary, oversleeping the night before (past 8.5 hours of sleep) seems to be carrying over into the next day's work.
 
