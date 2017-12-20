@@ -97,7 +97,7 @@ function NextTrial() {
   then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct, howToSet) {
   for (var i=0; i<4; i++) {
-    howToSet('#item1', trialStruct.items[i], ctx);
+    howToSet('#item1', trialStruct.items[i], ctx, 200, 200);
   }
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
@@ -149,7 +149,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
     angleDeg = curAngle / Math.PI * 180.0;
     angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
     var imgNum = Math.round(angleDeg);
-    howToSet('#continuousStimulus', imgNum, ctx2);
+    howToSet('#continuousStimulus', imgNum, ctx2, 200, 200);
     $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                        'top': centerY + Math.sin(curAngle)*ringSize-9});
     if (trialStruct.isPractice) {
@@ -172,9 +172,9 @@ function ShowContinuousReport(trialStruct, howToSet) {
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + curError + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
       var imgNum = Math.round(angleDeg);
-      howToSet('#feedbackReported', imgNum, ctx);
+      howToSet('#feedbackReported', imgNum, ctx3, 80, 100);
       imgNum = Math.round(trialStruct.mean);
-      howToSet('#feedbackCorrect', imgNum, ctx2);
+      howToSet('#feedbackCorrect', imgNum, ctx4, 40, 100);
       $('#feedback').show();
       $(document).bind('click.feedback', function(e) {
         $('#feedback').hide(); 
@@ -246,12 +246,12 @@ function ChangeToTri() {
 	$('#feedbackReported').addClass("feedbackReportedTri").addClass("arrowRightfeed");
 	$('#item1').addClass("item1Tri");
 
-  $('#continuousReport').css({'background-color': '#DDDDDD'});
-  $('#showTrial').css({'background-color': '#DDDDDD'});
+  $('#continuousReport').css({'background-color': '#FFFFFF'});
+  $('#showTrial').css({'background-color': '#FFFFFF'});
 }
 
-function recolor(context,newR,newG,newB) {
-    var imgData = context.getImageData(200, 200, item.width, item.height);
+function recolor(context,newR,newG,newB,initX,initY) {
+    var imgData = context.getImageData(initX, initY, item.width, item.height);
     var data = imgData.data;
     for (var i = 0; i < data.length; i += 4) {
         red = data[i + 0];
@@ -267,7 +267,7 @@ function recolor(context,newR,newG,newB) {
             data[i + 2] = newRgb.b;
         }
     }
-    context.putImageData(imgData, 200, 200);
+    context.putImageData(imgData, initX, initY);
 }
 function HSVtoRGB(h, s, v) {
     var r, g, b, i, f, p, q, t;
@@ -317,18 +317,18 @@ function RGBtoHSV(r, g, b) {
     };
 }
     
-function start(context,newR,newG,newB) {
-    context.drawImage(img, 200, 200);
-    recolor(context,newR,newG,newB);
+function start(context,newR,newG,newB,initX,initY) {
+    context.drawImage(img, initX, initY);
+    recolor(context,newR,newG,newB,initX,initY);
 }
 
-function SetTri(id, deg, context) {
+function SetTri(id, deg, context, initX, initY) {
     deg=(deg>=360)?deg-360:deg;
     deg=(deg<0)?deg+360:deg;
     var col=colors.colors[deg];
 
     img.crossOrigin = "anonymous";
-    img.onload = start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]));
+    img.onload = start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
     
     img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object108.jpg";
 }
@@ -442,7 +442,7 @@ https://www.mturk.com/mturk/externalSubmit
 <textarea name="comments" id="comments" style="width: 300px; height: 200px"></textarea><br><br>
 <a href="javascript:SaveData()" id="timSubmit">Submit</a>
 </div><div id="saving">Saving . . .</div></div>
-
+    
 <!-- Basic structure for a trial: -->  
 <div id="showTrial"><div id="allItems">
 <div id="item1"></div>
@@ -453,17 +453,21 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="continuousReport"> 
     <canvas id="contItem"  width=400 height=400></canvas>
     <div id="ring"></div><div id="pointer">&nbsp;</div></div>
-
-
-<script>var item = document.getElementById("item");
-var ctx = item.getContext("2d");
-var img = new Image();
-contItem = document.getElementById("contItem");
-var ctx2 = contItem.getContext("2d");
-var img2 = new Image();</script>
     
 <!-- feedback -->
-<div id="feedback"><div id="feedbackReportedText">You choose:</div><div id="feedbackReported"></div><div id="feedbackCorrectText">Correct answer:</div><div id="feedbackCorrect"></div><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
+<div id="feedback"><div id="feedbackReportedText">Your answer:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct answer:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
+    
+<script>
+var img = new Image();
+var item = document.getElementById("item");
+var ctx = item.getContext("2d");
+contItem = document.getElementById("contItem");
+var ctx2 = contItem.getContext("2d");
+var feedbackReportedTri = document.getElementById("feedbackReportedTri");
+var ctx3 = feedbackReportedTri.getContext("2d");
+feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
+var ctx4 = feedbackCorrectTri.getContext("2d");
+</script>
 
 <!-- preload images -->
 <img src="./timbrady.org_files/combinedEmotions.png" style="width: 100px; margin-left:-1000px">
