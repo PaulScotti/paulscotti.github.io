@@ -3,7 +3,7 @@ layout: post
 title:  "Productivity Analysis"
 date:   2017-12-20
 excerpt: "Plotting my productivity data from the past 6 months"
-comments: false
+comments: true
 ---
 
 # Productivity Spreadsheet
@@ -49,4 +49,5 @@ I also wish that I had more data from sleeping less than say, 5 hours, where det
 
 It certainly seems like the "hump-day" phenomenon is true for me. As well as generally less productive Fridays and weekends. Thursday was my most productive day, perhaps a side effect of getting to take things a little lighter on Wednesdays.
 
-##
+## Overall
+Overall, tracking my productivity every day has certainly been helpful. While the above results are not necessarily compelling, the act of having a friend watch over my productivity every week has certainly caused me to stay more focused on my goals. Being able to look back on a productive week well spent brings an innately fulfilling pleasure that is impossible to attain by simply going all out every day and never looking back. This method also allows one to prioritize goals that may not otherwise have had any payoff, such as keeping a daily journal.
