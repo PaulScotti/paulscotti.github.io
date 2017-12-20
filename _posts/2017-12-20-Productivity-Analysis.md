@@ -20,9 +20,9 @@ I should note that I have already conducted a similar study on myself during und
 ## Sleeping less = More productive?
 I try to get a little over 7 hours of sleep a night, but that's just my subjective account of what feels best when I wake up. Perhaps I actually work much better with 8 hours of sleep, or with 6 hours of sleep. Here is a plot of number of hours of sleep against number of points accrued.
 
-<img src = "/images/prod1.jpg" style="width:auto; height:400px">
+<img src = "/images/prod1.jpg" style="width:680; height:400px">
 <i>Error bars represent 1 std dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
 
 Strangely, it seems that as long as I sleep less than 8 hours, I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity (considering I already know I get most work done in the mornings), but I thought that getting too little sleep would also negatively impact me. Curious about this result, I recreated the same graph given that the y-axis now plotted to the <i>next day's</i> accrued points. The idea being that after sleeping so little, the ramifications might hit me the following day.
 
-<img src = "/images/prod2.jpg" style="width:auto; height:300px">
+<img src = "/images/prod2.jpg" style="width:580; height:300px">
