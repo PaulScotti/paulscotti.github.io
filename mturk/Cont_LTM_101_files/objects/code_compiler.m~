@@ -1,0 +1,10 @@
+clc; clear;
+
+nTrials = 100;
+code = [];
+preset = ['<img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.jpg">'];
+
+for i = 1:354
+    preset = strrep(preset,'Object',['Object',num2str(100+i)]);
+    code = strcat(code,preset);
+end

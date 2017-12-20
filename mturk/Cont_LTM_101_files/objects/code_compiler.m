@@ -26,11 +26,14 @@ preset = ['<div class=''trialDiv'' id=''trial_up1''>' ...
 '</br></center></div>'
 ];
 
-for i = 1:100
-    preset = strrep(preset,['trial_up',num2str(i-2)],['trial_up',num2str(i-1)]);
-    preset = strrep(preset,['trial_down',num2str(i-2)],['trial_down',num2str(i-1)]);
-    preset = strrep(preset,['scene',num2str(i+98)],['scene',num2str(i+99)]);
-    preset = strrep(preset,['trialImage',num2str(i-2)],['trialImage',num2str(i-1)]);
-    preset = strrep(preset,['question',num2str(i-2)],['question',num2str(i-1)]);
+
+clc; clear;
+
+code = [];
+preset = ['<img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.jpg">'];
+
+for i = 1:354
+    preset = strrep(preset,'Object',['Object',num2str(100+i)]);
     code = strcat(code,preset);
+    preset = ['<img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.jpg">'];
 end

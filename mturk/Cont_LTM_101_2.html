@@ -156,7 +156,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
         curError = Math.min(Math.abs(angleDeg-trialStruct.mean), 
           Math.abs((angleDeg+360)-trialStruct.mean), 
           Math.abs((angleDeg-360)-trialStruct.mean));
-      $('#feedbackError').html("Your error was: " + curError + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
+      $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
     }
     if (e.isFakeTrigger) {
       trialStruct.startedAngle = Math.round(angleDeg);
@@ -170,7 +170,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
     $(document).unbind('mousemove.curTrial');
     $("#continuousReport").hide();
     if (trialStruct.isPractice) {
-      $('#feedbackError').html("Your error was: " + curError + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
+      $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
       var imgNum = Math.round(angleDeg);
       howToSet('#feedbackReported', imgNum, ctx3, 80, 100);
       imgNum = Math.round(trialStruct.mean);
@@ -370,39 +370,6 @@ $(function() {
   background-color: black;
 }
 
-canvas.continuousStimulusTri {
-  margin: 175px;
-  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
-  background-size: 250px 250px;
-}
-
-
-canvas.itemDivTri {
-  position: absolute;
-}
-
-canvas.item1Tri {
-  margin: 175px;
-  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
-  background-size: 250px 250px;
-}
-
-.feedbackReportedTri {
-  position: absolute;
-  top: 120px;
-  left: 80px;
-  background-image: url('Cont_LTM_101_files/objects/Object101.jpg');
-  background-size: 150px 150px;
-}
-
-.feedbackCorrectTri {
-  position: absolute;
-  top: 120px;
-  right: 80px;
-  background-image: url('Cont_LTM_101_files/objects/Object107.jpg');
-  background-size: 150px 150px;
-}
-
 </style>
 </head>
 <body style="">
@@ -446,8 +413,8 @@ https://www.mturk.com/mturk/externalSubmit
 <!-- Basic structure for a trial: -->  
 <div id="showTrial"><div id="allItems">
 <div id="item1"></div>
-    <canvas id="item"  width=400 height=400></canvas></div>
-    <div id="pressKey">Click anywhere to start this trial.</div></div>
+<canvas id="item"  width=400 height=400></canvas></div>
+<div id="pressKey">Click anywhere to start this trial.</div></div>
     
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport"> 
@@ -470,7 +437,7 @@ var ctx4 = feedbackCorrectTri.getContext("2d");
 </script>
 
 <!-- preload images -->
-<img src="./timbrady.org_files/combinedEmotions.png" style="width: 100px; margin-left:-1000px">
+<img src=''http://paulscotti.github.io/mturk/depth_scenes/scenes/scene101.jpg'' height=''200'' width=''200'' id=''trialImage1''/>
 </form>
 
 
