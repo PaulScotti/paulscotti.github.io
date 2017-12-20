@@ -44,7 +44,7 @@ I also wish that I had more data from sleeping less than say, 5 hours, where det
 
 <b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 9 hours. Over 9 hours of sleep impairs that day's productivity <i>as well as</i> the next day's productivity.</b>
 
-## What day of the week is most productive? Do hump-days truly exist?
+## Do hump-days truly exist?
 <img src = "/images/prod4.jpg" style="height:60%; width: 60%">
 
 It certainly seems like the "hump-day" phenomenon is true for me. As well as generally less productive Fridays and weekends. Thursday was my most productive day, perhaps a side effect of getting to take things a little lighter on Wednesdays.
