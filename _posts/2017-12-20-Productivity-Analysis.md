@@ -38,7 +38,7 @@ It seems that as long as I wake up before 8am (~9.5 hrs of sleep), productivity 
 <img src = "/images/prod2b.jpg" style="height:60%; width: 60%">
 <figcaption><i>Data from weekends were removed in the above plot (looked similar either way).</i></figcaption>
 
-There is little data to suggest that sleeping around 6 hours negatively impairs my productivity at all. I also thought that perhaps on days where I sleep little, I also tend to oversleep the following day. On average, however, I slept only 30 minutes more. On the contrary, oversleeping the night before (past 8.5 hours of sleep) seems to be carrying over into the next day's work.
+There is little data to suggest that sleeping around 6 hours negatively impairs my productivity at all. I also thought that perhaps on days where I sleep little, I also tend to oversleep the following day. On average, however, I slept only 30 minutes more. On the contrary, oversleeping the night before (past 8.5 hours of sleep) seems to be carrying over into the next day's work. Weirdly enough, moderate oversleeping did not negatively impact the same day's productivity, but did affect the next day's productivity.
 
 While these results might suggest that I should aim for 6 hours of sleep a night, it might also suggest a trade-off where more hours in the day at less efficient pace (due to less sleep) totals the same amount of work accomplished.
 
