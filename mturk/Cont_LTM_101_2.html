@@ -9,7 +9,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
 
 <script src="./Cont_LTM_101_files/jcanvas.min.js"></script>
-
+    
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css"> 
@@ -19,7 +19,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [3, 1, 1, 1];
+var numTrialsPerPart = [3, 6];
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -28,14 +28,13 @@ var totalTrials = [];
 /* Pointers for where we are in the experiment: */
 var currentTrial = -1;
 var currentPart = 0;
-var setTo;
 var setItem;
 
 /* Generate trials: Do it the same for each subject by seeding the
    random number generator the same every time. */
 function GenerateTrials() {
   Math.seedrandom('jasonhaberman');
-  for (var i=0; i<numTrialsPerPart[2]/3; i++) { 
+  for (var i=0; i<numTrialsPerPart[1]; i++) { 
     var curMean = Math.floor(Math.random()*360);
     for (var j=0; j<3; j++) {
       triTrials.push({'mean': curMean, 
@@ -56,18 +55,15 @@ function GenerateTrials() {
 
 }
 
-/* Start the experiment. Show the trials for either faces or emotions
-   first (at random) */
+/* Start the experiment. */
 function StartExperiment() {
   if (IsOnTurk() && IsTurkPreview()) {
     alert("Please accept the HIT before continuing.");
     return false;
   }
   GenerateTrials();
-  ChangeToTri();
 
     totalTrials = [practiceTriTrials, triTrials];
-    setTo = [ChangeToTri, ChangeToTri];
     setItem = [SetTri, SetTri];
 
   $('#instructions').hide();
@@ -84,8 +80,7 @@ function NextTrial() {
     } else {
       currentTrial = 0;
       currentPart++;
-      setTo[currentPart]();
-      if (currentPart == 2) {
+      if (currentPart == 1) {
         alert("Okay, time for the real experiment. You won't get feedback about how you are doing anymore. Please do your best!");
       }
     }
@@ -238,18 +233,6 @@ function SendToServer(id, curData) {
   });
 }
 
-
-function ChangeToTri() {
-  $('.itemDiv').addClass("itemDivTri").addClass("arrowRight");
-  $('#continuousStimulus').addClass("continuousStimulusTri").addClass("arrowRight");
-	$('#feedbackCorrect').addClass("feedbackCorrectTri").addClass("arrowRightfeed");
-	$('#feedbackReported').addClass("feedbackReportedTri").addClass("arrowRightfeed");
-	$('#item1').addClass("item1Tri");
-
-  $('#continuousReport').css({'background-color': '#FFFFFF'});
-  $('#showTrial').css({'background-color': '#FFFFFF'});
-}
-
 function recolor(context,newR,newG,newB,initX,initY) {
     var imgData = context.getImageData(initX, initY, item.width, item.height);
     var data = imgData.data;
@@ -330,7 +313,7 @@ function SetTri(id, deg, context, initX, initY) {
     img.crossOrigin = "anonymous";
     img.onload = start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
     
-    img.src = "https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object108.jpg";
+    img.src = $('#199')[0].src;
 }
     
 /* Make sure all numbers in an array are between 0 and 360: */
@@ -381,16 +364,11 @@ $(function() {
   <p align="center"><img src="./timbrady.org_files/instrucTriangles.png" width="400" border="1"></p>
   <p>Notice how the color of the circles are all slightly different. These circles will be shown briefly, and then disappear, and you'll then be asked to report what the <strong>average color</strong> of these circles was. To do so, you'll use your mouse to change the color of a new circle (moving the mouse around the circle will change the color using a color wheel). In this case, you should report that the average color was something like this:</p>
   <p align="center"><img src="./timbrady.org_files/instrucTriangles2.png" width="400" border="1"></p>
-  <p>Once you've decided what the average is, you'll click your mouse to lock your answer in and move onto the next trial. <em>It is important that you report the <strong>average</strong> of <strong>all</strong> of the circles, and that you not just pick one or two circles. </em></p>
-  <p>In the second part, you will perform a similiar perceptual averaging task, but instead of circles you will see emotional faces, like this:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucEmotions.png" width="400" border="1"></p> 
-  <p>And will then have to report, with the mouse, what the <strong>average</strong> of these emotions looked like. The faces will be different emotions (sad, happy, etc) and so on one particular trial, 3 faces might be somewhat happy and one might be more sad, making the average of the faces 'mostly happy'. To report the average emotion of the faces, you'll use a circle with different emotions on it and many subtle variations between those emotions present. As you move your mouse, the emotion of the faces will change between more happy, more neutal and more sad:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucEmotions2.png" width="400" border="1"></p> 
-	<p>You'll have to select the average emotion that you saw in the first display, and then click when you think you've come as close as possible.</p>
+  <p>Once you've decided what the average is, you'll click your mouse to lock your answer in and move onto the next trial. <em>It is important that you report the <strong>average</strong> of <strong>all</strong> of the circles, and that you not just pick one or two circles. </em>
   <p>To start off with, we'll give you <strong>3 practice trials</strong> of each type. During the practice trials, you'll get feedback on how far off you are. <strong>An error value close to 0 is better</strong>; further from 0 means you are far off.</p> 
   <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./timbrady.org_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
   <!-- Consent statement at bottom: -->
-  <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p><p>By answering the following questions, you are participating in a study being performed by cognitive scientists in the Harvard University Psychology Department.  The purpose of this research is to examine human visual performance.</p><p>By participating you are confirming that you are over 18 years of age and have normal or corrected-to-normal vision.</p><p>If you have questions about this research, or if you would like to receive a report of this research when it is completed please contact Timothy Brady at tbrady@wjh.harvard.edu.</p><p>Your participation in this research is completely voluntary.  If you choose to participate, you may change your mind and leave the study at any time.  Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>For questions, concerns, or complaints that are not being addressed by the researcher, or research-related harm contact:  Committee on the Use of Human Subjects in Research at Harvard University, 1414 Massachusetts Avenue, Second Floor, Cambridge, MA  02138. Phone: 617-496-CUHS (2847).  Email: cuhs@fas.harvard.edu</p><p>By continuing, you are confirming that you understand these instructions and conditions of participation.</p></div>
+  <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p><p>By answering the following questions, you are participating in a study being performed by cognitive scientists at The Ohio State University.  The purpose of this research is to examine human visual performance.</p><p>By participating you are confirming that you are over 18 years of age and have normal or corrected-to-normal vision.</p><p>If you have questions about this research, or if you would like to receive a report of this research when it is completed please contact Paul Scotti at scotti.5@osu.edu.</p><p>Your participation in this research is completely voluntary.  If you choose to participate, you may change your mind and leave the study at any time.  Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>By continuing, you are confirming that you understand these instructions and conditions of participation.</p></div>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -436,9 +414,8 @@ feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 var ctx4 = feedbackCorrectTri.getContext("2d");
 </script>
 
-<!-- preload images -->
-<img src=''http://paulscotti.github.io/mturk/depth_scenes/scenes/scene101.jpg'' height=''200'' width=''200'' id=''trialImage1''/>
+<!-- Preload images -->
+<script src="./Cont_LTM_101_files/loadimg.js"></script>
 </form>
-
 
 </body></html>
