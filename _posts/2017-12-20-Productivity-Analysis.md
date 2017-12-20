@@ -19,8 +19,8 @@ Now that I have collected data using this method for the past half a year, perha
 On one hand, meditation and going to the gym consume valuable time. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>reinvigorate</i> leading to more energy or be a correlation where I tend to do these activities when I have surplus energy.
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
-<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.
-<br>Results were consistent even when excluding data from weekends.</br></i>
+<figcaption>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.
+<br>Results were consistent even when excluding data from weekends.</br></figcaption>
 
 No matter the cause, this is good evidence in support of living a more healthy lifestyle.
 
@@ -30,18 +30,19 @@ No matter the cause, this is good evidence in support of living a more healthy l
 I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7 hours of sleep, waking up at 5:30am. However, I very frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
 
 <img src = "/images/prod1.jpg" style="height: 75%; width: 75%">
-<i>Error bars represent 1 std dev.
-<br>Days when I was not concerned about my productivity were never included in the spreadsheet (e.g., vacations, conferences).</br></i>
+<figcaption>Error bars represent 1 std dev.
+<br>Days when I was not concerned about my productivity were never included in the spreadsheet (e.g., vacations, conferences).</br></figcaption>
 
 It seems that as long as I wake up before 8am (~9.5 hrs of sleep), productivity remains fairly constant. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day (I also know subjectively that it <i>feels</i> worse to get up earlier in the morning).
 
-<img src = "/images/prod2.jpg" style="height:60%; width: 60%">
+<img src = "/images/prod2b.jpg" style="height:60%; width: 60%">
+<figcaption>Data from weekends were removed in the above plot.</figcaption>
 
 There is little data to suggest that sleeping around 6 hours negatively impairs my productivity at all. I also thought that perhaps on days where I sleep little, I also tend to oversleep the following day. On average, however, I slept only 30 minutes more. On the contrary, oversleeping the night before seems to be carrying over into the next day's work.
 
 While these results might suggest that I should aim for 6 hours of sleep a night, it might also suggest a trade-off where more hours in the day at less efficient pace (due to less sleep) totals the same amount of work accomplished.
 
-I also wish that I had more data from sleeping less than say, 5 hours, where detrimental effects might be more obvious. However, I have enough trouble sleeping for a consistent 7 hours a night and not oversleeping. These results may also be somewhat confounded with weekends, where I still try to get a decent amount of work done but I am more likely to sleep in.
+I also wish that I had more data from sleeping less than say, 5 hours, where detrimental effects might be more obvious. However, I have enough trouble sleeping for a consistent 7 hours a night and not oversleeping.
 
 <b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 9 hours. Over 9 hours of sleep impairs that day's productivity <i>as well as</i> the next day's productivity.</b>
 
