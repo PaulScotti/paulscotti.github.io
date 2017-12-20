@@ -21,12 +21,12 @@ I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm mos
 <img src = "/images/prod1.jpg" style="height: 75%; width: 75%">
 <i>Error bars represent 1 std dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
 
-It seems that as long as I wake up before 8am (~9.5 hrs of sleep), I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day.
+It seems that as long as I wake up before 8am (~9.5 hrs of sleep), I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day (I also know subjectively that it <i>feels</i> worse to get up earlier in the morning).
 
 <img src = "/images/prod2.jpg" style="height:75%; width: 75%">
 
-It doesn't really seem like it. In fact, oversleeping the night before seems to be carrying over into the next day's productivity.
+There is little data to suggest that sleeping around 6 hours negatively impairs my productivity at all. I also thought that perhaps on days where I sleep little, I also tend to oversleep the following day. On average, however, I slept only 30 minutes more. On the contrary, oversleeping the night before seems to be carrying over into the next day's work.
 
-I also thought that perhaps on days where I sleep less than 6 hours, I also tend to oversleep the following day. However, on average, I slept only 30 minutes more than the previous day. I should also note that most of the days where I slept <6 hours  come from sleeping about 5 hours and 45 minutes.
+While these results might suggest that I should aim for 6 hours of sleep a night, it might also suggest a trade-off where more hours in the day at less efficient pace (due to less sleep) totals the same amount of work accomplished.
 
-<b>Conclusion: Sleep anywhere from 6 to 8 hours for optimal productivity, but do NOT oversleep!</b>
+<b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 9 hours. Over 9 hours of sleep impairs that day's productivity <i>as well as</i> the next day's productivity.</b>
