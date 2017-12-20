@@ -15,6 +15,16 @@ Essentially, I have a list of daily goals that I wish to accomplish, and I get p
 
 Now that I have been doing this method for the past half a year, I thought I would document the data so far. Perhaps I can learn what factors lead me to have the most productive day?
 
+## Meditation/Gym = More Productive?
+One hand hand, meditation and going to the gym consume valuable time from a productive day. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>lead to more energy</i> or be a sign that these days I had surplus energy to do more activities.
+
+<img src = "/images/prod3.jpg" style="height:60%; width: 60%">
+<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001. Results were consistent even when excluding data from weekends.</i>
+
+No matter the cause, this is good evidence in support of living a more healthy lifestyle.
+
+<b>Conclusion: Productivity <i>increases</i> on days including going to the gym or meditating.</b>
+
 ## Waking Up Early = More Productive?
 I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7 hours of sleep, waking up at 5:30am. However, I very frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
 
@@ -32,3 +42,8 @@ While these results might suggest that I should aim for 6 hours of sleep a night
 I also wish that I had more data from sleeping less than say, 5 hours, where detrimental effects might be more obvious. However, I have enough trouble sleeping for a consistent 7 hours a night and not oversleeping. These results may also be somewhat confounded with weekends, where I still try to get a decent amount of work done but I am more likely to sleep in.
 
 <b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 9 hours. Over 9 hours of sleep impairs that day's productivity <i>as well as</i> the next day's productivity.</b>
+
+## What day of the week is most productive? Do hump-days truly exist?
+<img src = "/images/prod3.jpg" style="height:60%; width: 60%">
+
+It certainly seems like the "hump-day" phenomenon is true for me. As well as generally less productive Fridays and weekends. Thursday was my most productive day, perhaps a side effect of getting to take things a little lighter on Wednesdays.
