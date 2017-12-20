@@ -16,7 +16,7 @@ There are daily goals that I wish to accomplish, and I receive points every time
 Now that I have collected data using this method for the past half a year, perhaps I can learn what factors lead to the most productive days?
 
 ## Meditation/Gym = More Productive?
-One hand hand, meditation and going to the gym consume valuable time from a productive day. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>lead to more energy</i> or be a sign that these days I had surplus energy to do more activities.
+On one hand, meditation and going to the gym consume valuable time. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>reinvigorate</i> leading to more energy or be a correlation where I tend to do these activities when I have surplus energy.
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
 <i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.</i>
