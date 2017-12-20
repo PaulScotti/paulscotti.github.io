@@ -15,7 +15,7 @@ There are daily goals that I wish to accomplish, and I receive points every time
 
 Now that I have collected data using this method for the past half a year, perhaps I can learn what factors lead to the most productive days?
 
-## Meditation/Gym = More Productive?
+## Meditation/Gym increases productivity?
 On one hand, meditation and going to the gym consume valuable time. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>reinvigorate</i> leading to more energy or be a correlation where I tend to do these activities when I have surplus energy.
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
@@ -26,7 +26,7 @@ No matter the cause, this is good evidence in support of living a more healthy l
 
 <b>Conclusion: Productivity <i>increases</i> on days including going to the gym or meditating.</b>
 
-## Waking Up Early = More Productive?
+## Waking up early = more productive?
 I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7 hours of sleep, waking up at 5:30am. However, I very frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
 
 <img src = "/images/prod1.jpg" style="height: 75%; width: 75%">
