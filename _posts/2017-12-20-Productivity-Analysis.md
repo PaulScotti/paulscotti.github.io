@@ -15,18 +15,18 @@ Essentially, I have a list of daily goals that I wish to accomplish, and I get p
 
 Now that I have been doing this method for the past half a year, I thought I would document the data so far. Perhaps I can learn what factors lead me to have the most productive day?
 
-I should note that I have already conducted a similar study on myself during undergrad, where I plotted how long it took me to complete tasks at different times of day. I discovered that my efficiency (most work completed in least amount of time) was at its peak the earlier in the day I worked on the tasks, and that I was least productive in later hours of the day (in addition to a slight dip during the afternoon). Here I wanted to more finely figure out what leads to an overall benefit to my productivity, as measured by an aggregate "points" system.
-
-## Sleeping less = More productive?
-I try to get a little over 7 hours of sleep a night, but that's just my subjective account of what feels best when I wake up. Perhaps I actually work much better with 8 hours of sleep, or with 6 hours of sleep. Here is a plot of number of hours of sleep against number of points accrued.
+## Waking up Early = More productive?
+I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7.5 hours of sleep, waking up at 6:00am. However, I frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
 
 <img src = "/images/prod1.jpg" style="height: 75%; width: 75%">
 <i>Error bars represent 1 std dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
 
-Strangely, it seems that as long as I sleep less than 8 hours, I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day.
+It seems that as long as I wake up before 8am (~9.5 hrs of sleep), I have about the same level of productivity. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day.
 
 <img src = "/images/prod2.jpg" style="height:75%; width: 75%">
 
-It doesn't really seem like it. I also thought that perhaps on days where I sleep less than 6 hours, I also tend to oversleep the following day. However, on average I slept only 30 minutes more. I should also note that most of the days I slept <6 hours  comes from sleeping about 5 hours and 45 minutes.
+It doesn't really seem like it. In fact, oversleeping the night before seems to be carrying over into the next day's productivity.
+
+I also thought that perhaps on days where I sleep less than 6 hours, I also tend to oversleep the following day. However, on average, I slept only 30 minutes more than the previous day. I should also note that most of the days where I slept <6 hours  come from sleeping about 5 hours and 45 minutes.
 
 <b>Conclusion: Sleep anywhere from 6 to 8 hours for optimal productivity, but do NOT oversleep!</b>
