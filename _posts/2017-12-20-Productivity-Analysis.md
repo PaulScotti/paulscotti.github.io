@@ -20,6 +20,7 @@ One hand hand, meditation and going to the gym consume valuable time from a prod
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
 <i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.
+
 Results were consistent even when excluding data from weekends.</i>
 
 No matter the cause, this is good evidence in support of living a more healthy lifestyle.
