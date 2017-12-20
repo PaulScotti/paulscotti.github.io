@@ -11,10 +11,12 @@ For the past few years I have been keeping track of all sorts of things in a Goo
 
 <img src = https://puu.sh/yKr7P/72d5c2de60.png></img>
 
-Essentially, I have a list of daily goals that I wish to accomplish, and I get points every time I do that task in a day. These points get tallied across the week, and if I fail to meet a minimum cutoff (35 points), then my most frugal friend alerts me of my tardiness and I have to venmo him 10 bucks (has already happened 4 times, which is pretty sad). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
+Essentially, I have a list of daily goals that I wish to accomplish, and I get points every time I do that task in a day. These points get tallied across the week, and if I fail to meet a minimum cutoff (35 points), then my most frugal friend alerts me of my tardiness and I have to venmo him 10 bucks (has happened 4 times, which is pretty sad). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
 
 Now that I have been doing this method for the past half a year, I thought I would document the data so far. Perhaps I can learn what factors lead me to have the most productive day?
 
 I should note that I have already conducted a similar study on myself during undergrad, where I plotted how long it took me to complete tasks at different times of day. I discovered that my efficiency (most work completed in least amount of time) was at its peak the earlier in the day I worked on the tasks, and that I was least productive in later hours of the day (in addition to a slight dip during the afternoon). Here I wanted to more finely figure out what leads to an overall benefit to my productivity, as measured by an aggregate "points" system.
 
 ## Sleeping less == More productive?
+
+<i>Note days where I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
