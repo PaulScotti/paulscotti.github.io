@@ -29,4 +29,6 @@ There is little data to suggest that sleeping around 6 hours negatively impairs 
 
 While these results might suggest that I should aim for 6 hours of sleep a night, it might also suggest a trade-off where more hours in the day at less efficient pace (due to less sleep) totals the same amount of work accomplished.
 
+I also wish that I had more data from sleeping less than 6 hours, where detrimental effects might be more obvious. However, I have enough trouble simply sleeping for a consistent 7.5 hours a night and not oversleeping.
+
 <b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 9 hours. Over 9 hours of sleep impairs that day's productivity <i>as well as</i> the next day's productivity.</b>
