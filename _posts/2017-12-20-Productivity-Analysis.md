@@ -19,9 +19,8 @@ Now that I have collected data using this method for the past half a year, perha
 One hand hand, meditation and going to the gym consume valuable time from a productive day. On the other hand (esp. considering I tend to do both of these activities in the morning), it may <i>lead to more energy</i> or be a sign that these days I had surplus energy to do more activities.
 
 <img src = "/images/prod3.jpg" style="height:60%; width: 60%">
-<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.
-
-Results were consistent even when excluding data from weekends.</i>
+<i>Mean None = 3.93, Mean M_or_G = 5.69, t = 3.99, p < .001.</i>
+<i>Results were consistent even when excluding data from weekends.</i>
 
 No matter the cause, this is good evidence in support of living a more healthy lifestyle.
 
@@ -31,7 +30,8 @@ No matter the cause, this is good evidence in support of living a more healthy l
 I maintain a fairly consistent sleep schedule, falling asleep around 10:30pm most days. I try to get 7 hours of sleep, waking up at 5:30am. However, I very frequently oversleep. Here I can calculate my wake up times against the amount of points I accrue that day. Perhaps I  work much better with 9 hours of sleep (later wake up times), or with 6 hours of sleep (earlier wake up times).
 
 <img src = "/images/prod1.jpg" style="height: 75%; width: 75%">
-<i>Error bars represent 1 std dev. Days when I was not concerned about my productivity were not included in this data (e.g., vacations, conferences).</i>
+<i>Error bars represent 1 std dev.</i>
+<i>Days when I was not concerned about my productivity were never included in the spreadsheet (e.g., vacations, conferences).</i>
 
 It seems that as long as I wake up before 8am (~9.5 hrs of sleep), productivity remains fairly constant. I somewhat expected that getting too much sleep would lead to less productivity, but I thought that getting too little sleep would also be detrimental. Curious about this result, I recreated the same graph given that the y-axis now plotted the <i>next day's</i> accrued points. The idea is that after sleeping so little, the ramifications might hit me the following day (I also know subjectively that it <i>feels</i> worse to get up earlier in the morning).
 
