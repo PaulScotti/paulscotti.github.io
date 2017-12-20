@@ -9,7 +9,7 @@ comments: false
 # Productivity Spreadsheet
 For the past few years I have been keeping track of all sorts of things in a Google spreadsheet, including every TV show, movie, book, video game, and recipe I consume. For the past 6 months I have been adding to a new productivity tab:
 
-<img src = "https://puu.sh/yKr7P/72d5c2de60.png">
+<img src = "/images/prod0.png">
 
 Essentially, I have a list of daily goals that I wish to accomplish, and I get points every time I do that task. These points get tallied across the week, and if I fail to meet a minimum weekly cutoff (35 points), then my most frugal friend tells me I'm a lazy POS and I am required to venmo him 10 bucks (has happened 4 times, he very much encourages this activity). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
 
