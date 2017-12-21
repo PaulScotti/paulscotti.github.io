@@ -8,8 +8,8 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/colors.js"></script>
 <script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
 
-<script src="./Cont_LTM_101_files/jcanvas.min.js"></script>
-    
+<script src="./Cont_LTM_101_files/jcanvas.min.js"></script>  
+
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css"> 
@@ -92,14 +92,14 @@ function NextTrial() {
   then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct, howToSet) {
   for (var i=0; i<4; i++) {
-    howToSet('#item1', trialStruct.items[i], ctx, 200, 200);
+    howToSet(104, trialStruct.items[i], ctx, 200, 200);
   }
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
-  if (currentPart < 2) {
-    $('#pressKey').html('<u><font color=navy>Practice for Part ' + (currentPart+1) + ' of 2</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + ' (in this part)<br><br>Click anywhere to start this trial.');
+  if (currentPart < 1) {
+    $('#pressKey').html('<u><font color=navy>Practice Phase' + '</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + '<br><br>Click anywhere to start this trial.');
   }  else {
-    $('#pressKey').html('<u>Part ' + (currentPart-1) + ' of 2</u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + ' (in this part)<br><br>Click anywhere to start this trial.');  
+    $('#pressKey').html('<u><font color=navy>Test Phase' + '</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + '<br><br>Click anywhere to start this trial.');
   }
   $('#pressKey').show();
   $(document).bind('click.startTrial', function(e) { 
@@ -144,7 +144,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
     angleDeg = curAngle / Math.PI * 180.0;
     angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
     var imgNum = Math.round(angleDeg);
-    howToSet('#continuousStimulus', imgNum, ctx2, 200, 200);
+    howToSet(104, imgNum, ctx2, 200, 200);
     $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                        'top': centerY + Math.sin(curAngle)*ringSize-9});
     if (trialStruct.isPractice) {
@@ -167,9 +167,9 @@ function ShowContinuousReport(trialStruct, howToSet) {
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
       var imgNum = Math.round(angleDeg);
-      howToSet('#feedbackReported', imgNum, ctx3, 80, 100);
+      howToSet(104, imgNum, ctx3, 80, 100);
       imgNum = Math.round(trialStruct.mean);
-      howToSet('#feedbackCorrect', imgNum, ctx4, 40, 100);
+      howToSet(104, imgNum, ctx4, 40, 100);
       $('#feedback').show();
       $(document).bind('click.feedback', function(e) {
         $('#feedback').hide(); 
@@ -220,7 +220,7 @@ function SaveData() {
 function SendToServer(id, curData) {
   var dataToServer = {
     'id': id,
-    'experimentName': 'EnsembleIndivDifference9',
+    'experimentName': 'ContLTM_101',
     'curData': JSON.stringify(curData)
   }; 
   $.post("https://timbrady.org/turk/savexxx.pl",
@@ -313,7 +313,7 @@ function SetTri(id, deg, context, initX, initY) {
     img.crossOrigin = "anonymous";
     img.onload = start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
     
-    img.src = $('#199')[0].src;
+    img.src = $('#' + id)[0].src;
 }
     
 /* Make sure all numbers in an array are between 0 and 360: */
@@ -381,7 +381,6 @@ $(function() {
 https://www.mturk.com/mturk/externalSubmit
 -->
 
-
 <!-- Screen for collecting comments when they are done: -->
 <div id="done"><div id="doneText">Done! Thanks!<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
 <textarea name="comments" id="comments" style="width: 300px; height: 200px"></textarea><br><br>
@@ -413,9 +412,9 @@ var ctx3 = feedbackReportedTri.getContext("2d");
 feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 var ctx4 = feedbackCorrectTri.getContext("2d");
 </script>
-
+    
 <!-- Preload images -->
-<script src="./Cont_LTM_101_files/loadimg.js"></script>
+<script src="./Cont_LTM_101_files/loadimg.js"></script>  
 </form>
 
 </body></html>

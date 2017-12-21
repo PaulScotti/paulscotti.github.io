@@ -44,7 +44,7 @@ While these results might suggest that I should aim for 6 hours of sleep a night
 
 I also wish that I had more data from sleeping less than say, 5 hours, where detrimental effects might be more obvious. However, I have enough trouble sleeping for a consistent 7 hours a night and not oversleeping.
 
-<b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 8.5 hours. More than this can impair that day's productivity <i>as well as</i> the next day's productivity. Not enough data to observe work from less than 6 hours of sleep.</b>
+<b>Conclusion: Productivity unaffected if sleeping anywhere from 6 to 8.5 hours. More than this can impair that day's productivity <i>as well as</i> the next day's productivity. Not enough data to observe work from significantly less than 6 hours of sleep.</b>
 
 ## Do hump-days truly exist?
 <img src = "/images/prod4.jpg" style="height:60%; width: 60%">
