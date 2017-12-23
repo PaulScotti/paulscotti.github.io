@@ -9,3 +9,13 @@ for i = 1:354
     code = strcat(code,presetNew);
     presetNew = [];
 end
+
+code2 = [];
+imgnum = ['x,'];
+
+for i = 1:300
+    imgnumNew = strrep(imgnum,'x',[num2str(100+i)]);
+    imgnumNew = strrep(imgnumNew,'IDN',[num2str(100+i)]);
+    code2 = strcat(code2,imgnumNew);
+    imgnumNew = [];
+end

@@ -11,7 +11,7 @@ For the past few years I have been keeping track of all sorts of things in a Goo
 
 <img src = "/images/prod0.png">
 
-There are daily goals that I wish to accomplish, and I receive points every time complete them. These points get tallied across the week, and if I fail to meet a minimum weekly cutoff (35 points), then my most frugal friend tells me I am a lazy POS and I am required to venmo him 10 bucks (has happened 4 times, he very much encourages this activity). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
+There are daily goals that I wish to accomplish, and I receive points every time I complete them. These points get tallied across the week, and if I fail to meet a minimum weekly cutoff (35 points), then my most frugal friend tells me I am a lazy POS and I am required to venmo him 10 bucks (has happened 4 times, he very much encourages this activity). I also have streaks (Don't Break the Chain technique) to further incentivize maintaining a constant stream of productivity.
 
 Now that I have collected data using this method for the past half a year, perhaps I can learn what factors lead to the most productive days?
 
