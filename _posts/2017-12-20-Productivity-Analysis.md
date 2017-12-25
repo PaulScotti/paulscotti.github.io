@@ -4,6 +4,7 @@ title:  "Productivity Analysis"
 date:   2017-12-20
 excerpt: "Plotting my productivity data from the past 6 months."
 comments: true
+visible: true
 ---
 
 # Productivity Spreadsheet
