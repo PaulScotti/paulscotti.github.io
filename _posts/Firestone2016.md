@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Cognition Does Not Influence Perception"
-date:   2017-24-21
+date:   2017-12-24
 excerpt: "Review of Firestone & Scholl (2016)."
 comments: true
 ---
