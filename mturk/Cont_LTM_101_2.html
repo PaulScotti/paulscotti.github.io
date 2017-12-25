@@ -17,7 +17,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script>
 /* Options: */
 var displayTime = 100;
-var isiTime = 1000;
+var isiTime = 10;
 var numTrialsPerPart = [5, 204];
 
 var practiceTriTrials = [];
@@ -112,8 +112,13 @@ function NextFeedTrial() {
       }
     }
   }
+  /* For first feed trial, there will be no image initialized, so we must set it as trial 1 */
+  img.src = $('#' + dx.testimg[0])[0].src; 
 
   ShowContinuousReport(totalTrials[currentPart][currentFeedTrial], setItem[currentPart]);
+    
+  /* Set starting color as grayscale */
+  start(ctx2,0,0,0,200,200);
 }
 
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; 
@@ -124,14 +129,7 @@ function ShowTrial(trialStruct, howToSet) {
   }
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
-  if (currentPart < 1) {
-    $('#pressKey').html('<u><font color=navy>Practice Phase' + '</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + '<br><br>Click anywhere to start this trial.');
-  }  else {
-    $('#pressKey').html('<u><font color=navy>Test Phase' + '</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + '<br><br>Click anywhere to start this trial.');
-  }
   $('#pressKey').show();
-  $(document).bind('click.startTrial', function(e) { 
-      $(document).unbind('click.startTrial');
       setTimeout(function() {
         $('#allItems').css('margin-top', 0);
         setTimeout(function() { 
@@ -143,7 +141,6 @@ function ShowTrial(trialStruct, howToSet) {
         }, displayTime);
       }, 500);
       $('#pressKey').hide();
-   });
 }
 
 /* Always track the mouse */
@@ -162,7 +159,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
   var angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
-  
+    
     $(document).bind('mousemove.curTrial', function(e) {
         var parentOffset = $('#continuousReport').offset(); 
         var relX = e.pageX - parentOffset.left - centerX;
@@ -178,7 +175,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
             curError = Math.min(Math.abs(angleDeg-trialStruct.mean), 
               Math.abs((angleDeg+360)-trialStruct.mean), 
               Math.abs((angleDeg-360)-trialStruct.mean));
-          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
+          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
         }
         if (e.isFakeTrigger) {
           trialStruct.startedAngle = Math.round(angleDeg);
@@ -194,12 +191,14 @@ function ShowContinuousReport(trialStruct, howToSet) {
         if (trialStruct.isPractice) {
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
           var imgNum = Math.round(angleDeg);
-          howToSet(dx.pracimg[currentFeedTrial], imgNum, ctx3, 80, 100);
+          howToSet(dx.pracimg[currentFeedTrial], imgNum, ctx3, 80, 100, 0);
           imgNum = Math.round(trialStruct.mean);
-          howToSet(dx.pracimg[currentFeedTrial], imgNum, ctx4, 40, 100);
+          howToSet(dx.pracimg[currentFeedTrial], imgNum, ctx4, 40, 100, 0);
+        img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;  ctx2.drawImage(img, 200, 200); 
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
             $('#feedback').hide(); 
+        img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;  ctx2.drawImage(img, 200, 200); 
             NextFeedTrial();
             $(document).unbind('click.feedback');
           });
@@ -207,7 +206,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
           NextFeedTrial();
          }
     });
-  
+    
   $("#continuousReport").show();
   e = $.Event('mousemove');
   e.pageX = mouseX;
@@ -265,21 +264,24 @@ function start(context,newR,newG,newB,initX,initY) {
     recolor(context,newR,newG,newB,initX,initY);
 }
 function recolor(context,newR,newG,newB,initX,initY) {
-    var imgData = context.getImageData(initX, initY, item.width, item.height);
-    var data = imgData.data;
+     var imgData = context.getImageData(initX, initY, item.width, item.height);
+     var data = imgData.data;
     for (var i = 0; i < data.length; i += 4) {
         red = data[i + 0];
         green = data[i + 1];
         blue = data[i + 2];
         var hsv = RGBtoHSV(red, green, blue);
         var hue = hsv.h * 360;
-        if (hue > 0) {
+        /* If grayscale, else if not grayscale */
+        if (newR == 0 & newG == 0 & newB == 0) {
+            var newRgb = HSVtoRGB(hsv.h, 0, hsv.v);
+        } else { 
             var temp = RGBtoHSV(newR,newG,newB);
             var newRgb = HSVtoRGB(temp.h, hsv.s, hsv.v);
-            data[i + 0] = newRgb.r;
-            data[i + 1] = newRgb.g;
-            data[i + 2] = newRgb.b;
         }
+        data[i + 0] = newRgb.r;
+        data[i + 1] = newRgb.g;
+        data[i + 2] = newRgb.b;
     }
     context.putImageData(imgData, initX, initY);
 }
@@ -420,6 +422,7 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
 <script>
+/* For first trial, there is no image initialized so we must set it as trial 1 */
 if (currentTrial == -1) {
     img.src = $('#'+dx.pracimg[0])[0].src; 
 }
@@ -433,6 +436,8 @@ var feedbackReportedTri = document.getElementById("feedbackReportedTri");
 var ctx3 = feedbackReportedTri.getContext("2d");
 feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 var ctx4 = feedbackCorrectTri.getContext("2d");
+    
+       
 </script>
 
 </form>
