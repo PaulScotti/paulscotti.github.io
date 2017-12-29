@@ -312,7 +312,7 @@ function ShowContinuousReport(trialStruct) {
         $(document).unbind('mousemove.curTrial');
         $("#continuousReport").hide();
         if (trialStruct.isPractice) {
-          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 20 deg.!)<br><br>Click to continue.");
+          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
           var imgNum = Math.round(angleDeg);
           SetTri(dx.pracimg[currentFeedTrial], imgNum, ctx3, 80, 100);
           imgNum = Math.round(trialStruct.mean);
