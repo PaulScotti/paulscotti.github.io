@@ -183,13 +183,11 @@ function RepeatTrial() {
     
   if (repeat < 3) {
       img.onload = function() {
-          ctx.drawImage(img, 200, 200);
+          start(ctx,100,200,200); 
       }
-      SetTri(dx.testimg[99], 100, ctx, 200, 200);
-
+      
       $('#showTrial').show();
       setTimeout(function() {      
-        $('#allItems').css('margin-top', 0);
         setTimeout(function() { 
             $('#allItems').css('margin-top', -1000);
             setTimeout(function() {
@@ -382,9 +380,14 @@ function SendToServer(id, curData) {
   });
 }
 
-function start(context,newR,newG,newB,initX,initY) {
+function start(context,deg,initX,initY) {
+    deg=(deg>=360)?deg-360:deg;
+    deg=(deg<0)?deg+360:deg;
+    var col=colors.colors[deg];
+    
     context.drawImage(img, initX, initY);
-    recolor(context,newR,newG,newB,initX,initY);
+
+ recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
 }
 function recolor(context,newR,newG,newB,initX,initY) {
      var imgData = context.getImageData(initX, initY, item.width, item.height);
@@ -457,11 +460,7 @@ function RGBtoHSV(r, g, b) {
 }  
 
 function SetTri(id, deg, context, initX, initY) {
-    deg=(deg>=360)?deg-360:deg;
-    deg=(deg<0)?deg+360:deg;
-    var col=colors.colors[deg];
-
- start(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
+    start(context,deg,initX,initY);
     
     /* loading next item id for next trial  */
     if (context == ctx) {
