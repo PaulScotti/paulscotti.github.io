@@ -21,9 +21,9 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <div id="instructions">
   <p>In this HIT, you will have to perform 2 separate tasks. It should take about 15-20 minutes total. Both tasks will require you to report the perceptual average of a set of items. </p>
   <p>In one part, you'll see several circles, like this:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucTriangles.png" width="400" border="1"></p>
+  <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400" border="1"></p>
   <p>Notice how the color of the circles are all slightly different. These circles will be shown briefly, and then disappear, and you'll then be asked to report what the <strong>average color</strong> of these circles was. To do so, you'll use your mouse to change the color of a new circle (moving the mouse around the circle will change the color using a color wheel). In this case, you should report that the average color was something like this:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucTriangles2.png" width="400" border="1"></p>
+  <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400" border="1"></p>
   <p>Once you've decided what the average is, you'll click your mouse to lock your answer in and move onto the next trial. <em>It is important that you report the <strong>average</strong> of <strong>all</strong> of the circles, and that you not just pick one or two circles. </em>
   <p>To start off with, we'll give you <strong>3 practice trials</strong> of each type. During the practice trials, you'll get feedback on how far off you are. <strong>An error value close to 0 is better</strong>; further from 0 means you are far off.</p> 
   <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./timbrady.org_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
@@ -83,6 +83,7 @@ var currentFeedTrial = -1;
 var feedbackPhase = 0;
 var repeat = 0;
 var numRepeats = 0; 
+var hit = 0;
     
 /* Randomize orderings */
 Shuffle(dx.r_testimg);
@@ -145,6 +146,7 @@ function StartExperiment() {
 function NextTrial() {
   currentTrial++;
   if (currentTrial>=numTrialsPerPart[currentPart]-1) {
+      alert("You will now see previously displayed objects again, one at a time. Please move your mouse along the black outside circle to adjust the color of the object until it matches its original color (be as precise as possible). Then click to continue.");
       /* Start continuous color report trials */
       NextFeedTrial();
       /* need return; otherwise the ShowTrial below executes */
@@ -155,7 +157,6 @@ function NextTrial() {
     
 function RepeatTrial() {
   repeat = repeat + 1;
-  hit = 0;
     
   if (repeat == 1) {
       tempTrial = currentTrial;
