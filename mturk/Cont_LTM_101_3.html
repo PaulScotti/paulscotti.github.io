@@ -9,6 +9,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
 <script src="./Cont_LTM_101_files/beep.js"></script>
 <script src="./Cont_LTM_101_files/jcanvas.min.js"></script>  
+<script src="./Cont_LTM_101_files/chance.js"></script>  
 
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
@@ -75,11 +76,12 @@ https://www.mturk.com/mturk/externalSubmit
 <script>
 /* Options: */
 var displayTime = 100;
-var isiTime = 500;
-var numTrialsPerPart = [5, 5]; /*204 trials*/
+var isiTime = 10;
+var numTrialsPerPart = [4, 204]; /*204 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
+var repeatTriTrials = [];
 var totalTrials = [];
 
 /* Pointers for where we are in the experiment: */
@@ -93,7 +95,15 @@ var numRepeats = 0;
 var hit = 0;
     
 /* Randomize orderings */
-Shuffle(dx.r_testimg);
+Shuffle(dx.r_study);
+chance1 = Chance(123);
+dx.r_study = dx.r_study.slice(0,numTrialsPerPart[1]);
+dx.r_test = dx.r_study;
+dx.r_test = chance1.shuffle(dx.r_test); 
+chance1 = Chance(123);
+dx.r_pracimg = chance1.shuffle(dx.pracimg); 
+chance1 = Chance(123);
+
 Shuffle(dx.r_repeatimg);
 dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-30);
     
@@ -113,15 +123,22 @@ var ctx4 = feedbackCorrectTri.getContext("2d");
     
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
-  Math.seedrandom('thissomemessycode');
+  Math.seedrandom('pablore');
+    
+  seed = Math.floor(Math.random()*360);
+  seed = [seed, (seed + 90)];
+  seed = [seed[0], seed[1], (seed[1] + 90)];
+  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
+  wrap(seed);
+    
   for (var i=0; i<numTrialsPerPart[1]; i++) { 
-    var curMean = Math.floor(Math.random()*360);
-    for (var j=0; j<3; j++) {
+    var pickSeed = dx.TrialType[i];
+    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    wrap(curMean);
       triTrials.push({'mean': curMean, 
                       'type': 'color', 
                       'isPractice': 0,
                       'items': curMean});
-    }
   }
   triTrials = Shuffle(triTrials);
 
@@ -132,6 +149,17 @@ function GenerateTrials() {
                     'isPractice': 1,
                     'items': curMean});
   }
+    
+  for (var i=0; i<dx.r_TrialType.length; i++) { 
+    var pickSeed = dx.r_TrialType[i];
+    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    wrap(curMean);
+    repeatTriTrials.push({'mean': curMean, 
+                    'type': 'color', 
+                    'isPractice': 0,
+                    'items': curMean});
+  } 
+    repeatTriTrials = Shuffle(repeatTriTrials);
 }
 
 /* Start the experiment. */
@@ -143,6 +171,8 @@ function StartExperiment() {
   GenerateTrials();
 
   totalTrials = [practiceTriTrials, triTrials];
+  r_totalTrials = [chance1.shuffle(practiceTriTrials), triTrials];
+  chance1 = Chance(123); r_totalTrials = [r_totalTrials[0], chance1.shuffle(triTrials)];
 
   $('#instructions').hide();
     
@@ -152,7 +182,7 @@ function StartExperiment() {
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   currentTrial++;
-  if (currentTrial>=numTrialsPerPart[currentPart]-1) {
+  if (currentTrial>numTrialsPerPart[currentPart]-1) {
       alert("You will now see previously displayed objects again, one at a time. Please move your mouse along the black outside circle to adjust the color of the object until it matches its original color (be as precise as possible). Then click to continue.");
       /* Start continuous color report trials */
       NextFeedTrial();
@@ -163,6 +193,7 @@ function NextTrial() {
 }
     
 function RepeatTrial() {
+  var imgNum = repeatTriTrials[numRepeats].mean;
   repeat = repeat + 1;
     
   if (repeat == 1) {
@@ -188,7 +219,7 @@ function RepeatTrial() {
     
   if (repeat <= 2) {
       img.onload = function() {
-          start(ctx,280,200,200); 
+          start(ctx,imgNum,200,200); 
       }
       if (currentPart == 0) {
           img.src = $('#' + dx.repeatpracimg[0])[0].src; 
@@ -227,7 +258,8 @@ function NextFeedTrial() {
   /* Turn off listening for clicks, prevents beeping */
   $(document).off("click");
   currentFeedTrial++;
-  if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) {
+    
+  if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
     if (currentPart == 1) {
       alert('done');
       Done();
@@ -243,17 +275,17 @@ function NextFeedTrial() {
   }
   
   if (currentFeedTrial == 0) {
-  /* Initialize first object */
-  if (currentPart == 0) {
-    img.src = $('#' + dx.pracimg[0])[0].src; 
-  } else {
-    img.src = $('#' + dx.r_testimg[0])[0].src; 
+      /* Initialize first object */
+      if (currentPart == 0) {
+        img.src = $('#' + dx.r_pracimg[0])[0].src; 
+      } else {
+        img.src = $('#' + dx.r_test[0])[0].src; 
   }}
     
-  ShowContinuousReport(totalTrials[currentPart][currentFeedTrial]);
-    
+  ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+        
   /* Set starting color as grayscale */
-  start(ctx2,'gray',200,200);
+  start(ctx2,'gray',200,200); 
   mouseMoved = 0;
 }
 
@@ -271,7 +303,7 @@ function ShowTrial(trialStruct) {
     
     console.log(currentTrial);
     if (currentPart == 1) {
-        console.log(dx.r_testimg[currentTrial]);
+        console.log(dx.r_study[currentTrial]);
     }
     
     img.onload = function() {
@@ -280,7 +312,7 @@ function ShowTrial(trialStruct) {
     if (currentPart == 0) {
     img.src = $('#' + dx.pracimg[currentTrial])[0].src;
     } else {
-    img.src = $('#' + dx.r_testimg[currentTrial])[0].src;
+    img.src = $('#' + dx.r_study[currentTrial])[0].src;
     }
 
     $('#allItems').css('margin-top', -1000);
@@ -324,7 +356,7 @@ function ShowContinuousReport(trialStruct) {
   var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
-  var startTime = new Date();
+  var startTime = new Date();    
     
     $(document).bind('mousemove.curTrial', function(e) {
         var parentOffset = $('#continuousReport').offset(); 
@@ -337,19 +369,22 @@ function ShowContinuousReport(trialStruct) {
         mouseMoved = 1;
         start(ctx2,imgNum,200,200); 
         if (currentPart == 0) {
-        img.src = $('#' + dx.pracimg[currentFeedTrial])[0].src;
+            img.src = $('#' + dx.r_pracimg[currentFeedTrial])[0].src;
         } else {
-        img.src = $('#' + dx.r_testimg[currentFeedTrial])[0].src;
+            img.src = $('#' + dx.r_test[currentFeedTrial])[0].src;
         }
         $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                            'top': centerY + Math.sin(curAngle)*ringSize-9});
+
+        curError = Math.abs(angleDeg-trialStruct.mean);
+        if (curError > 180) {
+            curError = 360-curError;
+        }
+        console.log(curError);
         if (trialStruct.isPractice) {
-            curError = Math.min(Math.abs(angleDeg-trialStruct.mean));
-            if (curError > 180) {
-                curError = curError - 180;
-            }
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
         }
+            
         if (e.isFakeTrigger) {
           trialStruct.startedAngle = Math.round(angleDeg);
         }
@@ -364,6 +399,7 @@ function ShowContinuousReport(trialStruct) {
             $(document).unbind('click.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
+            
             if (trialStruct.isPractice) {
                 $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
@@ -371,35 +407,41 @@ function ShowContinuousReport(trialStruct) {
                 start(ctx3,imgNum,80,100);
                 var imgNum = Math.round(trialStruct.mean);
                 start(ctx4,imgNum,40,100);
-                
-                if (currentPart == 0) {
-                img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;  
-                } else {
-                img.src = $('#' + dx.r_testimg[currentFeedTrial+1])[0].src;
+
+                if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
                 }
+                
                 ctx2.drawImage(img, 200, 200); 
                 $('#feedback').show();
                 $(document).bind('click.feedback', function(e) {
-                $('#feedback').hide(); 
-                if (currentPart == 0) {
-                img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;  
-                } else {
-                img.src = $('#' + dx.r_testimg[currentFeedTrial+1])[0].src;
-                }
-                ctx2.drawImage(img, 200, 200); 
-                NextFeedTrial();
-                $(document).unbind('click.feedback');
+                    $('#feedback').hide(); 
+
+                    if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                        img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
+                    }
+
+                    ctx2.drawImage(img, 200, 200); 
+                    NextFeedTrial();
+                    $(document).unbind('click.feedback');
                 });
             } else { 
-                img.src = $('#' + dx.r_testimg[currentFeedTrial+1])[0].src;
-                img.onload = function() {
-                    ctx2.drawImage(img, 200, 200); }
-                NextFeedTrial();
+                if (currentFeedTrial < numTrialsPerPart[0]) {
+                    img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
+                }
+                setTimeout(function() {
+                    if (currentFeedTrial < numTrialsPerPart[0]) {
+                        img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
+                    }
+                    ctx2.drawImage(img, 200, 200); 
+                    NextFeedTrial();
+                    $(document).unbind('click.feedback');
+                }, isiTime);
             }
         }
     });
     
-  $("#continuousReport").show();
+  $("#continuousReport").show();    
   e = $.Event('mousemove');
   e.pageX = mouseX;
   e.pageY = mouseY;
@@ -441,7 +483,7 @@ function SendToServer(id, curData) {
     'experimentName': 'ContLTM_101',
     'curData': JSON.stringify(curData)
   }; 
-  $.post("https://timbrady.org/turk/savexxx.pl",
+  $.post("https://paulscotti.github.io/mturk/save.pl",
     dataToServer,
     function(data) { 
       document.forms[0].submit();

@@ -1,0 +1,51 @@
+#!/usr/bin/python
+import sys
+sys.path.append('../')
+from boto.mturk.connection import MTurkConnection
+from boto.mturk.question import ExternalQuestion
+import boto.mturk.qualification as mtqu
+from dateutil.parser import *
+
+ACCESS_ID = 'AKIAJX3EUZT5LPX52JEQ'
+SECRET_KEY = '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'
+HOST = 'mechanicalturk.sandbox.amazonaws.com' # Use this to post to the sandbox instead
+
+# requestersandbox.mturk.com ???
+
+#HOST = 'mechanicalturk.amazonaws.com'
+
+def PostHits():
+  mtc = MTurkConnection(aws_access_key_id=ACCESS_ID,
+                        aws_secret_access_key=SECRET_KEY,
+                        host=HOST)
+
+
+  q = ExternalQuestion(external_url = "https://paulscotti.github.io/mturk/Cont_LTM_101_3/", frame_height=675)
+  keywords = ['memory', 'psychology', 'game', 'fun', 'experiment', 'research']
+  title = 'Memorize the colors of objects!'
+  experimentName = 'v1Turk'
+  description = '40 minutes research study involving color memory.'
+  pay = 0.50
+
+  qualifications = mtqu.Qualifications()
+  qualifications.add(mtqu.PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 90))
+  qualifications.add(mtqu.LocaleRequirement("EqualTo", "US"))
+  #qualifications.add(mtqu.Requirement("2Z046OQ1SNQQREGXAFSQPCNR1605PN"))
+
+  theHIT = mtc.create_hit(question=q,
+                          lifetime=10 * 60 * 60, # 10 hours
+                          max_assignments=3,
+                          title=title,
+                          description=description,
+                          keywords=keywords,
+                          qualifications=qualifications,
+                          reward=pay,
+                          duration=120 * 60, # 120 minutes
+                          approval_delay=5 * 60 * 60, # 5 hours
+                          annotation=experimentName)
+
+  assert(theHIT.status == True)
+  print theHIT
+  print theHIT[0].HITId
+
+PostHits()
