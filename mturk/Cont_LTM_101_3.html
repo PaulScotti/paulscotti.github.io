@@ -10,6 +10,11 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/beep.js"></script>
 <script src="./Cont_LTM_101_files/jcanvas.min.js"></script>  
 <script src="./Cont_LTM_101_files/chance.js"></script>  
+    
+<!-- load Firebase server javascript, we are just using it for storage -->
+<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-storage.js"></script>
 
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
 <link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
@@ -74,6 +79,22 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
 <script>
+    
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
+    authDomain: "scotti-92222.firebaseapp.com",
+    databaseURL: "https://scotti-92222.firebaseio.com",
+    projectId: "scotti-92222",
+    storageBucket: "scotti-92222.appspot.com",
+    messagingSenderId: "123079954596"
+};
+firebase.initializeApp(config);
+    
+var file = 'ring';
+var storageRef = firebase.storage().ref('data');
+storageRef.putString(file);
+    
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
@@ -473,6 +494,7 @@ function SaveData() {
     "comments": $('#comments').val(),
     "totalTrials": totalTrials
   };
+    
   SendToServer(curID, d);
 }
 
@@ -593,6 +615,7 @@ $(function() {
   if (navigator.userAgent.indexOf('MSIE') != -1) {
     $('body').html('Unfortunately this HIT does not work in IE. It works in Chrome, Firefox or Safari. Sorry!');
   }
-});
+});    
+    
 </script>
 </body></html>
