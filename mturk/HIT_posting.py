@@ -1,6 +1,5 @@
 #!/usr/bin/python
-import sys
-sys.path.append('../')
+import os
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import ExternalQuestion
 import boto.mturk.qualification as mtqu
@@ -8,11 +7,13 @@ from dateutil.parser import *
 
 ACCESS_ID = 'AKIAJX3EUZT5LPX52JEQ'
 SECRET_KEY = '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'
-HOST = 'mechanicalturk.sandbox.amazonaws.com' # Use this to post to the sandbox instead
+HOST = 'requestersandbox.mturk.com' # Use this to post to the sandbox instead
 
-# requestersandbox.mturk.com ???
+# mechanicalturk.sandbox.amazonaws.com ???
 
 #HOST = 'mechanicalturk.amazonaws.com'
+
+print 'loading...'
 
 def PostHits():
   mtc = MTurkConnection(aws_access_key_id=ACCESS_ID,
