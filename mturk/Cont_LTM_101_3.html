@@ -75,10 +75,24 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="feedback">
     <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
     
+<form onsubmit="return completeForm();" id="survey2">
+    <center>
+    <h4>Did you notice that most objects were of approximately the same color?</h4>
+    <input name="choice" type="radio" value="yes" id="surveyresponse" /> Yes
+    <input name="choice" type="radio" value="nope" id="surveyresponse2" /> Not really 
+    <p></p>
+    <td class="submit-button">
+        <input class="send_btn" type="submit" value="Submit"/>
+    </td>
+    </center>
+</form>
+    
 <!-- Preload images, needs to be below divs -->
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
 <script>
+$("#survey2").hide();        
+    
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -282,7 +296,6 @@ function NextFeedTrial() {
     
   if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
     if (currentPart == 1) {
-      alert('done');
       Survey();
       return;
     } else {
@@ -473,7 +486,7 @@ function ShowContinuousReport(trialStruct) {
                 }
             } else {
                 $('#showTrial').hide();
-                Done(); 
+                Survey2(); 
             }
         }
     });
@@ -495,6 +508,10 @@ function Survey() {
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200); 
   mouseMoved = 0;
+} 
+    
+function Survey2() {
+    $("#survey2").show(); 
 } 
     
 /* Done with the experiment; wait for comments and for them to hit Save */
@@ -621,6 +638,21 @@ function wrap(v) {
   return v;
 } 
 
+function completeForm() {
+    checkedornot = document.getElementById("surveyresponse").checked;
+    checkedornot2 = document.getElementById("surveyresponse2").checked;
+    //proceed only if they picked one of two options
+    if (checkedornot | checkedornot2) {
+        alert('Form submitted!');
+        $('#survey2').hide();
+        $('#instructions').hide();
+        Done();
+    } else {
+        alert('Please select an option.');
+    }  
+    return false;  
+}
+    
 $(window).load(function () {
   $('#startExperimentButton').show();
   $('#loading').hide();
