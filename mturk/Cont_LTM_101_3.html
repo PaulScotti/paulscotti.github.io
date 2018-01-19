@@ -12,7 +12,6 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/chance.js"></script>  
     
 <!-- load Firebase server javascript, we are just using it for storage -->
-<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-storage.js"></script>
 
@@ -63,6 +62,7 @@ https://www.mturk.com/mturk/externalSubmit
 <!-- Basic structure for a trial: -->  
     
 <div id="showTrial">
+<div id="fixation">+</div>
 <div id="allItems">
 <canvas id="item"  width=400 height=400></canvas></div></div>
     
@@ -79,7 +79,6 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
 <script>
-    
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -90,10 +89,6 @@ var config = {
     messagingSenderId: "123079954596"
 };
 firebase.initializeApp(config);
-    
-var file = 'ring';
-var storageRef = firebase.storage().ref('data');
-storageRef.putString(file);
     
 /* Options: */
 var displayTime = 1000;
@@ -447,16 +442,14 @@ function ShowContinuousReport(trialStruct) {
                     $(document).unbind('click.feedback');
                 });
             } else { 
+                $('#showTrial').show();
                 if (currentFeedTrial < numTrialsPerPart[0]) {
                     img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
                 }
                 setTimeout(function() {
-                    if (currentFeedTrial < numTrialsPerPart[0]) {
-                        img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
-                    }
                     ctx2.drawImage(img, 200, 200); 
                     NextFeedTrial();
-                    $(document).unbind('click.feedback');
+                    $('#showTrial').hide();
                 }, isiTime);
             }
         }
@@ -495,24 +488,12 @@ function SaveData() {
     "totalTrials": totalTrials
   };
     
-  SendToServer(curID, d);
-}
-
-/* Send the data to the server as JSON: */
-function SendToServer(id, curData) {
-  var dataToServer = {
-    'id': id,
-    'experimentName': 'ContLTM_101',
-    'curData': JSON.stringify(curData)
-  }; 
-  $.post("https://paulscotti.github.io/mturk/save.pl",
-    dataToServer,
-    function(data) { 
-      document.forms[0].submit();
-    }
-  ).fail(function(data) { 
-      document.forms[0].submit();  
-  });
+    /* save to Firebase server */
+    var blob = new Blob([d], {type: "application/json"});
+    var storageRef = firebase.storage().ref('data/' + curID + '.json');
+    storageRef.put(blob);    
+    
+    document.getElementById("saving").innerHTML = "Done!";
 }
 
 function start(context,deg,initX,initY) {

@@ -5,8 +5,8 @@
 	background: #FFFFFF;
 	margin: 20px auto;
 	position: relative;
-  display: none;
-  cursor: none;
+    display: none;
+    cursor: none;
 }
 
 #allItems {
@@ -16,7 +16,7 @@
 #fixation {
   position: absolute;
   width: 600px;
-  top: 285px;
+  top: 270px;
   text-align: center;
   font-size: 30px;
   font-weight: bold;
@@ -44,3 +44,4 @@
   user-select: none;
   cursor: default;
 }
+
