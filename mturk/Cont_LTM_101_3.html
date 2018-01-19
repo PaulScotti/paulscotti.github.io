@@ -93,7 +93,7 @@ firebase.initializeApp(config);
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [4, 5]; /*204 trials*/
+var numTrialsPerPart = [1, 2]; /*204 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -109,6 +109,7 @@ var feedbackPhase = 0;
 var repeat = 0;
 var numRepeats = 0; 
 var hit = 0;
+survey = 0;
     
 /* Randomize orderings */
 Shuffle(dx.r_study);
@@ -283,7 +284,6 @@ function NextFeedTrial() {
     if (currentPart == 1) {
       alert('done');
       Survey();
-      Done();
       return;
     } else {
       currentFeedTrial = -1;
@@ -393,7 +393,7 @@ function ShowContinuousReport(trialStruct) {
         start(ctx2,imgNum,200,200); 
         if (currentPart == 0) {
             img.src = $('#' + dx.r_pracimg[currentFeedTrial])[0].src;
-        } else {
+        } else if (survey == 0) {
             img.src = $('#' + dx.r_test[currentFeedTrial])[0].src;
         }
         $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
@@ -403,7 +403,7 @@ function ShowContinuousReport(trialStruct) {
         if (curError > 180) {
             curError = 360-curError;
         }
-        console.log(curError);
+        
         if (trialStruct.isPractice) {
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
         }
@@ -414,6 +414,16 @@ function ShowContinuousReport(trialStruct) {
     });
   
     $(document).bind('click.curTrial', function(e) {
+        /* Show approximate feedback: amazing! < 15, good! < 30 */
+        if (curError <= 15) {
+            feedText = 'Amazing!';
+        } else if (curError <= 30) {
+            feedText = 'Good!'; 
+        } else {
+            feedText = '...';
+        }
+        document.getElementById("fixation").innerHTML = feedText;
+        
         if (mouseMoved == 0) {
             alert('Move your mouse around the circle to select the original object color. Please be as precise as possible.');
         } else {
@@ -422,41 +432,48 @@ function ShowContinuousReport(trialStruct) {
             $(document).unbind('click.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
-            if (trialStruct.isPractice) {
-                $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+            if (survey == 0) {
+                if (trialStruct.isPractice) {
+                    $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
-                var imgNum = Math.round(angleDeg);
-                start(ctx3,imgNum,80,100);
-                var imgNum = Math.round(trialStruct.mean);
-                start(ctx4,imgNum,40,100);
-
-                if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-                img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
-                }
-                
-                ctx2.drawImage(img, 200, 200); 
-                $('#feedback').show();
-                $(document).bind('click.feedback', function(e) {
-                    $('#feedback').hide(); 
+                    var imgNum = Math.round(angleDeg);
+                    start(ctx3,imgNum,80,100);
+                    var imgNum = Math.round(trialStruct.mean);
+                    start(ctx4,imgNum,40,100);
 
                     if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-                        img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
+                    img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
                     }
 
                     ctx2.drawImage(img, 200, 200); 
-                    NextFeedTrial();
-                    $(document).unbind('click.feedback');
-                });
-            } else { 
-                $('#showTrial').show();
-                if (currentFeedTrial < numTrialsPerPart[0]) {
-                    img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
+                    $('#feedback').show();
+                    $(document).bind('click.feedback', function(e) {
+                        $('#feedback').hide(); 
+
+                        if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                            img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
+                        }
+
+                        ctx2.drawImage(img, 200, 200); 
+                        NextFeedTrial();
+                        document.getElementById("fixation").innerHTML = '+';
+                        $(document).unbind('click.feedback');
+                    });
+                } else { 
+                    $('#showTrial').show();
+                    if (currentFeedTrial < numTrialsPerPart[0]) {
+                        img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
+                    }
+                    setTimeout(function() {
+                        ctx2.drawImage(img, 200, 200); 
+                        NextFeedTrial();
+                        document.getElementById("fixation").innerHTML = '+';
+                        $('#showTrial').hide();
+                    }, isiTime);
                 }
-                setTimeout(function() {
-                    ctx2.drawImage(img, 200, 200); 
-                    NextFeedTrial();
-                    $('#showTrial').hide();
-                }, isiTime);
+            } else {
+                $('#showTrial').hide();
+                Done(); 
             }
         }
     });
@@ -469,12 +486,12 @@ function ShowContinuousReport(trialStruct) {
   $(document).trigger(e);
 }
 
-/* Done with the experiment; wait for comments and for them to hit Save */
 function Survey() {
-    $('#showTrial').hide();
+  $("#showTrial").hide();    
+  survey = 1;
   alert('Before you go, please select the most frequent color you think objects appeared as throughout the experiment.')
-  img.src = $('#999').src; 
-  ShowContinuousReport({mean: seed[0], type: "color", isPractice: 2, items: 990});
+  img.src = $('#999')[0].src; 
+  ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200); 
   mouseMoved = 0;
