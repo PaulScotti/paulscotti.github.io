@@ -40,7 +40,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
   <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./timbrady.org_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
     
   <!-- Consent statement at bottom: -->
-  <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p><p>By answering the following questions, you are participating in a study being performed by cognitive scientists at The Ohio State University.  The purpose of this research is to examine human visual performance.</p><p>By participating you are confirming that you are over 18 years of age and have normal or corrected-to-normal vision.</p><p>If you have questions about this research, or if you would like to receive a report of this research when it is completed please contact Paul Scotti at scotti.5@osu.edu.</p><p>Your participation in this research is completely voluntary.  If you choose to participate, you may change your mind and leave the study at any time.  Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>By continuing, you are confirming that you understand these instructions and conditions of participation.</p></div>
+    <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p><p>By answering the following questions, you are participating in a study being performed by cognitive scientists at The Ohio State University. The purpose of this research is to examine human attention and memory performance.</p><p>If you have questions or concerns about this research, or if you would like to receive a report of this research when it is completed, please contact Paul Scotti at scotti.5@osu.edu. </p><p>Your participation in this research is completely voluntary. If you choose to participate, you may change your mind and leave the study at any time. Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>Upon completion of this HIT, your Amazon Mechanical Turk Worker ID will be made available to the experimenters. Only select lab personnel will have access to the requester Mechanical Turk site, and Worker IDs will only be used to confirm study completion and assign compensation.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>For questions about your rights as a participant in this study or to discuss other study-related concerns or complaints with someone who is not part of the research team, you may contact Ms. Sandra Meadows in the Office of Responsible Research Practices at meadows.8@osu.edu.</p><p><b>By continuing, you are confirming that you have read the above information, voluntarily agree to participate, are over 18 years of age, and have normal or corrected-to-normal vision.</b></p></div>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -198,6 +198,8 @@ function StartExperiment() {
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   currentTrial++;
+  $('#fixation').css('color','black'); /* fixation back to black in case it wasn't */
+    
   if (currentTrial>numTrialsPerPart[currentPart]-1) {
       alert("You will now see previously displayed objects again, one at a time. Please move your mouse along the black outside circle to adjust the color of the object until it matches its original color (be as precise as possible). Then click to continue.");
       /* Start continuous color report trials */
@@ -224,10 +226,12 @@ function RepeatTrial() {
         if (repeat == 2) {
             new Beep(22050).play(1300, .2, [Beep.utils.amplify(8000)]);
             console.log('yes');
+            $('#fixation').css('color','rgb(0,255,0)');
             hit = 1;
         } else {
             new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
             console.log(repeat);
+            $('#fixation').css('color','red');
         }
         stopclick = 1;
     }
@@ -278,6 +282,7 @@ function NextFeedTrial() {
   if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
     if (currentPart == 1) {
       alert('done');
+      Survey();
       Done();
       return;
     } else {
@@ -290,7 +295,7 @@ function NextFeedTrial() {
     }
   }
   
-  if (currentFeedTrial == 0) {
+  if (currentFeedTrial <= 0) {
       /* Initialize first object */
       if (currentPart == 0) {
         img.src = $('#' + dx.r_pracimg[0])[0].src; 
@@ -308,10 +313,12 @@ function NextFeedTrial() {
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
     var stopclick = 0;
+    
     $(document).on("click", function (e) {
         if (stopclick == 0) {
             new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
             console.log(repeat);
+            $('#fixation').css('color','red');
             hit = 0;
             stopclick = 1;
         }
@@ -330,7 +337,7 @@ function ShowTrial(trialStruct) {
     } else {
     img.src = $('#' + dx.r_study[currentTrial])[0].src;
     }
-
+    
     $('#allItems').css('margin-top', -1000);
     $('#showTrial').show();
     setTimeout(function() {
@@ -415,7 +422,6 @@ function ShowContinuousReport(trialStruct) {
             $(document).unbind('click.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
-            
             if (trialStruct.isPractice) {
                 $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
@@ -463,6 +469,17 @@ function ShowContinuousReport(trialStruct) {
   $(document).trigger(e);
 }
 
+/* Done with the experiment; wait for comments and for them to hit Save */
+function Survey() {
+    $('#showTrial').hide();
+  alert('Before you go, please select the most frequent color you think objects appeared as throughout the experiment.')
+  img.src = $('#999').src; 
+  ShowContinuousReport({mean: seed[0], type: "color", isPractice: 2, items: 990});
+  /* Set starting color as grayscale */
+  start(ctx2,'gray',200,200); 
+  mouseMoved = 0;
+} 
+    
 /* Done with the experiment; wait for comments and for them to hit Save */
 function Done() {
   $('#done').show();
