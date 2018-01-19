@@ -44,12 +44,12 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 </div>
 
 <!-- Start form here to capture comments -->
-<form id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="get">
+<form id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="get">
 <input type="hidden" name="assignmentId" id="assignmentId" value="">
 <input type="hidden" name="assignmentId" id="assignmentId" value="">
 <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
 <!-- submit to turk
- https://workersandbox.mturk.com/mturk/externalSubmit
+https://workersandbox.mturk.com/mturk/externalSubmit
 https://www.mturk.com/mturk/externalSubmit
 -->
 
@@ -75,7 +75,7 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="feedback">
     <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
     
-<form id="survey2">
+<form id="survey2" style="display: none;">
     <center>
     <div id = "doneText"><p>We secretly manipulated how likely an object was to have a certain color.</p>...<p>Did you notice that most objects were of approximately the same color?</p></div>
     <br><br><br><br>
@@ -90,9 +90,7 @@ https://www.mturk.com/mturk/externalSubmit
 <!-- Preload images, needs to be below divs -->
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
-<script>
-$("#survey2").hide();        
-    
+<script>      
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -107,7 +105,7 @@ firebase.initializeApp(config);
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [1, 2]; /*204 trials*/
+var numTrialsPerPart = [2, 2]; /*204 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -296,6 +294,7 @@ function NextFeedTrial() {
     
   if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
     if (currentPart == 1) {
+      $('showTrial').hide;    
       Survey();
       return;
     } else {
@@ -478,6 +477,15 @@ function ShowContinuousReport(trialStruct) {
                         document.getElementById("fixation").innerHTML = '+';
                         $(document).unbind('click.feedback');
                     });
+                } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
+                    $('#showTrial').show();
+                    img.src = $('#999')[0].src;  
+                    setTimeout(function() {
+                        ctx2.drawImage(img, 200, 200); 
+                        NextFeedTrial();
+                        document.getElementById("fixation").innerHTML = '+';
+                        $('#showTrial').hide();
+                    }, isiTime);
                 } else { 
                     $('#showTrial').show();
                     if (currentFeedTrial < numTrialsPerPart[0]) {
@@ -505,12 +513,11 @@ function ShowContinuousReport(trialStruct) {
   $(document).trigger(e);
 }
 
-function Survey() {
-  $("#showTrial").hide();    
+function Survey() { 
+  $("#showTrial").hide(); 
   survey = 1;
   alert('Before you go, please select the most frequent color you think objects appeared as throughout the experiment.')
   ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
-  /* Set starting color as grayscale */
   start(ctx2,'gray',200,200); 
   mouseMoved = 0;
 } 
@@ -661,7 +668,6 @@ function completeForm() {
         $('#survey2').hide();
         $('#instructions').hide();
         Done();
-        document.forms[0].submit();
     } else {
         alert('Please select an option.');
     }  
