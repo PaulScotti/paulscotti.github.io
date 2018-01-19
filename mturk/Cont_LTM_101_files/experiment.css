@@ -57,7 +57,7 @@ body {
 
 
 #doneText {
-  position: absolute;
+  position: relative;
   width: 600px;
   top: 55px;
   text-align: center;
@@ -73,6 +73,15 @@ body {
   font-size: 20px;
   font-weight: bold;
 }
+
+#surveyItems {
+  display: none;
+  width: 600px; 
+  height: 600px;
+  margin: 0 auto; 
+  margin-top: 30px; 
+}
+
 
 #timSubmit {
   font-weight: bold; 

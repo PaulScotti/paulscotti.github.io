@@ -54,9 +54,9 @@ https://www.mturk.com/mturk/externalSubmit
 -->
 
 <!-- Screen for collecting comments when they are done: -->
-<div id="done"><div id="doneText">Done! Thanks!<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
+<div id="done"><div id="doneText">Thanks very much for your participation!<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
 <textarea name="comments" id="comments" style="width: 300px; height: 200px"></textarea><br><br>
-<a href="javascript:SaveData()" id="timSubmit">Submit</a>
+<a href="javascript:SaveData()" id="timSubmit">Click to Submit HIT</a>
 </div><div id="saving">Saving . . .</div></div>
     
 <!-- Basic structure for a trial: --> 
@@ -75,15 +75,15 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="feedback">
     <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
     
-<form onsubmit="return completeForm();" id="survey2">
+<form id="survey2">
     <center>
-    <h4>Did you notice that most objects were of approximately the same color?</h4>
+    <div id = "doneText"><p>We secretly manipulated how likely an object was to have a certain color.</p>...<p>Did you notice that most objects were of approximately the same color?</p></div>
+    <br><br><br><br>
     <input name="choice" type="radio" value="yes" id="surveyresponse" /> Yes
+    <br><br>
     <input name="choice" type="radio" value="nope" id="surveyresponse2" /> Not really 
-    <p></p>
-    <td class="submit-button">
-        <input class="send_btn" type="submit" value="Submit"/>
-    </td>
+    <br><br><br><br>
+    <a href="javascript:completeForm();" id="startExperimentButton" style="display: inline;">Submit</a>
     </center>
 </form>
     
@@ -117,7 +117,7 @@ var totalTrials = [];
 /* Pointers for where we are in the experiment: */
 var currentTrial = -1;
 var currentPart = 0;
-    
+
 var currentFeedTrial = -1;
 var feedbackPhase = 0;
 var repeat = 0;
@@ -408,6 +408,8 @@ function ShowContinuousReport(trialStruct) {
             img.src = $('#' + dx.r_pracimg[currentFeedTrial])[0].src;
         } else if (survey == 0) {
             img.src = $('#' + dx.r_test[currentFeedTrial])[0].src;
+        } else if (survey == 1) {
+            img.src = $('#999')[0].src;
         }
         $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                            'top': centerY + Math.sin(curAngle)*ringSize-9});
@@ -438,7 +440,7 @@ function ShowContinuousReport(trialStruct) {
         document.getElementById("fixation").innerHTML = feedText;
         
         if (survey == 1) {
-            explicitResp = curError;
+            explicitErr = curError;
         }
         
         if (mouseMoved == 0) {
@@ -507,8 +509,6 @@ function Survey() {
   $("#showTrial").hide();    
   survey = 1;
   alert('Before you go, please select the most frequent color you think objects appeared as throughout the experiment.')
-  img.onload = function() {
-  img.src = $('#999')[0].src; }
   ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200); 
@@ -524,7 +524,7 @@ function Done() {
   $('#done').show();
 }
     
-/* Save the data to the server (choose what to save) */
+/* Choose what to save and then put it on the server */
 function SaveData() {
   $('#done').children().hide();
   $('#saving').show();
@@ -542,14 +542,18 @@ function SaveData() {
     "screenHeight": screen.height,    
     "comments": $('#comments').val(),
     "totalTrials": totalTrials,
-    "explicitResponse": explicitResp,
-    "implicitResponse": implicitResp
+    "explicitError": explicitErr,
+    "implicitResponse": implicitResp,
+    "seeds": seed,
+    "StudyOrder": dx.r_study,
+    "TestOrder": dx.r_test,
+    "SeedOrder": dx.TrialType
   };
     
     /* save to Firebase server */
-    var blob = new Blob([d], {type: "application/json"});
+    var blob = new Blob([JSON.stringify(d)], {type: "application/json"});
     var storageRef = firebase.storage().ref('data/' + curID + '.json');
-    storageRef.put(blob);    
+    storageRef.put(blob);
     
     document.getElementById("saving").innerHTML = "Done!";
 }
@@ -657,6 +661,7 @@ function completeForm() {
         $('#survey2').hide();
         $('#instructions').hide();
         Done();
+        document.forms[0].submit();
     } else {
         alert('Please select an option.');
     }  
