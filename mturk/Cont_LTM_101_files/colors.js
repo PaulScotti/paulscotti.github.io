@@ -373,8 +373,8 @@ dx = {
         "r_TrialType":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3]
 	};
 /* 24 repeats, 204 test objects, 50% rich quad (1)
-TrialTypes is for test objects
-r_TrialTypes is for the repeat-detection objects
+TrialType is for test objects
+r_TrialType is for the repeat-detection objects
 r_repeatimg determines what trial to repeat on
 repeatimg are the IDs for the repeated images
 r_study are the presented objects that will be tested 
