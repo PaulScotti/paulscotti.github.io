@@ -59,7 +59,7 @@ https://www.mturk.com/mturk/externalSubmit
 <a href="javascript:SaveData()" id="timSubmit">Click to Submit HIT</a>
 </div><div id="saving">Saving . . .</div></div>
     
-<!-- Basic structure for a trial: --> 
+<!-- Basic structure for a trial: -->
 
 <div id="showTrial">
 <div id="fixation">+</div>
@@ -154,7 +154,9 @@ var ctx4 = feedbackCorrectTri.getContext("2d");
     
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
-  Math.seedrandom('scottirando');
+  curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
+  "are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");
+  Math.seedrandom(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
     
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -203,7 +205,9 @@ function StartExperiment() {
 
   totalTrials = [practiceTriTrials, triTrials];
   r_totalTrials = [chance1.shuffle(practiceTriTrials), triTrials];
-  chance1 = Chance(123); r_totalTrials = [r_totalTrials[0], chance1.shuffle(triTrials)];
+    
+  chance1 = Chance(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
+  r_totalTrials = [r_totalTrials[0], chance1.shuffle(triTrials)];
 
   $('#instructions').hide();
     
@@ -300,7 +304,7 @@ function NextFeedTrial() {
     } else {
       currentFeedTrial = -1;
       currentPart++;
-        alert("Okay, time for the real experiment. You won't get feedback about how you are doing anymore. Please do your best!");
+        alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects!");
         currentTrial = -1;
         NextTrial();
         return;
@@ -535,8 +539,6 @@ function SaveData() {
   $('#saving').show();
   $('#assignmentId').val(GetAssignmentId());
   var newDate = new Date();
-  var curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
-  "are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");
   d = { 
     "curID": curID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
