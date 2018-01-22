@@ -562,11 +562,9 @@ function SaveData() {
     var storageRef = firebase.storage().ref('data/' + curID + '.json');
     storageRef.put(blob);
     
-    document.getElementById("saving").innerHTML = "Click Submit";
+    document.getElementById("saving").innerHTML = "Done!";
     
-    function(data) { 
-      document.forms[0].submit();
-    }
+    document.forms[0].submit();
     
     $("#submitButton").show(); 
 }
