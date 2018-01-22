@@ -77,7 +77,7 @@ https://www.mturk.com/mturk/externalSubmit
     
 <form id="survey2" style="display: none;">
     <center>
-    <div id = "doneText"><p>We secretly manipulated how likely an object was to have a certain color.<b></b>Did you notice that most objects were of approximately the same color?</p></div>
+    <div id = "doneText"><p>We secretly manipulated how likely an object was to have a certain color.<br><br><p>Did you notice that most objects were of approximately the same color?</p></div>
     <br><br><br><br>
     <input name="choice" type="radio" value="yes" id="surveyresponse" /> Yes
     <br><br>
@@ -563,6 +563,10 @@ function SaveData() {
     storageRef.put(blob);
     
     document.getElementById("saving").innerHTML = "Click Submit";
+    
+    function(data) { 
+      document.forms[0].submit();
+    }
     
     $("#submitButton").show(); 
 }
