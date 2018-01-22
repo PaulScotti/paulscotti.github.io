@@ -563,6 +563,9 @@ function SaveData() {
     storageRef.put(blob);
     
     document.getElementById("saving").innerHTML = "Done!";
+    
+    /* submit form */
+    $("#turkSubmit").show()
 }
 
 function start(context,deg,initX,initY) {

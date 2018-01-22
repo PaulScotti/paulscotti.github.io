@@ -95,7 +95,7 @@ function decode(strToDecode)
  * Returns the Mechanical Turk Site to post the HIT to (sandbox. prod)
  */
 function turkGetSubmitToHost() {
-  return decode(turkGetParam("turkSubmitTo", "https://workersandbox.mturk.com"));
+  return decode(turkGetParam("turkSubmitTo", "https://www.mturk.com"));
 }
 
 
