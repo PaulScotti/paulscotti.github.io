@@ -564,8 +564,24 @@ function SaveData() {
     
     document.getElementById("saving").innerHTML = "Done!";
     
-    alert($('#assignmentId'));
-    document.forms[0].submit();
+  SendToServer(curID, d);
+}
+
+/* Send the data to the server as JSON: */
+function SendToServer(id, curData) {
+  var dataToServer = {
+    'id': id,
+    'experimentName': 'ContLTM_101',
+    'curData': JSON.stringify(curData)
+  }; 
+  $.post("https://timbrady.org/turk/savexxx.pl",
+    dataToServer,
+    function(data) { 
+      document.forms[0].submit();
+    }
+  ).fail(function(data) { 
+      document.forms[0].submit();  
+  });
 }
 
 function start(context,deg,initX,initY) {
