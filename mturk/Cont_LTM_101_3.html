@@ -91,6 +91,9 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="./Cont_LTM_101_files/loadimg.js"></script>  
     
 <script>      
+curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
+"are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");    
+    
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -105,7 +108,7 @@ firebase.initializeApp(config);
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [4, 16]; /*204 trials*/
+var numTrialsPerPart = [4, 12]; /*204 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -125,15 +128,15 @@ survey = 0;
     
 /* Randomize orderings */
 Shuffle(dx.r_study);
-chance1 = Chance(123);
+chance1 = Chance(curID);
 dx.r_study = dx.r_study.slice(0,numTrialsPerPart[1]);
 dx.r_test = dx.r_study;
 dx.r_test = chance1.shuffle(dx.r_test); 
-chance1 = Chance(123);
+chance1 = Chance(curID);
 dx.r_pracimg = chance1.shuffle(dx.pracimg); 
-chance1 = Chance(123);
+chance1 = Chance(curID);
 dx.r_TrialType = chance1.shuffle(dx.r_TrialType); 
-chance1 = Chance(123);
+chance1 = Chance(curID);
 
 Shuffle(dx.r_repeatimg);
 dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-24);
@@ -154,8 +157,6 @@ var ctx4 = feedbackCorrectTri.getContext("2d");
     
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
-  curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
-  "are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");
   Math.seedrandom(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
     
   seed = Math.floor(Math.random()*360);
@@ -419,6 +420,7 @@ function ShowContinuousReport(trialStruct) {
         if (curError > 180) {
             curError = 360-curError;
         }
+        console.log(curError);
         
         if (trialStruct.isPractice) {
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
