@@ -136,7 +136,7 @@ dx.r_TrialType = chance1.shuffle(dx.r_TrialType);
 chance1 = Chance(123);
 
 Shuffle(dx.r_repeatimg);
-dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-30);
+dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-24);
     
 /* Setup reused image variable */
 var img = new Image();
@@ -165,7 +165,7 @@ function GenerateTrials() {
   wrap(seed);
     
   for (var i=0; i<numTrialsPerPart[1]; i++) { 
-    var pickSeed = dx.TrialType[i];
+    var pickSeed = dx.r_TrialType[i];
     var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
       triTrials.push({'mean': curMean, 
@@ -490,7 +490,7 @@ function ShowContinuousReport(trialStruct) {
                     }, isiTime);
                 } else { 
                     $('#showTrial').show();
-                    if (currentFeedTrial < numTrialsPerPart[0]) {
+                    if (currentFeedTrial < numTrialsPerPart[1]) {
                         img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
                     }
                     setTimeout(function() {
@@ -554,7 +554,7 @@ function SaveData() {
     "seeds": seed,
     "StudyOrder": dx.r_study,
     "TestOrder": dx.r_test,
-    "SeedOrder": dx.TrialType
+    "SeedOrder": dx.r_TrialType
   };
     
     /* save to Firebase server */
