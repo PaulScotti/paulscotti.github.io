@@ -420,7 +420,6 @@ function ShowContinuousReport(trialStruct) {
         if (curError > 180) {
             curError = 360-curError;
         }
-        console.log(curError);
         
         if (trialStruct.isPractice) {
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -562,6 +561,8 @@ function SaveData() {
     /* save to Firebase server */
     var blob = new Blob([JSON.stringify(d)], {type: "application/json"});
     var storageRef = firebase.storage().ref('data/' + curID + '.json');
+    alert(blob);
+    alert(storageRef);
     storageRef.put(blob);
     
     document.getElementById("saving").innerHTML = "Done!";
