@@ -561,8 +561,6 @@ function SaveData() {
     /* save to Firebase server */
     var blob = new Blob([JSON.stringify(d)], {type: "application/json"});
     var storageRef = firebase.storage().ref('data/' + curID + '.json');
-    alert(blob);
-    alert(storageRef);
     storageRef.put(blob);
     
     document.getElementById("saving").innerHTML = "Done!";
