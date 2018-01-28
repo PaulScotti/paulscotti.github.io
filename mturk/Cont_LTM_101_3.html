@@ -104,11 +104,11 @@ var config = {
     messagingSenderId: "123079954596"
 };
 firebase.initializeApp(config);
-    
+
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [4, 12]; /*204 trials*/
+var numTrialsPerPart = [4, 102]; /*102 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -124,6 +124,8 @@ var feedbackPhase = 0;
 var repeat = 0;
 var numRepeats = 0; 
 var hit = 0;
+var numHits = 0;
+var falseHits = 0;
 survey = 0;
     
 /* Randomize orderings */
@@ -137,9 +139,11 @@ dx.r_pracimg = chance1.shuffle(dx.pracimg);
 chance1 = Chance(curID);
 dx.r_TrialType = chance1.shuffle(dx.r_TrialType); 
 chance1 = Chance(curID);
+dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType); 
+chance1 = Chance(curID);
 
 Shuffle(dx.r_repeatimg);
-dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-24);
+dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-11); /*this means 12 repeats!*/
     
 /* Setup reused image variable */
 var img = new Image();
@@ -184,8 +188,8 @@ function GenerateTrials() {
                     'items': curMean});
   }
     
-  for (var i=0; i<dx.r_TrialType.length; i++) { 
-    var pickSeed = dx.r_TrialType[i];
+  for (var i=0; i<dx.rep_TrialType.length; i++) { 
+    var pickSeed = dx.rep_TrialType[i];
     var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
     repeatTriTrials.push({'mean': curMean, 
@@ -247,9 +251,11 @@ function RepeatTrial() {
             new Beep(22050).play(1300, .2, [Beep.utils.amplify(8000)]);
             $('#fixation').css('color','rgb(0,255,0)');
             hit = 1;
+            numHits = numHits + 1;
         } else {
             new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
             $('#fixation').css('color','red');
+            falseHits = falseHits + 1;
         }
         stopclick = 1;
     }
@@ -555,7 +561,9 @@ function SaveData() {
     "seeds": seed,
     "StudyOrder": dx.r_study,
     "TestOrder": dx.r_test,
-    "SeedOrder": dx.r_TrialType
+    "SeedOrder": dx.r_TrialType,
+    "RepSeedOrder": dx.rep_TrialType,
+    "numcorrectrepeats": hit
   };
     
     /* save to Firebase server */

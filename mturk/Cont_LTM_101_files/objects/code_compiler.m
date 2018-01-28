@@ -19,22 +19,22 @@ imgnum = ['x,'];
 %     code2 = strcat(code2,imgnumNew);
 %     imgnumNew = [];
 % end
-for i = 1:102
+for i = 1:51
     imgnumNew = strrep(imgnum,'x',num2str(0));
     code2 = strcat(code2,imgnumNew);
     imgnumNew = [];
 end
-for i = 103:(103+34)
+for i = 52:(51+17)
     imgnumNew = strrep(imgnum,'x',num2str(1));
     code2 = strcat(code2,imgnumNew);
     imgnumNew = [];
 end
-for i = (103+34):(103+34+34)
+for i = (51+17+1):(51+17+17)
     imgnumNew = strrep(imgnum,'x',num2str(2));
     code2 = strcat(code2,imgnumNew);
     imgnumNew = [];
 end
-for i = (103+34+34):(103+34+34+34)
+for i = (51+17+17+1):(51+17+17+17)
     imgnumNew = strrep(imgnum,'x',num2str(3));
     code2 = strcat(code2,imgnumNew);
     imgnumNew = [];
