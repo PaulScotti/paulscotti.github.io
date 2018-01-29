@@ -27,17 +27,19 @@ function CheckBlockList(blockListName, funcForBlocked) {
 	if (!IsTurkPreview()) {
 		$.ajax({             
 			crossDomain: true,
-			dataType: 'jsonp',	
-			url: 'https://timbrady.org/turk/checkDuplicates.pl', 
+			dataType: 'json',	
+			url: 'https://paulscotti.github.io/mturk/blockedList.json', 
 			data:{'workerId': GetWorkerId(), 
-            'blockListName': blockListName}, 
+            'blockedIDs': blockedIDs}, 
 			success: function(data) {
+                alert('success');
 				$('#serverContacted').val(1);
 				if (data.blocked == 1) {
 					funcForBlocked();
 				}
 			},
 			error: function(jx, status, error) {
+                alert('failure');
 				$('#serverContacted').val(0);
 			}
 		});
