@@ -23,17 +23,17 @@ function GetAssignmentId() {
 }	
 
 // Check if this worker's actual ID is on the block list or not
-function CheckBlockList(blockedList,curID) {
-    if (blockedList.some(CurID)) {
-        alert('success');
-        $('#serverContacted').val(1);
-        if (data.blocked == 1) {
-            funcForBlocked();
-        }
-    } else {
-        alert('failure');
+function CheckBlockList(blockedIDs,curID) {
+    if (blockedIDs.some(CheckBlockedList)) {
+        alert('You have already completed this HIT before, or a HIT very similar to this. You are NOT valid to participate.');
         $('#serverContacted').val(0);
+    } else {
+        $('#serverContacted').val(1);
     }
+}
+
+function CheckBlockedList(currentValue) {
+  return currentValue == curID;
 }
 
 function RandomOrder(num) {

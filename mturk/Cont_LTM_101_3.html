@@ -95,6 +95,8 @@ https://www.mturk.com/mturk/externalSubmit
 curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
 "are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");    
     
+CheckBlockList(blockedIDs,curID);
+    
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
