@@ -45,7 +45,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 </div>
 
 <!-- Start form here to capture comments -->
-<form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
+<form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
 <input type="hidden" name="assignmentId" id="assignmentId" value="" >
 <input type="hidden" name="foo" value="" >
 <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
@@ -107,11 +107,16 @@ var config = {
     messagingSenderId: "123079954596"
 };
 firebase.initializeApp(config);
+    
+/* disable context menu */
+document.oncontextmenu = function() {
+    return false;
+}
 
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [4, 102]; /*102 trials*/
+var numTrialsPerPart = [4, 4]; /*102 trials*/
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -129,6 +134,7 @@ var numRepeats = 0;
 var hit = 0;
 var numHits = 0;
 var falseHits = 0;
+var mouseClick = -1;
 survey = 0;
     
 /* Randomize orderings */
@@ -403,15 +409,18 @@ function ShowContinuousReport(trialStruct) {
   var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
-  var startTime = new Date();    
+  var startTime = new Date();
+    
+  var flip = round(Math.rand());
+  var randrotate = floor(Math.rand()*360);
     
     $(document).bind('mousemove.curTrial', function(e) {
         var parentOffset = $('#continuousReport').offset(); 
         var relX = e.pageX - parentOffset.left - centerX;
         var relY = e.pageY - parentOffset.top - centerY;
-        var curAngle = Math.atan2(relY,relX);
+        var curAngle = (randrotate+Math.atan2(relY,relX))*flip;
         angleDeg = curAngle / Math.PI * 180.0;
-        angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
+        wrap(angleDeg);
         var imgNum = Math.round(angleDeg);
         mouseMoved = 1;
         start(ctx2,imgNum,200,200); 
@@ -435,11 +444,26 @@ function ShowContinuousReport(trialStruct) {
         }
             
         if (e.isFakeTrigger) {
-          trialStruct.startedAngle = Math.round(angleDeg);
+          trialStruct.startedAngle = wrap(Math.round(angleDeg)*flip);
         }
     });
   
-    $(document).bind('click.curTrial', function(e) {
+    $(document).bind('click.curTrial contextmenu.curTrial', function(e) {
+        findKey = 0;
+        if (findKey == 0) {
+            $(document).mousedown(function(e){ 
+                if( e.button == 2 ) { 
+                  mouseClick = 2;
+                  findKey = 1;
+                } else if (e.button == 0) {
+                  mouseClick = 1;
+                  findKey = 1;
+                }
+                e.button == NaN;
+            });  
+            console.log(mouseClick);
+        }
+        
         /* Show approximate feedback: amazing! < 15, good! < 30 */
         if (curError <= 15) {
             feedText = 'Amazing!';
@@ -460,6 +484,7 @@ function ShowContinuousReport(trialStruct) {
             trialStruct.reportedAngle = Math.round(angleDeg);
             trialStruct.rt = (new Date()) - startTime;
             $(document).unbind('click.curTrial');
+            $(document).unbind('contextmenu.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
             if (survey == 0) {

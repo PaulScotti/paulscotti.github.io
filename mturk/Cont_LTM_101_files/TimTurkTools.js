@@ -27,6 +27,7 @@ function CheckBlockList(blockedIDs,curID) {
     if (blockedIDs.some(CheckBlockedList)) {
         alert('You have already completed this HIT before, or a HIT very similar to this. You are NOT valid to participate.');
         $('#serverContacted').val(0);
+        document.body.style.display = "none";
     } else {
         $('#serverContacted').val(1);
     }
