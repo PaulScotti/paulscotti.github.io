@@ -1,4 +1,4 @@
-## Publications 
+## Publications
 ### In Prep
 * Reality vs. Simplicity: The Effects of Real-World Objects on Attentional Selection
 <br> <i> Paul S. Scotti, George L. Malcolm, Mary A. Peterson, Sarah Shomstein </i>
