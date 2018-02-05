@@ -1,5 +1,5 @@
 <!-- Paul Scotti 2017
-originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdiff/e9/ -->
+originally modified from Tim Brady http://timbrady.org/turk/ensembleindivdiff/e9/ -->
 
 <!-- Preload javascript and css files -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
@@ -11,6 +11,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 <script src="./Cont_LTM_101_files/jcanvas.min.js"></script>  
 <script src="./Cont_LTM_101_files/chance.js"></script> 
 <script src="./Cont_LTM_101_files/blockedList.js"></script>  
+<script src="lodash.core.js"></script>
     
 <!-- load Firebase server javascript, we are just using it for storage -->
 <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-app.js"></script>
@@ -41,7 +42,7 @@ originally modified from Tim Brady url=http://timbrady.org/turk/ensembleindivdif
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to click on the screen as quickly as possible if an object is immediately repeated. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p> 
 
-<br><p style="text-align: center"><a href="javascript:StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./timbrady.org_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
+<br><p style="text-align: center"><a href="javascript:StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -116,7 +117,10 @@ document.oncontextmenu = function() {
 /* Options: */
 var displayTime = 1000;
 var isiTime = 1000;
-var numTrialsPerPart = [4, 4]; /*102 trials*/
+var numTrialsPerPart = [4, 4]; // 102 trials
+var origColors = _.clone(colors); // clone is required to create a new variable and not a pointer variable
+var flippedColors = _.clone(colors).reverse();
+flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
 
 var practiceTriTrials = [];
 var triTrials = [];
@@ -411,16 +415,23 @@ function ShowContinuousReport(trialStruct) {
   var curError = 360;
   var startTime = new Date();
     
-  var flip = round(Math.rand());
-  var randrotate = floor(Math.rand()*360);
+  var flip = Math.round(Math.random());
+  console.log(flip);
+  var randrotate = Math.floor(Math.random()*360);
+  colors = colors.concat(colors.splice(0,randrotate)); //randomly rotate color wheel
+  console.log(colors[1]);
     
     $(document).bind('mousemove.curTrial', function(e) {
         var parentOffset = $('#continuousReport').offset(); 
         var relX = e.pageX - parentOffset.left - centerX;
         var relY = e.pageY - parentOffset.top - centerY;
-        var curAngle = (randrotate+Math.atan2(relY,relX))*flip;
+        var curAngle = Math.atan2(relY,relX);
         angleDeg = curAngle / Math.PI * 180.0;
-        wrap(angleDeg);
+        if (flip == 1) {
+            colors = flippedColors;
+        } else if (flip == 0) {
+            colors = origColors;
+        }
         var imgNum = Math.round(angleDeg);
         mouseMoved = 1;
         start(ctx2,imgNum,200,200); 
@@ -444,7 +455,7 @@ function ShowContinuousReport(trialStruct) {
         }
             
         if (e.isFakeTrigger) {
-          trialStruct.startedAngle = wrap(Math.round(angleDeg)*flip);
+          trialStruct.startedAngle = Math.round(angleDeg);
         }
     });
   
@@ -611,7 +622,7 @@ function start(context,deg,initX,initY) {
     } else {
         deg=(deg>=360)?deg-360:deg;
         deg=(deg<0)?deg+360:deg;
-        var col=colors.colors[deg];
+        var col=colors[deg];
     }
     
     context.drawImage(img, initX, initY);
