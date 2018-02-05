@@ -109,10 +109,10 @@ var config = {
 };
 firebase.initializeApp(config);
     
-/* disable context menu 
+/* disable context menu */
 document.oncontextmenu = function() {
     return false;
-}*/
+}
 
 /* Options: */
 var displayTime = 1000;
@@ -459,8 +459,22 @@ function ShowContinuousReport(trialStruct) {
         }
     });
   
-    $(document).bind('click.curTrial', function(e) {
-    
+    $(document).bind('click.curTrial contextmenu.curTrial', function(e) {
+        findKey = 0;
+        if (findKey == 0) {
+            $(document).mousedown(function(e){ 
+                if( e.button == 2 ) { 
+                  mouseClick = 2;
+                  findKey = 1;
+                } else if (e.button == 0) {
+                  mouseClick = 1;
+                  findKey = 1;
+                }
+                e.button == NaN;
+            });  
+            console.log(mouseClick);
+        }
+        
         /* Show approximate feedback: amazing! < 15, good! < 30 */
         if (curError <= 15) {
             feedText = 'Amazing!';
