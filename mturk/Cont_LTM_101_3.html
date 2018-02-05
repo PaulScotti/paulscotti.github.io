@@ -416,7 +416,6 @@ function ShowContinuousReport(trialStruct) {
   var startTime = new Date();
     
   var flip = Math.round(Math.random());
-  console.log(flip);
   var randrotate = Math.floor(Math.random()*360);
   colors = colors.concat(colors.splice(0,randrotate)); //randomly rotate color wheel
   console.log(colors[1]);
@@ -427,11 +426,6 @@ function ShowContinuousReport(trialStruct) {
         var relY = e.pageY - parentOffset.top - centerY;
         var curAngle = Math.atan2(relY,relX);
         angleDeg = curAngle / Math.PI * 180.0;
-        if (flip == 1) {
-            colors = flippedColors;
-        } else if (flip == 0) {
-            colors = origColors;
-        }
         var imgNum = Math.round(angleDeg);
         mouseMoved = 1;
         start(ctx2,imgNum,200,200); 
