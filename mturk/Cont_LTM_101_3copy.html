@@ -643,18 +643,10 @@ function recolor(context,newR,newG,newB,initX,initY) {
         red = data[i + 0];
         green = data[i + 1];
         blue = data[i + 2];
-        var hsv = RGBtoHSV(red, green, blue);
-        var hue = hsv.h * 360;
-        /* If grayscale, else if not grayscale */
-        if (newR == 0 & newG == 0 & newB == 0) {
-            var newRgb = HSVtoRGB(hsv.h, 0, hsv.v);
-        } else { 
-            var temp = RGBtoHSV(newR,newG,newB);
-            var newRgb = HSVtoRGB(temp.h, hsv.s, hsv.v);
-        }
-        data[i + 0] = newRgb.r;
-        data[i + 1] = newRgb.g;
-        data[i + 2] = newRgb.b;
+        ro = red;
+        newRgb.r = (red > 0) ? newR;
+        newRgb.g = (red > 0) ? newG;
+        newRgb.b = (red > 0) ? newB;
     }
     context.putImageData(imgData, initX, initY);
 }
