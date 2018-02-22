@@ -254,61 +254,89 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
   if (repeat == 1) {
       tempTrial = currentTrial;
       currentTrial = -999; }
-  
-  /* reset and then initialize audio code */
-  $(document).off("click");
-  var stopclick = 0;
-  $(document).on("click", function (e) {
-    if (stopclick == 0) {
-        if (repeat == 2) {
-            new Beep(22050).play(1300, .2, [Beep.utils.amplify(8000)]);
-            $('#fixation').css('color','rgb(0,255,0)');
-            hit = 1;
-            numHits = numHits + 1;
-        } else {
-            new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
-            $('#fixation').css('color','red');
-            falseHits = falseHits + 1;
-        }
-        stopclick = 1;
-    }
-  });
+  var centerX = 300, centerY = 300;
+  var ringSize = 250;
+  var angleDeg = 0;
+  var curError = 360;
+  var startTime = new Date();
     
-  if (repeat <= 2) {
-      img.onload = function() {
-          start(ctx,imgNum,200,200); 
-      }
-      if (currentPart == 0) {
-          img.src = $('#' + dx.repeatpracimg[0])[0].src; 
-      } else {
-          img.src = $('#' + dx.repeatimg[numRepeats])[0].src;
-          if (repeat == 2) {
-          numRepeats = numRepeats + 1;
-          }
-      }
+  var flip = Math.round(Math.random());
+  var randrotate = Math.floor(Math.random()*360);
+    
+$(document).bind('mousemove.curTrial', function(e) {
+        var parentOffset = $('#continuousReport').offset(); 
+        var relX = e.pageX - parentOffset.left - centerX;
+        var relY = e.pageY - parentOffset.top - centerY;
+        var curAngle = Math.atan2(relY,relX);
+        angleDeg = curAngle / Math.PI * 180.0;
+        var imgNum = Math.round(angleDeg);
+        mouseMoved = 1;
+        start(ctx2,imgNum,200,200); 
+        img.src = $('#' + dx.repeatimg[numRepeats])[0].src;
 
-      $('#showTrial').show();
-      setTimeout(function() {      
-        $('#allItems').css('margin-top', 0);
-        setTimeout(function() { 
-            $('#allItems').css('margin-top', -1000);
-            setTimeout(function() {
-              $('#showTrial').hide();
-                    RepeatTrial();
-            }, isiTime);
-        }, displayTime);
-      }, 500);
-  } else if (repeat == 3) {
-    repeat = 0;
-    currentTrial = tempTrial;
-    if (hit == 0 & currentPart == 0) {
-        alert('The phone repeated! Please click the screen when an object repeats.');
-        NextTrial();
-    } else {
-        NextTrial();
-    }
-  }
-} 
+        $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
+                           'top': centerY + Math.sin(curAngle)*ringSize-9});
+
+        curError = Math.abs(angleDeg-repeatTriTrials[numRepeats].mean);
+        if (curError > 180) {
+            curError = 360-curError;
+        }
+        
+        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
+            
+        if (e.isFakeTrigger) {
+          trialStruct.startedAngle = Math.round(angleDeg);
+        }
+    });
+  
+    $(document).bind('click.curTrial', function(e) {
+        /* Show approximate feedback: amazing! < 15, good! < 30 */
+        if (curError <= 15) {
+            feedText = 'Amazing!';
+        } else if (curError <= 30) {
+            feedText = 'Good!'; 
+        } else {
+            feedText = '...';
+        }
+        document.getElementById("fixation").innerHTML = feedText;
+
+        if (mouseMoved == 0) {
+            alert('Move your mouse around the circle to select the original object color. Please be as precise as possible.');
+        } else {
+            trialStruct.reportedAngle = Math.round(angleDeg);
+            trialStruct.rt = (new Date()) - startTime;
+            $(document).unbind('click.curTrial');
+            $(document).unbind('contextmenu.curTrial');
+            $(document).unbind('mousemove.curTrial');
+            $("#continuousReport").hide();
+            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+
+            var imgNum = Math.round(angleDeg);
+            start(ctx3,imgNum,80,100);
+            var imgNum = Math.round(repeatTriTrials[numRepeats].mean);
+            start(ctx4,imgNum,40,100);
+
+            if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                img.src = $('#' + dx.repeatimg[numRepeats])[0].src;  
+            }
+
+            ctx2.drawImage(img, 200, 200); 
+            $('#feedback').show();
+            $(document).bind('click.feedback', function(e) {
+                $('#feedback').hide(); 
+                repeat = 0;
+                NextTrial();
+            });
+        }
+    });
+    
+  $("#continuousReport").show();    
+  e = $.Event('mousemove');
+  e.pageX = mouseX;
+  e.pageY = mouseY;
+  e.isFakeTrigger = true;
+  $(document).trigger(e);
+};
     
 /* Show the next continuous color report trial: */
 function NextFeedTrial() {
