@@ -632,7 +632,6 @@ function start(context,deg,initX,initY) {
         deg=(deg<0)?deg+360:deg;
         var col=colors[deg];
     }
-    
     context.drawImage(img, initX, initY);
     recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
 }
@@ -647,6 +646,9 @@ function recolor(context,newR,newG,newB,initX,initY) {
         newRgb.r = (ro > 0) ? newR:red;
         newRgb.g = (ro > 0) ? newG:green;
         newRgb.b = (ro > 0) ? newB:blue;
+        data[i + 0] = newRgb.r;
+        data[i + 1] = newRgb.g;
+        data[i + 2] = newRgb.b;
     }
     context.putImageData(imgData, initX, initY);
 }
