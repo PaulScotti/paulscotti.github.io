@@ -636,19 +636,17 @@ function start(context,deg,initX,initY) {
     recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
 }
 function recolor(context,newR,newG,newB,initX,initY) {
-     var imgData = context.getImageData(initX, initY, item.width, item.height);
-     var data = imgData.data;
+    imgData = context.getImageData(initX, initY, item.width, item.height);
+    var data = imgData.data;
     for (var i = 0; i < data.length; i += 4) {
-        red = data[i + 0];
-        green = data[i + 1];
-        blue = data[i + 2];
-        ro = red;
-        newRgb.r = (ro > 0) ? newR:red;
-        newRgb.g = (ro > 0) ? newG:green;
-        newRgb.b = (ro > 0) ? newB:blue;
-        data[i + 0] = newRgb.r;
-        data[i + 1] = newRgb.g;
-        data[i + 2] = newRgb.b;
+        var red = data[i];
+        var green = data[i + 1];
+        var blue = data[i + 2];
+        if (red != 0 && red!= 255) {
+            data[i] = newR;
+            data[i + 1] = newG;
+            data[i + 2] = newB;
+        }
     }
     context.putImageData(imgData, initX, initY);
 }
