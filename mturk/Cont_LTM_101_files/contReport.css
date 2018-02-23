@@ -19,6 +19,26 @@
 	top: 50px;
 	left: 50px;
 }
+#pointer2 {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	background: black;
+	border: 9px solid black;
+	border-radius: 9px;
+	top: 50px;
+	left: 50px;
+}
+#pointer3 {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	background: black;
+	border: 9px solid black;
+	border-radius: 9px;
+	top: 50px;
+	left: 50px;
+}
 
 #ring {
 	position: absolute;
