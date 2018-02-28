@@ -11,6 +11,7 @@ originally modified from Tim Brady http://timbrady.org/turk/ensembleindivdiff/e9
 <script src="./Cont_LTM_101_files/jcanvas.min.js"></script>  
 <script src="./Cont_LTM_101_files/chance.js"></script> 
 <script src="./Cont_LTM_101_files/blockedList.js"></script>  
+<script src="./Cont_LTM_101_files/confidencereport.js"></script>  
 <script src="lodash.core.js"></script>
     
 <!-- load Firebase server javascript, we are just using it for storage -->
@@ -438,7 +439,7 @@ function ShowContinuousReport(trialStruct) {
         }
         $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                            'top': centerY + Math.sin(curAngle)*ringSize-9});
-
+        
         curError = Math.abs(angleDeg-trialStruct.mean);
         if (curError > 180) {
             curError = 360-curError;

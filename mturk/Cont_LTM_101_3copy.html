@@ -69,8 +69,9 @@ https://www.mturk.com/mturk/externalSubmit
     
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport"> 
-<canvas id="contItem"  width=400 height=400></canvas>
-<div id="ring"></div><div id="pointer"></div><div id="pointer2"></div><div id="pointer3"></div></div>
+<canvas id="contItem"  width=400 height=400></canvas><canvas id="arcCanvas"  width=450 height=400 id="arcAbsolute" style="border:4px solid #d3d3d3;"></canvas>
+<div id="ring"></div><div id="pointer"></div><div id="pointer2"></div><div id="pointer3"></div>
+</div>
     
 <!-- feedback -->
 <div id="feedback">
@@ -173,6 +174,28 @@ var ctx3 = feedbackReportedTri.getContext("2d");
 feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 var ctx4 = feedbackCorrectTri.getContext("2d");
     
+arcCanvas = document.getElementById("arcCanvas");
+var ctx5 = feedbackCorrectTri.getContext("2d");
+    
+/* Start the experiment, this function is the first to operate! */
+function StartExperiment() {
+  if (IsOnTurk() && IsTurkPreview()) {
+    alert("Please accept the HIT before continuing.");
+    return false;
+  }
+  GenerateTrials();
+
+  totalTrials = [practiceTriTrials, triTrials];
+  r_totalTrials = [chance1.shuffle(practiceTriTrials), triTrials];
+    
+  chance1 = Chance(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
+  r_totalTrials = [r_totalTrials[0], chance1.shuffle(triTrials)];
+
+  $('#instructions').hide();
+    
+  NextTrial();
+}
+    
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
   Math.seedrandom(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
@@ -214,25 +237,6 @@ function GenerateTrials() {
     repeatTriTrials = Shuffle(repeatTriTrials);
 }
 
-/* Start the experiment. */
-function StartExperiment() {
-  if (IsOnTurk() && IsTurkPreview()) {
-    alert("Please accept the HIT before continuing.");
-    return false;
-  }
-  GenerateTrials();
-
-  totalTrials = [practiceTriTrials, triTrials];
-  r_totalTrials = [chance1.shuffle(practiceTriTrials), triTrials];
-    
-  chance1 = Chance(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
-  r_totalTrials = [r_totalTrials[0], chance1.shuffle(triTrials)];
-
-  $('#instructions').hide();
-    
-  NextTrial();
-}
-
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   currentTrial++;
@@ -246,6 +250,58 @@ function NextTrial() {
       return;
   }
   ShowTrial(totalTrials[currentPart][currentTrial]);
+}
+    
+/* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
+function ShowTrial(trialStruct) {
+    var stopclick = 0;
+    
+    if (currentTrial == Math.ceil(numTrialsPerPart[1]/2) & currentPart == 1) {
+        alert('You are half way through the learning phase of this experiment! Keep it up!');
+    }
+    
+    $(document).on("click", function (e) {
+        if (stopclick == 0) {
+            new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
+            $('#fixation').css('color','red');
+            hit = 0;
+            stopclick = 1;
+        }
+    });
+    
+    img.onload = function() {
+      start(ctx,trialStruct.items,200,200,imgWidth,imgHeight); 
+    }
+    if (currentPart == 0) {
+        img.src = $('#' + dx.pracimg[currentTrial])[0].src;
+    } else {
+        img.src = $('#' + dx.r_study[currentTrial])[0].src;
+    }
+    
+    $('#allItems').css('margin-top', -1000);
+    $('#showTrial').show();
+    setTimeout(function() {
+        $('#allItems').css('margin-top', 0);
+        setTimeout(function() { 
+            $('#allItems').css('margin-top', -1000);
+            setTimeout(function() {
+              $('#showTrial').hide();
+                if (currentPart == 0) {
+                    if (dx.repeatprac.includes(currentTrial)) { 
+                        RepeatTrial();
+                    } else {
+                        NextTrial(); 
+                    }
+                } else {
+                    if (dx.r_repeatimg.includes(100+currentTrial)) { 
+                        RepeatTrial(); 
+                    } else {
+                        NextTrial(); 
+                    }
+                }
+            }, isiTime);
+        }, displayTime);
+    }, 500);
 }
     
 function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTrial */
@@ -264,7 +320,7 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
   var flip = Math.round(Math.random());
   var randrotate = Math.floor(Math.random()*360);
     
-$(document).bind('mousemove.curTrial', function(e) {
+    $(document).bind('mousemove.curTrial', function(e) {
         var parentOffset = $('#continuousReport').offset(); 
         var relX = e.pageX - parentOffset.left - centerX;
         var relY = e.pageY - parentOffset.top - centerY;
@@ -277,25 +333,19 @@ $(document).bind('mousemove.curTrial', function(e) {
 
         $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
                            'top': centerY + Math.sin(curAngle)*ringSize-9});
-    
-        $('#pointer2').css({'left': centerX + Math.cos(curAngle+20)*ringSize-9, 
-                           'top': centerY + Math.sin(curAngle+20)*ringSize-9});
-    
-        $('#pointer3').css({'left': centerX + Math.cos(curAngle+20)*ringSize-9, 
-                       'top': centerY + Math.sin(curAngle+20)*ringSize-9});
 
         curError = Math.abs(angleDeg-repeatTriTrials[numRepeats].mean);
         if (curError > 180) {
             curError = 360-curError;
         }
-        
+
         $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
-            
+
         if (e.isFakeTrigger) {
           trialStruct.startedAngle = Math.round(angleDeg);
         }
     });
-  
+
     $(document).bind('click.curTrial', function(e) {
         /* Show approximate feedback: amazing! < 15, good! < 30 */
         if (curError <= 15) {
@@ -313,7 +363,6 @@ $(document).bind('mousemove.curTrial', function(e) {
             trialStruct.reportedAngle = Math.round(angleDeg);
             trialStruct.rt = (new Date()) - startTime;
             $(document).unbind('click.curTrial');
-            $(document).unbind('contextmenu.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
             $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
@@ -381,58 +430,6 @@ function NextFeedTrial() {
   mouseMoved = 0;
 }
 
-/* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
-function ShowTrial(trialStruct) {
-    var stopclick = 0;
-    
-    if (currentTrial == Math.ceil(numTrialsPerPart[1]/2) & currentPart == 1) {
-        alert('You are half way through the learning phase of this experiment! Keep it up!');
-    }
-    
-    $(document).on("click", function (e) {
-        if (stopclick == 0) {
-            new Beep(22050).play(400, .2, [Beep.utils.amplify(8000)]);
-            $('#fixation').css('color','red');
-            hit = 0;
-            stopclick = 1;
-        }
-    });
-    
-    img.onload = function() {
-      start(ctx,trialStruct.items,200,200,imgWidth,imgHeight); 
-    }
-    if (currentPart == 0) {
-    img.src = $('#' + dx.pracimg[currentTrial])[0].src;
-    } else {
-    img.src = $('#' + dx.r_study[currentTrial])[0].src;
-    }
-    
-    $('#allItems').css('margin-top', -1000);
-    $('#showTrial').show();
-    setTimeout(function() {
-        $('#allItems').css('margin-top', 0);
-        setTimeout(function() { 
-            $('#allItems').css('margin-top', -1000);
-            setTimeout(function() {
-              $('#showTrial').hide();
-                if (currentPart == 0) {
-                    if (dx.repeatprac.includes(currentTrial)) { 
-                        RepeatTrial(); 
-                    } else {
-                        NextTrial(); 
-                    }
-                } else {
-                    if (dx.r_repeatimg.includes(100+currentTrial)) { 
-                        RepeatTrial(); 
-                    } else {
-                        NextTrial(); 
-                    }
-                }
-            }, isiTime);
-        }, displayTime);
-    }, 500);
-}
-
 /* Always track the mouse */
 var mouseX, mouseY;
 $(function() {
@@ -443,10 +440,9 @@ $(function() {
 });
 
 function ShowContinuousReport(trialStruct) {
-    
   var centerX = 300, centerY = 300;
   var ringSize = 250;
-  var angleDeg = 0;
+  angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
     
@@ -478,28 +474,13 @@ function ShowContinuousReport(trialStruct) {
         if (curError > 180) {
             curError = 360-curError;
         }
-        
-        if (trialStruct.isPractice) {
-          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
-        }
             
         if (e.isFakeTrigger) {
           trialStruct.startedAngle = Math.round(angleDeg);
         }
     });
   
-    $(document).bind('click.curTrial', function(e) {
-    
-        /* Show approximate feedback: amazing! < 15, good! < 30 */
-        if (curError <= 15) {
-            feedText = 'Amazing!';
-        } else if (curError <= 30) {
-            feedText = 'Good!'; 
-        } else {
-            feedText = '...';
-        }
-        document.getElementById("fixation").innerHTML = feedText;
-        
+    $(document).bind('click.curTrial', function(e) {        
         if (survey == 1) {
             explicitErr = curError;
         }
@@ -510,71 +491,135 @@ function ShowContinuousReport(trialStruct) {
             trialStruct.reportedAngle = Math.round(angleDeg);
             trialStruct.rt = (new Date()) - startTime;
             $(document).unbind('click.curTrial');
-            $(document).unbind('contextmenu.curTrial');
             $(document).unbind('mousemove.curTrial');
             $("#continuousReport").hide();
-            if (survey == 0) {
-                if (trialStruct.isPractice) {
-                    $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
-
-                    var imgNum = Math.round(angleDeg);
-                    start(ctx3,imgNum,80,100, imgWidth, imgHeight);
-                    var imgNum = Math.round(trialStruct.mean);
-                    start(ctx4,imgNum,40,100, imgWidth, imgHeight);
-
-                    if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-                    img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
-                    }
-
-                    ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
-                    $('#feedback').show();
-                    $(document).bind('click.feedback', function(e) {
-                        $('#feedback').hide(); 
-
-                        if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-                            img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
-                        }
-
-                        ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
-                        NextFeedTrial();
-                        document.getElementById("fixation").innerHTML = '+';
-                        $(document).unbind('click.feedback');
-                    });
-                } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
-                    $('#showTrial').show();
-                    img.src = $('#999')[0].src;  
-                    setTimeout(function() {
-                        ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
-                        NextFeedTrial();
-                        document.getElementById("fixation").innerHTML = '+';
-                        $('#showTrial').hide();
-                    }, isiTime);
-                } else { 
-                    $('#showTrial').show();
-                    if (currentFeedTrial < numTrialsPerPart[1]) {
-                        img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
-                    }
-                    setTimeout(function() {
-                        ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
-                        NextFeedTrial();
-                        document.getElementById("fixation").innerHTML = '+';
-                        $('#showTrial').hide();
-                    }, isiTime);
-                }
-            } else {
-                $('#showTrial').hide();
-                Survey2(); 
-            }
+            ShowConfidence(trialStruct,angleDeg);
         }
     });
     
-  $("#continuousReport").show();    
+  $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
   e = $.Event('mousemove');
   e.pageX = mouseX;
   e.pageY = mouseY;
   e.isFakeTrigger = true;
   $(document).trigger(e);
 }
+    
+function ShowConfidence(trialStruct,angleDeg) {
+    var centerX = 300, centerY = 300;
+    var ringSize = 250;
+    angleDeg2 = 0;
+    var curError = 360;
+    var startTime = new Date();
+    
+    /* Confidence report */ 
+    $(document).bind('mousemove.curTrial', function(e) {
+        var parentOffset = $('#continuousReport').offset(); 
+        var relX = e.pageX - parentOffset.left - centerX;
+        var relY = e.pageY - parentOffset.top - centerY;
+        curAngle = Math.atan2(relY,relX);
+        angleDeg2 = curAngle / Math.PI * 180.0;
+        $("#pointer2").show(); $("#pointer3").show();
+        if (wrap([angleDeg2 - angleDeg]) >= 180) {
+            $("#pointer2").css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
+               'top': centerY + Math.sin(curAngle)*ringSize-9});      
+
+            x = 300;
+            y = 500;
+            radius = 20;
+            startAngle = 1.1 * Math.PI;
+            endAngle = 1.9 * Math.PI;
+            counterClockwise = false;
+            ctx5.beginPath();
+            ctx5.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+            ctx5.lineWidth = 40;
+            ctx5.strokeStyle = 'green';
+            ctx5.stroke();
+ 
+        } else {
+            $("#pointer3").css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
+               'top': centerY + Math.sin(curAngle)*ringSize-9});
+        }
+    });
+
+    $(document).bind('click.curTrial', function(e) {
+        $("#pointer2").hide(); $("#pointer3").hide();
+        /* Show approximate feedback: amazing! < 15, good! < 30 */
+        if (trialStruct.isPractice) {
+          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
+        }
+        if (curError <= 15) {
+            feedText = 'Amazing!';
+        } else if (curError <= 30) {
+            feedText = 'Good!'; 
+        } else {
+            feedText = '...';
+        }
+        document.getElementById("fixation").innerHTML = feedText;
+        $("#continuousReport").hide(); 
+
+        if (survey == 0) {
+            if (trialStruct.isPractice) {
+                $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+
+                var imgNum = Math.round(angleDeg);
+                start(ctx3,imgNum,80,100, imgWidth, imgHeight);
+                var imgNum = Math.round(trialStruct.mean);
+                start(ctx4,imgNum,40,100, imgWidth, imgHeight);
+
+                if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
+                }
+
+                ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
+                $('#feedback').show();
+                $(document).bind('click.feedback', function(e) {
+                    $('#feedback').hide(); 
+
+                    if (currentFeedTrial+1 < numTrialsPerPart[0]) {
+                        img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;  
+                    }
+
+                    ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
+                    NextFeedTrial();
+                    document.getElementById("fixation").innerHTML = '+';
+                    $(document).unbind('click.feedback');
+                });
+            } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
+                $('#showTrial').show();
+                img.src = $('#999')[0].src;  
+                setTimeout(function() {
+                    ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
+                    NextFeedTrial();
+                    document.getElementById("fixation").innerHTML = '+';
+                    $('#showTrial').hide();
+                }, isiTime);
+            } else { 
+                $('#showTrial').show();
+                if (currentFeedTrial < numTrialsPerPart[1]) {
+                    img.src = $('#' + dx.r_test[currentFeedTrial+1])[0].src;  
+                }
+                setTimeout(function() {
+                    ctx2.drawImage(img, 200,200,imgWidth,imgHeight); 
+                    NextFeedTrial();
+                    document.getElementById("fixation").innerHTML = '+';
+                    $('#showTrial').hide();
+                }, isiTime);
+            }
+        } else {
+            $('#showTrial').hide();
+            Survey2(); 
+        }
+    });
+    
+    $("#continuousReport").show(); 
+    e = $.Event('mousemove');
+    e.pageX = mouseX;
+    e.pageY = mouseY;
+    e.isFakeTrigger = true;
+    $(document).trigger(e);
+}
+    
 
 function Survey() { 
   $("#showTrial").hide(); 
