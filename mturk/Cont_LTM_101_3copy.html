@@ -419,11 +419,10 @@ function NextFeedTrial() {
         img.src = $('#' + dx.r_test[0])[0].src;
       }
   }
-
-  ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
-
   /*Preload color wheel, first trial will have randrotate=0 and flip=0*/
   ringctx.drawImage(ringImg,50,50,500,500);
+
+  ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
 
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200, imgWidth, imgHeight);
@@ -611,7 +610,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
   });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2.clearRect(0, 0, 600, 600);
+    setTimeout(function() {
+      ctx2.clearRect(0, 0, 600, 600), .5});
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
