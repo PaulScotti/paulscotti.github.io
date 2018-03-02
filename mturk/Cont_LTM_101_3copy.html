@@ -368,9 +368,7 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
           }
 
           ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-          if (flip == 1) {
-            ringImg.src = $('#ringFlip')[0].src;
-          }
+          flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
           ringctx.translate(50+500/2, 50+500/2);
           ringctx.rotate(randrotate*Math.PI/180);
           ringctx.translate(-50-500/2, -50-500/2);
@@ -419,16 +417,17 @@ function NextFeedTrial() {
         img.src = $('#' + dx.r_pracimg[0])[0].src;
       } else {
         img.src = $('#' + dx.r_test[0])[0].src;
-  }}
+      }
+  }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+
+  /*Preload color wheel, first trial will have randrotate=0 and flip=0*/
+  ringctx.drawImage(ringImg,50,50,500,500);
 
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200, imgWidth, imgHeight);
   mouseMoved = 0;
-
-  /* Prepare to display ring img */
-  ringctx.drawImage(ringImg,50,50,500,500);
 }
 
 /* Always track the mouse */
@@ -444,9 +443,10 @@ function ShowContinuousReport(trialStruct) {
   var angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
+  ringctx.save();
 
-  flip = Math.round(Math.random());
-  randrotate = Math.floor(Math.random()*360);
+  currentFeedTrial <= 0? flip = 0 : flip = Math.round(Math.random());
+  currentFeedTrial <= 0? randrotate = 0 : randrotate = Math.floor(Math.random()*360);
   // colors = colors.concat(colors.splice(0,randrotate)); //randomly rotate color wheel
   console.log(colors[1]);
 
@@ -643,9 +643,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
 
             /* Rotate and flip the color wheel */
             ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-            if (flip == 1) {
-              ringImg.src = $('#ringFlip')[0].src;
-            }
+            flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
             ringctx.translate(50+500/2, 50+500/2);
             ringctx.rotate(randrotate*Math.PI/180);
             ringctx.translate(-50-500/2, -50-500/2);
@@ -653,6 +651,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
 
             $('#feedback').show();
             $(document).bind('click.feedback', function(e) {
+                ringctx.restore();
                 $('#feedback').hide();
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
