@@ -369,12 +369,12 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
 
           ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
           if (flip == 1) {
-            ringctx.scale(-1,1);
+            ringImg.src = $('#ringFlip')[0].src;
           }
           ringctx.translate(50+500/2, 50+500/2);
           ringctx.rotate(randrotate*Math.PI/180);
           ringctx.translate(-50-500/2, -50-500/2);
-          flip == 0? ringctx.drawImage(ringImg,50,50,500,500) : ringctx.drawImage(ringImg,50,50,500,500);
+          ringctx.drawImage(ringImg,50,50,500,500);
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
               $('#feedback').hide();
@@ -644,12 +644,12 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             /* Rotate and flip the color wheel */
             ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
             if (flip == 1) {
-              ringctx.scale(-1,1);
+              ringImg.src = $('#ringFlip')[0].src;
             }
             ringctx.translate(50+500/2, 50+500/2);
             ringctx.rotate(randrotate*Math.PI/180);
             ringctx.translate(-50-500/2, -50-500/2);
-            flip == 0? ringctx.drawImage(ringImg,50,50,500,500) : ringctx.drawImage(ringImg,50,50,500,500);
+            ringctx.drawImage(ringImg,50,50,500,500);
 
             $('#feedback').show();
             $(document).bind('click.feedback', function(e) {
