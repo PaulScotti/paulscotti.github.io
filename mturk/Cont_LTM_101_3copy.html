@@ -69,8 +69,9 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
-<canvas id="contItem"  width=800 height=800></canvas>
-<div id="ring"></div><div id="pointer"></div></div>
+<canvas id="contItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
+<canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
+<div id="pointer"></div></div>
 
 <!-- feedback -->
 <div id="feedback">
@@ -141,6 +142,7 @@ var numHits = 0;
 var falseHits = 0;
 var mouseClick = -1;
 survey = 0;
+const centerX = 300; const centerY = 300;
 
 /* Randomize orderings */
 Shuffle(dx.r_study);
@@ -163,6 +165,11 @@ dx.r_repeatimg = dx.r_repeatimg.splice(dx.r_repeatimg.length-11); /*this means 1
 var img = new Image();
 img.crossOrigin = "anonymous";
 
+/* Setup ring image */
+var ringImg = new Image();
+ringImg.crossOrigin = "anonymous";
+ringImg.src = $('#ring')[0].src;
+
 /* Setting up canvas contexts */
 var item = document.getElementById("item");
 var ctx = item.getContext("2d");
@@ -172,6 +179,8 @@ var feedbackReportedTri = document.getElementById("feedbackReportedTri");
 var ctx3 = feedbackReportedTri.getContext("2d");
 feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 var ctx4 = feedbackCorrectTri.getContext("2d");
+ringItem = document.getElementById("ringItem");
+var ringctx = ringItem.getContext("2d");
 
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
@@ -292,7 +301,6 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
   if (repeat == 1) {
       tempTrial = currentTrial;
       currentTrial = -999; }
-  var centerX = 300, centerY = 300;
   var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
@@ -358,6 +366,7 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
           }
 
           ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+          ringctx.drawImage(ringImg,-90,-100,780,780);
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
               $('#feedback').hide();
@@ -409,6 +418,9 @@ function NextFeedTrial() {
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200, imgWidth, imgHeight);
   mouseMoved = 0;
+
+  /* Prepare to display ring img */
+  ringctx.drawImage(ringImg,-90,-100,780,780);
 }
 
 /* Always track the mouse */
@@ -421,7 +433,6 @@ $(function() {
 });
 
 function ShowContinuousReport(trialStruct) {
-  var centerX = 300, centerY = 300;
   var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
@@ -487,8 +498,6 @@ function ShowContinuousReport(trialStruct) {
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
-    var centerX = 300;
-    var centerY = 300;
     var ringSize = 250;
     var angleDeg2 = 0;
     var curError = 360;
@@ -558,8 +567,6 @@ function ShowConfidence(trialStruct,angleDeg) {
 }
 
 function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
-  var centerX = 300;
-  var centerY = 300;
   var ringSize = 250;
   var angleDeg3 = 0;
   var curError = 360;
@@ -601,7 +608,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
   });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2.clearRect(0, 0, 800, 800);
+    ctx2.clearRect(0, 0, 600, 600);
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -632,6 +639,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             }
 
             ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+            ringctx.drawImage(ringImg,-90,-100,780,780);
             $('#feedback').show();
             $(document).bind('click.feedback', function(e) {
                 $('#feedback').hide();
@@ -641,6 +649,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
                 }
 
                 ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $(document).unbind('click.feedback');
@@ -650,6 +659,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             img.src = $('#999')[0].src;
             setTimeout(function() {
                 ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $('#showTrial').hide();
@@ -661,6 +671,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             }
             setTimeout(function() {
                 ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $('#showTrial').hide();
