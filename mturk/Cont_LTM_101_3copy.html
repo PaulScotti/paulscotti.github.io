@@ -611,7 +611,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
 
   $(document).bind('click.curTrial', function(e) {
     setTimeout(function() {
-      ctx2.clearRect(0, 0, 600, 600)} .5); /* Give a little delay to see 2nd arc */
+      ctx2.clearRect(0, 0, 600, 600)}, .5); /* Give a little delay to see 2nd arc */
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
