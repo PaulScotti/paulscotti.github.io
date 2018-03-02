@@ -132,7 +132,6 @@ var totalTrials = [];
 /* Pointers for where we are in the experiment: */
 var currentTrial = -1;
 var currentPart = 0;
-
 var currentFeedTrial = -1;
 var feedbackPhase = 0;
 var repeat = 0;
@@ -141,7 +140,11 @@ var hit = 0;
 var numHits = 0;
 var falseHits = 0;
 var mouseClick = -1;
+var randrotate = 0;
+var flip = 0;
 survey = 0;
+const radius = 242;
+const ringSize = 242;
 const centerX = 300; const centerY = 300;
 
 /* Randomize orderings */
@@ -301,13 +304,12 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
   if (repeat == 1) {
       tempTrial = currentTrial;
       currentTrial = -999; }
-  var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
 
-  var flip = Math.round(Math.random());
-  var randrotate = Math.floor(Math.random()*360);
+  flip = Math.round(Math.random());
+  randrotate = Math.floor(Math.random()*360);
 
   $(document).bind('mousemove.curTrial', function(e) {
       var parentOffset = $('#continuousReport').offset();
@@ -366,7 +368,13 @@ function RepeatTrial() { /* Should be renamed abrupt-onset trial, not RepeatTria
           }
 
           ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-          ringctx.drawImage(ringImg,-90,-100,780,780);
+          if (flip == 1) {
+            ringctx.scale(-1,1);
+          }
+          ringctx.translate(50+500/2, 50+500/2);
+          ringctx.rotate(randrotate*Math.PI/180);
+          ringctx.translate(-50-500/2, -50-500/2);
+          flip == 0? ringctx.drawImage(ringImg,50,50,500,500) : ringctx.drawImage(ringImg,50,50,500,500);
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
               $('#feedback').hide();
@@ -420,7 +428,7 @@ function NextFeedTrial() {
   mouseMoved = 0;
 
   /* Prepare to display ring img */
-  ringctx.drawImage(ringImg,-90,-100,780,780);
+  ringctx.drawImage(ringImg,50,50,500,500);
 }
 
 /* Always track the mouse */
@@ -433,13 +441,12 @@ $(function() {
 });
 
 function ShowContinuousReport(trialStruct) {
-  var ringSize = 250;
   var angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
 
-  var flip = Math.round(Math.random());
-  var randrotate = Math.floor(Math.random()*360);
+  flip = Math.round(Math.random());
+  randrotate = Math.floor(Math.random()*360);
   // colors = colors.concat(colors.splice(0,randrotate)); //randomly rotate color wheel
   console.log(colors[1]);
 
@@ -498,12 +505,10 @@ function ShowContinuousReport(trialStruct) {
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
-    var ringSize = 250;
     var angleDeg2 = 0;
     var curError = 360;
     var startTime = new Date();
     var startAngle = angleDeg * Math.PI / 180;
-    var radius = 250;
     var lastRot = 0;
     var noMore = 0;
     var diffAng = -999;
@@ -567,13 +572,11 @@ function ShowConfidence(trialStruct,angleDeg) {
 }
 
 function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
-  var ringSize = 250;
   var angleDeg3 = 0;
   var curError = 360;
   var startTime = new Date();
   var startAngle = angleDeg * Math.PI / 180;
   var startAngle2 = angleDeg2 * Math.PI / 180;
-  var radius = 250;
 
   /* Confidence report */
   $(document).bind('mousemove.curTrial', function(e) {
@@ -638,18 +641,19 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;
             }
 
+            /* Rotate and flip the color wheel */
             ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-            ringctx.drawImage(ringImg,-90,-100,780,780);
+            if (flip == 1) {
+              ringctx.scale(-1,1);
+            }
+            ringctx.translate(50+500/2, 50+500/2);
+            ringctx.rotate(randrotate*Math.PI/180);
+            ringctx.translate(-50-500/2, -50-500/2);
+            flip == 0? ringctx.drawImage(ringImg,50,50,500,500) : ringctx.drawImage(ringImg,50,50,500,500);
+
             $('#feedback').show();
             $(document).bind('click.feedback', function(e) {
                 $('#feedback').hide();
-
-                if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-                    img.src = $('#' + dx.r_pracimg[currentFeedTrial+1])[0].src;
-                }
-
-                ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $(document).unbind('click.feedback');
@@ -659,7 +663,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             img.src = $('#999')[0].src;
             setTimeout(function() {
                 ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $('#showTrial').hide();
@@ -671,7 +674,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng,lastRot) {
             }
             setTimeout(function() {
                 ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
-                ringctx.drawImage(ringImg,-90,-100,780,780);
                 NextFeedTrial();
                 document.getElementById("fixation").innerHTML = '+';
                 $('#showTrial').hide();
@@ -744,7 +746,7 @@ function SaveData() {
 
 function start(context,deg,initX,initY,imgWidth,imgHeight) {
     if (deg == 'gray') {
-        var col = [0,0,0];
+        var col = [127.5,127.5,127.5];
     } else {
         deg=(deg>=360)?deg-360:deg;
         deg=(deg<0)?deg+360:deg;
