@@ -368,7 +368,7 @@ dx = {
 				"r_repeatimg": counter(101,numTrialsPerPart[0]+131-1+totalRepeats),
 				"r_repeattrial": counter(101,numTrialsPerPart[1]+101-1),
 				"r_TrialType": repmat([0,0,0,1,2,3],numTrialsPerPart[1]/6),
-				"rep_TrialType": repmat([0,0,0,1,2,3],totalRepeats/6)
+				"rep_TrialType": repmat([0,0,0,1,2,3],Math.ceil(totalRepeats/6))
 	};
 
 	function repmat(array, count) {
