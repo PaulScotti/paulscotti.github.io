@@ -365,7 +365,8 @@ dx = {
         "repeatimg": counter(101,totalRepeats+101-1),
         "pracimg": counter(131,numTrialsPerPart[0]+131-1),
         "r_study": counter(136,numTrialsPerPart[1]+136-1),
-				"r_repeatimg": counter(101,numTrialsPerPart[1]+101-1),
+				"r_repeatimg": counter(101,numTrialsPerPart[0]+131-1+totalRepeats),
+				"r_repeattrial": counter(101,numTrialsPerPart[1]+101-1),
 				"r_TrialType": repmat([0,0,0,1,2,3],numTrialsPerPart[1]/6),
 				"rep_TrialType": repmat([0,0,0,1,2,3],totalRepeats/6)
 	};
@@ -391,7 +392,7 @@ dx = {
 TrialType is for test objects
 r_TrialType is for the repeat-detection objects
 rep_TrialType is the seeds used for repeated objects
-r_repeatimg determines what trial to repeat on
+r_repeattrial determines what trial to repeat on
 repeatimg are the IDs for the repeated images
 r_study are the presented objects that will be tested
 colors is for CIE LAB RGB conversions */
