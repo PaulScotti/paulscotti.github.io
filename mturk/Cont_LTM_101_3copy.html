@@ -437,9 +437,33 @@ function ShowContinuousReport(trialStruct) {
           img.src = $('#' + dx.r_test[currentFeedTrial])[0].src;
       } else if (survey == 1) {
           img.src = $('#999')[0].src;
+          // Draw fixed 45 degree highlight
+          ctx2.beginPath();
+          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
+          ctx2.lineWidth = 50;
+          ctx2.strokeStyle = 'white';
+          ctx2.stroke();
+          ctx2.beginPath();
+          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
+          ctx2.lineWidth = 50;
+          ctx2.strokeStyle = 'white';
+          ctx2.stroke();
+          ctx2.beginPath();
+          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
+          ctx2.lineWidth = 40;
+          ctx2.strokeStyle = 'black';
+          ctx2.stroke();
+          ctx2.beginPath();
+          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
+          ctx2.lineWidth = 40;
+          ctx2.strokeStyle = 'black';
+          ctx2.stroke();
       }
-      $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
-                         'top': centerY + Math.sin(curAngle)*ringSize-9});
+
+      if (survey == 0) {
+        $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
+                          'top': centerY + Math.sin(curAngle)*ringSize-9});
+      }
 
       curError = Math.abs(imgNum-trialStruct.item);
       if (curError > 180) {
@@ -459,6 +483,7 @@ function ShowContinuousReport(trialStruct) {
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
           explicitErr = curError;
+          return;
       }
 
       if (mouseMoved == 0) {
