@@ -1,1 +1,4 @@
-blockedIDs=["asdf","asdf2"];
+blockedIDs=[
+  "asdf",
+  "asdf2"
+];
