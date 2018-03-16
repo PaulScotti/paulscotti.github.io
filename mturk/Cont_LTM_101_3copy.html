@@ -74,7 +74,7 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="contItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <div id="pointer"></div>
-<div id="popQuiz"><p>Pop quiz! What color was this object?</p></div>
+<div id="popQuiz"><p>What color was this object?</p></div>
 </div>
 
 <!-- feedback -->
@@ -335,6 +335,7 @@ function ShowTrial(trialStruct) {
                     if (readyRepeat == 1) {
                       if (waitObject != 1) {
                         readyRepeat = 0;
+                        imgPop.src = $('#' + dx.r_repeattrial[numRepeats])[0].src;
                         RepeatTrial();
                       } else {
                         waitObject = 2;
@@ -360,10 +361,6 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   $('#popQuiz').show();
   // alert('Pop quiz! What color was this object?');
 
-  imgPop.src = $('#' + dx.r_repeattrial[numRepeats])[0].src;
-  ctx2.drawImage(imgPop, 200,200,imgWidth,imgHeight);
-  recolor(ctx2,127.5,127.5,127.5,200,200);
-
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   ringctx.restore();
   ringctx.drawImage(ringImg,50,50,500,500);
@@ -372,7 +369,8 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
+  ctx2.drawImage(imgPop, 200,200,imgWidth,imgHeight);
+  recolor(ctx2,127.5,127.5,127.5,200,200);
   mouseMoved = 0;
 };
 
