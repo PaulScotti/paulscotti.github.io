@@ -362,13 +362,12 @@ colors = [
 		];
 
 dx = {
-        "repeatimg": counter(101,totalRepeats+101-1),
-        "pracimg": counter(131,numTrialsPerPart[0]+131-1),
-        "r_study": counter(136,numTrialsPerPart[1]+136-1),
-				"r_repeatimg": counter(101,numTrialsPerPart[0]+131-1+totalRepeats),
-				"r_repeattrial": counter(101,numTrialsPerPart[1]+101-1),
-				"r_TrialType": repmat([0,0,0,1,2,3],numTrialsPerPart[1]/6),
-				"rep_TrialType": repmat([0,0,0,1,2,3],Math.ceil(totalRepeats/6))
+        "repeatimg": counter(101,101+totalRepeats-1),
+        "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
+        "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
+				"r_repeattrial": counter(1,numTrialsPerPart[1],2),
+				"r_TrialType": repmat([0,0,0,0,1,1,2,2,3,3],numTrialsPerPart[1]/10),
+				"rep_TrialType": repmat([0,0,0,0,1,1,2,2,3,3],Math.ceil(totalRepeats/10))
 	};
 
 	function repmat(array, count) {
@@ -381,7 +380,7 @@ dx = {
 	function counter(start, end, interval) {
 			if (interval == undefined) { var interval = 1; }
 			var result = [];
-			while (start!=end+interval) {
+			while (start<=end) {
 					result = result.concat(start);
 					start = start+interval;
 			}
