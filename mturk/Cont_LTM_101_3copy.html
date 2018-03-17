@@ -83,7 +83,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey2" style="display: none;">
     <center>
-    <div id = "doneText"><p>You finished! Just a few questions before you go:<p><br><br><p>Do you think object colors were sampled randomly or do you think most objects shared approximately the same color?</p></div>
+    <div id = "doneText"><p>You finished! Just a few questions before you go:<p><br><br><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
     <br><br><br><br>
     <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Randomly sampled colored
     <br><br>
@@ -120,7 +120,7 @@ document.oncontextmenu = function() {
 
 /* Options: */
 var totalRepeats = 10;
-var numTrialsPerPart = [3, 20, 20]; // prac, study, test; 240 tested nonrepeat trials
+var numTrialsPerPart = [4, 20, 20]; // prac, study, test; 240 tested nonrepeat trials
 </script> <script src="./Cont_LTM_101_files/colors.js"> </script>
 
 <script>
@@ -154,6 +154,7 @@ var randrotateMatPrac = []; var randrotateMatRep = []; var randrotateMat = [];
 var angleDeg = 0;
 var curError = 360;
 var curErrorMatPrac = []; var curErrorMatRep = []; var curErrorMat = [];
+var seed = [];
 var flip = 0;
 var flipMatPrac = []; var flipMatRep = []; var flipMat = [];
 var reportedcolorMatPrac = []; var reportedcolorMatRep = []; var reportedcolorMat = [];
@@ -244,9 +245,10 @@ function GenerateTrials() {
   chance1 = Chance(curID);
 
   for (var i=0; i<numTrialsPerPart[0]; i++) {
-    var curMean = Math.floor(Math.random()*360);
+    var cap = 360/numTrialsPerPart[0];
+    var curMean = counter(1,360,cap);
     practiceTriTrials.push({'isPractice': 1,
-                    'item': curMean});
+                    'item': curMean[i]});
   }
 
   for (var i=0; i<dx.rep_TrialType.length; i++) {
@@ -487,10 +489,11 @@ function ShowContinuousReport(trialStruct) {
         reportedcolorMat.push(imgNum);
       }
 
-      curError = flip == 0? Math.abs(imgNum-trialStruct.item) : Math.abs(wrap([180-imgNum])-trialStruct.item);
+      curError = Math.abs(imgNum-trialStruct.item);
       if (curError > 180) {
           curError = 360-curError;
       }
+
       if (currentPart == 0) {
         curErrorMatPrac.push(curError);
       } else if (repeat == 1) {
@@ -734,6 +737,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           ringctx.rotate(randrotate*Math.PI/180);
           ringctx.translate(-50-500/2, -50-500/2);
           ringctx.drawImage(ringImg,50,50,500,500);
+
           setTimeout(function() {
               if (repeat == 0) { $('#showTrial').hide(); }
               repeat == 1? NextTrial() : NextFeedTrial();
@@ -831,6 +835,7 @@ function SaveData() {
     "Confidence3": diffAng3Mat,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
+    "Seeds": seed,
     "RepSeedOrder": dx.rep_TrialType
   };
 
