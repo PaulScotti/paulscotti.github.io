@@ -3,21 +3,21 @@ originally modified from Tim Brady http://timbrady.org/turk/ensembleindivdiff/e9
 
 <!-- Preload javascript and css files -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/jquery.min.js"></script>
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/seedrandom.js"></script>
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/jcanvas.min.js"></script>
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/blockedList.js"></script>
+<script src="./Cont_LTM_101_files/jquery.min.js"></script>
+<script src="./Cont_LTM_101_files/seedrandom.js"></script>
+<script src="./Cont_LTM_101_files/TimTurkTools.js"></script>
+<script src="./Cont_LTM_101_files/jcanvas.min.js"></script>
+<script src="./Cont_LTM_101_files/chance.js"></script>
+<script src="./Cont_LTM_101_files/blockedList.js"></script>
 <script src="lodash.core.js"></script> <!-- Allows _clone -->
 
 <!-- load Firebase server javascript, we are using it for storage -->
 <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-storage.js"></script>
 
-<link rel="stylesheet" type="text/css" href="paulscotti.github.io/mturk/Cont_LTM_101_files/contReport.css">
-<link rel="stylesheet" type="text/css" href="paulscotti.github.io/mturk/Cont_LTM_101_files/showTrials.css">
-<link rel="stylesheet" type="text/css" href="paulscotti.github.io/mturk/Cont_LTM_101_files/experiment.css">
+<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/contReport.css">
+<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/showTrials.css">
+<link rel="stylesheet" type="text/css" href="./Cont_LTM_101_files/experiment.css">
 
 </head>
 <body style="">
@@ -44,7 +44,7 @@ originally modified from Tim Brady http://timbrady.org/turk/ensembleindivdiff/e9
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p>
 
-<p style="text-align: center"><a href="javascript:StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
+<p style="text-align: center"><a href="javascript:StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -94,7 +94,7 @@ https://www.mturk.com/mturk/externalSubmit
 </form>
 
 <!-- Preload images, needs to be below divs -->
-<script src="paulscotti.github.io/mturk/Cont_LTM_101_files/loadimg.js"></script>
+<script src="./Cont_LTM_101_files/loadimg.js"></script>
 
 <script>
 curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an mTurker! " +
@@ -121,7 +121,7 @@ document.oncontextmenu = function() {
 /* Options: */
 var totalRepeats = 10; // need be factor of r_TrialType.length (40% = 10)
 var numTrialsPerPart = [4, 20, 20]; // prac, study, test; 240 tested nonrepeat trials
-</script> <script src="paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
+</script> <script src="./Cont_LTM_101_files/colors.js"> </script>
 
 <script>
 chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
