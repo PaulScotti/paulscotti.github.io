@@ -1,4 +1,4 @@
 blockedIDs=[
-  "asdf",
-  "asdf2"
+  "zasdf",
+  "zasdf2"
 ];
