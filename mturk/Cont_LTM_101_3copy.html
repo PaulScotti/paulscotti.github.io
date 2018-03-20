@@ -517,7 +517,7 @@ function ShowContinuousReport(trialStruct) {
           explicitErr = curError;
       }
 
-      if (mouseMoved == 0) {
+      if (mouseMoved == 0 && survey == 0) {
           alert('Move your mouse around the circle and click to select your best guess at to the original object color. Please be as precise as possible!');
       } else {
           trialStruct.reportedAngle = Math.round(angleDeg);
