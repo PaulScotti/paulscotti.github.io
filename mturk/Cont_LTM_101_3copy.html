@@ -238,10 +238,10 @@ function GenerateTrials() {
                     'isPractice': 0,
                     'item': curMean,
                     'itemID': dx.r_study[i],
-                    'origTrial': i});
+                    'origTrial': i+1});
   }
-  triTrialsTest = _.clone(triTrials);
-  triTrials = chance1.shuffle(triTrials);
+  triTrials = _.clone(triTrialsTest);
+  triTrialsTest = chance1.shuffle(triTrialsTest);
   chance1 = Chance(curID);
 
   for (var i=0; i<numTrialsPerPart[0]; i++) {
@@ -259,7 +259,7 @@ function GenerateTrials() {
                     'seed': pickSeed,
                     'isPractice': 0,
                     'item': curMean,
-                    'origTrial': dx.r_repeattrial[i]});
+                    'origTrial': dx.r_repeattrial[i] + 1});
   }
     repeatTriTrials = Shuffle(repeatTriTrials);
 }
@@ -504,6 +504,8 @@ function ShowContinuousReport(trialStruct) {
 
       if (e.isFakeTrigger) {
         trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
+        trialStruct.randrotate = randrotate;
+        trialStruct.flip = flip;
         flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
         ringctx.translate(50+500/2, 50+500/2);
         ringctx.rotate(randrotate*Math.PI/180);
@@ -522,6 +524,7 @@ function ShowContinuousReport(trialStruct) {
       } else {
           trialStruct.reportedAngle = Math.round(angleDeg);
           trialStruct.rt = (new Date()) - startTime;
+          trialStruct.col_diff = curError;
           $(document).unbind('click.curTrial');
           $(document).unbind('mousemove.curTrial');
           $("#continuousReport").hide();
@@ -685,6 +688,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     $(document).unbind('click.curTrial');
     $(document).unbind('mousemove.curTrial');
       if (trialStruct.isPractice) {
+          trialStruct.conf2 = diffAng2;
+          trialStruct.conf3 = diffAng3;
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
           imgNum = Math.round(wrap([angleDeg-randrotate]));
