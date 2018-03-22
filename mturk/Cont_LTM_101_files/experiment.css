@@ -99,19 +99,22 @@ body {
 }
 
 
-#timSubmit {
+#turkSubmit {
   font-weight: bold;
   color: black;
   border: 3px outset gray;
   background: #CCC;
   padding: 5px;
   text-decoration: none;
+  position: relative;
+  top: 60px;
+  margin-left: 215px;
 }
 
-#timSubmit:hover {
+#turkSubmit:hover {
   border: 3px solid gray;
 }
 
-#timSubmit:active {
+#turkSubmit:active {
   border: 3px inset gray;
 }
