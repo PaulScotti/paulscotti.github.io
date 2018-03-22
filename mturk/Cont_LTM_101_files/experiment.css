@@ -65,6 +65,14 @@ body {
 }
 
 #popQuiz {
+  position: absolute;
+  width: 600px;
+  top: 550px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#underText {
   position: relative;
   width: 600px;
   top: 620px;

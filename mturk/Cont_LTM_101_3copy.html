@@ -36,7 +36,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct2.png" width="400"></p>
 
-<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors for the objects. Also note that since this is an experiment designed to study memory, we advise that you <strong>do not take any breaks after starting this study</strong>. Note that the task is supposed to be difficult! If you do not know the correct color, move your mouse around the wheel and select what feels right.</p>
+<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors for the objects. Also note that since this is an experiment designed to study memory, we advise that you <strong>do not take any breaks after starting this study</strong>. Also do not use any external sources to better remember the objects (e.g., recording the page, taking notes), as we are studying the mechanisms behind human memory. Note that the task is supposed to be difficult! If you do not know the correct color, move your mouse around the wheel and select what feels right.</p>
 
 <p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how certain you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the range of colors you think contain the original object's color. If you were 100% certain about your answer then you would not highlight any colors, and if you were completely guessing then you would highlight the entirety of the color wheel. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel.</p>
 
@@ -58,8 +58,9 @@ https://www.mturk.com/mturk/externalSubmit
 -->
 
 <!-- Screen for collecting comments when they are done: -->
-<div id="done"><div id="doneText">Thanks very much for your participation!<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
+<div id="done"><div id="doneText">Thanks very much for your participation! Your bonus may take a few extra days to process.<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
 <textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>
+<center><p><div id="cashPrize"><p>text</p></center></div></p>
 <a href="javascript:void(0);" onclick="SaveData()" id="timSubmit">Click to Submit HIT</a>
 </div><div id="saving">Saving . . .</div></div>
 
@@ -75,15 +76,25 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <div id="pointer"></div>
 <div id="popQuiz"><p>What color was this object?</p></div>
+<div id="underText"><p></p></div>
 </div>
 
 <!-- feedback -->
 <div id="feedback">
     <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
 
+<form id="survey1" style="display: none;">
+    <center>
+    <div id = "doneText"><p>You finished! Just a few questions before you go:<p><br><p>What strategy (if any) did you use when selecting the colors of objects?</p></div>
+    <br><br><br><br>
+    <textarea name="strategy" id="strategy" style="width: 400px; height: 300px"></textarea><br><br>
+    <a href="javascript:void(0);" onclick="Survey2();" id="startExperimentButton" style="display: inline;">Submit</a>
+    </center>
+</form>
+
 <form id="survey2" style="display: none;">
     <center>
-    <div id = "doneText"><p>You finished! Just a few questions before you go:<p><br><br><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
+    <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
     <br><br><br><br>
     <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Randomly sampled colored
     <br><br>
@@ -119,8 +130,8 @@ document.oncontextmenu = function() {
 }*/
 
 /* Options: */
-var totalRepeats = 10; // need be factor of r_TrialType.length (40% = 10)
-var numTrialsPerPart = [4, 20, 20]; // prac, study, test; 240 tested nonrepeat trials
+var totalRepeats = 5; // need be factor of r_TrialType.length (40% = 10)
+var numTrialsPerPart = [4, 10, 10]; // prac, study, test; 240 tested nonrepeat trials
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
 
 <script>
@@ -166,6 +177,7 @@ var waitObject = 0;
 const radius = 242;
 const ringSize = 242;
 const centerX = 300; const centerY = 300;
+var points = 6.00;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -181,7 +193,7 @@ dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
 chance1 = Chance(curID);
 
 Shuffle(dx.r_repeattrial);
-dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); /*this means totalRepeats num of repeats! Needs to be multiple of 10*/
+dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); /*this means totalRepeats num of repeats! Needs to be multiple of 5*/
 
 /* Setup reused image variable */
 var img = new Image();
@@ -383,12 +395,12 @@ function NextFeedTrial() {
   if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
     if (currentPart > 0) {
       $('showTrial').hide;
-      Survey2();
+      Survey1();
       return;
     } else {
       currentFeedTrial = -1;
       currentPart++;
-        alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. Thank you and we wish you the best of luck!");
+        alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. Note you will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
         currentTrial = -1;
         imgX.src = $('#' + r_totalTrials[2][0].itemID)[0].src; /* preload first image of test phase */
         NextTrial();
@@ -519,8 +531,10 @@ function ShowContinuousReport(trialStruct) {
           explicitErr = curError;
       }
 
-      if (mouseMoved == 0 && survey == 0) {
-          alert('Move your mouse around the circle and click to select your best guess at to the original object color. Please be as precise as possible!');
+      if (mouseMoved == 0) {
+          if (survey == 0) {
+            alert('Move your mouse around the circle and click to select your best guess at to the original object color. Please be as precise as possible!');
+          }
       } else {
           trialStruct.reportedAngle = Math.round(angleDeg);
           trialStruct.rt = (new Date()) - startTime;
@@ -677,9 +691,11 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
     }
     if (curError <= 15) {
-        feedText = 'Amazing! (+$.01)';
+        feedText = 'Amazing!<br>(+$.01)';
+        points = points + .01;
     } else if (curError <= 30) {
-        feedText = 'Good! (+$.005)';
+        feedText = 'Good!<br>(+$.005)';
+        points = points + .005;
     } else {
         feedText = '...';
     }
@@ -775,28 +791,33 @@ function Survey() {
   ringctx.save();
 
   if (radioResp == 1) {
-    document.getElementById("popQuiz").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+    document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
   } else if (radioResp == 2) {
-    document.getElementById("popQuiz").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+    document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
   }
 
-  $('#popQuiz').show();
   ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
 
-  alert(document.getElementById("popQuiz").innerHTML);
+  alert(document.getElementById("underText").innerHTML);
 
   /* Set starting color as grayscale */
   start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
   mouseMoved = 0;
 }
 
+function Survey1() {
+  $('#survey1').show()
+}
+
 function Survey2() {
-    $("#survey2").show();
+  $('#survey1').hide()
+  $("#survey2").show();
 }
 
 /* Done with the experiment; wait for comments and for them to hit Save */
 function Done() {
   $('#done').show();
+  document.getElementById("cashPrize").innerHTML = "Total earnings: $" + points.toFixed(2);
 }
 
 /* Choose what to save and then put it on the server */
@@ -832,12 +853,7 @@ function SaveData() {
     "TestErrorPrac": curErrorMatPrac,
     "TestErrorRep": curErrorMatRep,
     "TestError": curErrorMat,
-    "Confidence2Prac": diffAng2MatPrac,
-    "Confidence2Rep": diffAng2MatRep,
-    "Confidence2": diffAng2Mat,
-    "Confidence3Prac": diffAng3MatPrac,
-    "Confidence3Rep": diffAng3MatRep,
-    "Confidence3": diffAng3Mat,
+    "Bonus": points,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
     "Seeds": seed,
