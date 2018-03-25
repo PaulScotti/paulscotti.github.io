@@ -62,8 +62,8 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Screen for collecting comments when they are done: -->
 <div id="done"><div id="doneText">Thanks very much for your participation! Your bonus may take a few extra days to process.<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
-<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>
-<center><br><div id="cashPrize">text</center></div>
+<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea>
+<center><p><div id="cashPrize">text</center></div></p>
 <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit HIT</a>
 </div><div id="saving">Saving . . .</div></div>
 
@@ -109,17 +109,17 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey3" style="display: none;">
     <center>
-    <div id = "doneText"><p>How confident are you that the 90 degree biased region you specified is close to the real experimental manipulation?</p></div>
+    <div id = "doneText"><p>How confident are you that the biased region you selected is close to the actual experimental manipulation?</p></div>
     <br><br><br><br>
     <div class="likertButtons">
-    Uncertain
-    <label for="likert1">1<input id="likertConfidence" type="radio" value="1"></label>
-    <label for="likert2">2<input id="likertConfidence" type="radio" value="2"></label>
-    <label for="likert3">3<input id="likertConfidence" type="radio" value="3"></label>
-    <label for="likert4">4<input id="likertConfidence" type="radio" value="4"></label>
-    <label for="likert5">5<input id="likertConfidence" type="radio" value="5"></label>
-    <label for="likert6">6<input id="likertConfidence" type="radio" value="6"></label>
-    Certain
+    Less certain
+    <label for="likert1">1<input id="likertConfidence" type="radio" name="likertz" value="1"></label>
+    <label for="likert2">2<input id="likertConfidence" type="radio" name="likertz" value="2"></label>
+    <label for="likert3">3<input id="likertConfidence" type="radio" name="likertz" value="3"></label>
+    <label for="likert4">4<input id="likertConfidence" type="radio" name="likertz" value="4"></label>
+    <label for="likert5">5<input id="likertConfidence" type="radio" name="likertz" value="5"></label>
+    <label for="likert6">6<input id="likertConfidence" type="radio" name="likertz" value="6"></label>
+    More certain
     </div>
     <br><br>
     <a href="javascript:void(0);" onclick="Done();" id="startExperimentButton" style="display: inline;">Submit</a></center>
@@ -152,7 +152,7 @@ firebase.initializeApp(config);
 
 /* Options: */
 var totalRepeats = 5; // need be factor of r_TrialType.length (40% = 10)
-var numTrialsPerPart = [4, 10, 10]; // prac, study, test; 240 tested nonrepeat trials
+var numTrialsPerPart = [2, 5, 5]; // prac, study, test; 240 tested nonrepeat trials
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
 
 <script>
@@ -800,32 +800,32 @@ function Survey() {
   //proceed only if they picked one of two options
   if (radioResp > 0) {
       $('#instructions').hide();
+
+      // Now they have answered our multiple-coice question
+      $("#survey2").hide();
+      survey = 1;
+
+      /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
+      ringctx.restore();
+      ringctx.drawImage(ringImg,50,50,500,500);
+      ringctx.save();
+
+      if (radioResp == 1) {
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+      } else if (radioResp == 2) {
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+      }
+
+      ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
+
+      alert(document.getElementById("underText").innerHTML);
+
+      /* Set starting color as grayscale */
+      start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
+      mouseMoved = 0;
   } else {
       alert('Please select an option.');
   }
-
-  // Now they have answered our multiple-coice question
-  $("#survey2").hide();
-  survey = 1;
-
-  /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
-  ringctx.restore();
-  ringctx.drawImage(ringImg,50,50,500,500);
-  ringctx.save();
-
-  if (radioResp == 1) {
-    document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
-  } else if (radioResp == 2) {
-    document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
-  }
-
-  ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
-
-  alert(document.getElementById("underText").innerHTML);
-
-  /* Set starting color as grayscale */
-  start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
-  mouseMoved = 0;
 }
 
 function Survey1() {
@@ -843,13 +843,9 @@ function Survey3() {
 
 /* Done with the experiment; wait for comments and for them to hit Save */
 function Done() {
-  //proceed only if they picked an option
-  if (document.getElementById("likertConfidence").value > 0) {
-      $('#instructions').hide();
-
-      // Now they have answered our question
+  //proceed only if they picked an option for survey3
+  if (document.querySelector('input[name="likertz"]:checked').value > 0) {
       $("#survey3").hide();
-
       $('#done').show();
       let cashpoints = points + basepay;
       document.getElementById("cashPrize").innerHTML = "Total earnings: $" + cashpoints.toFixed(2);
