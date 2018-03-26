@@ -201,6 +201,7 @@ const centerX = 300; const centerY = 300;
 var points = 0;
 var basepay = 6;
 var radioResp = 0;
+var likertAns = 0;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -845,6 +846,7 @@ function Survey3() {
 function Done() {
   //proceed only if they picked an option for survey3
   if (document.querySelector('input[name="likertz"]:checked').value > 0) {
+      likertAns = document.querySelector('input[name="likertz"]:checked').value;
       $("#survey3").hide();
       $('#done').show();
       let cashpoints = points + basepay;
@@ -891,8 +893,9 @@ function SaveData() {
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
     "Seeds": seed,
-    "RepSeedOrder": dx.rep_TrialType
-  };
+    "RepSeedOrder": dx.rep_TrialType,
+    "LikertAns": LikertAns
+  }; 
 
     /* save to Firebase server */
     var blob = new Blob([JSON.stringify(d)], {type: "application/json"});
