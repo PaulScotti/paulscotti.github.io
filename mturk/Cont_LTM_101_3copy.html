@@ -851,6 +851,7 @@ function Done() {
       $('#done').show();
       let cashpoints = points + basepay;
       document.getElementById("cashPrize").innerHTML = "Total earnings: $" + cashpoints.toFixed(2);
+      points = points.toFixed(2); //round to 2 decimal places
   } else {
       alert('Please select an option.');
   }
