@@ -511,11 +511,13 @@ function ShowContinuousReport(trialStruct) {
         $('#pointer').hide();
       }
 
-      curError = Math.abs(imgNum-trialStruct.item);
+      flip == 0? curError = Math.abs(imgNum-trialStruct.item) : curError = Math.abs(wrap([180-imgNum])-wrap([180-trialStruct.item]));
       if (curError > 180) {
           curError = 360-curError;
+      } else if (curError < -180) {
+          curError = curError+360;
       }
-      console.log(curError);
+      // console.log(curError);
 
       if (e.isFakeTrigger) {
         trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
