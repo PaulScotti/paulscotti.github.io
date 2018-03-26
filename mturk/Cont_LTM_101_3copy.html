@@ -182,16 +182,10 @@ var repeat = 0;
 var numRepeats = 0;
 var mouseClick = -1;
 var randrotate = 0;
-var randrotateMatPrac = []; var randrotateMatRep = []; var randrotateMat = [];
 var angleDeg = 0;
 var curError = 360;
-var curErrorMatPrac = []; var curErrorMatRep = []; var curErrorMat = [];
 var seed = [];
 var flip = 0;
-var flipMatPrac = []; var flipMatRep = []; var flipMat = [];
-var reportedcolorMatPrac = []; var reportedcolorMatRep = []; var reportedcolorMat = [];
-var diffAng2MatPrac = []; var diffAng2MatRep = []; var diffAng2Mat = [];
-var diffAng3MatPrac = []; var diffAng3MatRep = []; var diffAng3Mat = [];
 var survey = 0;
 var readyRepeat = 0;
 var waitObject = 0;
@@ -517,25 +511,9 @@ function ShowContinuousReport(trialStruct) {
         $('#pointer').hide();
       }
 
-      if (currentPart == 0) {
-        reportedcolorMatPrac.push(imgNum);
-      } else if (repeat == 1) {
-        reportedcolorMatRep.push(imgNum);
-      } else if (currentPart == 2 && survey == 0){
-        reportedcolorMat.push(imgNum);
-      }
-
       curError = Math.abs(imgNum-trialStruct.item);
       if (curError > 180) {
           curError = 360-curError;
-      }
-
-      if (currentPart == 0) {
-        curErrorMatPrac.push(curError);
-      } else if (repeat == 1) {
-        curErrorMatRep.push(curError);
-      } else if (currentPart == 2 && survey == 0){
-        curErrorMat.push(curError);
       }
 
       if (e.isFakeTrigger) {
@@ -703,13 +681,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
   $(document).bind('click.curTrial', function(e) {
     ctx2.clearRect(0, 0, 600, 600);
-    if (currentPart == 0) {
-      diffAng2MatPrac.push(diffAng2); diffAng3MatPrac.push(diffAng3);
-    } else if (repeat == 1) {
-      diffAng2MatRep.push(diffAng2); diffAng3MatRep.push(diffAng3);
-    } else if (currentPart == 2 && survey == 0){
-      diffAng2Mat.push(diffAng2); diffAng3Mat.push(diffAng3);
-    }
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -768,13 +739,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
               img.src = $('#999')[0].src;
           }
           ringctx.clearRect(50,50,500,500);
-          if (currentPart == 0) {
-            randrotateMatPrac.push(randrotate); flipMatPrac.push(flip);
-          } else if (repeat == 1) {
-            randrotateMatRep.push(randrotate); flipMatRep.push(flip);
-          } else if (currentPart == 2 && survey == 0){
-            randrotateMat.push(randrotate); flipMat.push(flip);
-          }
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
           flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
@@ -872,30 +836,18 @@ function SaveData() {
     "screenWidth": screen.width,
     "screenHeight": screen.height,
     "comments": $('#comments').val(),
-    "randrotatePrac": randrotateMatPrac,
-    "randrotateRep": randrotateMatRep,
-    "randrotate": randrotateMat,
-    "flipPrac": flipMatPrac,
-    "flipRep": flipMatRep,
-    "flip": flipMat,
+    "strategy": $('#strategy').val(),
     "pracTrials": r_totalTrials[0],
     "studyTrials": r_totalTrials[1],
     "testTrials": r_totalTrials[2],
     "radioResponse": radioResp,
     "explicitError": explicitErr,
-    "seeds": seed,
-    "reportedcolorPrac": reportedcolorMatPrac,
-    "reportedcolorRep": reportedcolorMatRep,
-    "reportedcolor": reportedcolorMat,
-    "TestErrorPrac": curErrorMatPrac,
-    "TestErrorRep": curErrorMatRep,
-    "TestError": curErrorMat,
+    "LikertAns": likertAns,
     "Bonus": points,
+    "Seeds": seed,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
-    "Seeds": seed,
-    "RepSeedOrder": dx.rep_TrialType,
-    "LikertAns": likertAns
+    "RepSeedOrder": dx.rep_TrialType
   };
 
     /* save to Firebase server */
