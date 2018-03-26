@@ -515,6 +515,7 @@ function ShowContinuousReport(trialStruct) {
       if (curError > 180) {
           curError = 360-curError;
       }
+      console.log(curError);
 
       if (e.isFakeTrigger) {
         trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
