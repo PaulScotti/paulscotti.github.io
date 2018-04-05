@@ -371,6 +371,7 @@ dx = {
 				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
 	};
 
+
 	function repmat(array, count) {
 	    var result = [];
 	    while (count--) {
