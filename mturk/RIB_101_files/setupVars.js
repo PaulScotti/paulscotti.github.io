@@ -363,9 +363,10 @@ colors = [
 
 dx = {
         "repeatimg": counter(101,101+totalRepeats-1),
-        "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
-        "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
-				"r_repeattrial": counter(1,numTrialsPerPart[1],2),
+        "pracimg": counter(101+dx.repeatimg.length,101+dx.repeatimg.length+numTrialsPerPart[0]-1),
+        "controlimg": counter(101+dx.pracimg.length,101+dx.pracimg.length+numTrialsType[0]-1),
+				"plus_img": counter(101+dx.controlimg.length,101+dx.controlimg.length+numTrialsType[1]/2-1,2),
+				"neg_img": counter(102+dx.controlimg.length,101+dx.controlimg.length+numTrialsType[1]/2-1,2),
 				"r_TrialType": repmat([0,0,1,2,3],numTrialsPerPart[1]/5),
 				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
 	};
@@ -387,8 +388,7 @@ dx = {
 			return result;
 	}
 
-/* 12 repeats, 102 test objects, 50% rich quad (1)
-TrialType is for test objects
+/* TrialType is for test objects
 r_TrialType is for the repeat-detection objects
 rep_TrialType is the seeds used for repeated objects
 r_repeattrial determines what trial to repeat on

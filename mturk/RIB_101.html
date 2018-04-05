@@ -1,5 +1,4 @@
-<!-- Paul Scotti 2018
-originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e9/ -->
+<!-- Paul Scotti 2018, originally modified from Tim Brady code -->
 
 <!-- Preload javascript and css files -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
@@ -151,9 +150,10 @@ firebase.initializeApp(config);
 }*/
 
 /* Options: */
-var totalRepeats = 5; // need be factor of r_TrialType.length (40% = 10)
+var totalRepeats = 5; // around 10%, need be factor of r_TrialType.length
 var numTrialsPerPart = [2, 5, 2, 5]; // prac, study, retrieval, test
-</script> <script src="https://paulscotti.github.io/mturk/RIB_101_files/colors.js"> </script>
+var numTrialsType = [42, 126] // 42 control items, 63*2 noncontrol (Rp+ Rp-) items
+</script> <script src="https://paulscotti.github.io/mturk/RIB_101_files/setupVars.js"> </script>
 
 <script>
 chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
