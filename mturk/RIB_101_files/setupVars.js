@@ -367,15 +367,25 @@ dx = {
         "controlimg": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]-1),
 				"plus_img": counter(101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
 				"neg_img": counter(102+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
-				"trial_type": repmat([0,0,1,2,3],numTrialsPerPart[1]/5),
-				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
+				"trial_type": repmat([0,0,1,2,3],(numTrialsPerPart[1]+totalRepeats)/5),
+				"rep_TrialType": Shuffle([repmat(1,totalRepeats),repmat(2,numTrialsType[0]),repmat(3,numTrialsType[1]/2),repmat(4,numTrialsType[1]/2)])
+
+				/*
+				abruptimg = abrupt image IDs
+				pracimg = image IDs used for practice phase
+				controlimg = control image IDs
+				plus_img = Rp+ item IDs
+				neg_img = Rp- item IDs
+			  trial_type = (1 = abrupt 2 = control 3 = Rp+ 4 = Rp-)
+			  cx = same as dx but for color of the item
+				*/
 	};
 
 cx = {
 				"abruptimg": randcolor(dx.abruptimg.length,1,360),
 				"pracimg": randcolor(dx.pracimg.length,1,360),
 				"controlimg": randcolor(dx.controlimg.length,1,360),
-				"plus_img": randcolor(dx.plus_img.length,1,360),
+				"plus_img": randcolor(dx.plus_img.length,1,360)
 				// cx.neg_img: wrap([Math.ceil(Math.random()*30 + 90) + dx.plus_img])
 };
 
@@ -402,12 +412,3 @@ cx = {
 		}
 		return result;
 	}
-
-	/* NOTES:
-	abruptimg = abrupt image IDs
-	pracimg = image IDs used for practice phase
-	controlimg = control image IDs
-	plus_img = Rp+ item IDs
-	neg_img = Rp- item IDs
-  trial_type = (1 = abrupt 2 = control 3 = Rp+ 4 = Rp-)
-  cx = same as dx but for color of the item
