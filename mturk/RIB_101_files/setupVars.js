@@ -362,14 +362,22 @@ colors = [
 		];
 
 dx = {
-        "repeatimg": counter(101,101+totalRepeats-1),
+        "abruptimg": counter(101,101+totalRepeats-1),
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "controlimg": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]-1),
-				"plus_img": counter(101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]/2-1,2),
-				"neg_img": counter(102+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]/2-1,2),
-				"r_TrialType": repmat([0,0,1,2,3],numTrialsPerPart[1]/5),
+				"plus_img": counter(101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
+				"neg_img": counter(102+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
+				"trial_type": repmat([0,0,1,2,3],numTrialsPerPart[1]/5),
 				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
 	};
+
+cx = {
+				"abruptimg": randcolor(dx.abruptimg.length,1,360),
+				"pracimg": randcolor(dx.pracimg.length,1,360),
+				"controlimg": randcolor(dx.controlimg.length,1,360),
+				"plus_img": randcolor(dx.plus_img.length,1,360),
+				// cx.neg_img: wrap([Math.ceil(Math.random()*30 + 90) + dx.plus_img])
+};
 
 	function repmat(array, count) {
 	    var result = [];
@@ -387,11 +395,19 @@ dx = {
 			}
 			return result;
 	}
+	function randcolor(count,minLimit,maxLimit) {
+		var result = [];
+		while (result.length < count) {
+				result = result.concat(Math.ceil(Math.random() * maxLimit + minLimit-1));
+		}
+		return result;
+	}
 
-/* TrialType is for test objects
-r_TrialType is for the repeat-detection objects
-rep_TrialType is the seeds used for repeated objects
-r_repeattrial determines what trial to repeat on
-repeatimg are the IDs for the repeated images
-r_study are the presented objects that will be tested
-colors is for CIE LAB RGB conversions */
+	/* NOTES:
+	abruptimg = abrupt image IDs
+	pracimg = image IDs used for practice phase
+	controlimg = control image IDs
+	plus_img = Rp+ item IDs
+	neg_img = Rp- item IDs
+  trial_type = (1 = abrupt 2 = control 3 = Rp+ 4 = Rp-)
+  cx = same as dx but for color of the item
