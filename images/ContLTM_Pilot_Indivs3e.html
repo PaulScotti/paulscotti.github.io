@@ -11787,10 +11787,10 @@ div#notebook {
 <h2 id="Exclusions">Exclusions<a class="anchor-link" href="#Exclusions">&#182;</a></h2><h4 id="Target-proportion-is-less-than-.15.">Target proportion is less than .15.<a class="anchor-link" href="#Target-proportion-is-less-than-.15.">&#182;</a></h4><ul>
 <li>5 pilot subjects excluded</li>
 </ul>
-<h4 id="Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-70-degrees.">Average standard deviation across target and biased guessing distributions (weighted by respective proportion fits) exceeds 70 degrees.<a class="anchor-link" href="#Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-70-degrees.">&#182;</a></h4>
+<h4 id="Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-35-degrees.">Average standard deviation across target and biased guessing distributions (weighted by respective proportion fits) exceeds 35 degrees.<a class="anchor-link" href="#Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-35-degrees.">&#182;</a></h4>
 <pre><code>targetRQ = targetfit + RQfit;
 
-if targetfit &lt; .15 || ( (targetfit/targetRQ) * targetSD + (RQfit/targetRQ) * biasedSD ) &gt; 70
+if targetfit &lt; .15 || mean([(targetfit/targetRQ) * targetSD,(RQfit/targetRQ) * biasedSD]) &gt; 35
 
 </code></pre>
 <ul>
