@@ -367,7 +367,7 @@ dx = {
         "controlimg": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]-1),
 				"plus_img": counter(101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
 				"neg_img": counter(102+totalRepeats+numTrialsPerPart[0]+numTrialsType[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsType[0]+numTrialsType[1]-1,2),
-				"trial_type": Shuffle([repmat(1,totalRepeats),repmat(2,numTrialsType[0]),repmat(3,numTrialsType[1]/2),repmat(4,numTrialsType[1]/2)])
+				"trial_type": Shuffle(arrayconcat([repmat(1,totalRepeats),repmat(2,numTrialsType[0]),repmat(3,numTrialsType[1]/2),repmat(4,numTrialsType[1]/2)]))
 
 				/*
 				abruptimg = abrupt image IDs
@@ -408,6 +408,13 @@ cx = {
 		var result = [];
 		while (result.length < count) {
 				result = result.concat(Math.ceil(Math.random() * maxLimit + minLimit-1));
+		}
+		return result;
+	}
+	function arrayconcat(arrays) {
+		var result = [];
+		for (var i=0; i<arrays.length; i++) {
+				result = result.concat(arrays[i]);
 		}
 		return result;
 	}
