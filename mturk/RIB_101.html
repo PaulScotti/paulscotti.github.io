@@ -200,26 +200,24 @@ var startExpTime = new Date();
 var block = 0;
 
 /* Randomize orderings */
-dx.r_study = chance1.shuffle(dx.r_study);
+var r_abruptimg = chance1.shuffle(dx.abruptimg);
 chance1 = Chance(curID);
-dx.r_study = dx.r_study.slice(0,numTrialsPerPart[1]);
-/*dx.r_pracimg = chance1.shuffle(dx.pracimg);
+var r_pracimg = chance1.shuffle(dx.pracimg);
 chance1 = Chance(curID);
-/*dx.r_repeatimg = chance1.shuffle(dx.r_repeatimg);
-chance1 = Chance(curID);*/
-dx.r_TrialType = chance1.shuffle(dx.r_TrialType);
+var r_controlimg = chance1.shuffle(dx.controlimg);
 chance1 = Chance(curID);
-dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
+var r_plus_img = chance1.shuffle(dx.plus_img);
 chance1 = Chance(curID);
-
-Shuffle(dx.r_repeattrial);
-dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); /*this means totalRepeats num of repeats! Needs to be multiple of 5*/
+var r_neg_img = chance1.shuffle(dx.neg_img);
+chance1 = Chance(curID);
+var r_trial_type = chance1.shuffle(dx.trial_type);
+chance1 = Chance(curID);
 
 /* Setup reused image variable */
-var img = new Image();
-img.crossOrigin = "anonymous";
-var imgX = new Image();
-imgX.crossOrigin = "anonymous";
+var img1 = new Image();
+img1.crossOrigin = "anonymous";
+var img2 = new Image();
+img2.crossOrigin = "anonymous";
 var imgPop = new Image();
 imgPop.crossOrigin = "anonymous";
 
@@ -240,8 +238,8 @@ var ctx4 = feedbackCorrectTri.getContext("2d");
 ringItem = document.getElementById("ringItem");
 var ringctx = ringItem.getContext("2d");
 
-imgX.src = $('#' + dx.pracimg[0])[0].src;
-imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+img2.src = $('#' + r_pracimg[0])[0].src;
+imgPop.src = $('#' + r_abruptimg[numRepeats])[0].src;
 
 /* Start by hiding pop quiz text */
 $('#popQuiz').hide();
@@ -252,48 +250,6 @@ function GenerateTrials() {
     curID = 'no_id';
   }
   Math.seedrandom(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
-
-  seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 90)];
-  seed = [seed[0], seed[1], (seed[1] + 90)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
-  wrap(seed);
-
-  for (var i=0; i<numTrialsPerPart[1]; i++) {
-    var pickSeed = dx.r_TrialType[i];
-    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
-    wrap(curMean);
-    // let indexArr = dx.r_test;
-    // origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
-    triTrials.push({'mean': seed[pickSeed],
-                    'seed': pickSeed,
-                    'isPractice': 0,
-                    'item': curMean,
-                    'itemID': dx.r_study[i],
-                    'origTrial': i+1});
-  }
-  triTrialsTest = _.clone(triTrials);
-  triTrials = chance1.shuffle(triTrials);
-  chance1 = Chance(curID);
-
-  for (var i=0; i<numTrialsPerPart[0]; i++) {
-    var cap = 360/numTrialsPerPart[0];
-    var curMean = counter(1,360,cap);
-    practiceTriTrials.push({'isPractice': 1,
-                    'item': curMean[i]});
-  }
-
-  for (var i=0; i<dx.rep_TrialType.length; i++) {
-    var pickSeed = dx.rep_TrialType[i];
-    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
-    wrap(curMean);
-    repeatTriTrials.push({'mean': seed[pickSeed],
-                    'seed': pickSeed,
-                    'isPractice': 0,
-                    'item': curMean,
-                    'origTrial': dx.r_repeattrial[i] + 1});
-  }
-    repeatTriTrials = Shuffle(repeatTriTrials);
 }
 
 /* Start the experiment, this function is the first to operate! */
@@ -303,8 +259,6 @@ function StartExperiment() {
     return false;
   }
   GenerateTrials();
-
-  r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
 
   $('#instructions').hide();
   NextTrial();
@@ -335,7 +289,6 @@ function NextTrial() {
   } else {
     ShowTrial(r_totalTrials[currentPart][currentTrial]);
   }
-
 }
 
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
@@ -344,15 +297,15 @@ function ShowTrial(trialStruct) {
         alert('You are half way through the learning phase of this experiment! Keep it up!');
     }
 
-    img.onload = function() {
+    img1.onload = function() {
       start(ctx,trialStruct.item,200,200,imgWidth,imgHeight,flip,img);
     }
     if (currentPart == 0) {
-        img.src = $('#' + dx.pracimg[currentTrial])[0].src;
+        img1.src = $('#' + dx.pracimg[currentTrial])[0].src;
     } else if (readyRepeat == 1 && waitObject != 2) {
-        img.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+        img1.src = $('#' + dx.repeatimg[numRepeats])[0].src;
     } else {
-        img.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
+        img1.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
     }
 
     $('#allItems').css('margin-top', -1000);
@@ -422,7 +375,7 @@ function NextFeedTrial() {
       currentPart++;
         alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
         currentTrial = -1;
-        imgX.src = $('#' + r_totalTrials[2][0].itemID)[0].src; /* preload first image of test phase */
+        img2.src = $('#' + r_totalTrials[2][0].itemID)[0].src; /* preload first image of test phase */
         NextTrial();
         return;
     }
@@ -437,10 +390,10 @@ function NextFeedTrial() {
 
   /* Set starting color as grayscale */
   if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
+    ctx2.drawImage(img2, 200, 200, imgWidth, imgHeight);
     recolor(ctx2,127.5,127.5,127.5,200,200);
   } else if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
+    ctx2.drawImage(img2, 200, 200, imgWidth, imgHeight);
     recolor(ctx2,127.5,127.5,127.5,200,200);
   } else {
     start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
@@ -478,11 +431,11 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (currentPart == 0) {
-          img.src = $('#' + dx.pracimg[currentFeedTrial])[0].src;
+          img1.src = $('#' + dx.pracimg[currentFeedTrial])[0].src;
       } else if (survey == 0 && repeat == 0) {
-          img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemID)[0].src;
+          img1.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemID)[0].src;
       } else if (survey == 1 && repeat == 0) {
-          img.src = $('#999')[0].src;
+          img1.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
           ctx2.beginPath();
           ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
@@ -716,7 +669,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           start(ctx4,imgNum,40,100, imgWidth, imgHeight, flip, img);
 
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-          img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;
+          img1.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;
           }
           ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
 
@@ -741,9 +694,9 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
               imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
               numRepeats++;
           } else if (currentFeedTrial < numTrialsPerPart[1]-1) {
-              img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemID)[0].src;
+              img1.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemID)[0].src;
           } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
-              img.src = $('#999')[0].src;
+              img1.src = $('#999')[0].src;
           }
           ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
