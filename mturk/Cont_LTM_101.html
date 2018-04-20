@@ -863,9 +863,10 @@ function SaveData() {
     var storageRef = firebase.storage().ref('data/' + curID + '.json');
     storageRef.put(blob);
 
-    document.getElementById("saving").innerHTML = "Done!";
+    document.getElementById("saving").innerHTML = "Done! Submitting HIT...";
 
-    document.forms[0].submit();
+    // submit HIT after waiting a few seconds to make sure data got sent
+    setTimeout(function(){ document.forms[0].submit(); }, 3000);
 }
 
 function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
