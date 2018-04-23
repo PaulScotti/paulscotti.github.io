@@ -150,8 +150,8 @@ document.oncontextmenu = function() {
 }
 
 /* Options: */
-var totalRepeats = 30; // need be factor of r_TrialType.length (40% = 10)
-var numTrialsPerPart = [5, 240, 240]; // prac, study, test (should = study); 240 tested nonrepeat trials
+var totalRepeats = 2; // need be factor of r_TrialType.length (40% = 10)
+var numTrialsPerPart = [2, 5, 5]; // prac, study, test (should = study); 240 tested nonrepeat trials
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
 
 <script>
@@ -512,7 +512,11 @@ function ShowContinuousReport(trialStruct) {
         $('#pointer').hide();
       }
 
+      if (survey == 1) {
+      flip == 0? curError = Math.abs(imgNum-seed[0]) : curError = Math.abs(wrap([180-imgNum])-wrap([180-seed[0]]));
+      } else {
       flip == 0? curError = Math.abs(imgNum-trialStruct.item) : curError = Math.abs(wrap([180-imgNum])-wrap([180-trialStruct.item]));
+      }
       if (curError > 180) {
           curError = 360-curError;
       } else if (curError < -180) {
