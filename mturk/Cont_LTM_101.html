@@ -547,6 +547,7 @@ function ShowContinuousReport(trialStruct) {
           }
       } else {
           trialStruct.reportedAngle = Math.round(angleDeg);
+          trialStruct.reportedColor = imgNum;
           trialStruct.rt = (new Date()) - startTime;
           trialStruct.col_diff = curError;
           $(document).unbind('click.curTrial');
@@ -629,10 +630,10 @@ function ShowConfidence(trialStruct,angleDeg) {
     $(document).bind('click.curTrial', function(e) {
       if (currentPart == 0 && currentFeedTrial == 0 && noMore == 0) {
         if (lastRot == 0) {
-          alert('Lookin\' good! Now finish your highlighting in the other circular direction. ' +
+          alert('Now finish your highlighting in the other circular direction. ' +
           ' Since you went clockwise so far, finish by clicking counterclockwise from your original best guess.')
         } else {
-          alert('Lookin\' good! Now finish your highlighting in the other circular direction. ' +
+          alert('Now finish your highlighting in the other circular direction. ' +
           ' Since you went counterclockwise so far, finish by clicking clockwise from your original best guess.')
         }
       }
