@@ -263,13 +263,13 @@ function GenerateTrials() {
     var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
     // let indexArr = dx.r_test;
-    // origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
+    origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
                     'isPractice': 0,
                     'item': curMean,
                     'itemID': dx.r_study[i],
-                    'origTrial': i+1});
+                    'origTrial': origTrial});
   }
   triTrialsTest = _.clone(triTrials);
   triTrials = chance1.shuffle(triTrials);
