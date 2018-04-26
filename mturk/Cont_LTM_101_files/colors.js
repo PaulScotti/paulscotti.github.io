@@ -387,11 +387,12 @@ dx = {
 			return result;
 	}
 
-/* 12 repeats, 102 test objects, 50% rich quad (1)
+/*
 TrialType is for test objects
 r_TrialType is for the repeat-detection objects
 rep_TrialType is the seeds used for repeated objects
 r_repeattrial determines what trial to repeat on
 repeatimg are the IDs for the repeated images
 r_study are the presented objects that will be tested
-colors is for CIE LAB RGB conversions */
+colors is for CIE LAB RGB conversions
+*/

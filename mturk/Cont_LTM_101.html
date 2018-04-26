@@ -262,8 +262,8 @@ function GenerateTrials() {
     var pickSeed = dx.r_TrialType[i];
     var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
-    // let indexArr = dx.r_test;
-    origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
+    // let indexArr = r_totalTrials[1];
+    // origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
                     'isPractice': 0,
@@ -272,7 +272,7 @@ function GenerateTrials() {
                     'origTrial': origTrial});
   }
   triTrialsTest = _.clone(triTrials);
-  triTrials = chance1.shuffle(triTrials);
+  triTrialsTest = chance1.shuffle(triTrialsTest);
   chance1 = Chance(curID);
 
   for (var i=0; i<numTrialsPerPart[0]; i++) {
