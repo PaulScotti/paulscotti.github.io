@@ -195,7 +195,7 @@ var points = 0;
 var basepay = 6;
 var radioResp = 0;
 var likertAns = 0;
-var explicitErr = -999;
+var explicitColor = -999;
 var startExpTime = new Date();
 
 /* Randomize orderings */
@@ -538,7 +538,7 @@ function ShowContinuousReport(trialStruct) {
 
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
-          explicitErr = curError;
+          explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
       }
 
       if (mouseMoved == 0) {
@@ -855,7 +855,7 @@ function SaveData() {
     "studyTrials": r_totalTrials[1],
     "testTrials": r_totalTrials[2],
     "radioResponse": radioResp,
-    "explicitError": explicitErr,
+    "explicitColor": explicitColor,
     "LikertAns": likertAns,
     "Bonus": points,
     "Seeds": seed,
