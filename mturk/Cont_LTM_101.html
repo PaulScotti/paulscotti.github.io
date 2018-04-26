@@ -547,7 +547,7 @@ function ShowContinuousReport(trialStruct) {
           }
       } else {
           trialStruct.reportedAngle = Math.round(angleDeg);
-          trialStruct.reportedColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-angleDeg-randrotate]));
+          trialStruct.reportedColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180+wrap([angleDeg-randrotate])]));
           trialStruct.rt = (new Date()) - startTime;
           trialStruct.col_diff = curError;
           $(document).unbind('click.curTrial');
