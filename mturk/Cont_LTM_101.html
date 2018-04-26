@@ -269,7 +269,7 @@ function GenerateTrials() {
                     'isPractice': 0,
                     'item': curMean,
                     'itemID': dx.r_study[i],
-                    'origTrial': origTrial});
+                    'origTrial': i});
   }
   triTrialsTest = _.clone(triTrials);
   triTrialsTest = chance1.shuffle(triTrialsTest);
