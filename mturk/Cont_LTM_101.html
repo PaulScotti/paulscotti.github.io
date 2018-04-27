@@ -70,7 +70,7 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<canvas id="item"  width=500 height=500></canvas></div></div>
+<canvas id="item"  width=600 height=600></canvas></div></div>
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
@@ -150,7 +150,7 @@ document.oncontextmenu = function() {
 }
 
 /* Options: */
-var totalRepeats = 30; // 30 need be factor of r_TrialType.length (in this case it's 5)
+var totalRepeats = 20; // 20 need be factor of r_TrialType.length (in this case it's 5)
 var numTrialsPerPart = [5, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
 
@@ -339,12 +339,16 @@ function NextTrial() {
 
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
-    if (currentTrial == Math.ceil(numTrialsPerPart[1]/2) && currentPart == 1 && readyRepeat == 0) {
-        alert('You are half way through the learning phase of this experiment! Keep it up!');
+    if (currentTrial == Math.ceil(numTrialsPerPart[1]/4) && currentPart == 1 && readyRepeat == 0) {
+        alert('You are a quarter of the way through the study phase of this experiment! Keep it up!');
+    } else if (currentTrial == Math.ceil(numTrialsPerPart[1]/2) && currentPart == 1 && readyRepeat == 0) {
+        alert('You are half of the way through the study phase of this experiment! Keep it up!');
+    } else if (currentTrial == Math.ceil(numTrialsPerPart[1]*(3/4)) && currentPart == 1 && readyRepeat == 0) {
+          alert('You are 3/4 of the way through the study phase of this experiment! Keep it up!');
     }
 
     img.onload = function() {
-      start(ctx,trialStruct.item,250,250,imgWidth,imgHeight,flip,img);
+      start(ctx,trialStruct.item,175, 180,imgWidth,imgHeight,flip,img);
     }
     if (currentPart == 0) {
         img.src = $('#' + dx.pracimg[currentTrial])[0].src;
@@ -402,8 +406,8 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  ctx2.drawImage(imgPop, 250,250,imgWidth,imgHeight);
-  recolor(ctx2,127.5,127.5,127.5,200,200);
+  ctx2.drawImage(imgPop, 175, 180,imgWidth,imgHeight);
+  recolor(ctx2,127.5,127.5,127.5,175, 180);
   mouseMoved = 0;
 };
 
@@ -436,13 +440,13 @@ function NextFeedTrial() {
 
   /* Set starting color as grayscale */
   if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,200,200);
+    ctx2.drawImage(imgX, 175, 180, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 180);
   } else if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,200,200);
+    ctx2.drawImage(imgX, 175, 180, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 180);
   } else {
-    start(ctx2,'gray',250,250, imgWidth, imgHeight, flip, img);
+    start(ctx2,'gray',175, 180, imgWidth, imgHeight, flip, img);
   }
   mouseMoved = 0;
 }
@@ -471,9 +475,9 @@ function ShowContinuousReport(trialStruct) {
       mouseMoved = 1;
 
       if (repeat == 0) {
-        start(ctx2,imgNum,250,250,imgWidth,imgHeight,flip,img);
+        start(ctx2,imgNum,175, 180,imgWidth,imgHeight,flip,img);
       } else if (repeat == 1) {
-        start(ctx2,imgNum,250,250,imgWidth,imgHeight,flip,imgPop);
+        start(ctx2,imgNum,175, 180,imgWidth,imgHeight,flip,imgPop);
       }
 
       if (currentPart == 0) {
@@ -715,14 +719,14 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
           imgNum = Math.round(wrap([angleDeg-randrotate]));
-          start(ctx3,imgNum,80,100, imgWidth, imgHeight, flip, img);
+          start(ctx3,imgNum,80,100, imgWidth-50, imgHeight-50, flip, img);
           imgNum = flip == 0? Math.round(trialStruct.item) : Math.round(wrap([180-trialStruct.item]));
-          start(ctx4,imgNum,40,100, imgWidth, imgHeight, flip, img);
+          start(ctx4,imgNum,40,100, imgWidth-50, imgHeight-50, flip, img);
 
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
           img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;
           }
-          ctx2.drawImage(img, 250,250,imgWidth,imgHeight);
+          ctx2.drawImage(img, 175, 180,imgWidth,imgHeight);
 
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
@@ -797,7 +801,7 @@ function Survey() {
       alert(document.getElementById("underText").innerHTML);
 
       /* Set starting color as grayscale */
-      start(ctx2,'gray',250,250, imgWidth, imgHeight, flip, img);
+      start(ctx2,'gray',175, 180, imgWidth, imgHeight, flip, img);
       mouseMoved = 0;
   } else {
       alert('Please select an option.');
