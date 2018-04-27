@@ -366,9 +366,21 @@ dx = {
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
 				"r_repeattrial": counter(1,numTrialsPerPart[1],2),
-				"r_TrialType": repmat([0,0,1,2,3],numTrialsPerPart[1]/5),
+				"r_TrialType": repmat([0,0,1,2,3],trialsPerBlock),
 				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
 	};
+
+	var tempRand = _.clone(dx.r_TrialType);
+
+	for (var blockNum=0; blockNum<=totBlocks; blockNum++) {
+    let tempRand2 = chance1.shuffle(tempRand);
+		if (blockNum == 0) {
+    	dx.r_TrialType = tempRand2;
+		} else {
+    	dx.r_TrialType.push.apply(dx.r_TrialType,tempRand2);
+		}
+  }
+  chance1 = Chance(curID);
 
 	function repmat(array, count) {
 	    var result = [];
