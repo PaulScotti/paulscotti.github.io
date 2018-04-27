@@ -70,7 +70,7 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<canvas id="item"  width=400 height=400></canvas></div></div>
+<canvas id="item"  width=500 height=500></canvas></div></div>
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
@@ -158,9 +158,9 @@ var numTrialsPerPart = [5, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), 
 chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
 
 var imgNum = 0;
-var imgWidth = 200;
-var imgHeight = 200;
-var displayTime = 1000;
+var imgWidth = 250;
+var imgHeight = 250;
+var displayTime = 2000;
 var isiTime = 1000;
 var origColors = _.clone(colors); // clone is required to create a new variable and not a pointer variable
 var flippedColors = _.clone(colors).reverse();
@@ -344,7 +344,7 @@ function ShowTrial(trialStruct) {
     }
 
     img.onload = function() {
-      start(ctx,trialStruct.item,200,200,imgWidth,imgHeight,flip,img);
+      start(ctx,trialStruct.item,250,250,imgWidth,imgHeight,flip,img);
     }
     if (currentPart == 0) {
         img.src = $('#' + dx.pracimg[currentTrial])[0].src;
@@ -402,7 +402,7 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  ctx2.drawImage(imgPop, 200,200,imgWidth,imgHeight);
+  ctx2.drawImage(imgPop, 250,250,imgWidth,imgHeight);
   recolor(ctx2,127.5,127.5,127.5,200,200);
   mouseMoved = 0;
 };
@@ -442,7 +442,7 @@ function NextFeedTrial() {
     ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
     recolor(ctx2,127.5,127.5,127.5,200,200);
   } else {
-    start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
+    start(ctx2,'gray',250,250, imgWidth, imgHeight, flip, img);
   }
   mouseMoved = 0;
 }
@@ -471,9 +471,9 @@ function ShowContinuousReport(trialStruct) {
       mouseMoved = 1;
 
       if (repeat == 0) {
-        start(ctx2,imgNum,200,200,imgWidth,imgHeight,flip,img);
+        start(ctx2,imgNum,250,250,imgWidth,imgHeight,flip,img);
       } else if (repeat == 1) {
-        start(ctx2,imgNum,200,200,imgWidth,imgHeight,flip,imgPop);
+        start(ctx2,imgNum,250,250,imgWidth,imgHeight,flip,imgPop);
       }
 
       if (currentPart == 0) {
@@ -722,7 +722,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
           img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;
           }
-          ctx2.drawImage(img, 200,200,imgWidth,imgHeight);
+          ctx2.drawImage(img, 250,250,imgWidth,imgHeight);
 
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
@@ -797,7 +797,7 @@ function Survey() {
       alert(document.getElementById("underText").innerHTML);
 
       /* Set starting color as grayscale */
-      start(ctx2,'gray',200,200, imgWidth, imgHeight, flip, img);
+      start(ctx2,'gray',250,250, imgWidth, imgHeight, flip, img);
       mouseMoved = 0;
   } else {
       alert('Please select an option.');

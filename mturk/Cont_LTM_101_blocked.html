@@ -150,8 +150,8 @@ document.oncontextmenu = function() {
 }
 
 /* Options: */
-var totalRepeats = 30; // 30 need be factor of r_TrialType.length (in this case it's 5)
-var numTrialsPerPart = [5, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+var totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
+var numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors.js"> </script>
 
 <script>
@@ -175,7 +175,7 @@ var totalTrials = [];
 /* Pointers for where we are in the experiment: */
 var currentTrial = -1;
 var currentPart = 0;
-var currentFeedTrial = -1;
+var currentFeedTrial = 0;
 var feedbackPhase = 0;
 var repeat = 0;
 var numRepeats = 0;
@@ -197,8 +197,8 @@ var radioResp = 0;
 var likertAns = 0;
 var explicitColor = -999;
 var block = 1;
-var trialsPerBlock = 40;
-var totBlocks = numTrialsPerPart[1].length/trialsPerBlock;
+var trialsPerBlock = 10;
+var totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 var startExpTime = new Date();
 
 /* Randomize orderings */
@@ -243,7 +243,7 @@ ringItem = document.getElementById("ringItem");
 var ringctx = ringItem.getContext("2d");
 
 imgX.src = $('#' + dx.pracimg[0])[0].src;
-imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+// imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
 
 /* Start by hiding pop quiz text */
 $('#popQuiz').hide();
@@ -319,8 +319,19 @@ function NextTrial() {
     currentTrial++;
   }
 
-  if (currentTrial % trialsPerBlock == 0) {
-      alert("Finished block "+block+" of "+totBlocks+". You will now see all previous objects from this block, select their original color by clicking on the color wheel (be as precise as possible).");
+  if (currentTrial>numTrialsPerPart[currentPart]-1 && currentPart == 0) {
+    alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.");
+    if (currentPart == 1) {
+      currentPart = 2;
+    }
+    $('#showTrial').hide();
+
+    /* Start continuous color report trials */
+    NextFeedTrial();
+    /* need return; otherwise the ShowTrial below executes */
+    return;
+  } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
+      alert("Finished Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
       block = block + 1;
       if (currentPart == 1) {
         currentPart = 2;
@@ -420,15 +431,8 @@ function NextFeedTrial() {
       $('showTrial').hide;
       Survey1();
       return;
-    } else if (currentFeedTrial % trialsPerBlock == 0)
-      if (currentPart == 2) {
-        currentPart = 1;
-      }
-      /* Go back to study phase */
-      NextTrial();
-      return;
     } else {
-      currentFeedTrial = -1;
+      currentFeedTrial = 0;
       currentPart++;
         alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
         currentTrial = -1;
@@ -436,6 +440,12 @@ function NextFeedTrial() {
         NextTrial();
         return;
     }
+  } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2) {
+    currentPart = 1;
+    /* Go back to study phase */
+    alert("Starting study phase of Block "+block+".")
+    NextTrial();
+    return;
   }
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
@@ -446,7 +456,7 @@ function NextFeedTrial() {
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
 
   /* Set starting color as grayscale */
-  if (currentPart == 0 && currentFeedTrial == 0) {
+  if (currentFeedTrial % trialsPerBlock == 0) {
     ctx2.drawImage(imgX, 200, 200, imgWidth, imgHeight);
     recolor(ctx2,127.5,127.5,127.5,200,200);
   } else if (currentPart == 0 && currentFeedTrial == 0) {

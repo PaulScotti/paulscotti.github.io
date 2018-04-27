@@ -10,7 +10,7 @@
 }
 
 #allItems {
-  position: relative;
+  position: relative; left: -55; top: -75;
 }
 
 #fixation {
@@ -44,4 +44,3 @@
   user-select: none;
   cursor: default;
 }
-
