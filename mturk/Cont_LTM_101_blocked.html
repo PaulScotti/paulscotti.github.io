@@ -150,12 +150,15 @@ document.oncontextmenu = function() {
 }
 
 /* Options: */
+chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
 var totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 var numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+var block = 1;
+var trialsPerBlock = 10;
+var totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
 <script>
-chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
 
 var imgNum = 0;
 var imgWidth = 250;
@@ -196,9 +199,6 @@ var basepay = 6;
 var radioResp = 0;
 var likertAns = 0;
 var explicitColor = -999;
-var block = 1;
-var trialsPerBlock = 10;
-var totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 var startExpTime = new Date();
 
 /* Randomize orderings */
