@@ -11827,16 +11827,17 @@ div#notebook {
 <strong>NQs only: Comparing between Model A and Model B, no sig differences</strong></p>
 <h2 id="Priors-(MODEL-A):-(did-test-variations-on-this,-which-didn't-change-too-much)">Priors (MODEL A): (did test variations on this, which didn't change too much)<a class="anchor-link" href="#Priors-(MODEL-A):-(did-test-variations-on-this,-which-didn't-change-too-much)">&#182;</a></h2><p><img src="https://puu.sh/Abn7h/12ed55162f.png" alt=""></p>
 <h2 id="Priors-(MODEL-B):">Priors (MODEL B):<a class="anchor-link" href="#Priors-(MODEL-B):">&#182;</a></h2><p><img src="https://puu.sh/Abnah/7248446c62.png" alt=""></p>
-<h2 id="Exclusions">Exclusions<a class="anchor-link" href="#Exclusions">&#182;</a></h2><h4 id="Target-proportion-is-less-than-.10">Target proportion is less than .10<a class="anchor-link" href="#Target-proportion-is-less-than-.10">&#182;</a></h4><ul>
+<h2 id="Exclusions">Exclusions<a class="anchor-link" href="#Exclusions">&#182;</a></h2><p>(also tried toying around with these exclusions, but I had even more trouble than last time when separating the data into our subjective interpretations for who should go where, so I stayed with the same exclusions from before aside from reducing the exclusion for tprop from .15 to .10, as several more subjects had decreased tprop in this corrected data)</p>
+<h4 id="Target-proportion-is-less-than-.10">Target proportion is less than .10<a class="anchor-link" href="#Target-proportion-is-less-than-.10">&#182;</a></h4><ul>
 <li>NQs &amp; FQ (Model A): 6 pilot subjects excluded</li>
 <li>NQs &amp; FQ (Model B): 8 pilot subjects excluded</li>
 <li>NQs only (Model A): 10 pilot subjects excluded</li>
 <li>NQs only (Model B): 9 pilot subjects excluded</li>
 </ul>
 <h4 id="Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-70-degrees.">Average standard deviation across target and biased guessing distributions (weighted by respective proportion fits) exceeds 70 degrees.<a class="anchor-link" href="#Average-standard-deviation-across-target-and-biased-guessing-distributions-(weighted-by-respective-proportion-fits)-exceeds-70-degrees.">&#182;</a></h4>
-<pre><code>targetRQ = targetfit + RQfit + FQfit;
+<pre><code>targetRQFQ = targetfit + RQfit + FQfit;
 
-if targetfit &lt; .15 || ((targetfit * targetSD) + (RQfit * biasedSD) + (FQfit * biasedSD) / targetRQ &gt; 70
+if targetfit &lt; .10 || ((targetfit * targetSD) + (RQfit * biasedSD) + (FQfit * biasedSD) / targetRQFQ &gt; 70
 
 </code></pre>
 <ul>
@@ -13011,7 +13012,7 @@ BvIDAADY+D+Zwv2EhRNduAAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="NQs-&amp;-FQ,-Model-A">NQs &amp; FQ, Model A<a class="anchor-link" href="#NQs-&amp;-FQ,-Model-A">&#182;</a></h2>
+<h2 id="NQs-&amp;-FQ,-Model-B">NQs &amp; FQ, Model B<a class="anchor-link" href="#NQs-&amp;-FQ,-Model-B">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13574,7 +13575,7 @@ AAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="NQ-only,-Model-A">NQ only, Model A<a class="anchor-link" href="#NQ-only,-Model-A">&#182;</a></h2>
+<h2 id="NQ-only,-Model-B">NQ only, Model B<a class="anchor-link" href="#NQ-only,-Model-B">&#182;</a></h2>
 </div>
 </div>
 </div>
