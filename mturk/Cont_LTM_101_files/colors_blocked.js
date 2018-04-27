@@ -371,6 +371,7 @@ dx = {
 	};
 
 	var tempRand = _.clone(dx.r_TrialType);
+	console.log(tempRand);
 
 	for (var blockNum=0; blockNum<=totBlocks; blockNum++) {
     let tempRand2 = chance1.shuffle(tempRand);
