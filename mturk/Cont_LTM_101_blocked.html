@@ -74,14 +74,14 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="allItems">
 <canvas id="item" width=600 height=600></canvas>
 <canvas id="CDitem" width=600 height=600></canvas>
-<canvas id="CDfixitem" width=600 height=600></canvas></div></div>
+</div></div>
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
 <canvas id="contItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <div id="pointer"></div>
-<div id="popQuiz"><p>What color was this object?</p></div>
+<div id="popQuiz"><p>Did the color of this square change?</p></div>
 <div id="underText"><p></p></div>
 </div>
 
@@ -246,6 +246,9 @@ imgCD.src = $('#diff1')[0].src;
 let CDfix = new Image();
 CDfix.crossOrigin = "anonymous";
 CDfix.src = $('#CDfixation')[0].src; //lowercase CDfixation refers to the actual image, CDFixation refers to the class
+let imgCDtest = new Image();
+imgCDtest.crossOrigin = "anonymous";
+imgCDtest.src = $('#diff2')[0].src;
 
 /* Setting up canvas contexts */
 const item = document.getElementById("item");
@@ -260,8 +263,7 @@ const ringItem = document.getElementById("ringItem");
 const ringctx = ringItem.getContext("2d");
 const CDitem = document.getElementById("CDitem");
 const cdctx = CDitem.getContext("2d");
-const CDfixitem = document.getElementById("CDfixitem");
-const cdfixctx = CDfixitem.getContext("2d");
+
 
 imgX.src = $('#' + dx.pracimg[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
@@ -357,17 +359,6 @@ function NextTrial() {
       alert('Prepare for change detection task!');
       ChangeDetection();
       return;
-
-      /*alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
-      block = block + 1;
-      if (currentPart == 1) {
-        currentPart = 2;
-      }
-      $('#showTrial').hide();
-      blockStart = 1;
-
-      NextFeedTrial();
-      return;*/
   }
 
   if (readyRepeat == 1 && waitObject != 2) {
@@ -495,40 +486,39 @@ function NextFeedTrial() {
 }
 
 function ChangeDetection() { // filler change detection task before every test phase
-  console.log('start');
-  imgCD.onload = function() {
-    cdfixctx.drawImage(CDfix,0,0,600,600);
-    cdctx.drawImage(imgCD,0,0,600,600);
-  }
-$('#showTrial').show();
-$('#item').css('margin-top', -1000);
-$('#CDfixation').css('margin-top', 0);
+  alert('Before we test your memory, please complete a short change detection task. You will soon see an array of colored squares that appear for a brief moment. Then, one colored square will be presented. The task is to select whether the single colored square is the same or a different color than it was before.')
+
+  $('#showTrial').show();
+  $('#item').css('margin-top', -1000);
+  $('#allItems').css('margin-top', 0);
+  $('#CDfixation').css('margin-top', 0); // show fixation
+
+  cdctx.drawImage(CDfix,0,0,600,600);
   for (let numCD = 0; numCD <= 1; numCD++) {
     console.log(numCD);
-    $('#allItems').css('margin-top', 0);
-    $('#CDfixation').css('margin-top', 0); // show fixation
-
     setTimeout(function(){  // after 800 ms, show colored memory array
-      $('#CDfixitem').css('margin-top', -1000);
-      $('#CDitem').css('margin-top', 0);
+      cdctx.drawImage(imgCD,0,0,600,600);
       console.log('Step1');
           setTimeout(function(){  // after 200 ms, show fixation again
-            $('#CDitem').css('margin-top', -1000);
-            $('#CDfixitem').css('margin-top', 0);
+            cdctx.drawImage(CDfix,0,0,600,600);
             console.log('Step2');
                   setTimeout(function(){  // after 900 ms, show test array
-                    $('#CDfixitem').css('margin-top', -1000);
-                    $('#CDitem').css('margin-top', -1000);
-                    console.log('Step3');
-                          alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
-                          block = block + 1;
-                          if (currentPart == 1) {
-                            currentPart = 2;
-                          }
-                          $('#showTrial').hide();
-                          blockStart = 1;
+                          cdctx.drawImage(imgCDtest,0,0,600,600);
+                          document.getElementById("underText").innerHTML = "Did the color of this square change?";
+                          $('#underText').show();
 
-                          NextFeedTrial();
+                            /*setTimeout(function(){
+                                alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
+                                block = block + 1;
+                                if (currentPart == 1) {
+                                  currentPart = 2;
+                                }
+                                $('#showTrial').hide();
+                                $('#underText').hide();
+                                blockStart = 1;
+
+                                NextFeedTrial();
+                              }, 1000);*/
                   }, 900);
           }, 200);
      }, 800);

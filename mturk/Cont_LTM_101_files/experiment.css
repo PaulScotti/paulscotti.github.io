@@ -25,6 +25,29 @@ body {
   display: none;
 }
 
+#startExperimentButton2 {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+
+#startExperimentButton2:hover {
+  border: 3px inset gray;
+}
+
+#startExperimentButton2:active {
+  border: 3px inset gray;
+}
+
+#startExperimentButton2 {
+  display: none;
+}
+
 #loading {
   font-size: 14pt;
   font-style: italic;
