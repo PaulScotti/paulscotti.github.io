@@ -227,6 +227,8 @@ let imgX = new Image();
 imgX.crossOrigin = "anonymous";
 let imgPop = new Image();
 imgPop.crossOrigin = "anonymous";
+let imgCD = new Image();
+imgCD.crossOrigin = "anonymous";
 
 /* Setup ring image */
 let ringImg = new Image();
@@ -334,6 +336,11 @@ function NextTrial() {
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
+      /*alert('Prepare for change detection task!');
+      $('#showTrial').hide();
+      ChangeDetection();
+      return;*/
+
       alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
       block = block + 1;
       if (currentPart == 1) {
@@ -464,6 +471,26 @@ function NextFeedTrial() {
   }
   mouseMoved = 0;
 }
+
+/*function ChangeDetection() {
+  $('#allItems').css('margin-top', -1000);
+  $('#showTrial').show();
+  setTimeout(function() {
+      $('#allItems').css('margin-top', 0);
+      setTimeout(function() {
+          $('#allItems').css('margin-top', -1000);
+          setTimeout(function() {
+            $('#showTrial').hide();
+              if (currentPart == 0) {
+                  NextTrial();
+              } else {
+
+              }
+            }
+          }, isiTime);
+      }, displayTime);
+  }, 500);
+}*/
 
 /* Always track the mouse */
 let mouseX, mouseY;
