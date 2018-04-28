@@ -374,9 +374,9 @@ let colors = [
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
 		if (blockNum == 0) {
-    	dx.r_TrialType = _.clone(Shuffle(tempRand));
+    	dx.r_TrialType = _.clone(chance1.shuffle(tempRand));
 		} else {
-    	dx.r_TrialType.push.apply(dx.r_TrialType,Shuffle(tempRand));
+    	dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(tempRand));
 		}
   }
 

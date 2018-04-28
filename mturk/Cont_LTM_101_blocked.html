@@ -178,7 +178,7 @@ let r_totalTrials = [];
 /* Pointers for where we are in the experiment: */
 let currentTrial = -1;
 let currentPart = 0;
-let currentFeedTrial = 0;
+let currentFeedTrial = -1;
 let feedbackPhase = 0;
 let repeat = 0;
 let numRepeats = 0;
@@ -213,12 +213,12 @@ let relY = -999;
 let parentOffset = -999;
 
 /* Randomize orderings */
-// chance1 = Chance(curID); // Using the same initialized rng so that each array is randomized the same way
-Shuffle(dx.r_study);
-Shuffle(dx.r_TrialType);
-Shuffle(dx.rep_TrialType);
-Shuffle(dx.r_repeattrial);
-dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //what trials will be repeat trials (equals totalRepeats)
+chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can trace back their trials
+chance1.shuffle(dx.r_study);
+chance1.shuffle(dx.r_TrialType);
+chance1.shuffle(dx.rep_TrialType);
+chance1.shuffle(dx.r_repeattrial);
+dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //determine which trials will be repeat trials (equals totalRepeats)
 
 /* Setup reused image variable */
 let img = new Image();
@@ -280,8 +280,7 @@ function GenerateTrials() {
 
   for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
     let tempTest = _.clone(triTrials.slice(trialsPerBlock*blockNum,trialsPerBlock*(blockNum+1)));
-    Shuffle(tempTest);
-    triTrialsTest.push.apply(triTrialsTest,tempTest);
+    triTrialsTest.push.apply(triTrialsTest,chance1.shuffle(tempTest));
   }
 
   for (let i=0; i<numTrialsPerPart[0]; i++) {
@@ -301,7 +300,7 @@ function GenerateTrials() {
                     'item': curMean,
                     'origTrial': dx.r_repeattrial[i] + 1});
   }
-    Shuffle(repeatTriTrials);
+    chance1.shuffle(repeatTriTrials);
 }
 
 /* Start the experiment, this function is the first to operate! */
@@ -922,12 +921,11 @@ function SaveData() {
 
 function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
     flip==0? colors=origColors : colors=flippedColors;
-    if (deg == 'gray') {
-        let col = [127.5,127.5,127.5];
-    } else {
+    let col = [127.5,127.5,127.5];
+    if (deg != 'gray') {
         deg=(deg>=360)?deg-360:deg;
         deg=(deg<0)?deg+360:deg;
-        let col = colors[deg];
+        col = colors[deg];
     }
     context.drawImage(image, initX, initY, imgWidth, imgHeight);
     recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
