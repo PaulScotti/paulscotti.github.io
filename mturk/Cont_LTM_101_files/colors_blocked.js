@@ -372,6 +372,7 @@ const dx = {
 
 	const tempRand = _.clone(dx.r_TrialType);
 	console.log(tempRand);
+	console.log('new');
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
 		if (blockNum == 0) {
