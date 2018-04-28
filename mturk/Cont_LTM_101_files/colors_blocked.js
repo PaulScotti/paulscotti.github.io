@@ -372,6 +372,7 @@ const colors = [
 
 	const tempRand = _.clone(dx.r_TrialType);
 	console.log(tempRand);
+	console.log('asdf');
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
 		let tempRand2 = Shuffle(tempRand);
