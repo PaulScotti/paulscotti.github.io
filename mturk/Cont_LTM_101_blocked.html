@@ -149,6 +149,8 @@ document.oncontextmenu = function() {
     return false;
 }
 
+const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can trace back their trials
+
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 const numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
@@ -213,11 +215,10 @@ let relY = -999;
 let parentOffset = -999;
 
 /* Randomize orderings */
-chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can trace back their trials
-chance1.shuffle(dx.r_study);
-chance1.shuffle(dx.r_TrialType);
-chance1.shuffle(dx.rep_TrialType);
-chance1.shuffle(dx.r_repeattrial);
+dx.r_study = chance1.shuffle(dx.r_study);
+dx.r_TrialType = chance1.shuffle(dx.r_TrialType);
+dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
+dx.r_repeattrial = chance1.shuffle(dx.r_repeattrial);
 dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //determine which trials will be repeat trials (equals totalRepeats)
 
 /* Setup reused image variable */
@@ -300,7 +301,7 @@ function GenerateTrials() {
                     'item': curMean,
                     'origTrial': dx.r_repeattrial[i] + 1});
   }
-    chance1.shuffle(repeatTriTrials);
+    repeatTriTrials = chance1.shuffle(repeatTriTrials);
 }
 
 /* Start the experiment, this function is the first to operate! */
@@ -566,7 +567,7 @@ function ShowContinuousReport(trialStruct) {
       } else if (curError < -180) {
           curError = curError+360;
       }
-      // console.log(curError);
+      console.log(curError);
 
       if (e.isFakeTrigger) {
         trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
@@ -884,6 +885,7 @@ function SaveData() {
   const newDate = new Date();
   const d = {
     "curID": curID,
+    "assignmentID": assignmentID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,
     "endExpTime": newDate,
