@@ -72,7 +72,9 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<canvas id="item"  width=600 height=600></canvas></div></div>
+<canvas id="item" width=600 height=600></canvas>
+<canvas id="CDitem" width=600 height=600></canvas>
+<canvas id="CDfixitem" width=600 height=600></canvas></div></div>
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
@@ -81,12 +83,6 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="pointer"></div>
 <div id="popQuiz"><p>What color was this object?</p></div>
 <div id="underText"><p></p></div>
-</div>
-
-<!-- Structure for change detection task: -->
-<div id="ShowCD">
-<canvas id="CDitem"  width=600 height=600></canvas>
-<canvas id="CDfixitem"  width=600 height=600></canvas>
 </div>
 
 <!-- feedback -->
@@ -163,7 +159,7 @@ const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can t
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 10;
+const trialsPerBlock = 5;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -246,10 +242,10 @@ ringImg.src = $('#ring')[0].src;
 /* Setup CD images */
 let imgCD = new Image();
 imgCD.crossOrigin = "anonymous";
-imgCD.src = $('#CD')[0].src;
+imgCD.src = $('#diff1')[0].src;
 let CDfix = new Image();
 CDfix.crossOrigin = "anonymous";
-CDfix.src = $('#CDFixation')[0].src;
+CDfix.src = $('#CDfixation')[0].src; //lowercase CDfixation refers to the actual image, CDFixation refers to the class
 
 /* Setting up canvas contexts */
 const item = document.getElementById("item");
@@ -359,7 +355,6 @@ function NextTrial() {
     return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
       alert('Prepare for change detection task!');
-      $('#showTrial').hide();
       ChangeDetection();
       return;
 
@@ -500,21 +495,43 @@ function NextFeedTrial() {
 }
 
 function ChangeDetection() { // filler change detection task before every test phase
-
+  console.log('start');
+  imgCD.onload = function() {
+    cdfixctx.drawImage(CDfix,0,0,600,600);
+    cdctx.drawImage(imgCD,0,0,600,600);
+  }
+$('#showTrial').show();
+$('#item').css('margin-top', -1000);
+$('#CDfixation').css('margin-top', 0);
   for (let numCD = 0; numCD <= 1; numCD++) {
-    $('#CDFixation').css('margin-top', 0); // show fixation
+    console.log(numCD);
+    $('#allItems').css('margin-top', 0);
+    $('#CDfixation').css('margin-top', 0); // show fixation
+
     setTimeout(function(){  // after 800 ms, show colored memory array
-      $('#CDFixation').css('margin-top', -1000);
-      $('#ShowCD').css('margin-top', 0);
+      $('#CDfixitem').css('margin-top', -1000);
+      $('#CDitem').css('margin-top', 0);
+      console.log('Step1');
+          setTimeout(function(){  // after 200 ms, show fixation again
+            $('#CDitem').css('margin-top', -1000);
+            $('#CDfixitem').css('margin-top', 0);
+            console.log('Step2');
+                  setTimeout(function(){  // after 900 ms, show test array
+                    $('#CDfixitem').css('margin-top', -1000);
+                    $('#CDitem').css('margin-top', -1000);
+                    console.log('Step3');
+                          alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
+                          block = block + 1;
+                          if (currentPart == 1) {
+                            currentPart = 2;
+                          }
+                          $('#showTrial').hide();
+                          blockStart = 1;
+
+                          NextFeedTrial();
+                  }, 900);
+          }, 200);
      }, 800);
-     setTimeout(function(){  // after 200 ms, show fixation again
-       $('#ShowCD').css('margin-top', -1000);
-       $('#CDFixation').css('margin-top', 0);
-     }, 200);
-     setTimeout(function(){  // after 900 ms, show test array
-       $('#CDFixation').css('margin-top', -1000);
-       $('#ShowCD').css('margin-top', -1000);
-     }, 900);
    }
 }
 
