@@ -164,8 +164,8 @@ const imgWidth = 250;
 const imgHeight = 250;
 const displayTime = 1000;
 const isiTime = 1000;
-const origColors = _.clone(colors); // clone is required to create a new variable and not a pointer variable
-const flippedColors = _.clone(colors).reverse();
+const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
+let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
 
 let practiceTriTrials = [];
