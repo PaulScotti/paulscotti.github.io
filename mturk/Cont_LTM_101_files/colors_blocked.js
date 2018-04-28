@@ -361,7 +361,7 @@ const colors = [
 			[245.5,37,112.5]
 		];
 
-let dx = {
+	let dx = {
         "repeatimg": counter(101,101+totalRepeats-1),
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
