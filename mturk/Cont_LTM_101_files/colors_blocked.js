@@ -374,11 +374,10 @@ const dx = {
 	console.log(tempRand);
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
-    let tempRand2 = Shuffle(tempRand);
 		if (blockNum == 0) {
-    	dx.r_TrialType = tempRand2;
+    	dx.r_TrialType = Shuffle(tempRand);
 		} else {
-    	dx.r_TrialType.push.apply(dx.r_TrialType,tempRand2);
+    	dx.r_TrialType.push.apply(dx.r_TrialType,Shuffle(tempRand));
 		}
   }
 

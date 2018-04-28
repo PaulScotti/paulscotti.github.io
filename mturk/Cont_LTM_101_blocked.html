@@ -218,6 +218,7 @@ Shuffle(dx.r_study);
 Shuffle(dx.r_TrialType);
 Shuffle(dx.rep_TrialType);
 Shuffle(dx.r_repeattrial);
+dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //what trials will be repeat trials (equals totalRepeats)
 
 /* Setup reused image variable */
 let img = new Image();
