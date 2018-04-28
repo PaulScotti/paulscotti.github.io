@@ -83,3 +83,23 @@
   font-weight: bold;
   font-size: 14pt;
 }
+
+#CDFixation {
+	position: absolute;
+	width: 600px;
+	height: 600px;
+	top: 0px;
+	left:0px;
+	background: url(CDfixation.png);
+	background-position: center;
+}
+
+#CDitem {
+	position: absolute;
+	width: 600px;
+	height: 600px;
+	top: 0px;
+	left:0px;
+	background: url(diff1.png);
+	background-position: center;
+}

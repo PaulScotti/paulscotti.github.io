@@ -83,6 +83,13 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="underText"><p></p></div>
 </div>
 
+<!-- Structure for change detection task: -->
+<div id="showCD">
+<div id="ShowCD">
+<canvas id="CDitem"  width=600 height=600></canvas>
+<canvas id="CDFixation"  width=600 height=600></canvas>
+</div></div>
+
 <!-- feedback -->
 <div id="feedback">
     <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
@@ -233,6 +240,8 @@ let imgPop = new Image();
 imgPop.crossOrigin = "anonymous";
 let imgCD = new Image();
 imgCD.crossOrigin = "anonymous";
+let CDfix = new Image();
+CDfix.crossOrigin = "anonymous";
 
 /* Setup ring image */
 let ringImg = new Image();
@@ -485,24 +494,23 @@ function NextFeedTrial() {
   mouseMoved = 0;
 }
 
-function ChangeDetection() {
-  $('#allItems').css('margin-top', -1000);
-  $('#showTrial').show();
-  setTimeout(function() {
-      $('#allItems').css('margin-top', 0);
-      setTimeout(function() {
-          $('#allItems').css('margin-top', -1000);
-          setTimeout(function() {
-            $('#showTrial').hide();
-              if (currentPart == 0) {
-                  NextTrial();
-              } else {
+function ChangeDetection() { // filler change detection task before every test phase
 
-              }
-            }
-          }, isiTime);
-      }, displayTime);
-  }, 500);
+  $('#CDFixation').css('margin-top', 0); // show fixation
+  setTimeout(function(){  // after 800 ms, show colored memory array
+    $('#CDFixation').css('margin-top', -1000);
+    $('#ShowCD').css('margin-top', 0);
+   }, 800);
+   setTimeout(function(){  // after 200 ms, show fixation again
+     $('#ShowCD').css('margin-top', -1000);
+     $('#CDFixation').css('margin-top', 0);
+   }, 200);
+   setTimeout(function(){  // after 900 ms, show test array
+     $('#CDFixation').css('margin-top', -1000);
+     $('#ShowCD').css('margin-top', -1000);
+   }, 900);
+
+
 }
 
 /* Always track the mouse */
