@@ -250,6 +250,8 @@ const feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 const ctx4 = feedbackCorrectTri.getContext("2d");
 const ringItem = document.getElementById("ringItem");
 const ringctx = ringItem.getContext("2d");
+const CDitem = document.getElementById("CDitem");
+const cd_ctx = CDitem.getContext("2d");
 
 imgX.src = $('#' + dx.pracimg[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
@@ -342,12 +344,12 @@ function NextTrial() {
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
-      /*alert('Prepare for change detection task!');
+      alert('Prepare for change detection task!');
       $('#showTrial').hide();
       ChangeDetection();
-      return;*/
+      return;
 
-      alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
+      /*alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
       block = block + 1;
       if (currentPart == 1) {
         currentPart = 2;
@@ -356,7 +358,7 @@ function NextTrial() {
       blockStart = 1;
 
       NextFeedTrial();
-      return;
+      return;*/
   }
 
   if (readyRepeat == 1 && waitObject != 2) {
@@ -483,7 +485,7 @@ function NextFeedTrial() {
   mouseMoved = 0;
 }
 
-/*function ChangeDetection() {
+function ChangeDetection() {
   $('#allItems').css('margin-top', -1000);
   $('#showTrial').show();
   setTimeout(function() {
@@ -501,7 +503,7 @@ function NextFeedTrial() {
           }, isiTime);
       }, displayTime);
   }, 500);
-}*/
+}
 
 /* Always track the mouse */
 let mouseX, mouseY;
