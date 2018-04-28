@@ -103,6 +103,14 @@ body {
   font-size: 20px;
 }
 
+#underText2 {
+  position: relative;
+  width: 600px;
+  top: 620px;
+  text-align: center;
+  font-size: 20px;
+}
+
 #saving {
   display: none;
   position: absolute;

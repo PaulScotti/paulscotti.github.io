@@ -74,6 +74,7 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="allItems">
 <canvas id="item" width=600 height=600></canvas>
 <canvas id="CDitem" width=600 height=600></canvas>
+<div id="underText2"><p></p></div>
 </div></div>
 
 <!-- Structure for continuous report after the trial: -->
@@ -506,6 +507,9 @@ function ChangeDetection() { // filler change detection task before every test p
                           cdctx.drawImage(imgCDtest,0,0,600,600);
                           document.getElementById("underText").innerHTML = "Did the color of this square change?";
                           $('#underText').show();
+
+                          $('#startExperimentButton').show();
+                          $('#startExperimentButton2').show();
 
                             /*setTimeout(function(){
                                 alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
