@@ -74,8 +74,9 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="allItems">
 <canvas id="item" width=600 height=600></canvas>
 <canvas id="CDitem" width=600 height=600></canvas>
-<center><div id="underText2"><p></p></div></center>
-<div id="SameButton"></div><div id="DiffButton"></div>
+<br><br><center><div id="underText2"><p></p></div></center><br><br>
+<center><a href="javascript:void(0);" onclick="Survey2();" id="SameButton" style="display: hidden; ">Same</a>
+<a href="javascript:void(0);" onclick="Survey2();" id="DiffButton" style="display: hidden;">Different</a></center>
 </div></div>
 
 <!-- Structure for continuous report after the trial: -->
@@ -509,8 +510,8 @@ function ChangeDetection() { // filler change detection task before every test p
                           document.getElementById("underText2").innerHTML = "Did the color of this square change?";
                           $('#underText2').show();
 
-                          $('#startExperimentButton').show();
-                          $('#startExperimentButton2').show();
+                          $('#SameButton').show();
+                          $('#DiffButton').show();
 
                             /*setTimeout(function(){
                                 alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
