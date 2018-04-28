@@ -371,17 +371,13 @@ const colors = [
 	};
 
 	const tempRand = _.clone(dx.r_TrialType);
-	console.log(tempRand);
-	console.log('asdf');
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
-		let tempRand2 = Shuffle(tempRand);
 		if (blockNum == 0) {
-    	dx.r_TrialType = tempRand2;
+    	dx.r_TrialType = _.clone(Shuffle(tempRand));
 		} else {
-    	dx.r_TrialType.push.apply(dx.r_TrialType,tempRand2);
+    	dx.r_TrialType.push.apply(dx.r_TrialType,Shuffle(tempRand));
 		}
-		console.log(blockNum);
   }
 
 	function repmat(array, count) {
