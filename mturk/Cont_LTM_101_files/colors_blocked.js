@@ -1,4 +1,4 @@
-colors = [
+const colors = [
 			[246,37,111],
 			[246,37,110],
 			[246,37,109],
@@ -361,7 +361,7 @@ colors = [
 			[245.5,37,112.5]
 		];
 
-dx = {
+const dx = {
         "repeatimg": counter(101,101+totalRepeats-1),
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
@@ -370,29 +370,28 @@ dx = {
 				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
 	};
 
-	var tempRand = _.clone(dx.r_TrialType);
+	const tempRand = _.clone(dx.r_TrialType);
 	console.log(tempRand);
 
-	for (var blockNum=0; blockNum<=totBlocks; blockNum++) {
-    let tempRand2 = chance1.shuffle(tempRand);
+	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
+    let tempRand2 = Shuffle(tempRand);
 		if (blockNum == 0) {
     	dx.r_TrialType = tempRand2;
 		} else {
     	dx.r_TrialType.push.apply(dx.r_TrialType,tempRand2);
 		}
   }
-  chance1 = Chance(curID);
 
 	function repmat(array, count) {
-	    var result = [];
+	    let result = [];
 	    while (count--) {
 	        result = result.concat(array);
 	    }
 	    return result;
 	}
 	function counter(start, end, interval) {
-			if (interval == undefined) { var interval = 1; }
-			var result = [];
+			if (interval == undefined) { interval = 1; }
+			let result = [];
 			while (start<=end) {
 					result = result.concat(start);
 					start = start+interval;

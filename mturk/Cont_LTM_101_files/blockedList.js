@@ -1,4 +1,4 @@
-blockedIDs=[
+const blockedIDs=[
   "AK47FLPTKZR5G",
   "ALZVG5501Y5IX",
   "A3G55RJTW3BSGM"

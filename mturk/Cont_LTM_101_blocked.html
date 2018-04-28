@@ -128,13 +128,13 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/loadimg.js"></script>
 
 <script>
-curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an mTurker! " +
+const curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an mTurker! " +
 "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "id");
 
 CheckBlockList(blockedIDs,curID);
 
 // Initialize Firebase
-var config = {
+const config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
     authDomain: "scotti-92222.firebaseapp.com",
     databaseURL: "https://scotti-92222.firebaseio.com",
@@ -150,97 +150,99 @@ document.oncontextmenu = function() {
 }
 
 /* Options: */
-chance1 = Chance(curID); //randomize based on seed formed from curID (so it's traceable)
-var totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-var numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
-var block = 1;
-var trialsPerBlock = 10;
-var totBlocks = numTrialsPerPart[1]/trialsPerBlock;
+const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
+const numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+let block = 1;
+const trialsPerBlock = 10;
+const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
 <script>
 
-var imgNum = 0;
-var imgWidth = 250;
-var imgHeight = 250;
-var displayTime = 1000;
-var isiTime = 1000;
-var origColors = _.clone(colors); // clone is required to create a new variable and not a pointer variable
-var flippedColors = _.clone(colors).reverse();
+let imgNum = 0;
+const imgWidth = 250;
+const imgHeight = 250;
+const displayTime = 1000;
+const isiTime = 1000;
+const origColors = _.clone(colors); // clone is required to create a new variable and not a pointer variable
+const flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
 
-var practiceTriTrials = [];
-var triTrials = [];
-var triTrialsTest = [];
-var repeatTriTrials = [];
-var totalTrials = [];
+let practiceTriTrials = [];
+let triTrials = [];
+let triTrialsTest = [];
+let repeatTriTrials = [];
+let totalTrials = [];
+let r_totalTrials = [];
 
 /* Pointers for where we are in the experiment: */
-var currentTrial = -1;
-var currentPart = 0;
-var currentFeedTrial = 0;
-var feedbackPhase = 0;
-var repeat = 0;
-var numRepeats = 0;
-var mouseClick = -1;
-var randrotate = 0;
-var angleDeg = 0;
-var curError = 360;
-var seed = [];
-var flip = 0;
-var survey = 0;
-var readyRepeat = 0;
-var waitObject = 0;
+let currentTrial = -1;
+let currentPart = 0;
+let currentFeedTrial = 0;
+let feedbackPhase = 0;
+let repeat = 0;
+let numRepeats = 0;
+let mouseClick = -1;
+let randrotate = 0;
+let angleDeg = 0; let angleDeg2 = 0; let angleDeg3 = 0;
+let curAngle = 0;
+let curError = 360;
+let seed = [];
+let flip = 0;
+let survey = 0;
+let readyRepeat = 0;
+let waitObject = 0;
 const radius = 242;
 const ringSize = 242;
 const centerX = 300; const centerY = 300;
-var points = 0;
-var basepay = 6;
-var radioResp = 0;
-var likertAns = 0;
-var explicitColor = -999;
-var startExpTime = new Date();
+let points = 0;
+let feedText = '';
+let basepay = 6;
+let radioResp = 0;
+let likertAns = 0;
+let explicitColor = -999;
+const startExpTime = new Date();
+let mouseMoved = 0;
+let startTime = -999;
+let startAngle = -999; let startAngle2 = -999;
+let diffAng2 = -999; let diffAng3 = -999;
+let lastRot = -999;
+let noMore = -999;
+let relX = -999;
+let relY = -999;
+let parentOffset = -999;
 
 /* Randomize orderings */
-dx.r_study = chance1.shuffle(dx.r_study);
-chance1 = Chance(curID);
-dx.r_study = dx.r_study.slice(0,numTrialsPerPart[1]);
-/*dx.r_pracimg = chance1.shuffle(dx.pracimg);
-chance1 = Chance(curID);
-/*dx.r_repeatimg = chance1.shuffle(dx.r_repeatimg);
-chance1 = Chance(curID);*/
-dx.r_TrialType = chance1.shuffle(dx.r_TrialType);
-chance1 = Chance(curID);
-dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
-chance1 = Chance(curID);
-
+// chance1 = Chance(curID); // Using the same initialized rng so that each array is randomized the same way
+Shuffle(dx.r_study);
+Shuffle(dx.r_TrialType);
+Shuffle(dx.rep_TrialType);
 Shuffle(dx.r_repeattrial);
-dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); /*this means totalRepeats num of repeats! Needs to be multiple of 5*/
 
 /* Setup reused image variable */
-var img = new Image();
+let img = new Image();
 img.crossOrigin = "anonymous";
-var imgX = new Image();
+let imgX = new Image();
 imgX.crossOrigin = "anonymous";
-var imgPop = new Image();
+let imgPop = new Image();
 imgPop.crossOrigin = "anonymous";
 
 /* Setup ring image */
-var ringImg = new Image();
+let ringImg = new Image();
 ringImg.crossOrigin = "anonymous";
 ringImg.src = $('#ring')[0].src;
 
 /* Setting up canvas contexts */
-var item = document.getElementById("item");
-var ctx = item.getContext("2d");
-contItem = document.getElementById("contItem");
-var ctx2 = contItem.getContext("2d");
-var feedbackReportedTri = document.getElementById("feedbackReportedTri");
-var ctx3 = feedbackReportedTri.getContext("2d");
-feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
-var ctx4 = feedbackCorrectTri.getContext("2d");
-ringItem = document.getElementById("ringItem");
-var ringctx = ringItem.getContext("2d");
+const item = document.getElementById("item");
+const ctx = item.getContext("2d");
+const contItem = document.getElementById("contItem");
+const ctx2 = contItem.getContext("2d");
+const feedbackReportedTri = document.getElementById("feedbackReportedTri");
+const ctx3 = feedbackReportedTri.getContext("2d");
+const feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
+const ctx4 = feedbackCorrectTri.getContext("2d");
+const ringItem = document.getElementById("ringItem");
+const ringctx = ringItem.getContext("2d");
 
 imgX.src = $('#' + dx.pracimg[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
@@ -261,12 +263,10 @@ function GenerateTrials() {
   seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
   wrap(seed);
 
-  for (var i=0; i<numTrialsPerPart[1]; i++) {
-    var pickSeed = dx.r_TrialType[i];
-    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+  for (let i=0; i<numTrialsPerPart[1]; i++) {
+    let pickSeed = dx.r_TrialType[i];
+    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
-    // let indexArr = r_totalTrials[1];
-    // origTrial = indexArr.findIndex(indexArr => indexArr==dx.r_study[i]);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
                     'isPractice': 0,
@@ -275,23 +275,22 @@ function GenerateTrials() {
                     'origTrial': i});
   }
 
-  for (var blockNum=0; blockNum<=totBlocks; blockNum++) {
+  for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
     let tempTest = _.clone(triTrials.slice(trialsPerBlock*blockNum,trialsPerBlock*(blockNum+1)));
-    tempTest = chance1.shuffle(tempTest);
+    Shuffle(tempTest);
     triTrialsTest.push.apply(triTrialsTest,tempTest);
   }
-  chance1 = Chance(curID);
 
-  for (var i=0; i<numTrialsPerPart[0]; i++) {
-    var cap = 360/numTrialsPerPart[0];
-    var curMean = counter(1,360,cap);
+  for (let i=0; i<numTrialsPerPart[0]; i++) {
+    let cap = 360/numTrialsPerPart[0];
+    let curMean = counter(1,360,cap);
     practiceTriTrials.push({'isPractice': 1,
                     'item': curMean[i]});
   }
 
-  for (var i=0; i<dx.rep_TrialType.length; i++) {
-    var pickSeed = dx.rep_TrialType[i];
-    var curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+  for (let i=0; i<dx.rep_TrialType.length; i++) {
+    let pickSeed = dx.rep_TrialType[i];
+    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
     repeatTriTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
@@ -299,7 +298,7 @@ function GenerateTrials() {
                     'item': curMean,
                     'origTrial': dx.r_repeattrial[i] + 1});
   }
-    repeatTriTrials = Shuffle(repeatTriTrials);
+    Shuffle(repeatTriTrials);
 }
 
 /* Start the experiment, this function is the first to operate! */
@@ -332,8 +331,7 @@ function NextTrial() {
 
     /* Start continuous color report trials */
     NextFeedTrial();
-    /* need return; otherwise the ShowTrial below executes */
-    return;
+    return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
       alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
       block = block + 1;
@@ -342,9 +340,7 @@ function NextTrial() {
       }
       $('#showTrial').hide();
 
-      /* Start continuous color report trials */
       NextFeedTrial();
-      /* need return; otherwise the ShowTrial below executes */
       return;
   }
 
@@ -469,7 +465,7 @@ function NextFeedTrial() {
 }
 
 /* Always track the mouse */
-var mouseX, mouseY;
+let mouseX, mouseY;
 $(function() {
   $(document).bind('mousemove.overall', function(e) {
     mouseX = e.pageX;
@@ -480,13 +476,13 @@ $(function() {
 function ShowContinuousReport(trialStruct) {
   angleDeg = 0;
   curError = 360;
-  var startTime = new Date();
+  startTime = new Date();
 
   $(document).bind('mousemove.curTrial', function(e) {
-      var parentOffset = $('#continuousReport').offset();
-      var relX = e.pageX - parentOffset.left - centerX;
-      var relY = e.pageY - parentOffset.top - centerY;
-      var curAngle = Math.atan2(relY,relX);
+      parentOffset = $('#continuousReport').offset();
+      relX = e.pageX - parentOffset.left - centerX;
+      relY = e.pageY - parentOffset.top - centerY;
+      curAngle = Math.atan2(relY,relX);
       angleDeg = curAngle / Math.PI * 180.0;
       imgNum = Math.round(wrap([angleDeg-randrotate]));
       mouseMoved = 1;
@@ -596,20 +592,20 @@ function ShowContinuousReport(trialStruct) {
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
-    var angleDeg2 = 0;
-    var startTime = new Date();
-    var startAngle = angleDeg * Math.PI / 180;
-    var lastRot = 0;
-    var noMore = 0;
-    var diffAng2 = -999;
+    angleDeg2 = 0;
+    startTime = new Date();
+    startAngle = angleDeg * Math.PI / 180;
+    lastRot = 0;
+    noMore = 0;
+    diffAng2 = -999;
 
     /* Confidence report */
     $(document).bind('mousemove.curTrial', function(e) {
-        var parentOffset = $('#continuousReport').offset();
-        var relX = e.pageX - parentOffset.left - centerX;
-        var relY = e.pageY - parentOffset.top - centerY;
-        var curAngle = Math.atan2(relY,relX);
-        var angleDeg2 = curAngle / Math.PI * 180.0;
+        parentOffset = $('#continuousReport').offset();
+        relX = e.pageX - parentOffset.left - centerX;
+        relY = e.pageY - parentOffset.top - centerY;
+        curAngle = Math.atan2(relY,relX);
+        angleDeg2 = curAngle / Math.PI * 180.0;
         diffAng2 = wrap([wrap([angleDeg])-wrap([angleDeg2])])>180? wrap([wrap([angleDeg2])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg2])]);
         if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
           ctx2.beginPath();
@@ -672,18 +668,18 @@ function ShowConfidence(trialStruct,angleDeg) {
 }
 
 function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
-  var angleDeg3 = 0;
-  var startTime = new Date();
-  var startAngle = angleDeg * Math.PI / 180;
-  var startAngle2 = angleDeg2 * Math.PI / 180;
+  angleDeg3 = 0;
+  startTime = new Date();
+  startAngle = angleDeg * Math.PI / 180;
+  startAngle2 = angleDeg2 * Math.PI / 180;
 
   /* Confidence report */
   $(document).bind('mousemove.curTrial', function(e) {
-      var parentOffset = $('#continuousReport').offset();
-      var relX = e.pageX - parentOffset.left - centerX;
-      var relY = e.pageY - parentOffset.top - centerY;
-      var curAngle = Math.atan2(relY,relX);
-      var angleDeg3 = curAngle / Math.PI * 180.0;
+      parentOffset = $('#continuousReport').offset();
+      relX = e.pageX - parentOffset.left - centerX;
+      relY = e.pageY - parentOffset.top - centerY;
+      curAngle = Math.atan2(relY,relX);
+      angleDeg3 = curAngle / Math.PI * 180.0;
       diffAng3 = wrap([wrap([angleDeg])-wrap([angleDeg3])])>180? wrap([wrap([angleDeg3])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg3])]);
       if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
         ctx2.beginPath();
@@ -858,8 +854,8 @@ function SaveData() {
   $('#done').children().hide();
   $('#saving').show();
   $('#assignmentId').val(GetAssignmentId());
-  var newDate = new Date();
-  d = {
+  const newDate = new Date();
+  const d = {
     "curID": curID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,
@@ -886,8 +882,8 @@ function SaveData() {
   };
 
     /* save to Firebase server */
-    var blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    var storageRef = firebase.storage().ref('data/' + curID + '.json');
+    const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
+    const storageRef = firebase.storage().ref('data/' + curID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
@@ -899,22 +895,22 @@ function SaveData() {
 function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
     flip==0? colors=origColors : colors=flippedColors;
     if (deg == 'gray') {
-        var col = [127.5,127.5,127.5];
+        let col = [127.5,127.5,127.5];
     } else {
         deg=(deg>=360)?deg-360:deg;
         deg=(deg<0)?deg+360:deg;
-        var col=colors[deg];
+        let col = colors[deg];
     }
     context.drawImage(image, initX, initY, imgWidth, imgHeight);
     recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
 }
 function recolor(context,newR,newG,newB,initX,initY) {
     imgData = context.getImageData(initX, initY, item.width, item.height);
-    var data = imgData.data;
-    for (var i = 0; i < data.length; i += 4) {
-        var red = data[i];
-        var green = data[i + 1];
-        var blue = data[i + 2];
+    let data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        let red = data[i];
+        let green = data[i + 1];
+        let blue = data[i + 2];
         if (red != 0 && red!= 255) {
             data[i] = newR;
             data[i + 1] = newG;
@@ -926,7 +922,7 @@ function recolor(context,newR,newG,newB,initX,initY) {
 
 /* Make sure all numbers in an array are between 0 and 360: */
 function wrap(v) {
-  for (var i=0; i<v.length; i++) {
+  for (let i=0; i<v.length; i++) {
     if (v[i]>360) { v[i]-=360; }
     if (v[i]<0) { v[i]+=360; }
   }
