@@ -84,11 +84,10 @@ https://www.mturk.com/mturk/externalSubmit
 </div>
 
 <!-- Structure for change detection task: -->
-<div id="showCD">
 <div id="ShowCD">
 <canvas id="CDitem"  width=600 height=600></canvas>
-<canvas id="CDFixation"  width=600 height=600></canvas>
-</div></div>
+<canvas id="CDfixitem"  width=600 height=600></canvas>
+</div>
 
 <!-- feedback -->
 <div id="feedback">
@@ -238,15 +237,19 @@ let imgX = new Image();
 imgX.crossOrigin = "anonymous";
 let imgPop = new Image();
 imgPop.crossOrigin = "anonymous";
-let imgCD = new Image();
-imgCD.crossOrigin = "anonymous";
-let CDfix = new Image();
-CDfix.crossOrigin = "anonymous";
 
 /* Setup ring image */
 let ringImg = new Image();
 ringImg.crossOrigin = "anonymous";
 ringImg.src = $('#ring')[0].src;
+
+/* Setup CD images */
+let imgCD = new Image();
+imgCD.crossOrigin = "anonymous";
+imgCD.src = $('#CD')[0].src;
+let CDfix = new Image();
+CDfix.crossOrigin = "anonymous";
+CDfix.src = $('#CDFixation')[0].src;
 
 /* Setting up canvas contexts */
 const item = document.getElementById("item");
@@ -260,7 +263,9 @@ const ctx4 = feedbackCorrectTri.getContext("2d");
 const ringItem = document.getElementById("ringItem");
 const ringctx = ringItem.getContext("2d");
 const CDitem = document.getElementById("CDitem");
-const cd_ctx = CDitem.getContext("2d");
+const cdctx = CDitem.getContext("2d");
+const CDfixitem = document.getElementById("CDfixitem");
+const cdfixctx = CDfixitem.getContext("2d");
 
 imgX.src = $('#' + dx.pracimg[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
@@ -496,21 +501,21 @@ function NextFeedTrial() {
 
 function ChangeDetection() { // filler change detection task before every test phase
 
-  $('#CDFixation').css('margin-top', 0); // show fixation
-  setTimeout(function(){  // after 800 ms, show colored memory array
-    $('#CDFixation').css('margin-top', -1000);
-    $('#ShowCD').css('margin-top', 0);
-   }, 800);
-   setTimeout(function(){  // after 200 ms, show fixation again
-     $('#ShowCD').css('margin-top', -1000);
-     $('#CDFixation').css('margin-top', 0);
-   }, 200);
-   setTimeout(function(){  // after 900 ms, show test array
-     $('#CDFixation').css('margin-top', -1000);
-     $('#ShowCD').css('margin-top', -1000);
-   }, 900);
-
-
+  for (let numCD = 0; numCD <= 1; numCD++) {
+    $('#CDFixation').css('margin-top', 0); // show fixation
+    setTimeout(function(){  // after 800 ms, show colored memory array
+      $('#CDFixation').css('margin-top', -1000);
+      $('#ShowCD').css('margin-top', 0);
+     }, 800);
+     setTimeout(function(){  // after 200 ms, show fixation again
+       $('#ShowCD').css('margin-top', -1000);
+       $('#CDFixation').css('margin-top', 0);
+     }, 200);
+     setTimeout(function(){  // after 900 ms, show test array
+       $('#CDFixation').css('margin-top', -1000);
+       $('#ShowCD').css('margin-top', -1000);
+     }, 900);
+   }
 }
 
 /* Always track the mouse */
