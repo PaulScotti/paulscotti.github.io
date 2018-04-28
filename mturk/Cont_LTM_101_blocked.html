@@ -74,7 +74,8 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="allItems">
 <canvas id="item" width=600 height=600></canvas>
 <canvas id="CDitem" width=600 height=600></canvas>
-<div id="underText2"><p></p></div>
+<center><div id="underText2"><p></p></div></center>
+<div id="SameButton"></div><div id="DiffButton"></div>
 </div></div>
 
 <!-- Structure for continuous report after the trial: -->
@@ -505,8 +506,8 @@ function ChangeDetection() { // filler change detection task before every test p
             console.log('Step2');
                   setTimeout(function(){  // after 900 ms, show test array
                           cdctx.drawImage(imgCDtest,0,0,600,600);
-                          document.getElementById("underText").innerHTML = "Did the color of this square change?";
-                          $('#underText').show();
+                          document.getElementById("underText2").innerHTML = "Did the color of this square change?";
+                          $('#underText2').show();
 
                           $('#startExperimentButton').show();
                           $('#startExperimentButton2').show();

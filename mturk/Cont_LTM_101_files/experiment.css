@@ -25,7 +25,7 @@ body {
   display: none;
 }
 
-#startExperimentButton2 {
+#SameButton {
   display: inline-block;
   color: black;
   border: 3px outset gray;
@@ -35,16 +35,32 @@ body {
   font-family: Arial, Helvetica;
   font-weight: bold;
 }
-
-#startExperimentButton2:hover {
+#SameButton:hover {
   border: 3px inset gray;
 }
-
-#startExperimentButton2:active {
+#SameButton:active {
   border: 3px inset gray;
 }
-
-#startExperimentButton2 {
+#SameButton {
+  display: none;
+}
+#DiffButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#DiffButton:hover {
+  border: 3px inset gray;
+}
+#DiffButton:active {
+  border: 3px inset gray;
+}
+#DiffButton {
   display: none;
 }
 
