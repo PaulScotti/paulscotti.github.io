@@ -26,23 +26,25 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one hour.</center><br>You will receive $6.00 for HIT completion. Depending on performance you may receive a bonus up to $2.70.<br>If you have previously completed this HIT then you are ineligible to participate.</b></p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b></p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
-<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have viewed all of our objects.</p>
+<p>An object will be displayed for one second, followed by a blank delay. This will repeat for until you have seen 40 objects.</p>
 
-<p>After you have seen all of the objects, you will be tested on your memory for each object's color (you will also sometimes be abruptly tested during the learning of objects). A previously observed object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess as to the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
+<p>You will then be tested on your memory for each object's color. A previously observed object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess as to the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct2.png" width="400"></p>
 
 <p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors for the objects. Also note that since this is an experiment designed to study memory, we require that you <strong>do not take any breaks after starting this study</strong>.</p>
 
-<p>Note that the task is supposed to be difficult! If you do not know the correct color, move your mouse around the color wheel and select what feels right. You are not allowed to use any external tools to remember objects.</p>
+<p>If you do not know the correct color, move your mouse around the color wheel and select what feels right. You are not allowed to use any external tools to remember objects.</p>
 
 <p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how certain you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the range of colors you think contain the original object's color. If you were 100% certain about your answer then you would not highlight any colors, and if you were completely guessing then you would highlight the entirety of the color wheel. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel.</p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct3.png" width="400"></p>
+
+<p>After you have been tested on all 40 objects, the entire process repeats. That is, you will study and be tested on another 40 objects.</p>
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p>
 
@@ -50,7 +52,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 </div>
 
 <!-- Start form here to capture comments -->
-<form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
+<form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
 <input type="hidden" name="assignmentId" id="assignmentId" value="" >
 <input type="hidden" name="foo" value="" >
 <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
@@ -153,7 +155,7 @@ const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can t
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [2, 240, 240]; // [5, 240, 240] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 10;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -213,6 +215,7 @@ let noMore = -999;
 let relX = -999;
 let relY = -999;
 let parentOffset = -999;
+let blockStart = 0;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -259,7 +262,10 @@ function GenerateTrials() {
   if (curID == null) {
     curID = 'no_id';
   }
-  Math.seedrandom(curID); /* Use their ID as the random seed generator, so you can trace back their trials */
+  if (typeof assignmentID === 'undefined') {
+    assignmentID = 'no_assignment';
+  }
+  Math.seedrandom(curID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -347,6 +353,7 @@ function NextTrial() {
         currentPart = 2;
       }
       $('#showTrial').hide();
+      blockStart = 1;
 
       NextFeedTrial();
       return;
@@ -363,7 +370,7 @@ function NextTrial() {
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
     img.onload = function() {
-      start(ctx,trialStruct.item,180, 180,imgWidth,imgHeight,flip,img);
+      start(ctx,trialStruct.item,175, 175,imgWidth,imgHeight,flip,img);
     }
     if (currentPart == 0) {
         img.src = $('#' + dx.pracimg[currentTrial])[0].src;
@@ -421,35 +428,39 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  ctx2.drawImage(imgPop, 180, 180,imgWidth,imgHeight);
-  recolor(ctx2,127.5,127.5,127.5,180, 180);
+  ctx2.drawImage(imgPop, 175, 175,imgWidth,imgHeight);
+  recolor(ctx2,127.5,127.5,127.5,175, 175);
   mouseMoved = 0;
 };
 
 /* Show the next continuous color report trial: */
 function NextFeedTrial() {
-  currentFeedTrial++;
-
-  if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
-    if (currentPart > 0) {
-      $('showTrial').hide;
-      Survey1();
-      return;
-    } else {
-      currentFeedTrial = 0;
-      currentPart++;
-        alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
-        currentTrial = -1;
-        imgX.src = $('#' + r_totalTrials[2][0].itemID)[0].src; /* preload first image of test phase */
-        NextTrial();
+  if (blockStart == 0) {
+    currentFeedTrial++;
+    if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
+      if (currentPart > 0) {
+        $('showTrial').hide;
+        Survey1();
         return;
+      } else {
+        currentFeedTrial = 0;
+        currentPart++;
+          alert("Okay, time for the real experiment. Please do your best to remember the colors of the subsequent objects, as you\'ll be tested on your memory for all of them by the end. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
+          currentTrial = -1;
+          imgX.src = $('#' + r_totalTrials[2][0].itemID)[0].src; /* preload first image of test phase */
+          NextTrial();
+          return;
+      }
+    } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2 && blockStart == 0) {
+      currentPart = 1;
+      /* Go back to study phase */
+      alert("Starting study phase of Block "+block+" out of "+totBlocks+".");
+      imgX.src = $('#' + r_totalTrials[2][currentFeedTrial].itemID)[0].src; /* preload image */
+      NextTrial();
+      return;
     }
-  } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2) {
-    currentPart = 1;
-    /* Go back to study phase */
-    alert("Starting study phase of Block "+block+" out of "+totBlocks+".");
-    NextTrial();
-    return;
+  } else {
+    blockStart = 0;
   }
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
@@ -461,13 +472,13 @@ function NextFeedTrial() {
 
   /* Set starting color as grayscale */
   if (currentFeedTrial % trialsPerBlock == 0) {
-    ctx2.drawImage(imgX, 180, 180, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,180, 180);
+    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 175);
   } else if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 180, 180, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,180, 180);
+    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 175);
   } else {
-    start(ctx2,'gray',180, 180, imgWidth, imgHeight, flip, img);
+    start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
   }
   mouseMoved = 0;
 }
@@ -516,9 +527,9 @@ function ShowContinuousReport(trialStruct) {
       mouseMoved = 1;
 
       if (repeat == 0) {
-        start(ctx2,imgNum,180, 180,imgWidth,imgHeight,flip,img);
+        start(ctx2,imgNum,175, 175,imgWidth,imgHeight,flip,img);
       } else if (repeat == 1) {
-        start(ctx2,imgNum,180, 180,imgWidth,imgHeight,flip,imgPop);
+        start(ctx2,imgNum,175, 175,imgWidth,imgHeight,flip,imgPop);
       }
 
       if (currentPart == 0) {
@@ -558,16 +569,15 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 1) {
-      flip == 0? curError = Math.abs(imgNum-seed[0]) : curError = Math.abs(wrap([180-imgNum])-wrap([180-seed[0]]));
+      flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
-      flip == 0? curError = Math.abs(imgNum-trialStruct.item) : curError = Math.abs(wrap([180-imgNum])-wrap([180-trialStruct.item]));
+      flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
       }
       if (curError > 180) {
           curError = 360-curError;
       } else if (curError < -180) {
           curError = curError+360;
       }
-      console.log(curError);
 
       if (e.isFakeTrigger) {
         trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
@@ -767,7 +777,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
           img.src = $('#' + dx.pracimg[currentFeedTrial+1])[0].src;
           }
-          ctx2.drawImage(img, 180, 180,imgWidth,imgHeight);
+          ctx2.drawImage(img, 175, 175,imgWidth,imgHeight);
 
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
@@ -842,7 +852,7 @@ function Survey() {
       alert(document.getElementById("underText").innerHTML);
 
       /* Set starting color as grayscale */
-      start(ctx2,'gray',180, 180, imgWidth, imgHeight, flip, img);
+      start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
       mouseMoved = 0;
   } else {
       alert('Please select an option.');
