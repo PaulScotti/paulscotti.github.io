@@ -361,7 +361,7 @@ const colors = [
 			[245.5,37,112.5]
 		];
 
-const dx = {
+let dx = {
         "repeatimg": counter(101,101+totalRepeats-1),
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
@@ -372,7 +372,6 @@ const dx = {
 
 	const tempRand = _.clone(dx.r_TrialType);
 	console.log(tempRand);
-	console.log('new');
 
 	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
 		if (blockNum == 0) {
@@ -380,6 +379,7 @@ const dx = {
 		} else {
     	dx.r_TrialType.push.apply(dx.r_TrialType,Shuffle(tempRand));
 		}
+		console.log(blockNum);
   }
 
 	function repmat(array, count) {
