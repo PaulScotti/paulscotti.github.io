@@ -537,6 +537,16 @@ function ChangeDetection() { // filler change detection task before every test p
      blockStart = 1;
      alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block.\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
      block = block + 1;
+
+     ringctx.clearRect(50,50,500,500);
+     flip = Math.round(Math.random());
+     randrotate = Math.floor(Math.random()*360);
+     flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+     ringctx.translate(50+500/2, 50+500/2);
+     ringctx.rotate(randrotate*Math.PI/180);
+     ringctx.translate(-50-500/2, -50-500/2);
+     ringctx.drawImage(ringImg,50,50,500,500);
+
      NextFeedTrial();
    }
 }
@@ -589,12 +599,6 @@ function ShowContinuousReport(trialStruct) {
   angleDeg = 0;
   curError = 360;
   startTime = new Date();
-
-  flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-  ringctx.translate(50+500/2, 50+500/2);
-  ringctx.rotate(randrotate*Math.PI/180);
-  ringctx.translate(-50-500/2, -50-500/2);
-  ringctx.drawImage(ringImg,50,50,500,500);
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
@@ -663,6 +667,11 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
+        flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+        ringctx.translate(50+500/2, 50+500/2);
+        ringctx.rotate(randrotate*Math.PI/180);
+        ringctx.translate(-50-500/2, -50-500/2);
+        ringctx.drawImage(ringImg,50,50,500,500);
       }
   });
 
