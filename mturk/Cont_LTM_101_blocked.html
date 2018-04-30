@@ -363,7 +363,7 @@ function NextTrial() {
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
-      alert('Prepare for change detection task!');
+      alert('Before we test your memory, please complete a short change detection task. You will soon see an array of colored squares that appear for a brief moment. Then, one colored square will be presented. The task is to select whether the single colored square is the same or a different color than it was before.')
       ChangeDetection();
       return;
   }
@@ -493,7 +493,11 @@ function NextFeedTrial() {
 }
 
 function ChangeDetection() { // filler change detection task before every test phase
-  alert('Before we test your memory, please complete a short change detection task. You will soon see an array of colored squares that appear for a brief moment. Then, one colored square will be presented. The task is to select whether the single colored square is the same or a different color than it was before.')
+  $('#underText2').hide();
+  $('#SameButton').hide();
+  $('#DiffButton').hide();
+  alert('Click OK to start change detection trial.')
+
 
   for (let numCD = 0; numCD <= 1; numCD++) {
     CDtrial++;
@@ -537,23 +541,25 @@ function ChangeDetection() { // filler change detection task before every test p
 function SamePress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 1;
+    console.log(CDaccuracy);
   }
 }
 function DiffPress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 0;
+    console.log(CDaccuracy);
   }
 }
 function CDtrialChange() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) {
-    if (sameTally > 10) {
+    if (sameTally >= 9) {
       sameTally = -1;
     }
     sameTally = sameTally + 2;
     imgCD.src = $('#diff'+sameTally)[0].src;
-    imgCDtest.src = $('#diff4'+(sameTally+1))[0].src;
+    imgCDtest.src = $('#diff'+(sameTally+1))[0].src;
   } else {
-    if (diffTally > 8) {
+    if (diffTally >= 7) {
       diffTally = -1;
     }
     diffTally = diffTally + 2;

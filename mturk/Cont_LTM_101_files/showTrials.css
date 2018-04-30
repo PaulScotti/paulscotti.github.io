@@ -5,12 +5,12 @@
 	background: #FFFFFF;
 	margin: 20px auto;
 	position: relative;
-    display: none;
-    cursor: none;
+  display: none;
 }
 
 #allItems {
   position: relative;
+	cursor: none;
 }
 
 #fixation {
@@ -26,7 +26,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: default;
 }
 
 #pressKey {
