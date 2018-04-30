@@ -116,7 +116,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey3" style="display: none;">
     <center>
-    <div id = "doneText"><p>How confident are you that the biased region you selected is close to the actual experimental manipulation?</p></div>
+    <div id = "doneText"><p>How confident are you that the biased color region you selected is close to the actual experimental manipulation?</p></div>
     <br><br><br><br>
     <div class="likertButtons">
     Less certain
@@ -397,7 +397,6 @@ function ShowTrial(trialStruct) {
     } else {
         img.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
     }
-    console.log(trialStruct.item);
 
     $('#allItems').css('margin-top', -1000);
     $('#showTrial').show();
@@ -653,8 +652,6 @@ function ShowContinuousReport(trialStruct) {
       } else if (curError < -180) {
           curError = curError+360;
       }
-      console.log(imgNum);
-      console.log(curError);
 
       if (e.isFakeTrigger) {
         trialStruct.startingColor = startingColor;
