@@ -472,7 +472,7 @@ function NextFeedTrial() {
     } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2 && blockStart == 0) {
       currentPart = 1;
       /* Go back to study phase */
-      alert("Starting study phase of Block "+block+" of "+totBlocks+".");
+      alert("Starting study phase (Block "+block+" of "+totBlocks+").");
       imgX.src = $('#' + r_totalTrials[2][currentFeedTrial].itemID)[0].src; /* preload image */
       NextTrial();
       return;
