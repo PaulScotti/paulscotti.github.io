@@ -472,7 +472,7 @@ function NextFeedTrial() {
     } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2 && blockStart == 0) {
       currentPart = 1;
       /* Go back to study phase */
-      alert("Starting study phase of Block "+block+" out of "+totBlocks+".");
+      alert("Starting study phase of Block "+block+" of "+totBlocks+".");
       imgX.src = $('#' + r_totalTrials[2][currentFeedTrial].itemID)[0].src; /* preload image */
       NextTrial();
       return;
@@ -535,7 +535,7 @@ function ChangeDetection() { // filler change detection task before every test p
      $('#allItems').css('margin-top', -1000);
      $('#CDitem').hide();
      blockStart = 1;
-     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
+     alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
      block = block + 1;
      NextFeedTrial();
    }
