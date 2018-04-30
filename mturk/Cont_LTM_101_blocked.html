@@ -214,6 +214,7 @@ let explicitColor = -999;
 const startExpTime = new Date();
 let mouseMoved = 0;
 let startTime = -999;
+let startingColor = -999;
 let startAngle = -999; let startAngle2 = -999;
 let diffAng2 = -999; let diffAng3 = -999;
 let lastRot = -999;
@@ -385,6 +386,7 @@ function NextTrial() {
 
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
+    flip = 0;
     img.onload = function() {
       start(ctx,trialStruct.item,175, 175,imgWidth,imgHeight,flip,img);
     }
@@ -395,6 +397,7 @@ function ShowTrial(trialStruct) {
     } else {
         img.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
     }
+    console.log(trialStruct.item);
 
     $('#allItems').css('margin-top', -1000);
     $('#showTrial').show();
@@ -595,6 +598,7 @@ function ShowContinuousReport(trialStruct) {
       curAngle = Math.atan2(relY,relX);
       angleDeg = curAngle / Math.PI * 180.0;
       imgNum = Math.round(wrap([angleDeg-randrotate]));
+      startingColor = imgNum;
       mouseMoved = 1;
 
       if (repeat == 0) {
@@ -649,9 +653,11 @@ function ShowContinuousReport(trialStruct) {
       } else if (curError < -180) {
           curError = curError+360;
       }
+      console.log(imgNum);
+      console.log(curError);
 
       if (e.isFakeTrigger) {
-        trialStruct.startedAngle = Math.round(wrap([angleDeg-randrotate]));
+        trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
         flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
@@ -984,7 +990,6 @@ function SaveData() {
     "Seeds": seed,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
-    "RepSeedOrder": dx.rep_TrialType,
     "CDAccuracy": CDaccuracy
   };
 
