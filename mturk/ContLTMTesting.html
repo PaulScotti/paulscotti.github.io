@@ -161,9 +161,9 @@ const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can t
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 5;
+const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -284,8 +284,11 @@ function GenerateTrials() {
   if (curID == null) {
     curID = 'no_id';
   }
-  if (typeof assignmentID === 'undefined') {
-    assignmentID = 'no_assignment';
+  if (typeof assignmentId === 'undefined') {
+    assignmentId = 'no_assignment';
+  }
+  if (typeof workerId === 'undefined') {
+    workerId = 'no_workerId';
   }
   Math.seedrandom(curID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
@@ -960,8 +963,8 @@ function SaveData() {
   const newDate = new Date();
   const d = {
     "curID": curID,
-    "workerId": workerID,
-    "assignmentID": assignmentID,
+    "workerId": workerId,
+    "assignmentId": assignmentId,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,
     "endExpTime": newDate,
