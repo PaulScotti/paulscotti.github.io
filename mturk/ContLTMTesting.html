@@ -26,7 +26,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please allow text pop-ups to be displayed as they will sometimes be used to relay experimental instructions.</p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please allow text pop-ups to be displayed as they will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
@@ -535,7 +535,7 @@ function ChangeDetection() { // filler change detection task before every test p
      $('#allItems').css('margin-top', -1000);
      $('#CDitem').hide();
      blockStart = 1;
-     alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
+     alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block.\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
      block = block + 1;
      NextFeedTrial();
    }
@@ -589,6 +589,12 @@ function ShowContinuousReport(trialStruct) {
   angleDeg = 0;
   curError = 360;
   startTime = new Date();
+
+  flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+  ringctx.translate(50+500/2, 50+500/2);
+  ringctx.rotate(randrotate*Math.PI/180);
+  ringctx.translate(-50-500/2, -50-500/2);
+  ringctx.drawImage(ringImg,50,50,500,500);
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
@@ -657,11 +663,6 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
-        flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-        ringctx.translate(50+500/2, 50+500/2);
-        ringctx.rotate(randrotate*Math.PI/180);
-        ringctx.translate(-50-500/2, -50-500/2);
-        ringctx.drawImage(ringImg,50,50,500,500);
       }
   });
 
@@ -965,6 +966,7 @@ function SaveData() {
   const newDate = new Date();
   const d = {
     "curID": curID,
+    "workerId": workerID,
     "assignmentID": assignmentID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,

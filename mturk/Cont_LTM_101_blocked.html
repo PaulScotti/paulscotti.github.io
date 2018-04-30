@@ -590,6 +590,12 @@ function ShowContinuousReport(trialStruct) {
   curError = 360;
   startTime = new Date();
 
+  flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+  ringctx.translate(50+500/2, 50+500/2);
+  ringctx.rotate(randrotate*Math.PI/180);
+  ringctx.translate(-50-500/2, -50-500/2);
+  ringctx.drawImage(ringImg,50,50,500,500);
+
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
       relX = e.pageX - parentOffset.left - centerX;
@@ -657,11 +663,6 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
-        flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-        ringctx.translate(50+500/2, 50+500/2);
-        ringctx.rotate(randrotate*Math.PI/180);
-        ringctx.translate(-50-500/2, -50-500/2);
-        ringctx.drawImage(ringImg,50,50,500,500);
       }
   });
 
