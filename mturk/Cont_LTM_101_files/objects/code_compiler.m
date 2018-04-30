@@ -1,7 +1,7 @@
 clc; clear;
 
 code = [];
-preset = ['<img id="IDN" src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.jpg" style="margin-left:-1000px">'];
+preset = ['<img id="IDN" src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.png" style="margin-left:-1000px">'];
 
 for i = 319:365
     presetNew = strrep(preset,'Object',['Object',num2str(100+i)]);
