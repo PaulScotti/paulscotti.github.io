@@ -74,9 +74,10 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="allItems">
 <canvas id="item" width=600 height=600></canvas>
 <canvas id="CDitem" width=600 height=600></canvas>
-<br><br><center><div id="underText2"><p></p></div></center><br><br>
+<br><br>
 <center><a href="javascript:void(0);" onclick="Survey2();" id="SameButton" style="display: hidden; ">Same</a>
 <a href="javascript:void(0);" onclick="Survey2();" id="DiffButton" style="display: hidden;">Different</a></center>
+<center><div id="underText2"><p>Did the color of this square change?</p></div></center>
 </div></div>
 
 <!-- Structure for continuous report after the trial: -->
@@ -84,7 +85,7 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="contItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
 <div id="pointer"></div>
-<div id="popQuiz"><p>Did the color of this square change?</p></div>
+<div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
 </div>
 
@@ -271,8 +272,9 @@ const cdctx = CDitem.getContext("2d");
 imgX.src = $('#' + dx.pracimg[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
 
-/* Start by hiding pop quiz text */
+/* Start by hiding text */
 $('#popQuiz').hide();
+$('#underText2').hide();
 
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
@@ -507,7 +509,6 @@ function ChangeDetection() { // filler change detection task before every test p
             console.log('Step2');
                   setTimeout(function(){  // after 900 ms, show test array
                           cdctx.drawImage(imgCDtest,0,0,600,600);
-                          document.getElementById("underText2").innerHTML = "Did the color of this square change?";
                           $('#underText2').show();
 
                           $('#SameButton').show();
