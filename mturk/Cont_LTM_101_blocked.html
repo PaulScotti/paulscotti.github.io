@@ -222,6 +222,7 @@ let relX = -999;
 let relY = -999;
 let parentOffset = -999;
 let blockStart = 0;
+let numCD = 0;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = -999;
 
@@ -496,12 +497,11 @@ function ChangeDetection() { // filler change detection task before every test p
   $('#underText2').hide();
   $('#SameButton').hide();
   $('#DiffButton').hide();
-  alert('Click OK to start change detection trial.')
 
-
-  for (let numCD = 0; numCD <= 1; numCD++) {
-    CDtrial++;
+  if (numCD < 2) {
+    CDtrial++; numCD++;
     CDtrialChange();
+    alert('Click OK to start change detection trial.')
 
     $('#showTrial').show();
     $('#item').css('margin-top', -1000);
@@ -509,7 +509,6 @@ function ChangeDetection() { // filler change detection task before every test p
     $('#CDfixation').css('margin-top', 0); // show fixation
 
     cdctx.drawImage(CDfix,0,0,600,600);
-
       console.log(numCD);
       setTimeout(function(){  // after 800 ms, show colored memory array
         cdctx.drawImage(imgCD,0,0,600,600);
@@ -522,42 +521,46 @@ function ChangeDetection() { // filler change detection task before every test p
                             $('#underText2').show();
                             $('#SameButton').show();
                             $('#DiffButton').show();
-
-                                  // alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
-                                  // block = block + 1;
-                                  // if (currentPart == 1) {
-                                  //   currentPart = 2;
-                                  // }
-                                  // $('#showTrial').hide();
-                                  // $('#underText').hide();
-                                  // blockStart = 1;
-                                  //
-                                  // NextFeedTrial();
                     }, 900);
             }, 200);
        }, 800);
+   } else {
+     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
+     block = block + 1;
+     if (currentPart == 1) {
+       currentPart = 2;
+     }
+     $('#showTrial').hide();
+     $('#CDitem').css('margin-top', -1000);
+     blockStart = 1;
+
+     NextFeedTrial();
    }
 }
 function SamePress() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) { //if CDtrial equals any of the numbers in the array (representing same trials)
+  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 1;
-    console.log(CDaccuracy);
+  } else {
+    CDaccuracy = 0;
   }
+  alert(CDaccuracy);
 }
 function DiffPress() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) { //if CDtrial equals any of the numbers in the array (representing same trials)
+  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 0;
-    console.log(CDaccuracy);
+  } else {
+    CDaccuracy = 1;
   }
+  alert(CDaccuracy);
 }
 function CDtrialChange() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) == 1) {
+  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > - 1) {
     if (sameTally >= 9) {
       sameTally = -1;
     }
     sameTally = sameTally + 2;
-    imgCD.src = $('#diff'+sameTally)[0].src;
-    imgCDtest.src = $('#diff'+(sameTally+1))[0].src;
+    imgCD.src = $('#same'+sameTally)[0].src;
+    imgCDtest.src = $('#same'+(sameTally+1))[0].src;
   } else {
     if (diffTally >= 7) {
       diffTally = -1;
