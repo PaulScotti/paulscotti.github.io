@@ -508,10 +508,11 @@ function ChangeDetection() { // filler change detection task before every test p
   $('#SameButton').hide();
   $('#DiffButton').hide();
 
+  if (numCD == 0) {
+    alert('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
+  }
+
   if (numCD < 2) {
-    if (numCD == 0) {
-      alert('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
-    }
     CDtrial++; numCD++;
     CDtrialChange();
 
