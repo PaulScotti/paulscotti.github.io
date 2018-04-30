@@ -161,9 +161,9 @@ const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can t
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 40;
+const trialsPerBlock = 5;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -537,16 +537,6 @@ function ChangeDetection() { // filler change detection task before every test p
      blockStart = 1;
      alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block.\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
      block = block + 1;
-
-     ringctx.clearRect(50,50,500,500);
-     flip = Math.round(Math.random());
-     randrotate = Math.floor(Math.random()*360);
-     flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-     ringctx.translate(50+500/2, 50+500/2);
-     ringctx.rotate(randrotate*Math.PI/180);
-     ringctx.translate(-50-500/2, -50-500/2);
-     ringctx.drawImage(ringImg,50,50,500,500);
-
      NextFeedTrial();
    }
 }
@@ -599,6 +589,7 @@ function ShowContinuousReport(trialStruct) {
   angleDeg = 0;
   curError = 360;
   startTime = new Date();
+  $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
@@ -671,7 +662,6 @@ function ShowContinuousReport(trialStruct) {
         ringctx.translate(50+500/2, 50+500/2);
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
-        ringctx.drawImage(ringImg,50,50,500,500);
       }
   });
 
@@ -701,12 +691,14 @@ function ShowContinuousReport(trialStruct) {
       }
   });
 
-  $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
   e = $.Event('mousemove');
   e.pageX = mouseX;
   e.pageY = mouseY;
   e.isFakeTrigger = true;
   $(document).trigger(e);
+  setTimeout(function() { // for some reason without delaying, ring won't be rotated correctly
+      ringctx.drawImage(ringImg,50,50,500,500);
+  }, 25);
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
@@ -859,13 +851,9 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           }
           ctx2.drawImage(img, 175, 175,imgWidth,imgHeight);
 
+          ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
-          flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-          ringctx.translate(50+500/2, 50+500/2);
-          ringctx.rotate(randrotate*Math.PI/180);
-          ringctx.translate(-50-500/2, -50-500/2);
-          ringctx.drawImage(ringImg,50,50,500,500);
 
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
@@ -887,11 +875,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
-          flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-          ringctx.translate(50+500/2, 50+500/2);
-          ringctx.rotate(randrotate*Math.PI/180);
-          ringctx.translate(-50-500/2, -50-500/2);
-          ringctx.drawImage(ringImg,50,50,500,500);
 
           setTimeout(function() {
               if (repeat == 0) { $('#showTrial').hide(); }

@@ -141,8 +141,6 @@ const curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an m
 
 CheckBlockList(blockedIDs,curID);
 
-alert('Changing code right now to fix error Julie found, so beware')
-
 // Initialize Firebase
 const config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -484,7 +482,9 @@ function NextFeedTrial() {
   }
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
+  ringctx.restore();
   ringctx.drawImage(ringImg,50,50,500,500);
+  ringctx.save();
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
 
@@ -589,12 +589,7 @@ function ShowContinuousReport(trialStruct) {
   angleDeg = 0;
   curError = 360;
   startTime = new Date();
-
-  flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-  ringctx.translate(50+500/2, 50+500/2);
-  ringctx.rotate(randrotate*Math.PI/180);
-  ringctx.translate(-50-500/2, -50-500/2);
-  ringctx.drawImage(ringImg,50,50,500,500);
+  $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
@@ -663,6 +658,10 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
+        flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+        ringctx.translate(50+500/2, 50+500/2);
+        ringctx.rotate(randrotate*Math.PI/180);
+        ringctx.translate(-50-500/2, -50-500/2);
       }
   });
 
@@ -692,12 +691,14 @@ function ShowContinuousReport(trialStruct) {
       }
   });
 
-  $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
   e = $.Event('mousemove');
   e.pageX = mouseX;
   e.pageY = mouseY;
   e.isFakeTrigger = true;
   $(document).trigger(e);
+  setTimeout(function() { // for some reason without delaying, ring won't be rotated correctly
+      ringctx.drawImage(ringImg,50,50,500,500);
+  }, 25);
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
@@ -850,13 +851,9 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           }
           ctx2.drawImage(img, 175, 175,imgWidth,imgHeight);
 
+          ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
-          flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-          ringctx.translate(50+500/2, 50+500/2);
-          ringctx.rotate(randrotate*Math.PI/180);
-          ringctx.translate(-50-500/2, -50-500/2);
-          ringctx.drawImage(ringImg,50,50,500,500);
 
           $('#feedback').show();
           $(document).bind('click.feedback', function(e) {
@@ -878,11 +875,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
-          flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-          ringctx.translate(50+500/2, 50+500/2);
-          ringctx.rotate(randrotate*Math.PI/180);
-          ringctx.translate(-50-500/2, -50-500/2);
-          ringctx.drawImage(ringImg,50,50,500,500);
 
           setTimeout(function() {
               if (repeat == 0) { $('#showTrial').hide(); }
@@ -908,7 +900,9 @@ function Survey() {
       survey = 1;
 
       /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
+      ringctx.restore();
       ringctx.drawImage(ringImg,50,50,500,500);
+      ringctx.save();
 
       if (radioResp == 1) {
         document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
