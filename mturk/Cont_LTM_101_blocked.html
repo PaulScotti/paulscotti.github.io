@@ -30,13 +30,13 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
-<p>An object will be displayed for one second, followed by a blank delay. This will repeat for until you have seen 40 objects.</p>
+<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen 40 objects.</p>
 
-<p>You will then be tested on your memory for each object's color. A previously observed object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess as to the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
+<p>You will then be tested on your memory for each object's color. A previously seen object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess of the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct2.png" width="400"></p>
 
-<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors for the objects. Also note that since this is an experiment designed to study memory, we require that you <strong>do not take any breaks after starting this study</strong>.</p>
+<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors of the objects. Also note that since this is an experiment designed to study memory, we require that you <strong>do not take any breaks after starting this study</strong>.</p>
 
 <p>If you do not know the correct color, move your mouse around the color wheel and select what feels right. You are not allowed to use any external tools to remember objects.</p>
 
@@ -535,7 +535,7 @@ function ChangeDetection() { // filler change detection task before every test p
      $('#allItems').css('margin-top', -1000);
      $('#CDitem').hide();
      blockStart = 1;
-     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess as to the original object color. Please be as precise as possible!");
+     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
      block = block + 1;
      NextFeedTrial();
    }
