@@ -26,7 +26,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b></p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please allow text pop-ups to be displayed as they will sometimes be used to relay experimental instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
@@ -77,7 +77,7 @@ https://www.mturk.com/mturk/externalSubmit
 </div><br><br>
 <center><a href="javascript:void(0);" onclick="SamePress();ChangeDetection();" id="SameButton" style="display: hidden; ">Same</a>
 <a href="javascript:void(0);" onclick="DiffPress();ChangeDetection();" id="DiffButton" style="display: hidden;">Different</a>
-<div id="underText2"><p>Did the color of this square change?</p></div></center>
+<div id="underText2"><p>Did this square stay the same color or change to a different color?</p></div></center>
 </div>
 
 <!-- Structure for continuous report after the trial: -->
@@ -228,7 +228,6 @@ let CDaccuracy = -999;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
-dx.r_TrialType = chance1.shuffle(dx.r_TrialType);
 dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
 dx.r_repeattrial = chance1.shuffle(dx.r_repeattrial);
 dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //determine which trials will be repeat trials (equals totalRepeats)
@@ -354,7 +353,7 @@ function NextTrial() {
   }
 
   if (currentTrial>numTrialsPerPart[currentPart]-1 && currentPart == 0) {
-    alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.");
+    alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
     if (currentPart == 1) {
       currentPart = 2;
     }
@@ -364,8 +363,15 @@ function NextTrial() {
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
   } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
-      alert('Before we test your memory, please complete a short change detection task. You will soon see an array of colored squares that appear for a brief moment. Then, one colored square will be presented. The task is to select whether the single colored square is the same or a different color than it was before.')
-      ChangeDetection();
+      $('#showTrial').show();
+      $('#item').css('margin-top', -1000);
+      $('#allItems').css('margin-top', 0);
+      cdctx.drawImage(CDfix,0,0,600,600);
+      setTimeout(function() { // Want to change screen to gray before alert, so delay alert by half a second
+        alert('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
+        numCD = 0;
+        ChangeDetection();
+      }, 500);
       return;
   }
 
@@ -501,60 +507,57 @@ function ChangeDetection() { // filler change detection task before every test p
   if (numCD < 2) {
     CDtrial++; numCD++;
     CDtrialChange();
-    alert('Click OK to start change detection trial.')
 
     $('#showTrial').show();
     $('#item').css('margin-top', -1000);
     $('#allItems').css('margin-top', 0);
-    $('#CDfixation').css('margin-top', 0); // show fixation
+    $('#CDitem').show();
 
     cdctx.drawImage(CDfix,0,0,600,600);
-      console.log(numCD);
-      setTimeout(function(){  // after 800 ms, show colored memory array
-        cdctx.drawImage(imgCD,0,0,600,600);
-        console.log('Step1');
-            setTimeout(function(){  // after 200 ms, show fixation again
-              cdctx.drawImage(CDfix,0,0,600,600);
-              console.log('Step2');
-                    setTimeout(function(){  // after 900 ms, show test array
-                            cdctx.drawImage(imgCDtest,0,0,600,600);
-                            $('#underText2').show();
-                            $('#SameButton').show();
-                            $('#DiffButton').show();
-                    }, 900);
-            }, 200);
-       }, 800);
+    setTimeout(function(){  // after 800 ms, show colored memory array
+      cdctx.drawImage(imgCD,0,0,600,600);
+          setTimeout(function(){  // after 200 ms, show fixation again
+            cdctx.drawImage(CDfix,0,0,600,600);
+                  setTimeout(function(){  // after 900 ms, show test array
+                          cdctx.drawImage(imgCDtest,0,0,600,600);
+                          $('#underText2').show();
+                          $('#SameButton').show();
+                          $('#DiffButton').show();
+                  }, 900);
+          }, 200);
+   }, 800);
    } else {
-     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).");
-     block = block + 1;
-     if (currentPart == 1) {
-       currentPart = 2;
-     }
+     currentPart = 2;
      $('#showTrial').hide();
-     $('#CDitem').css('margin-top', -1000);
+     $('#item').css('margin-top', 0);
+     $('#allItems').css('margin-top', -1000);
+     $('#CDitem').hide();
      blockStart = 1;
-
+     alert("Finished study phase of Block "+block+" out of "+totBlocks+". You will now see all previous objects from this Block--select their original colors by clicking on the color wheel (please be as precise as possible).\n\nMove your mouse around the color wheel and click your best guess as to the original object color. Please be as precise as possible!");
+     block = block + 1;
      NextFeedTrial();
    }
 }
 function SamePress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 1;
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
   } else {
     CDaccuracy = 0;
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
   }
-  alert(CDaccuracy);
 }
 function DiffPress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy = 0;
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
   } else {
     CDaccuracy = 1;
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
   }
-  alert(CDaccuracy);
 }
 function CDtrialChange() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > - 1) {
+  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) {
     if (sameTally >= 9) {
       sameTally = -1;
     }
@@ -664,11 +667,7 @@ function ShowContinuousReport(trialStruct) {
           explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
       }
 
-      if (mouseMoved == 0) {
-          if (survey == 0) {
-            alert('Move your mouse around the circle and click to select your best guess at to the original object color. Please be as precise as possible!');
-          }
-      } else {
+      if (mouseMoved != 0) {
           trialStruct.reportedAngle = Math.round(angleDeg);
           trialStruct.reportedColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
           trialStruct.rt = (new Date()) - startTime;

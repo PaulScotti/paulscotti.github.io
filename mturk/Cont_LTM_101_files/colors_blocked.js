@@ -371,14 +371,15 @@ let colors = [
 	};
 
 	const tempRand = _.clone(dx.r_TrialType);
+	dx.r_TrialType = [];
 
-	for (let blockNum=0; blockNum<=totBlocks; blockNum++) {
-		if (blockNum == 0) {
-    	dx.r_TrialType = _.clone(chance1.shuffle(tempRand));
-		} else {
-    	dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(tempRand));
+	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
+		let fooArray = _.clone(chance1.shuffle(tempRand));
+		let fooIter = trialsPerBlock/5;
+		for (fooNum = 1; fooNum<=fooIter; fooNum++) {
+			dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(fooArray));
 		}
-  }
+	}
 
 	function repmat(array, count) {
 	    let result = [];
