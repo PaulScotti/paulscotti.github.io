@@ -26,7 +26,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately 3 to 5 minutes.</center><br>You will receive $0.50 for HIT completion. Depending on performance you may receive a bonus up to $0.10.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p><b><center>This HIT lasts approximately 5 minutes.</center><br>You will receive $0.50 for HIT completion. Depending on performance you may receive a bonus up to $0.20.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
@@ -162,7 +162,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 10, 10]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [5, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 5;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
