@@ -173,8 +173,8 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 250;
-const isiTime = 250;
+const displayTime = 300;
+const isiTime = 300;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
@@ -219,7 +219,7 @@ let startTime = -999;
 let startingColor = -999;
 let startAngle = -999; let startAngle2 = -999;
 let diffAng2 = -999; let diffAng3 = -999;
-let lastRot = -999;
+let lastRot = -999; let lastRotMat = [];
 let noMore = -999;
 let relX = -999;
 let relY = -999;
@@ -228,6 +228,7 @@ let blockStart = 0;
 let numCD = 0;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
+let tempVar = true;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -355,11 +356,10 @@ function StartExperiment() {
 function NextTrial() {
   repeat = 0;
   currentTrial++;
-  console.log(currentTrial);
 
   if (nextTrialStart == 0) {
     if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) {
-      alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
+      alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
       if (currentPart == 1) {
         currentPart = 2;
       }
@@ -488,20 +488,11 @@ function NextFeedTrial() {
   ringctx.restore();
   ringctx.drawImage(ringImg,50,50,500,500);
   ringctx.save();
-  ringctx.clearRect(0, 0, 600, 600);
+  if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
+    ringctx.clearRect(0, 0, 600, 600);
+  }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
-
-  /* Set starting color as grayscale */
-  if (currentFeedTrial % trialsPerBlock == 0) {
-    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,175, 175);
-  } else if (currentPart == 0 && currentFeedTrial == 0) {
-    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
-    recolor(ctx2,127.5,127.5,127.5,175, 175);
-  } else {
-    start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
-  }
   mouseMoved = 0;
 }
 
@@ -511,7 +502,7 @@ function ChangeDetection() { // filler change detection task before every test p
   $('#DiffButton').hide();
 
   if (numCD == 0) {
-    confirm('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
+    confirm('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nPress [ENTER] to continue.');
   }
 
   if (numCD < 2) {
@@ -552,19 +543,19 @@ function ChangeDetection() { // filler change detection task before every test p
 function SamePress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
   } else {
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
   }
 }
 function DiffPress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
   } else {
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
   }
 }
 function CDtrialChange() {
@@ -653,9 +644,9 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 1) {
-      flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
+        flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
-      flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
+        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
       }
       if (curError > 180) {
           curError = 360-curError;
@@ -663,7 +654,7 @@ function ShowContinuousReport(trialStruct) {
           curError = curError+360;
       }
 
-      if (e.isFakeTrigger) {
+      if (e.isFakeTrigger) { // this code only executes once before anything else happens, e.g. otherwise randrotate would be next trial's randrotate
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
@@ -672,7 +663,23 @@ function ShowContinuousReport(trialStruct) {
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
         ringImg.onload = function() {
-          ringctx.drawImage(ringImg,50,50,500,500)
+          ringctx.drawImage(ringImg,50,50,500,500);
+        }
+        ringctx.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
+        ctx2.onload = function() {
+          start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img); //set starting color as grayscale
+        }
+        start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
+      }
+      if (currentPart == 0 && currentFeedTrial == 0) { // needed special code for first practice item starting as grayscale, no idea why
+        if (tempVar) {
+          setTimeout(function() {
+            ctx2.onload = function() {
+              start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img); //set starting color as grayscale
+            }
+            start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
+          }, 150);
+          tempVar = false;
         }
       }
   });
@@ -742,7 +749,7 @@ function ShowConfidence(trialStruct,angleDeg) {
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
-          lastRot = 1;
+          lastRot = 1; lastRotMat.push(lastRot);
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
           ctx2.beginPath();
           ctx2.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
@@ -759,7 +766,7 @@ function ShowConfidence(trialStruct,angleDeg) {
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
-          lastRot = 0;
+          lastRot = 0; lastRotMat.push(lastRot);
         }
     });
 
@@ -922,9 +929,6 @@ function Survey() {
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
 
       alert(document.getElementById("underText").innerHTML);
-
-      /* Set starting color as grayscale */
-      start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
       mouseMoved = 0;
   } else {
       alert('Please select an option.');
@@ -989,7 +993,8 @@ function SaveData() {
     "Seeds": seed,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
-    "CDAccuracy": CDaccuracy
+    "CDAccuracy": CDaccuracy,
+    "firstConfDir": lastRotMat
   };
 
     /* save to Firebase server */
@@ -1019,6 +1024,7 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
         context.drawImage(image, initX, initY, imgWidth, imgHeight);
         recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
       }
+      recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
     }
 }
 function recolor(context,newR,newG,newB,initX,initY) {
