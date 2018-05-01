@@ -138,7 +138,7 @@ https://www.mturk.com/mturk/externalSubmit
 <script>
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
 "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
-let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number:", "assignmentId");
+let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
 
 CheckBlockList(blockedIDs,WORKERID);
 

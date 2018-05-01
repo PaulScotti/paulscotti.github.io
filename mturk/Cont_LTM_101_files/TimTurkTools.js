@@ -23,7 +23,7 @@ function GetAssignmentId() {
 }
 
 // Check if this worker's actual ID is on the block list or not
-function CheckBlockList(blockedIDs,curID) {
+function CheckBlockList(blockedIDs,WORKERID) {
     if (blockedIDs.some(CheckBlockedList)) {
         alert('You have already completed this HIT before, or a HIT very similar to this. You are NOT valid to participate.');
         $('#serverContacted').val(0);
@@ -34,7 +34,7 @@ function CheckBlockList(blockedIDs,curID) {
 }
 
 function CheckBlockedList(currentValue) {
-  return currentValue == curID;
+  return currentValue == WORKERID;
 }
 
 function RandomOrder(num) {
