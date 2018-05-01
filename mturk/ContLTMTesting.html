@@ -375,6 +375,7 @@ function NextTrial() {
         $('#allItems').css('margin-top', 0);
         cdctx.drawImage(CDfix,0,0,600,600);
         numCD = 0; nextTrialStart = 1; currentTrial--;
+        tempVar = true;
         ChangeDetection();
         return;
     }
@@ -671,7 +672,7 @@ function ShowContinuousReport(trialStruct) {
         }
         start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
       }
-      if (currentPart == 0 && currentFeedTrial == 0) { // needed special code for first practice item starting as grayscale, no idea why
+      if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
         if (tempVar) {
           setTimeout(function() {
             ctx2.onload = function() {
@@ -705,7 +706,13 @@ function ShowContinuousReport(trialStruct) {
             ShowConfidence(trialStruct,angleDeg);
             $('#popQuiz').hide();
           } else {
-            Survey3();
+            var expConfirm = confirm("Is this your selection? [Cancel] to redo.");
+            if (expConfirm == true) {
+              Survey3();
+            } else {
+              ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
+              return;
+            }
           }
       }
   });
