@@ -26,7 +26,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p><b><center>This HIT lasts approximately one to one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
@@ -46,7 +46,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p>After you have been tested on all 40 objects, the entire process repeats. That is, you will study and be tested on another 40 objects.</p>
 
-<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p>
+<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
 
 <p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
@@ -688,12 +688,26 @@ function ShowContinuousReport(trialStruct) {
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
           explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
+      } else if (((new Date()) - startTime) < 500) {
+          alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
+          ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
+          ringctx.clearRect(0,0,600,600);
+          ringctx.restore();
+          ringctx.drawImage(ringImg,50,50,500,500);
+          ringctx.save();
+          $("#continuousReport").hide();
+          $(document).unbind('click.curTrial');
+          $(document).unbind('mousemove.curTrial');
+          ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+          return;
+        }
       }
 
       if (mouseMoved != 0) {
           trialStruct.reportedAngle = Math.round(angleDeg);
           trialStruct.reportedColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
           trialStruct.rt = (new Date()) - startTime;
+          trialStruct.trialTimeStart = startTime;
           trialStruct.col_diff = curError;
           $(document).unbind('click.curTrial');
           $(document).unbind('mousemove.curTrial');
