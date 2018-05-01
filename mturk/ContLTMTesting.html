@@ -367,7 +367,7 @@ function NextTrial() {
     /* Start continuous color report trials */
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
-  } else if (currentTrial % trialsPerBlock+1 == 0 && currentTrial != 0 && currentPart == 1) {
+  } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
       $('#showTrial').show();
       $('#item').css('margin-top', -1000);
       $('#allItems').css('margin-top', 0);
