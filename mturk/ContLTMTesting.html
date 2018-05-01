@@ -46,7 +46,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p>After you have been tested on all 40 objects, the entire process repeats. That is, you will study and be tested on another 40 objects.</p>
 
-<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p>
+<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
 
 <p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
@@ -228,6 +228,7 @@ let blockStart = 0;
 let numCD = 0;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
+let tooFast = [];
 let tempVar = true;
 
 /* Randomize orderings */
@@ -698,6 +699,7 @@ function ShowContinuousReport(trialStruct) {
           $("#continuousReport").hide();
           $(document).unbind('click.curTrial');
           $(document).unbind('mousemove.curTrial');
+          tooFast.push(1);
           ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
           return;
         }
@@ -1015,7 +1017,8 @@ function SaveData() {
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
     "CDAccuracy": CDaccuracy,
-    "firstConfDir": lastRotMat
+    "firstConfDir": lastRotMat,
+    "tooFastCount": tooFast
   };
 
     /* save to Firebase server */

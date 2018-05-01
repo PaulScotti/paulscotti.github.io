@@ -228,6 +228,7 @@ let blockStart = 0;
 let numCD = 0;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
+let tooFast = [];
 let tempVar = true;
 
 /* Randomize orderings */
@@ -698,6 +699,7 @@ function ShowContinuousReport(trialStruct) {
           $("#continuousReport").hide();
           $(document).unbind('click.curTrial');
           $(document).unbind('mousemove.curTrial');
+          tooFast.push(1);
           ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
           return;
         }
@@ -1015,7 +1017,8 @@ function SaveData() {
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
     "CDAccuracy": CDaccuracy,
-    "firstConfDir": lastRotMat
+    "firstConfDir": lastRotMat,
+    "tooFastCount": tooFast
   };
 
     /* save to Firebase server */
