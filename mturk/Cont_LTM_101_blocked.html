@@ -223,7 +223,7 @@ let relX = -999;
 let relY = -999;
 let parentOffset = -999;
 let blockStart = 0;
-let numCD = 0;
+let numCD = 0; let stopCD = 1;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
 
@@ -371,8 +371,8 @@ function NextTrial() {
       $('#item').css('margin-top', -1000);
       $('#allItems').css('margin-top', 0);
       cdctx.drawImage(CDfix,0,0,600,600);
+      numCD = 0; stopCD = 1;
       setTimeout(function() { // Want to change screen to gray before alert, so delay alert by half a second
-        numCD = 0;
         ChangeDetection();
       }, 500);
       return;
@@ -510,9 +510,10 @@ function ChangeDetection() { // filler change detection task before every test p
 
   if (numCD == 0) {
     alert('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
+    stopCD = 0;
   }
 
-  if (numCD < 2) {
+  if (numCD < 2 && stopCD == 0) {
     CDtrial++; numCD++;
     CDtrialChange();
 
@@ -534,7 +535,7 @@ function ChangeDetection() { // filler change detection task before every test p
                   }, 900);
           }, 200);
    }, 800);
-   } else {
+ } else if (numCD >= 2 && stopCD = 0) {
      currentPart = 2;
      $('#showTrial').hide();
      $('#item').css('margin-top', 0);
