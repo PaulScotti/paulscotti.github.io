@@ -544,19 +544,19 @@ function ChangeDetection() { // filler change detection task before every test p
 function SamePress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
   } else {
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
   }
 }
 function DiffPress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
   } else {
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
   }
 }
 function CDtrialChange() {
