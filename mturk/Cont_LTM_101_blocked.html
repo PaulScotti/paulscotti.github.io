@@ -141,6 +141,8 @@ const curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an m
 
 CheckBlockList(blockedIDs,curID);
 
+alert('Warning Im testing code right now!!');
+
 // Initialize Firebase
 const config = {
     apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -161,9 +163,9 @@ const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can t
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 40;
+const trialsPerBlock = 10;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -224,6 +226,7 @@ let relY = -999;
 let parentOffset = -999;
 let blockStart = 0;
 let numCD = 0; let stopCD = 1;
+let ringStop = 1;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
 
@@ -488,6 +491,7 @@ function NextFeedTrial() {
   ringctx.drawImage(ringImg,50,50,500,500);
   ringctx.save();
 
+  ringStop = 0;
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
 
   /* Set starting color as grayscale */
@@ -670,6 +674,11 @@ function ShowContinuousReport(trialStruct) {
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
       }
+
+      if (ringStop == 0) {
+        ringctx.drawImage(ringImg,50,50,500,500);
+        ringStop = 1;
+      }
   });
 
   $(document).bind('click.curTrial', function(e) {
@@ -703,9 +712,6 @@ function ShowContinuousReport(trialStruct) {
   e.pageY = mouseY;
   e.isFakeTrigger = true;
   $(document).trigger(e);
-  setTimeout(function() { // for some reason without delaying, ring won't be rotated correctly
-      ringctx.drawImage(ringImg,50,50,500,500);
-  }, 40);
 }
 
 function ShowConfidence(trialStruct,angleDeg) {
@@ -917,6 +923,7 @@ function Survey() {
         document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       }
 
+      ringStop = 0;
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
 
       alert(document.getElementById("underText").innerHTML);
