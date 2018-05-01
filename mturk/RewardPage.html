@@ -1,0 +1,85 @@
+<!-- Paul Scotti 2018
+originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e9/ -->
+
+<!-- Preload javascript and css files -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jquery.min.js"></script>
+<script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/seedrandom.js"></script>
+<script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
+
+<!-- load Firebase server javascript, we are using it for storage -->
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+
+</head>
+<body style="">
+
+<!-- Consent statement: -->
+<div id="consentDiv"><h2>This page is for HIT compensation for workers who encountered an error in a previous HIT and were not compensated as a result. Please do not accept this HIT unless you have been explicitly told to find this HIT and have received a code to enter on this page.<br></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#done').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Click to Continue</a></p></h2></div>
+
+<!-- Start form here to capture comments -->
+<form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
+<input type="hidden" name="assignmentId" id="assignmentId" value="" >
+<input type="hidden" name="foo" value="" >
+<input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
+<!-- submit to turk
+https://workersandbox.mturk.com/mturk/externalSubmit
+https://www.mturk.com/mturk/externalSubmit
+-->
+
+<!-- Screen for collecting comments when they are done: -->
+<center><div id="done" style="display: none"><div id="doneText">Copy your code into the text box below. Ensure there are no stray spaces surrounding the pasted text.<br><br>
+<textarea name="comments" id="comments" style="width: 200px; height: 20px"></textarea><br><br>
+<a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit HIT</a>
+</div></div><div id="saving" style="display: none">Saving . . .</div></center>
+
+<script>
+let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
+"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
+
+// Initialize Firebase
+const config = {
+    apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
+    authDomain: "scotti-92222.firebaseapp.com",
+    databaseURL: "https://scotti-92222.firebaseio.com",
+    projectId: "scotti-92222",
+    storageBucket: "scotti-92222.appspot.com",
+    messagingSenderId: "123079954596"
+};
+firebase.initializeApp(config);
+
+/* Choose what to save and then put it on the server */
+function SaveData() {
+  if ($('#comments').val() == 'asdf') {
+    $('#done').children().hide();
+    $('#saving').show();
+    $('#assignmentId').val(GetAssignmentId());
+    const newDate = new Date();
+    const d = {
+      "WORKERID": WORKERID,
+      "ASSIGNMENTID": ASSIGNMENTID,
+      "curTime": newDate.today() + " @ " + newDate.timeNow()
+    };
+
+      /* save to Firebase server */
+      const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
+      const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
+      storageRef.put(blob);
+
+      document.getElementById("saving").innerHTML = "Submitting HIT...";
+
+      // submit HIT after waiting a few seconds to make sure data got sent
+      setTimeout(function(){ document.forms[0].submit(); }, 3000);
+  } else {
+    alert('Invalid code.');
+  }
+}
+
+$(function() {
+  if (navigator.userAgent.indexOf('MSIE') != -1) {
+    $('body').html('Unfortunately this HIT does not work in IE. It works in Chrome, Firefox or Safari. Sorry!');
+  }
+});
+
+</script>
+</body></html>
