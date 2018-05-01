@@ -106,9 +106,9 @@ https://www.mturk.com/mturk/externalSubmit
     <center>
     <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
     <br><br><br><br>
-    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Randomly sampled colored
+    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Each color chosen at random
     <br><br>
-    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Preferentially sampled colors
+    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Some portion of colors chosen more than others
     <br><br><br><br>
     <a href="javascript:void(0);" onclick="Survey();" id="startExperimentButton" style="display: inline;">Submit</a>
     </center>
@@ -921,9 +921,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a portion containing one quarter of the color wheel (90 degrees). Please select the range of colors you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a portion containing one quarter of the color wheel (90 degrees). Please select the range of colors you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
