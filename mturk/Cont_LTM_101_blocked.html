@@ -998,6 +998,7 @@ function SaveData() {
     document.getElementById("saving").innerHTML = "Submitting HIT...";
 
     // submit HIT after waiting a few seconds to make sure data got sent
+    // technically this should be ajax i think
     setTimeout(function(){ document.forms[0].submit(); }, 3000);
 }
 
