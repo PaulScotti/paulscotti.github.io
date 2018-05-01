@@ -353,11 +353,8 @@ function StartExperiment() {
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   repeat = 0;
-  // if (! (readyRepeat == 1 && waitObject != 2)) {
-    currentTrial++;
-  // }
 
-  if (currentTrial>numTrialsPerPart[currentPart]-1 && currentPart == 0) {
+  if (currentTrial>=numTrialsPerPart[currentPart]-1 && currentPart == 0) {
     alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
     if (currentPart == 1) {
       currentPart = 2;
@@ -367,15 +364,17 @@ function NextTrial() {
     /* Start continuous color report trials */
     NextFeedTrial();
     return; // need return; otherwise the ShowTrial below executes
-  } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
+  } else if ((currentTrial+1) % trialsPerBlock == 0 && (currentTrial+1) != 0 && currentPart == 1) {
       $('#showTrial').show();
       $('#item').css('margin-top', -1000);
       $('#allItems').css('margin-top', 0);
       cdctx.drawImage(CDfix,0,0,600,600);
-      numCD = 0; 
+      numCD = 0;
       ChangeDetection();
       return;
   }
+
+  currentTrial++;
 
   if (readyRepeat == 1 && waitObject != 2) {
     ShowTrial(repeatTriTrials[numRepeats]);
