@@ -52,7 +52,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 </div>
 
 <!-- Start form here to capture comments -->
-<form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
+<form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
 <input type="hidden" name="assignmentId" id="assignmentId" value="" >
 <input type="hidden" name="foo" value="" >
 <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
@@ -136,10 +136,11 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/loadimg.js"></script>
 
 <script>
-const curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an mTurker! " +
-"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "id");
+let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
+"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number:", "assignmentId");
 
-CheckBlockList(blockedIDs,curID);
+CheckBlockList(blockedIDs,WORKERID);
 
 // Initialize Firebase
 const config = {
@@ -157,11 +158,11 @@ firebase.initializeApp(config);
 //     return false;
 // }
 
-const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can trace back their trials
+const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [2, 10, 10]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 5;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -172,8 +173,8 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 1000;
-const isiTime = 1000;
+const displayTime = 250;
+const isiTime = 250;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
@@ -189,6 +190,7 @@ let r_totalTrials = [];
 let currentTrial = -1;
 let currentPart = 0;
 let currentFeedTrial = -1;
+let nextTrialStart = 1;
 let feedbackPhase = 0;
 let repeat = 0;
 let numRepeats = 0;
@@ -224,7 +226,6 @@ let relY = -999;
 let parentOffset = -999;
 let blockStart = 0;
 let numCD = 0;
-let ringStop = 1;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
 
@@ -282,16 +283,16 @@ $('#underText2').hide();
 
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
-  if (curID == null) {
-    curID = 'no_id';
+  if (WORKERID == null) {
+    WORKERID = 'no_id';
   }
-  if (typeof assignmentId === 'undefined') {
+  if (typeof ASSIGNMENTID === 'undefined') {
     assignmentId = 'no_assignment';
   }
-  if (typeof workerId === 'undefined') {
+  if (typeof WORKERID === 'undefined') {
     workerId = 'no_workerId';
   }
-  Math.seedrandom(curID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
+  Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -353,28 +354,32 @@ function StartExperiment() {
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   repeat = 0;
-
-  if (currentTrial>=numTrialsPerPart[currentPart]-1 && currentPart == 0) {
-    alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
-    if (currentPart == 1) {
-      currentPart = 2;
-    }
-    $('#showTrial').hide();
-
-    /* Start continuous color report trials */
-    NextFeedTrial();
-    return; // need return; otherwise the ShowTrial below executes
-  } else if ((currentTrial+1) % trialsPerBlock == 0 && (currentTrial+1) != 0 && currentPart == 1) {
-      $('#showTrial').show();
-      $('#item').css('margin-top', -1000);
-      $('#allItems').css('margin-top', 0);
-      cdctx.drawImage(CDfix,0,0,600,600);
-      numCD = 0; currentTrial++;
-      ChangeDetection();
-      return;
-  }
-
   currentTrial++;
+  console.log(currentTrial);
+
+  if (nextTrialStart == 0) {
+    if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) {
+      alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
+      if (currentPart == 1) {
+        currentPart = 2;
+      }
+      $('#showTrial').hide();
+
+      nextTrialStart = 1;
+      /* Start continuous color report trials */
+      NextFeedTrial();
+      return; // need return; otherwise the ShowTrial below executes
+    } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) {
+        $('#showTrial').show();
+        $('#item').css('margin-top', -1000);
+        $('#allItems').css('margin-top', 0);
+        cdctx.drawImage(CDfix,0,0,600,600);
+        numCD = 0; nextTrialStart = 1; currentTrial--;
+        ChangeDetection();
+        return;
+    }
+  }
+  nextTrialStart = 0;
 
   if (readyRepeat == 1 && waitObject != 2) {
     ShowTrial(repeatTriTrials[numRepeats]);
@@ -483,8 +488,8 @@ function NextFeedTrial() {
   ringctx.restore();
   ringctx.drawImage(ringImg,50,50,500,500);
   ringctx.save();
+  ringctx.clearRect(0, 0, 600, 600);
 
-  ringStop = 0;
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
 
   /* Set starting color as grayscale */
@@ -821,7 +826,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
   });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2.clearRect(0, 0, 600, 600);
+    ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -914,7 +919,6 @@ function Survey() {
         document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       }
 
-      ringStop = 0;
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
 
       alert(document.getElementById("underText").innerHTML);
@@ -962,9 +966,8 @@ function SaveData() {
   $('#assignmentId').val(GetAssignmentId());
   const newDate = new Date();
   const d = {
-    "curID": curID,
-    "workerId": workerId,
-    "assignmentId": assignmentId,
+    "WORKERID": WORKERID,
+    "ASSIGNMENTID": ASSIGNMENTID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,
     "endExpTime": newDate,
@@ -991,7 +994,7 @@ function SaveData() {
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data/' + curID + '.json');
+    const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
