@@ -58,7 +58,8 @@ function SaveData() {
     const d = {
       "WORKERID": WORKERID,
       "ASSIGNMENTID": ASSIGNMENTID,
-      "curTime": newDate.today() + " @ " + newDate.timeNow()
+      "curTime": newDate.today() + " @ " + newDate.timeNow(),
+      "userAgent": navigator.userAgent
     };
 
       /* save to Firebase server */
