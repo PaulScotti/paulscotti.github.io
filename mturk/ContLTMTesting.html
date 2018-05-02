@@ -689,19 +689,19 @@ function ShowContinuousReport(trialStruct) {
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
           explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
-      } else if (((new Date()) - startTime) < 250) {
-          alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
-          ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
-          ringctx.clearRect(0,0,600,600);
-          ringctx.restore();
-          ringctx.drawImage(ringImg,50,50,500,500);
-          ringctx.save();
-          $("#continuousReport").hide();
-          $(document).unbind('click.curTrial');
-          $(document).unbind('mousemove.curTrial');
-          tooFast.push(1);
-          ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
-          return;
+      // } else if (((new Date()) - startTime) < 250) {
+      //     alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
+      //     ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
+      //     ringctx.clearRect(0,0,600,600);
+      //     ringctx.restore();
+      //     ringctx.drawImage(ringImg,50,50,500,500);
+      //     ringctx.save();
+      //     $("#continuousReport").hide();
+      //     $(document).unbind('click.curTrial');
+      //     $(document).unbind('mousemove.curTrial');
+      //     tooFast.push(1);
+      //     ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+      //     return;
       }
 
       if (mouseMoved != 0) {

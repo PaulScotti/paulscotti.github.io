@@ -26,7 +26,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one to one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please allow text pop-ups to be displayed as they will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
@@ -46,7 +46,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p>After you have been tested on all 40 objects, the entire process repeats. That is, you will study and be tested on another 40 objects.</p>
 
-<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
+<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects.</p>
 
 <p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
@@ -106,9 +106,9 @@ https://www.mturk.com/mturk/externalSubmit
     <center>
     <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
     <br><br><br><br>
-    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Each color chosen at random
+    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Randomly sampled colored
     <br><br>
-    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Some portion of colors chosen more than others
+    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Preferentially sampled colors
     <br><br><br><br>
     <a href="javascript:void(0);" onclick="Survey();" id="startExperimentButton" style="display: inline;">Submit</a>
     </center>
@@ -136,11 +136,10 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/loadimg.js"></script>
 
 <script>
-let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
-"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
-let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
+const curID = (IsOnTurk())? GetAssignmentId() : prompt("You don't look like an mTurker! " +
+"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "id");
 
-CheckBlockList(blockedIDs,WORKERID);
+CheckBlockList(blockedIDs,curID);
 
 // Initialize Firebase
 const config = {
@@ -154,17 +153,17 @@ const config = {
 firebase.initializeApp(config);
 
 /* disable context menu */
-document.oncontextmenu = function() {
-    return false;
-}
+// document.oncontextmenu = function() {
+//     return false;
+// }
 
-const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
+const chance1 = Chance(curID); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [2, 20, 20]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 40;
+const trialsPerBlock = 10;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -190,7 +189,6 @@ let r_totalTrials = [];
 let currentTrial = -1;
 let currentPart = 0;
 let currentFeedTrial = -1;
-let nextTrialStart = 1;
 let feedbackPhase = 0;
 let repeat = 0;
 let numRepeats = 0;
@@ -219,17 +217,16 @@ let startTime = -999;
 let startingColor = -999;
 let startAngle = -999; let startAngle2 = -999;
 let diffAng2 = -999; let diffAng3 = -999;
-let lastRot = -999; let lastRotMat = [];
+let lastRot = -999;
 let noMore = -999;
 let relX = -999;
 let relY = -999;
 let parentOffset = -999;
 let blockStart = 0;
 let numCD = 0;
+let ringStop = 1;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
-let tooFast = [];
-let tempVar = true;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -285,16 +282,16 @@ $('#underText2').hide();
 
 /* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
-  if (WORKERID == null) {
-    WORKERID = 'no_id';
+  if (curID == null) {
+    curID = 'no_id';
   }
-  if (typeof ASSIGNMENTID === 'undefined') {
+  if (typeof assignmentId === 'undefined') {
     assignmentId = 'no_assignment';
   }
-  if (typeof WORKERID === 'undefined') {
+  if (typeof workerId === 'undefined') {
     workerId = 'no_workerId';
   }
-  Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
+  Math.seedrandom(curID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -356,32 +353,29 @@ function StartExperiment() {
 /* Show the next trial or show the done screen if they are finished: */
 function NextTrial() {
   repeat = 0;
-  currentTrial++;
-
-  if (nextTrialStart == 0) {
-    if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) {
-      alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
-      if (currentPart == 1) {
-        currentPart = 2;
-      }
-      $('#showTrial').hide();
-
-      nextTrialStart = 1;
-      /* Start continuous color report trials */
-      NextFeedTrial();
-      return; // need return; otherwise the ShowTrial below executes
-    } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) {
-        $('#showTrial').show();
-        $('#item').css('margin-top', -1000);
-        $('#allItems').css('margin-top', 0);
-        cdctx.drawImage(CDfix,0,0,600,600);
-        numCD = 0; nextTrialStart = 1; currentTrial--;
-        tempVar = true;
-        ChangeDetection();
-        return;
-    }
+  if (! (readyRepeat == 1 && waitObject != 2)) {
+    currentTrial++;
   }
-  nextTrialStart = 0;
+
+  if (currentTrial>numTrialsPerPart[currentPart]-1 && currentPart == 0) {
+    alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to continue.\n\nClick OK or hit [ENTER] to close this text window.");
+    if (currentPart == 1) {
+      currentPart = 2;
+    }
+    $('#showTrial').hide();
+
+    /* Start continuous color report trials */
+    NextFeedTrial();
+    return; // need return; otherwise the ShowTrial below executes
+  } else if (currentTrial % trialsPerBlock == 0 && currentTrial != 0 && currentPart == 1) {
+      $('#showTrial').show();
+      $('#item').css('margin-top', -1000);
+      $('#allItems').css('margin-top', 0);
+      cdctx.drawImage(CDfix,0,0,600,600);
+      numCD = 0;
+      ChangeDetection();
+      return;
+  }
 
   if (readyRepeat == 1 && waitObject != 2) {
     ShowTrial(repeatTriTrials[numRepeats]);
@@ -490,11 +484,20 @@ function NextFeedTrial() {
   ringctx.restore();
   ringctx.drawImage(ringImg,50,50,500,500);
   ringctx.save();
-  if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
-    ringctx.clearRect(0, 0, 600, 600);
-  }
 
+  ringStop = 0;
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+
+  /* Set starting color as grayscale */
+  if (currentFeedTrial % trialsPerBlock == 0) {
+    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 175);
+  } else if (currentPart == 0 && currentFeedTrial == 0) {
+    ctx2.drawImage(imgX, 175, 175, imgWidth, imgHeight);
+    recolor(ctx2,127.5,127.5,127.5,175, 175);
+  } else {
+    start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
+  }
   mouseMoved = 0;
 }
 
@@ -504,7 +507,7 @@ function ChangeDetection() { // filler change detection task before every test p
   $('#DiffButton').hide();
 
   if (numCD == 0) {
-    confirm('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nPress [ENTER] to continue.');
+    confirm('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nClick OK to start change detection trial.');
   }
 
   if (numCD < 2) {
@@ -545,19 +548,19 @@ function ChangeDetection() { // filler change detection task before every test p
 function SamePress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
   } else {
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
   }
 }
 function DiffPress() {
   if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
     CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Incorrect...\n\nClick OK to start change detection trial.') : alert('Incorrect...\n\nClick OK to continue.');
   } else {
     CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
+    numCD < 2 ? alert('Correct!\n\nClick OK to start change detection trial.') : alert('Correct!\n\nClick OK to continue.');
   }
 }
 function CDtrialChange() {
@@ -646,9 +649,9 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 1) {
-        flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
+      flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
-        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
+      flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
       }
       if (curError > 180) {
           curError = 360-curError;
@@ -656,7 +659,7 @@ function ShowContinuousReport(trialStruct) {
           curError = curError+360;
       }
 
-      if (e.isFakeTrigger) { // this code only executes once before anything else happens, e.g. otherwise randrotate would be next trial's randrotate
+      if (e.isFakeTrigger) {
         trialStruct.startingColor = startingColor;
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
@@ -665,23 +668,7 @@ function ShowContinuousReport(trialStruct) {
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
         ringImg.onload = function() {
-          ringctx.drawImage(ringImg,50,50,500,500);
-        }
-        ringctx.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
-        ctx2.onload = function() {
-          start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img); //set starting color as grayscale
-        }
-        start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
-      }
-      if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
-        if (tempVar) {
-          setTimeout(function() {
-            ctx2.onload = function() {
-              start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img); //set starting color as grayscale
-            }
-            start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
-          }, 150);
-          tempVar = false;
+          ringctx.drawImage(ringImg,50,50,500,500)
         }
       }
   });
@@ -689,26 +676,12 @@ function ShowContinuousReport(trialStruct) {
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
           explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
-      // } else if (((new Date()) - startTime) < 250) {
-      //     alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
-      //     ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
-      //     ringctx.clearRect(0,0,600,600);
-      //     ringctx.restore();
-      //     ringctx.drawImage(ringImg,50,50,500,500);
-      //     ringctx.save();
-      //     $("#continuousReport").hide();
-      //     $(document).unbind('click.curTrial');
-      //     $(document).unbind('mousemove.curTrial');
-      //     tooFast.push(1);
-      //     ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
-      //     return;
       }
 
       if (mouseMoved != 0) {
           trialStruct.reportedAngle = Math.round(angleDeg);
           trialStruct.reportedColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
           trialStruct.rt = (new Date()) - startTime;
-          trialStruct.trialTimeStart = startTime;
           trialStruct.col_diff = curError;
           $(document).unbind('click.curTrial');
           $(document).unbind('mousemove.curTrial');
@@ -721,13 +694,7 @@ function ShowContinuousReport(trialStruct) {
             ShowConfidence(trialStruct,angleDeg);
             $('#popQuiz').hide();
           } else {
-            var expConfirm = confirm("Is this your selection? [Cancel] to redo.");
-            if (expConfirm == true) {
-              Survey3();
-            } else {
-              ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
-              return;
-            }
+            Survey3();
           }
       }
   });
@@ -771,7 +738,7 @@ function ShowConfidence(trialStruct,angleDeg) {
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
-          lastRot = 1; lastRotMat.push(lastRot);
+          lastRot = 1;
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
           ctx2.beginPath();
           ctx2.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
@@ -788,7 +755,7 @@ function ShowConfidence(trialStruct,angleDeg) {
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
-          lastRot = 0; lastRotMat.push(lastRot);
+          lastRot = 0;
         }
     });
 
@@ -855,7 +822,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
   });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
+    ctx2.clearRect(0, 0, 600, 600);
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -943,14 +910,18 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a certain 90 degree portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       }
 
+      ringStop = 0;
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
 
       alert(document.getElementById("underText").innerHTML);
+
+      /* Set starting color as grayscale */
+      start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, img);
       mouseMoved = 0;
   } else {
       alert('Please select an option.');
@@ -992,8 +963,9 @@ function SaveData() {
   $('#assignmentId').val(GetAssignmentId());
   const newDate = new Date();
   const d = {
-    "WORKERID": WORKERID,
-    "ASSIGNMENTID": ASSIGNMENTID,
+    "curID": curID,
+    "workerId": workerId,
+    "assignmentId": assignmentId,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "startExpTime": startExpTime,
     "endExpTime": newDate,
@@ -1015,19 +987,18 @@ function SaveData() {
     "Seeds": seed,
     "StudyOrder": dx.r_study,
     "SeedOrder": dx.r_TrialType,
-    "CDAccuracy": CDaccuracy,
-    "firstConfDir": lastRotMat,
-    "tooFastCount": tooFast
+    "CDAccuracy": CDaccuracy
   };
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('data/' + curID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
 
     // submit HIT after waiting a few seconds to make sure data got sent
+    // technically this should be ajax i think
     setTimeout(function(){ document.forms[0].submit(); }, 3000);
 }
 
@@ -1047,7 +1018,6 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
         context.drawImage(image, initX, initY, imgWidth, imgHeight);
         recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
       }
-      recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
     }
 }
 function recolor(context,newR,newG,newB,initX,initY) {
