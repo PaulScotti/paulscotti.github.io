@@ -8,7 +8,6 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jcanvas.min.js"></script>
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
-<script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/blockedList.js"></script>
 <script src="lodash.core.js"></script> <!-- Allows _clone -->
 
 <!-- load Firebase server javascript, we are using it for storage -->
@@ -139,8 +138,6 @@ https://www.mturk.com/mturk/externalSubmit
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
 "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
 let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
-
-CheckBlockList(blockedIDs,WORKERID);
 
 // Initialize Firebase
 const config = {
