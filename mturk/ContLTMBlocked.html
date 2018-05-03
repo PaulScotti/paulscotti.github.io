@@ -227,6 +227,7 @@ let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
 let tooFast = [];
 let tempVar = true;
+let age = 0;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -343,6 +344,9 @@ function StartExperiment() {
     return false;
   }
   GenerateTrials();
+
+  age = prompt('Before we start, can you tell me how old you are?');
+  alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
 
@@ -1006,7 +1010,8 @@ function SaveData() {
     "SeedOrder": dx.r_TrialType,
     "CDAccuracy": CDaccuracy,
     "firstConfDir": lastRotMat,
-    "tooFastCount": tooFast
+    "tooFastCount": tooFast,
+    "Age": age
   };
 
     /* save to Firebase server */
