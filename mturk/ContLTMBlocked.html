@@ -228,6 +228,7 @@ let CDaccuracy = [];
 let tooFast = [];
 let tempVar = true;
 let age = 0;
+let sex = -999;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -346,6 +347,7 @@ function StartExperiment() {
   GenerateTrials();
 
   age = prompt('Before we start, can you tell me how old you are (in years)?');
+  sex = prompt('And are you male (M) or female (F) or other (O)?');
   alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
@@ -1011,7 +1013,8 @@ function SaveData() {
     "CDAccuracy": CDaccuracy,
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,
-    "Age": age
+    "Age": age,
+    "Sex": sex
   };
 
     /* save to Firebase server */
