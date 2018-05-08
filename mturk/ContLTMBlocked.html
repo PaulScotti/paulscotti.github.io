@@ -348,6 +348,14 @@ function StartExperiment() {
 
   age = prompt('Before we start, can you tell me how old you are (in years)?');
   sex = prompt('And are you male (M) or female (F) or other (O)?');
+
+  while (!(age >0)) {
+    age = prompt('Can you tell me how old you are (in years)?');
+  }
+
+  while (!((sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+      sex = prompt('Are you male (M) or female (F) or other (O)?');
+  }
   alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
