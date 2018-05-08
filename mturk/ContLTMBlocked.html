@@ -353,7 +353,7 @@ function StartExperiment() {
     age = prompt('Can you tell me how old you are (in years)?');
   }
 
-  while (!((sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+  while (!(sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
       sex = prompt('Are you male (M) or female (F) or other (O)?');
   }
   alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
