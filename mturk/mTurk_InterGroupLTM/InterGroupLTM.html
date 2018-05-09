@@ -8,7 +8,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jcanvas.min.js"></script>
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
-<script src="lodash.core.js"></script> <!-- Allows _clone -->
+<script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js"></script> <!-- Allows _clone -->
 
 <!-- load Firebase server javascript, we are using it for storage -->
 <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
@@ -20,10 +20,13 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 </head>
 <body style="">
 
+<!-- Consent statement: -->
+<div id="consentDiv"><h1>The Ohio State University Consent to Participate in Research</h1><h2>Study Title: Individual variation in attention, cognitive control, and memory</h2><h2>Researchers: Paul S. Scotti, Yoolim Hong, Julie D. Golomb, Andrew B. Leber</h2> <p><b>This is a consent form for research participation.</b> It contains important information about this study and what to expect if you decide to participate.</p><p><b>Your participation is voluntary.</b></p><p>Please consider the information carefully. Feel free to email questions to the researchers before making your decision whether or not to participate.  If you decide to participate, you will be asked to click a button below this form.</p><p><b>Purpose:</b> In this experiment, we are interested in understanding how humans are able to control their attention to focus on relevant information, and how attention is related to other cognitive abilities and traits.</p><p><b>Procedures/Tasks:</b> Your participation involves watching various visual events on a computer screen and responding to what you saw. Additionally, you may be asked to complete a survey. You will be provided with detailed written instructions at the start of each task or survey.</p><p><b>Duration:</b> The experiment is expected to take the duration listed in the HIT description. You may leave the study at any time.  If you decide to stop participating in the study, there will be no penalty to you, and you will not lose any benefits to which you are otherwise entitled.  Your decision will not affect your future relationship with The Ohio State University.</p><p><b>Risks and Benefits:</b> There is no more risk associated with participation than you would normally encounter while playing a simple video game.  Benefits include advance scientific knowledge, experiencing the research process, and learning about attention and cognitive control.</p><p><b>Confidentiality:</b> Upon completed of the HIT, your Amazon Mechanical Turk Worker ID will be made available to the experimenters. Only select lab personnel will have access to the requester Mechanical Turk site, and Worker IDs will be used only to confirm study completion, assign compensation, and, in some cases, to invite you to participate in a follow-up study.</p><p>The data that you provide in the experiment will be stored temporarily on a secure private online server or on the web-survey platform Qualtrics, then transferred to our secure lab computers. Your name or contact information will not be collected during the experiment. Only select lab personnel who have received training in human subjects protection and clearance to handle data for this project will have access to your results. We will work to make sure that no one sees your data without approval. But, because we are using the Internet, there is a chance that someone could access your online responses without permission. In some cases, this information could be used to identify you. Your data will be protected with a code to reduce the risk that other people can view the responses. However, there are rare instances when the researcher may be required to share personally identifiable information. For example, in response to a complaint about the research, officials at The University and/or regulatory oversight government agencies (National Science Foundation) may access research data.  The researcher is also required by law to report certain information to government and/or law enforcement officials (e.g., threatened violence against self or others, communicable diseases).</p><p><b>Incentives:</b> You will receive the compensation amount listed in the HIT description (based on a rate of $6/hour). If you withdraw early for any reason, your payment will be prorated to the nearest increment of 10 minutes based on a $6/hour rate, up until the amount indicated in the HIT description. If you withdraw early, please contact the researcher at scotti.5@osu.edu to ensure you receive your compensation.</p><p><b>Participant Rights:</b> You may refuse to participate in this study without penalty or loss of benefits to which you are otherwise entitled. If you are a student or employee at Ohio State, your decision will not affect your grades or employment status.</p><p>If you choose to participate in the study, you may discontinue participation at any time without penalty or loss of benefits.  By consenting below, you do not give up any personal legal rights you may have as a participant in this study.</p><p>An Institutional Review Board responsible for human subjects research at The Ohio State University reviewed this research project and found it to be acceptable, according to applicable state and federal regulations and University policies designed to protect the rights and welfare of participants in research.</p><p><b>Contacts and Questions:</b> For questions, concerns, or complaints about the study, or you feel you have been harmed as a result of study participation, you may contact either Paul Scotti at scotti.5@osu.edu. For questions about your rights as a participant in this study or to discuss other study-related concerns or complaints with someone who is not part of the research team, you may contact Ms. Sandra Meadows in the Office of Responsible Research Practices at meadows.8@osu.edu.</p><p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><center><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p><br></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#instructions').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">I consent to participate in this study</a></p></div>
+
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This study lasts approximately one and a half hours.</center><br>You will receive $15.00 for completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this study then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
-<p>In this experiment, you will memorize the colors of a variety of objects.</p>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
 <p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen 40 objects.</p>
@@ -48,7 +51,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 </div>
 
 <!-- Start form here to capture comments -->
-<form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
+<form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
 <input type="hidden" name="assignmentId" id="assignmentId" value="" >
 <input type="hidden" name="foo" value="" >
 <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
@@ -58,10 +61,10 @@ https://www.mturk.com/mturk/externalSubmit
 -->
 
 <!-- Screen for collecting comments when they are done: -->
-<div id="done"><div id="doneText">Thanks very much for your participation!<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
+<div id="done"><div id="doneText">Thanks very much for your participation! Your bonus may take a few extra days to process.<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
 <textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea>
 <center><p><div id="cashPrize">text</center></div></p>
-<a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
+<a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit HIT</a>
 </div><div id="saving">Saving . . .</div></div>
 
 <!-- Basic structure for a trial: -->
@@ -132,20 +135,6 @@ https://www.mturk.com/mturk/externalSubmit
 <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/loadimg.js"></script>
 
 <script>
-$('#instructions').show()
-
-age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-while (!(age >0)) {
-  age = prompt('Can you tell me how old you are (in years)?');
-}
-
-sex = prompt('And are you male (M) or female (F) or other (O)?');
-
-while (!(sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-    sex = prompt('Are you male (M) or female (F) or other (O)?');
-}
-
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
 "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
 let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
@@ -217,7 +206,7 @@ const ringSize = 242;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
-let basepay = 15;
+let basepay = 9;
 let radioResp = 0;
 let likertAns = 0;
 let explicitColor = -999;
@@ -238,6 +227,8 @@ let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let CDaccuracy = [];
 let tooFast = [];
 let tempVar = true;
+let age = 0;
+let sex = -999;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -264,7 +255,7 @@ imgCD.crossOrigin = "anonymous";
 imgCD.src = $('#diff1')[0].src;
 let CDfix = new Image();
 CDfix.crossOrigin = "anonymous";
-CDfix.src = $('#CDfixation')[0].src;
+CDfix.src = $('#CDfixation')[0].src; //lowercase CDfixation refers to the actual image, CDFixation refers to the class
 let imgCDtest = new Image();
 imgCDtest.crossOrigin = "anonymous";
 imgCDtest.src = $('#diff2')[0].src;
@@ -291,6 +282,7 @@ imgX.src = $('#' + dx.pracimg[0])[0].src;
 $('#popQuiz').hide();
 $('#underText2').hide();
 
+/* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
   if (WORKERID == null) {
     WORKERID = 'no_id';
@@ -354,7 +346,18 @@ function StartExperiment() {
   }
   GenerateTrials();
 
-  alert('You will now see colored objects appear one at a time. Remember their colors!')
+  age = prompt('Before we start, can you tell me how old you are (in years)?');
+
+  while (!(age >0)) {
+    age = prompt('Can you tell me how old you are (in years)?');
+  }
+
+  sex = prompt('And are you male (M) or female (F) or other (O)?');
+
+  while (!(sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+      sex = prompt('Are you male (M) or female (F) or other (O)?');
+  }
+  alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
 
@@ -1028,10 +1031,10 @@ function SaveData() {
     const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
     storageRef.put(blob);
 
-    document.getElementById("saving").innerHTML = "Saving...";
+    document.getElementById("saving").innerHTML = "Submitting HIT...";
 
     // submit HIT after waiting a few seconds to make sure data got sent
-    setTimeout(function(){ document.getElementById("saving").innerHTML = "Thank you! Please come out and find your experimenter."; }, 3000);
+    setTimeout(function(){ document.forms[0].submit(); }, 3000);
 }
 
 function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image) {
