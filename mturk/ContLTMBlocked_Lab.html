@@ -134,6 +134,18 @@ https://www.mturk.com/mturk/externalSubmit
 <script>
 $('#instructions').show()
 
+age = prompt('Before we start, can you tell me how old you are (in years)?');
+
+while (!(age >0)) {
+  age = prompt('Can you tell me how old you are (in years)?');
+}
+
+sex = prompt('And are you male (M) or female (F) or other (O)?');
+
+while (!(sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+    sex = prompt('Are you male (M) or female (F) or other (O)?');
+}
+
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
 "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
 let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
@@ -345,18 +357,7 @@ function StartExperiment() {
   }
   GenerateTrials();
 
-  age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-  while (!(age >0)) {
-    age = prompt('Can you tell me how old you are (in years)?');
-  }
-
-  sex = prompt('And are you male (M) or female (F) or other (O)?');
-
-  while (!(sex == 'M' || sex == 'F' || sex == 'O' || sex == 'm' || sex == 'f' || sex == 'o' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-      sex = prompt('Are you male (M) or female (F) or other (O)?');
-  }
-  alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
+  alert('You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
 
