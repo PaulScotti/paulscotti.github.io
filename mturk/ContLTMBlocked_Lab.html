@@ -266,7 +266,7 @@ imgCD.crossOrigin = "anonymous";
 imgCD.src = $('#diff1')[0].src;
 let CDfix = new Image();
 CDfix.crossOrigin = "anonymous";
-CDfix.src = $('#CDfixation')[0].src; //lowercase CDfixation refers to the actual image, CDFixation refers to the class
+CDfix.src = $('#CDfixation')[0].src;
 let imgCDtest = new Image();
 imgCDtest.crossOrigin = "anonymous";
 imgCDtest.src = $('#diff2')[0].src;
@@ -293,7 +293,6 @@ imgX.src = $('#' + dx.pracimg[0])[0].src;
 $('#popQuiz').hide();
 $('#underText2').hide();
 
-/* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
   if (WORKERID == null) {
     WORKERID = 'no_id';
