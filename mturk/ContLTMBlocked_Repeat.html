@@ -158,11 +158,12 @@ document.oncontextmenu = function() {
 const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
-const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [2, 10, 5]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const totalRepeats = 5; // 30 need be factor of r_TrialType.length (in this case it's 5)
+const numTrialsPerPart = [2, 5, 5]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const actualStudyNum = numTrialsPerPart[1]*2;
 let block = 1;
 const trialsPerBlock = 10;
-const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
+const totBlocks = actualStudyNum/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
 <script>
@@ -170,7 +171,7 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 1000;
+const displayTime = 3000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -318,10 +319,12 @@ function GenerateTrials() {
     triTrialsTest.push.apply(triTrialsTest,chance1.shuffle(tempTest));
   }
 
-  fooArray = triTrials.slice(0,length(triTrials)/2);
-  fooArray2 = triTrials.slice(length(triTrials)/2,length(triTrials));
+  fooArray = triTrials.slice(0,triTrials.length/2); //take study trials, split in half, randomize each, place 1st half at end followed by 2nd half
+  fooArray2 = triTrials.slice(triTrials.length/2,triTrials.length);
   triTrials.push.apply(triTrials,chance1.shuffle(fooArray));
   triTrials.push.apply(triTrials,chance1.shuffle(fooArray2));
+
+  numTrialsPerPart[1] = actualStudyNum; //increase num of study trials to double its original value
 
   for (let i=0; i<numTrialsPerPart[0]; i++) {
     let cap = 360/numTrialsPerPart[0];
@@ -338,7 +341,8 @@ function GenerateTrials() {
                     'seed': pickSeed,
                     'isPractice': 0,
                     'item': curMean,
-                    'origTrial': dx.r_repeattrial[i] + 1});
+                    'itemID': dx.repeatimg[i],
+                    'origTrial': dx.r_repeattrial[i]});
   }
     repeatTriTrials = chance1.shuffle(repeatTriTrials);
 }
@@ -921,7 +925,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           if (repeat == 1) {
               imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
               numRepeats++;
-          } else if (currentFeedTrial < numTrialsPerPart[1]-1) {
+          } else if (currentFeedTrial < numTrialsPerPart[currentPart]-1) {
               img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemID)[0].src;
           } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
               img.src = $('#999')[0].src;
@@ -1035,7 +1039,8 @@ function SaveData() {
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,
     "Age": age,
-    "Gender": sex
+    "Sex": sex,
+    "ExpName": 'ContLTMBLocked_Repeat'
   };
 
     /* save to Firebase server */
