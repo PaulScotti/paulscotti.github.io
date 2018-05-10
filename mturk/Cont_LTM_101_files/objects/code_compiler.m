@@ -3,7 +3,7 @@ clc; clear;
 code = [];
 preset = ['<img id="IDN" src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/objects/Object.png" style="margin-left:-1000px">'];
 
-for i = 400:400
+for i = 401:405
     presetNew = strrep(preset,'Object',['Object',num2str(100+i)]);
     presetNew = strrep(presetNew,'IDN',[num2str(100+i)]);
     code = strcat(code,presetNew);
