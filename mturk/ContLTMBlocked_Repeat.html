@@ -25,13 +25,13 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.90.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
-<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen 90 objects.</p>
+<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen all of our objects twice.</p>
 
-<p>You will then be tested on your memory for each object's color. A previously seen object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess of the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
+<p>At random times you will be tested on your color memory for a previously seen object. The object will be presented in grayscale on the screen and you will be required to move your mouse around a color wheel to select your best guess of the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct2.png" width="400"></p>
 
@@ -39,13 +39,13 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p>If you do not know the correct color, move your mouse around the color wheel and select what feels right. You are not allowed to use any external tools to remember objects.</p>
 
-<p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how certain you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the smallest range of colors you think could contain the original object's color. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel. If you were very certain about your answer then you would highlight a small range of colors, and if you were completely guessing then you would highlight the entirety of the color wheel.</p>
+<p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how certain you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the smallest range of colors you think could contain the original object's color. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel (shown below). If you were more certain about your answer, then you would highlight a smaller range of colors. If you were completely guessing then you would highlight the entirety of the color wheel.</p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct3.png" width="400"></p>
 
-<p>After you have been tested on all 90 objects, the entire process repeats. That is, you will study and be tested on another 90 objects.</p>
+<p><strong>After you have seen all our objects twice, you will be tested on all the remaining objects that you have not already been tested on.</strong> In other words, every object that you see will eventually be tested.</p>
 
-<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
+<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
 
 <p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
@@ -164,14 +164,14 @@ const actualStudyNum = numTrialsPerPart[1]*2;
 let block = 1;
 const trialsPerBlock = 10;
 const totBlocks = actualStudyNum/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_2ndhalfDup.js"> </script>
 
 <script>
 
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 3000;
+const displayTime = 1000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -319,8 +319,8 @@ function GenerateTrials() {
     triTrialsTest.push.apply(triTrialsTest,chance1.shuffle(tempTest));
   }
 
-  fooArray = triTrials.slice(0,triTrials.length/2); //take study trials, split in half, randomize each, place 1st half at end followed by 2nd half
-  fooArray2 = triTrials.slice(triTrials.length/2,triTrials.length);
+  fooArray = _.clone(triTrials.slice(0,triTrials.length/2)); //take study trials, split in half, randomize each, place 1st half at end followed by 2nd half
+  fooArray2 = _.clone(triTrials.slice(triTrials.length/2,triTrials.length));
   triTrials.push.apply(triTrials,chance1.shuffle(fooArray));
   triTrials.push.apply(triTrials,chance1.shuffle(fooArray2));
 
@@ -445,16 +445,18 @@ function ShowTrial(trialStruct) {
                     if (readyRepeat == 1) {
                       if (waitObject != 1) {
                         readyRepeat = 0;
+                        if (waitObject == 0) { currentTrial--; }
                         RepeatTrial();
                       } else {
                         waitObject = 2;
+                        currentTrial--;
                         NextTrial();
                       }
                     } else {
                       if (dx.r_repeattrial.includes(currentTrial)) {
                           waitObject = Math.random()<0.5? 0 : 1;
                           imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
-                          if (currentTrial == numTrialsPerPart[1] - 1) { waitObject = 0; }
+                          if (currentTrial == numTrialsPerPart[1]) { waitObject = 0; }
                           readyRepeat = 1; NextTrial();
                       } else {
                           readyRepeat = 0; NextTrial();
