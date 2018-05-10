@@ -384,8 +384,6 @@ function NextTrial() {
   repeat = 0;
   currentTrial++;
 
-  console.log(currentTrial);
-
   if (nextTrialStart == 0) {
     if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) {
       alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
