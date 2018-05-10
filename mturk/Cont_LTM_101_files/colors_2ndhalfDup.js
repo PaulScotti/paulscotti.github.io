@@ -381,11 +381,6 @@ let colors = [
 		}
 	}
 
-	fooArray = dx.r_TrialType.slice(0,length(dx.r_TrialType)/2);
-	fooArray2 = dx.r_TrialType.slice(length(dx.r_TrialType)/2,length(dx.r_TrialType));
-	dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(fooArray));
-	dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(fooArray2));
-
 	function repmat(array, count) {
 	    let result = [];
 	    while (count--) {

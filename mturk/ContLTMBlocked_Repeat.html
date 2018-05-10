@@ -158,10 +158,10 @@ document.oncontextmenu = function() {
 const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
-const totalRepeats = 30; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
+const numTrialsPerPart = [2, 10, 5]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 360;
+const trialsPerBlock = 10;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -318,6 +318,11 @@ function GenerateTrials() {
     triTrialsTest.push.apply(triTrialsTest,chance1.shuffle(tempTest));
   }
 
+  fooArray = triTrials.slice(0,length(triTrials)/2);
+  fooArray2 = triTrials.slice(length(triTrials)/2,length(triTrials));
+  triTrials.push.apply(triTrials,chance1.shuffle(fooArray));
+  triTrials.push.apply(triTrials,chance1.shuffle(fooArray2));
+
   for (let i=0; i<numTrialsPerPart[0]; i++) {
     let cap = 360/numTrialsPerPart[0];
     let curMean = counter(1,360,cap);
@@ -364,7 +369,7 @@ function StartExperiment() {
   // save a file letting me know that someone made it this far
   const blobx = new Blob([JSON.stringify(WORKERID)], {type: "application/json"});
   const storageRefx = firebase.storage().ref('started/' + WORKERID + '.json');
-  storageRefx.put(blob);
+  storageRefx.put(blobx);
 
   $('#instructions').hide();
   NextTrial();
@@ -374,6 +379,8 @@ function StartExperiment() {
 function NextTrial() {
   repeat = 0;
   currentTrial++;
+
+  console.log(currentTrial);
 
   if (nextTrialStart == 0) {
     if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) {
