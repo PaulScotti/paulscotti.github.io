@@ -170,7 +170,7 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 1000;
+const displayTime = 2000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -364,7 +364,7 @@ function StartExperiment() {
   // save a file letting me know that someone made it this far
   const blobx = new Blob([JSON.stringify(WORKERID)], {type: "application/json"});
   const storageRefx = firebase.storage().ref('started/' + WORKERID + '.json');
-  storageRefx.put(blob);
+  storageRefx.put(blobx);
 
   $('#instructions').hide();
   NextTrial();
