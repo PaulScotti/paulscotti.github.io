@@ -159,18 +159,18 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked_dub.js"> </script>
 
 <script>
 
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 1000;
+const displayTime = 2000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -303,7 +303,11 @@ function GenerateTrials() {
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
-    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    if (pickSeed == 0 || pickSeed == 2) {
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*30) - 15);
+    } else {
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*150) - 75);
+    }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
@@ -360,6 +364,11 @@ function StartExperiment() {
   alert('Thanks! You will now see colored objects appear one at a time. Remember their colors!')
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
+
+  // save a file letting me know that someone made it this far
+  const blobx = new Blob([JSON.stringify(WORKERID)], {type: "application/json"});
+  const storageRefx = firebase.storage().ref('started/' + WORKERID + '.json');
+  storageRefx.put(blobx);
 
   $('#instructions').hide();
   NextTrial();
@@ -1023,7 +1032,8 @@ function SaveData() {
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,
     "Age": age,
-    "Sex": sex
+    "Sex": sex,
+    "ExpName": 'ContLTMBlocked40'
   };
 
     /* save to Firebase server */
