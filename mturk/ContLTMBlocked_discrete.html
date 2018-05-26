@@ -25,11 +25,11 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <!-- Instructions: -->
 <div id="instructions" style="display: none">
-<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.60.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
+<p><b><center>This HIT lasts approximately one and a half hours.</center><br>You will receive $9.00 for HIT completion. Depending on performance you may receive a bonus up to $3.78.<br>If you have previously completed this HIT then you are ineligible to participate.</b><br>Please do not disable the creation of text dialogs as these will sometimes be used to relay instructions.</p><br>
 <p>In this HIT, you will memorize the colors of a variety of objects.</p>
 <p>Every object has a single color associated with it. For example:</p>
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct1.png" width="400"></p>
-<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen 40 objects.</p>
+<p>An object will be displayed for one second, followed by a blank delay. This will repeat until you have seen 42 objects.</p>
 
 <p>You will then be tested on your memory for each object's color. A previously seen object will be presented on the screen and you will be required to move your mouse around a color wheel to select your best guess of the original color of the object. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next object.</p>
 
@@ -43,7 +43,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/Instruct3.png" width="400"></p>
 
-<p>After you have been tested on all 40 objects, the entire process repeats. That is, you will study and be tested on another 40 objects.</p>
+<p>After you have been tested on all 42 objects, the entire process repeats. That is, you will study and be tested on another 42 objects.</p>
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
 
@@ -103,11 +103,11 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey2" style="display: none;">
     <center>
-    <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
+    <div id = "doneText"><p>Do you think that a certain color occurred most often across all objects?</p></div>
     <br><br><br><br>
-    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Each color chosen at random
+    <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> No color more likely than another
     <br><br>
-    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Some portion of colors chosen more than others
+    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> One color chosen most often
     <br><br><br><br>
     <a href="javascript:void(0);" onclick="Survey();" id="startExperimentButton" style="display: inline;">Submit</a>
     </center>
@@ -115,7 +115,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey3" style="display: none;">
     <center>
-    <div id = "doneText"><p>How confident are you that the biased color region you selected is close to the actual experimental manipulation?</p></div>
+    <div id = "doneText"><p>How confident are you that the color you selected is close to the actual most common color?</p></div>
     <br><br><br><br>
     <div class="likertButtons">
     Less certain
@@ -159,7 +159,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [1, 42, 42]; // 5, 378, 378] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const numTrialsPerPart = [1, 378, 378]; // 5, 378, 378] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 42;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -170,8 +170,8 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 2000;
-const isiTime = 1000;
+const displayTime = 200;
+const isiTime = 200;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
@@ -633,34 +633,30 @@ function ShowContinuousReport(trialStruct) {
       } else if (survey == 1 && repeat == 0) {
           img.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
-          ctx2.lineWidth = 50;
-          ctx2.strokeStyle = 'white';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
-          ctx2.lineWidth = 50;
-          ctx2.strokeStyle = 'white';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
-          ctx2.lineWidth = 40;
-          ctx2.strokeStyle = 'black';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
-          ctx2.lineWidth = 40;
-          ctx2.strokeStyle = 'black';
-          ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
+          // ctx2.lineWidth = 50;
+          // ctx2.strokeStyle = 'white';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
+          // ctx2.lineWidth = 50;
+          // ctx2.strokeStyle = 'white';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
+          // ctx2.lineWidth = 40;
+          // ctx2.strokeStyle = 'black';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
+          // ctx2.lineWidth = 40;
+          // ctx2.strokeStyle = 'black';
+          // ctx2.stroke();
       }
 
-      if (survey == 0) {
-        $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
-                          'top': centerY + Math.sin(curAngle)*ringSize-9});
-      } else {
-        $('#pointer').hide();
-      }
+      $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
+                        'top': centerY + Math.sin(curAngle)*ringSize-9});
 
       if (survey == 1) {
         flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
@@ -706,7 +702,7 @@ function ShowContinuousReport(trialStruct) {
   $(document).bind('click.curTrial', function(e) {
       if (survey == 1) {
           explicitColor = flip == 0? Math.round(wrap([angleDeg-randrotate])) : Math.round(wrap([180-wrap([angleDeg-randrotate])]));
-      } else if (currentPart == 2 && ((new Date()) - startTime) < 500) {
+      } else if (currentPart == 2 && ((new Date()) - startTime) < 300) {
         if (currentFeedTrial % trialsPerBlock != 0) {
           alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
         }
@@ -952,9 +948,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, ~22% of objects shared the same color. Please select the color you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, ~22% of objects shared the same color. Please select the color you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
@@ -1029,7 +1025,7 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked40'
+    "ExpName": 'ContLTM_Discrete'
   };
 
     /* save to Firebase server */
