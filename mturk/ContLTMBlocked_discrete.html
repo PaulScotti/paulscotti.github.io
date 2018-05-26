@@ -295,15 +295,15 @@ function GenerateTrials() {
   }
   Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
-  seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 90)];
-  seed = [seed[0], seed[1], (seed[1] + 90)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
+  const see = Math.floor(Math.random()*360);
+  for (let i=0; i<12; i++) {
+    seed = seed.concat(see + (i*30));
+  }
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
-    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    let curMean = seed[pickSeed]);
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
@@ -327,7 +327,7 @@ function GenerateTrials() {
 
   for (let i=0; i<dx.rep_TrialType.length; i++) {
     let pickSeed = dx.rep_TrialType[i];
-    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    let curMean = seed[pickSeed]);
     wrap(curMean);
     repeatTriTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
