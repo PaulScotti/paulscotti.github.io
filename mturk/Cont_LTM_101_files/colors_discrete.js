@@ -366,8 +366,8 @@ let colors = [
         "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
         "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
 				"r_repeattrial": counter(1,numTrialsPerPart[1],2),
-				"r_TrialType": repmat([0,0,0,1,2,3,4,5,6,7,8,9,10,11],trialsPerBlock/3),
-				"rep_TrialType": repmat([0,0,0,1,2,3,4,5,6,7,8,9,10,11],Math.ceil(totalRepeats/3))
+				"r_TrialType": repmat([0,0,0,1,2,3,4,5,6,7,8,9,10,11],trialsPerBlock/14),
+				"rep_TrialType": repmat([0,0,0,1,2,3,4,5,6,7,8,9,10,11],Math.ceil(totalRepeats/14))
 	};
 
 	const tempRand = _.clone(dx.r_TrialType);
@@ -375,7 +375,7 @@ let colors = [
 
 	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
 		fooArray = _.clone(chance1.shuffle(tempRand));
-		fooIter = trialsPerBlock/3;
+		fooIter = trialsPerBlock/14;
 		for (fooNum = 1; fooNum<=fooIter; fooNum++) {
 			dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(fooArray));
 		}
