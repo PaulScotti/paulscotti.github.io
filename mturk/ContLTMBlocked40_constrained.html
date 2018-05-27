@@ -296,9 +296,9 @@ function GenerateTrials() {
   Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 90)];
-  seed = [seed[0], seed[1], (seed[1] + 90)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
+  seed = [seed, (seed + 110)];
+  seed = [seed[0], seed[1], (seed[1] + 110)];
+  seed = [seed[0], seed[1], seed[2], (seed[2] + 110)];
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
