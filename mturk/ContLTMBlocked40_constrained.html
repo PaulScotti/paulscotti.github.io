@@ -163,7 +163,7 @@ const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat)
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked_dub.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
 <script>
 
@@ -296,7 +296,7 @@ function GenerateTrials() {
   Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 110)];
+  seed = [seed, (seed + 70)];
   seed = [seed[0], seed[1], (seed[1] + 110)];
   seed = [seed[0], seed[1], seed[2], (seed[2] + 110)];
   wrap(seed);
@@ -306,7 +306,7 @@ function GenerateTrials() {
     if (pickSeed == 0 || pickSeed == 2) {
       curMean = seed[pickSeed] + (Math.floor(Math.random()*30) - 15);
     } else {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*150) - 75);
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*110) - 55);
     }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
