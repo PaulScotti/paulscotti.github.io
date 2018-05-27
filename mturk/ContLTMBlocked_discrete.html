@@ -1030,7 +1030,7 @@ function SaveData() {
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('data_discrete/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
