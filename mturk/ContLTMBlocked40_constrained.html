@@ -303,7 +303,7 @@ function GenerateTrials() {
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
-    if (pickSeed == 0 || pickSeed == 2) {
+    if (pickSeed == 0) {
       curMean = seed[pickSeed] + (Math.floor(Math.random()*30) - 15);
     } else {
       curMean = seed[pickSeed] + (Math.floor(Math.random()*110) - 55);
