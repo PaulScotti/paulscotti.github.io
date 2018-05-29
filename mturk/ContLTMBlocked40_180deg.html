@@ -1033,12 +1033,12 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked40_constrained'
+    "ExpName": 'ContLTMBlocked40_180deg'
   };
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('data_180deg/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
