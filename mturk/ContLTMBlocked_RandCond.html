@@ -136,7 +136,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <script>
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
-"Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+"Enter an ID to save your data with (any number/string will do).", "workID");
 let ASSIGNMENTID = (IsOnTurk())? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
 
 // Initialize Firebase
@@ -158,10 +158,13 @@ document.oncontextmenu = function() {
 const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
+Math.seedrandom(); /* Completely random seed, no longer based on WorkerID */
+const RandCondition = Math.round(Math.random())+1; //either condition 1 (replication) or condition 2 (80 obj per block)
+
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 40;
+RandCondition == 1 ? trialsPerBlock = 40 : trialsPerBlock = 80;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -293,7 +296,6 @@ function GenerateTrials() {
   if (typeof WORKERID === 'undefined') {
     workerId = 'no_workerId';
   }
-  Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
 
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -999,6 +1001,7 @@ function SaveData() {
   $('#done').children().hide();
   $('#saving').show();
   $('#assignmentId').val(GetAssignmentId());
+  RandCondition == 1 ? exptName = 'ContLTMBlocked40_1c' : exptName = 'ContLTMBlocked80';
   const newDate = new Date();
   const d = {
     "WORKERID": WORKERID,
@@ -1029,7 +1032,7 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked40'
+    "ExpName": exptName
   };
 
     /* save to Firebase server */
