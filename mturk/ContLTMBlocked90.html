@@ -155,7 +155,8 @@ document.oncontextmenu = function() {
     return false;
 }
 
-const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
+const SeedRNG = Math.seedrandom();
+const chance1 = Chance(SeedRNG); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
@@ -170,8 +171,8 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 250;
 const imgHeight = 250;
-const displayTime = 2500;
-const isiTime = 500;
+const displayTime = 1000;
+const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
@@ -293,7 +294,7 @@ function GenerateTrials() {
   if (typeof WORKERID === 'undefined') {
     workerId = 'no_workerId';
   }
-  Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
+  Math.seedrandom(SeedRNG); /* Use specific rng seed so you can backtrack trials */
 
   seed = Math.floor(Math.random()*360);
   seed = [seed, (seed + 90)];
@@ -1029,12 +1030,13 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked90'
+    "ExpName": 'ContLTMBlocked90_v2',
+    "SeedRNG": SeedRNG
   };
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data90/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('data_90v2/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
@@ -1069,7 +1071,7 @@ function recolor(context,newR,newG,newB,initX,initY) {
         let red = data[i];
         let green = data[i + 1];
         let blue = data[i + 2];
-        if (red != 0 && red!= 255) {
+        if (blue != 0 && blue!= 255) {
             data[i] = newR;
             data[i + 1] = newG;
             data[i + 2] = newB;
