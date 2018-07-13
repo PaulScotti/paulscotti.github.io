@@ -164,7 +164,7 @@ const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat)
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked_60.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked_70.js"> </script>
 
 <script>
 
@@ -953,9 +953,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 60% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 70% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 60% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 70% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
