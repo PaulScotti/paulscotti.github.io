@@ -297,14 +297,18 @@ function GenerateTrials() {
   Math.seedrandom(SeedRNG); /* Use specific rng seed so you can backtrack trials */
 
   seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 90)];
-  seed = [seed[0], seed[1], (seed[1] + 90)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
+  seed = [seed, (seed + 75)];
+  seed = [seed[0], seed[1], (seed[0] + 180)];
+  seed = [seed[0], seed[1], seed[2], (seed[2] + 75)];
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
-    let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    if (pickSeed == 0) {
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*15) - 7.5);
+    } else {
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*115) - 57.5);
+    }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,

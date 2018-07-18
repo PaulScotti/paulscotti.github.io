@@ -155,7 +155,8 @@ document.oncontextmenu = function() {
     return false;
 }
 
-const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
+const SeedRNG = Math.seedrandom();
+const chance1 = Chance(SeedRNG); // Use their ID as the shuffle seed, so you can trace back their trials
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
@@ -282,7 +283,6 @@ imgX.src = $('#' + dx.pracimg[0])[0].src;
 $('#popQuiz').hide();
 $('#underText2').hide();
 
-/* Generate trials: Do it the same for each subject by seeding the random number generator the same every time. */
 function GenerateTrials() {
   if (WORKERID == null) {
     WORKERID = 'no_id';
@@ -293,22 +293,19 @@ function GenerateTrials() {
   if (typeof WORKERID === 'undefined') {
     workerId = 'no_workerId';
   }
-  Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
+  Math.seedrandom(SeedRNG); /* Use specific rng seed so you can backtrack trials */
 
   seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 70)];
-  seed = [seed[0], seed[1], (seed[1] + 110)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 110)];
+  seed = [seed, (seed + 180)];
+  seed = [seed[0], seed[1], seed[1], seed[1]];
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
     if (pickSeed == 0) {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*30) - 15);
-    } else if (pickSeed == 3) {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*15) - 7.5);
     } else {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*240) - 120);
+      curMean = seed[pickSeed] + (Math.floor(Math.random()*345) - 172.5);
     }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
@@ -640,22 +637,22 @@ function ShowContinuousReport(trialStruct) {
           img.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*12, curAngle, 1);
+          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*12, curAngle, 0);
+          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/12, curAngle, 1);
+          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
           ctx2.lineWidth = 40;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/12, curAngle, 0);
+          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
           ctx2.lineWidth = 40;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
@@ -958,9 +955,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a confined portion of the color wheel (30 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a confined portion of the color wheel (30 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
@@ -1035,7 +1032,8 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked40_constrained'
+    "ExpName": 'ContLTMBlocked_Expt3b',
+    "SeedRNG": SeedRNG
   };
 
     /* save to Firebase server */
@@ -1075,7 +1073,7 @@ function recolor(context,newR,newG,newB,initX,initY) {
         let red = data[i];
         let green = data[i + 1];
         let blue = data[i + 2];
-        if (red != 0 && red!= 255) {
+        if (blue != 0 && blue!= 255) {
             data[i] = newR;
             data[i + 1] = newG;
             data[i + 2] = newB;
