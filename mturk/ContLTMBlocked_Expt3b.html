@@ -160,7 +160,7 @@ const chance1 = Chance(SeedRNG); // Use their ID as the shuffle seed, so you can
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 40, 40]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -303,9 +303,9 @@ function GenerateTrials() {
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
     if (pickSeed == 0) {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*15) - 7.5);
+      curMean = round(seed[pickSeed] + (Math.floor(Math.random()*15) - 7.5));
     } else {
-      curMean = seed[pickSeed] + (Math.floor(Math.random()*345) - 172.5);
+      curMean = round(seed[pickSeed] + (Math.floor(Math.random()*345) - 172.5));
     }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
