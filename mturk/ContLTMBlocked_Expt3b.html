@@ -635,24 +635,24 @@ function ShowContinuousReport(trialStruct) {
           img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemID)[0].src;
       } else if (survey == 1 && repeat == 0) {
           img.src = $('#999')[0].src;
-          // Draw fixed 45 degree highlight
+          // Draw fixed 15 degree highlight
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
+          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*12, curAngle, 1);
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
+          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*12, curAngle, 0);
           ctx2.lineWidth = 50;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
+          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/12, curAngle, 1);
           ctx2.lineWidth = 40;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
+          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/12, curAngle, 0);
           ctx2.lineWidth = 40;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
@@ -955,9 +955,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a 15 deg. portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a 15 deg. portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
