@@ -103,11 +103,11 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey2" style="display: none;">
     <center>
-    <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared approximately the same color?</p></div>
+    <div id = "doneText"><p>Do you think object colors were sampled randomly from the color wheel or do you think objects often shared the same color?</p></div>
     <br><br><br><br>
     <input name="choice" type="radio" value="nope" id="surveyresponseRand" /> Each color chosen at random
     <br><br>
-    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Some portion of colors chosen more than others
+    <input name="choice" type="radio" value="yes" id="surveyresponsePref" /> Objects often shared same color
     <br><br><br><br>
     <a href="javascript:void(0);" onclick="Survey();" id="startExperimentButton" style="display: inline;">Submit</a>
     </center>
@@ -115,7 +115,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <form id="survey3" style="display: none;">
     <center>
-    <div id = "doneText"><p>How confident are you that the biased color region you selected is close to the actual experimental manipulation?</p></div>
+    <div id = "doneText"><p>How confident are you that the color you selected is close to the actual experimental manipulation?</p></div>
     <br><br><br><br>
     <div class="likertButtons">
     Less certain
@@ -160,7 +160,7 @@ const chance1 = Chance(SeedRNG); // Use their ID as the shuffle seed, so you can
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
+const numTrialsPerPart = [5, 40, 40]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 360 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -303,9 +303,9 @@ function GenerateTrials() {
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
     if (pickSeed == 0) {
-      curMean = Math.round(seed[pickSeed] + (Math.floor(Math.random()*15) - 7.5));
+      curMean = Math.round(seed[pickSeed]);
     } else {
-      curMean = Math.round(seed[pickSeed] + (Math.floor(Math.random()*345) - 172.5));
+      curMean = Math.round(seed[pickSeed] + (Math.floor(Math.random()*359) - 179.5));
     }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
@@ -635,27 +635,27 @@ function ShowContinuousReport(trialStruct) {
           img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemID)[0].src;
       } else if (survey == 1 && repeat == 0) {
           img.src = $('#999')[0].src;
-          // Draw fixed 15 degree highlight
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*12, curAngle, 1);
-          ctx2.lineWidth = 50;
-          ctx2.strokeStyle = 'white';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*12, curAngle, 0);
-          ctx2.lineWidth = 50;
-          ctx2.strokeStyle = 'white';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/12, curAngle, 1);
-          ctx2.lineWidth = 40;
-          ctx2.strokeStyle = 'black';
-          ctx2.stroke();
-          ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/12, curAngle, 0);
-          ctx2.lineWidth = 40;
-          ctx2.strokeStyle = 'black';
-          ctx2.stroke();
+          // // Draw fixed 15 degree highlight
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI, curAngle, 1);
+          // ctx2.lineWidth = 50;
+          // ctx2.strokeStyle = 'white';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI, curAngle, 0);
+          // ctx2.lineWidth = 50;
+          // ctx2.strokeStyle = 'white';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle + Math.PI, curAngle, 1);
+          // ctx2.lineWidth = 40;
+          // ctx2.strokeStyle = 'black';
+          // ctx2.stroke();
+          // ctx2.beginPath();
+          // ctx2.arc(centerX, centerY, radius, curAngle - Math.PI, curAngle, 0);
+          // ctx2.lineWidth = 40;
+          // ctx2.strokeStyle = 'black';
+          // ctx2.stroke();
       }
 
       if (survey == 0) {
@@ -955,9 +955,9 @@ function Survey() {
       ringctx.save();
 
       if (radioResp == 1) {
-        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from a 15 deg. portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were the same color. Please select the color you think matches our preferential color sampling.";
       } else if (radioResp == 2) {
-        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were sampled from a 15 deg. portion of the color wheel. Please select the range of colors you think matches our preferential color sampling.";
+        document.getElementById("underText").innerHTML = "Yes, we did manipulate what colors were presented. Specifically, 40% of objects were the same color. Please select the color you think matches our preferential color sampling.";
       }
 
       ShowContinuousReport({mean: seed[0], type: "color", isPractice: 0, items: 999});
