@@ -362,12 +362,11 @@ let colors = [
 		];
 
 	let dx = {
-        "repeatimg": counter(101,101+totalRepeats-1),
-        "pracimg": counter(101+totalRepeats,101+totalRepeats+numTrialsPerPart[0]-1),
-        "r_study": counter(101+totalRepeats+numTrialsPerPart[0],101+totalRepeats+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
-				"r_repeattrial": counter(1,numTrialsPerPart[1],2),
-				"r_TrialType": repmat([0,0,1,2,3],trialsPerBlock/5),
-				"rep_TrialType": repmat([0,0,1,2,3],Math.ceil(totalRepeats/5))
+        "pracimgA": counter(101,101+numTrialsPerPart[0]-1),
+				"pracimgB": counter(101+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]-1),
+        "testimgA": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
+				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
+				"trialtype": repmat([0,0,1,2,3],trialsPerBlock/5)
 	};
 
 	const tempRand = _.clone(dx.r_TrialType);

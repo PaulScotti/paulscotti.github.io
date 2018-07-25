@@ -159,7 +159,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -408,13 +408,12 @@ function NextTrial() {
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
     flip = 0;
-    start(ctx,trialStruct.item,175, 175,imgWidth,imgHeight,flip,img);
+    start(ctxA,trialStruct.itemA,175, 175,imgWidth,imgHeight,flip,imgA);
+    start(ctxB,trialStruct.itemB,175, 175,imgWidth,imgHeight,flip,imgB);
     if (currentPart == 0) {
-        img.src = $('#' + dx.pracimg[currentTrial])[0].src;
-    } else if (readyRepeat == 1 && waitObject != 2) {
-        img.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+        imgA.src = $('#' + dx.pracimgA[currentTrial])[0].src;
     } else {
-        img.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
+        imgA.src = $('#' + dx.testimgA[currentPart][currentTrial].itemID)[0].src;
     }
 
     $('#allItems').css('margin-top', -1000);
