@@ -12,9 +12,9 @@
 <!-- load Firebase server javascript, we are using it for storage -->
 <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/contReport.css">
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/showTrials.css">
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/experiment.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/contReport.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/showTrials.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/experiment.css">
 
 </head>
 <body style="">
@@ -70,9 +70,8 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<canvas id="itemA" width=300 height=300></canvas>
-<canvas id="itemB" width=300 height=300></canvas>
-<canvas id="CDitem" width=300 height=300></canvas>
+<canvas id="item" width=600 height=600></canvas>
+<canvas id="CDitem" width=600 height=600></canvas>
 </div><br><br>
 <center><a href="javascript:void(0);" onclick="SamePress();ChangeDetection();" id="SameButton" style="display: hidden; ">Same</a>
 <a href="javascript:void(0);" onclick="DiffPress();ChangeDetection();" id="DiffButton" style="display: hidden;">Different</a>
@@ -168,9 +167,9 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 <script>
 
 let imgNum = 0;
-const imgWidth = 200;
-const imgHeight = 200;
-const displayTime = 2000;
+const imgWidth = 250;
+const imgHeight = 250;
+const displayTime = 1000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
