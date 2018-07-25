@@ -12,9 +12,9 @@
 <!-- load Firebase server javascript, we are using it for storage -->
 <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/contReport.css">
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/showTrials.css">
-<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/Cont_LTM_101_files/experiment.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/contReport.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/showTrials.css">
+<link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/experiment.css">
 
 </head>
 <body style="">
@@ -70,8 +70,9 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<canvas id="item" width=600 height=600></canvas>
-<canvas id="CDitem" width=600 height=600></canvas>
+<canvas id="itemA" width=300 height=300></canvas>
+<canvas id="itemB" width=300 height=300></canvas>
+<canvas id="CDitem" width=300 height=300></canvas>
 </div><br><br>
 <center><a href="javascript:void(0);" onclick="SamePress();ChangeDetection();" id="SameButton" style="display: hidden; ">Same</a>
 <a href="javascript:void(0);" onclick="DiffPress();ChangeDetection();" id="DiffButton" style="display: hidden;">Different</a>
@@ -158,7 +159,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat), test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
@@ -167,9 +168,9 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 <script>
 
 let imgNum = 0;
-const imgWidth = 250;
-const imgHeight = 250;
-const displayTime = 1000;
+const imgWidth = 200;
+const imgHeight = 200;
+const displayTime = 2000;
 const isiTime = 1000;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -407,13 +408,12 @@ function NextTrial() {
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
     flip = 0;
-    start(ctx,trialStruct.item,175, 175,imgWidth,imgHeight,flip,img);
+    start(ctxA,trialStruct.itemA,175, 175,imgWidth,imgHeight,flip,imgA);
+    start(ctxB,trialStruct.itemB,175, 175,imgWidth,imgHeight,flip,imgB);
     if (currentPart == 0) {
-        img.src = $('#' + dx.pracimg[currentTrial])[0].src;
-    } else if (readyRepeat == 1 && waitObject != 2) {
-        img.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+        imgA.src = $('#' + dx.pracimgA[currentTrial])[0].src;
     } else {
-        img.src = $('#' + r_totalTrials[currentPart][currentTrial].itemID)[0].src;
+        imgA.src = $('#' + dx.testimgA[currentPart][currentTrial].itemID)[0].src;
     }
 
     $('#allItems').css('margin-top', -1000);
