@@ -370,11 +370,11 @@ let colors = [
 	};
 
 	const tempRand = _.clone(dx.r_TrialType);
-	dx.r_TrialType = [];
+	dx.trialtype = [];
 
 	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
 		fooArray = _.clone(chance1.shuffle(tempRand));
-		dx.r_TrialType.push.apply(dx.r_TrialType,chance1.shuffle(fooArray));
+		dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
 	}
 
 	function repmat(array, count) {

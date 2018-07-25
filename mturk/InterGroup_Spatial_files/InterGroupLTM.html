@@ -161,7 +161,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 40;
+const trialsPerBlock = 20;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
 
@@ -231,14 +231,17 @@ let age = 0;
 let sex = -999;
 
 /* Randomize orderings */
-dx.r_study = chance1.shuffle(dx.r_study);
-dx.rep_TrialType = chance1.shuffle(dx.rep_TrialType);
-dx.r_repeattrial = chance1.shuffle(dx.r_repeattrial);
-dx.r_repeattrial = dx.r_repeattrial.splice(dx.r_repeattrial.length-totalRepeats); //determine which trials will be repeat trials (equals totalRepeats)
+dx.pracimgA = chance1.shuffle(dx.pracimgA);
+dx.pracimgB = chance1.shuffle(dx.pracimgB);
+dx.testimgA = chance1.shuffle(dx.testimgA);
+dx.testimgB = chance1.shuffle(dx.testimgB);
+dx.trialtype = chance1.shuffle(dx.trialtype);
 
 /* Setup reused image variable */
-let img = new Image();
-img.crossOrigin = "anonymous";
+let imgA = new Image();
+imgA.crossOrigin = "anonymous";
+let imgB = new Image();
+imgB.crossOrigin = "anonymous";
 let imgX = new Image();
 imgX.crossOrigin = "anonymous";
 let imgPop = new Image();
@@ -262,9 +265,9 @@ imgCDtest.src = $('#diff2')[0].src;
 
 /* Setting up canvas contexts */
 const itemA = document.getElementById("itemA");
-const ctxA = item.getContext("2d");
+const ctxA = itemA.getContext("2d");
 const itemB = document.getElementById("itemB");
-const ctxB = item.getContext("2d");
+const ctxB = itemB.getContext("2d");
 const contItem = document.getElementById("contItem");
 const ctx2 = contItem.getContext("2d");
 const feedbackReportedTri = document.getElementById("feedbackReportedTri");
@@ -397,11 +400,7 @@ function NextTrial() {
   }
   nextTrialStart = 0;
 
-  if (readyRepeat == 1 && waitObject != 2) {
-    ShowTrial(repeatTriTrials[numRepeats]);
-  } else {
-    ShowTrial(r_totalTrials[currentPart][currentTrial]);
-  }
+  ShowTrial(r_totalTrials[currentPart][currentTrial]);
 
 }
 
