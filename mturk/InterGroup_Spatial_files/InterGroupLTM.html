@@ -411,8 +411,10 @@ function ShowTrial(trialStruct) {
     start(ctxB,trialStruct.itemB,175, 175,imgWidth,imgHeight,flip,imgB);
     if (currentPart == 0) {
         imgA.src = $('#' + dx.pracimgA[currentTrial])[0].src;
+        imgB.src = $('#' + dx.pracimgB[currentTrial])[0].src;
     } else {
         imgA.src = $('#' + dx.testimgA[currentPart][currentTrial].itemID)[0].src;
+        imgB.src = $('#' + dx.testimgB[currentPart][currentTrial].itemID)[0].src;
     }
 
     $('#allItems').css('margin-top', -1000);
