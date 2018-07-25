@@ -307,7 +307,7 @@ function GenerateTrials() {
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
-    let pickSeed = dx.r_TrialType[i];
+    let pickSeed = dx.trialtype[i];
     let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
@@ -1020,7 +1020,7 @@ function SaveData() {
     "Bonus": points,
     "Seeds": seed,
     "StudyOrder": dx.r_study,
-    "SeedOrder": dx.r_TrialType,
+    "SeedOrder": dx.trialtype,
     "CDAccuracy": CDaccuracy,
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,

@@ -369,7 +369,7 @@ let colors = [
 				"trialtype": repmat([0,0,1,2,3],trialsPerBlock/5)
 	};
 
-	const tempRand = _.clone(dx.r_TrialType);
+	const tempRand = _.clone(dx.trialtype);
 	dx.trialtype = [];
 
 	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
