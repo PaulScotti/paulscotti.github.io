@@ -164,7 +164,7 @@ const numTrialsPerPart = [5, 360, 360]; // [5, 360, 360] prac, study (nonrepeat)
 let block = 1;
 const trialsPerBlock = 40;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/colors_blocked_30PercentRich.js"> </script>
 
 <script>
 
@@ -230,6 +230,8 @@ let tooFast = [];
 let tempVar = true;
 let age = 0;
 let sex = -999;
+let bin = Array.from(Array(5), () => 0);
+let randRetry = 1;
 
 /* Randomize orderings */
 dx.r_study = chance1.shuffle(dx.r_study);
@@ -296,16 +298,56 @@ function GenerateTrials() {
   Math.seedrandom(SeedRNG); /* Use specific rng seed so you can backtrack trials */
 
   seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 180)];
-  seed = [seed[0], seed[1], seed[1], seed[1]];
-  wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.r_TrialType[i];
+    if (i%40 == 0) { // reset bin pseudo balancing at beginning of each block
+      bin = Array.from(Array(5), () => 0);
+    }
     if (pickSeed == 0) {
-      curMean = Math.round(seed[pickSeed]);
+      var curMean = seed; // rich point
     } else {
-      curMean = Math.round(seed[pickSeed] + (Math.floor(Math.random()*359) - 179.5));
+      while (randRetry == 1) {
+        var curMean = Math.ceil(Math.random()*358+.001); //.001 ensures min is 1 and max is 359
+        console.log(randRetry);
+        switch (curMean) { // pseudo counter balancing of non-Rich objects for the block
+          case curMean <= 22:
+            bin[0] = bin[0] + 1;
+            if (bin[0]>4) { randRetry = 1; bin[0] = bin[0] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 67:
+            bin[1] = bin[1] + 1;
+            if (bin[1]>4) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 112:
+            bin[2] = bin[2] + 1;
+            if (bin[2]>4) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 157:
+            bin[3] = bin[3] + 1;
+            if (bin[3]>4) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 202:
+            bin[4] = bin[4] + 1;
+            if (bin[4]>4) { randRetry = 1; bin[4] = bin[4] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 247:
+            bin[3] = bin[3] + 1;
+            if (bin[3]>4) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 292:
+            bin[2] = bin[2] + 1;
+            if (bin[2]>4) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 337:
+            bin[1] = bin[1] + 1;
+            if (bin[1]>4) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
+            break;
+          case curMean <= 359:
+            bin[0] = bin[0] + 1;
+            if (bin[0]>4) { randRetry = 1; bin[0] = bin[0] - 1; } else { randRetry = 0; }
+        }
+      }
     }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
@@ -1073,7 +1115,7 @@ function recolor(context,newR,newG,newB,initX,initY) {
         let red = data[i];
         let green = data[i + 1];
         let blue = data[i + 2];
-        if (blue != 0 && blue!= 255) {
+        if (blue != 0 && blue != 255) {
             data[i] = newR;
             data[i + 1] = newG;
             data[i + 2] = newB;
