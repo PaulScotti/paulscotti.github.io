@@ -83,8 +83,11 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
-<canvas id="contItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
-<canvas id="ringItem"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
+<div id='contItem_abs' style="position:absolute; top:150px; left:0px; z-index:1">
+<canvas id="contItemA" width=300 height=300></canvas></div>
+<div id='contItemB_abs' style="position:absolute; top:150; left:300px; z-index:2">
+<canvas id="contItemB" width=300 height=300></canvas></div>
+<canvas id="ringItem"  width=300 height=300 style="position: absolute; top:150px; left:0px; z-index:3"></canvas>
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
@@ -270,8 +273,10 @@ const itemA = document.getElementById("itemA");
 const ctxA = itemA.getContext("2d");
 const itemB = document.getElementById("itemB");
 const ctxB = itemB.getContext("2d");
-const contItem = document.getElementById("contItem");
-const ctx2 = contItem.getContext("2d");
+const contItemA = document.getElementById("contItemA");
+const ctx2 = contItemA.getContext("2d");
+const contItemB = document.getElementById("contItemB");
+const ctx2b = contItemB.getContext("2d");
 const feedbackReportedTri = document.getElementById("feedbackReportedTri");
 const ctx3 = feedbackReportedTri.getContext("2d");
 const feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
@@ -469,8 +474,8 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  ctx2.drawImage(imgPop, 175, 175,imgWidth,imgHeight);
-  recolor(ctx2,127.5,127.5,127.5,175, 175);
+  ctx2.drawImage(imgPop, 50, 50,imgWidth,imgHeight);
+  recolor(ctx2,127.5,127.5,127.5,50, 50);
   mouseMoved = 0;
 };
 
@@ -622,9 +627,9 @@ function ShowContinuousReport(trialStruct) {
       mouseMoved = 1;
 
       if (repeat == 0) {
-        start(ctx2,imgNum,175, 175,imgWidth,imgHeight,flip,imgA,itemA);
+        start(ctx2,imgNum,50, 50,imgWidth,imgHeight,flip,imgA,itemA);
       } else if (repeat == 1) {
-        start(ctx2,imgNum,175, 175,imgWidth,imgHeight,flip,imgPop);
+        start(ctx2,imgNum,50, 50,imgWidth,imgHeight,flip,imgPop);
       }
 
       if (currentPart == 0) {
@@ -687,17 +692,17 @@ function ShowContinuousReport(trialStruct) {
         }
         ringctx.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
         ctx2.onload = function() {
-          start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
+          start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
         }
-        start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA);
+        start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
       }
       if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
         if (tempVar) {
           setTimeout(function() {
             ctx2.onload = function() {
-              start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
+              start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
             }
-            start(ctx2,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA);
+            start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
           }, 150);
           tempVar = false;
         }
@@ -897,7 +902,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
           img.src = $('#' + dx.pracimgA[currentFeedTrial+1])[0].src;
           }
-          ctx2.drawImage(img, 175, 175,imgWidth,imgHeight);
+          ctx2.drawImage(img, 50, 50,imgWidth,imgHeight);
 
           ringctx.clearRect(50,50,500,500);
           flip = Math.round(Math.random());
@@ -1069,7 +1074,7 @@ function recolor(context,newR,newG,newB,initX,initY,itemID) {
         let red = data[i];
         let green = data[i + 1];
         let blue = data[i + 2];
-        if (blue != 0 && blue!= 255) { //(red > 112.5 && blue < 112.5) {
+        if (red > 5 && blue < 200) {
             data[i] = newR;
             data[i + 1] = newG;
             data[i + 2] = newB;
