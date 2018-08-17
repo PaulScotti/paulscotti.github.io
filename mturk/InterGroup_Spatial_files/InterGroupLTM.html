@@ -70,9 +70,9 @@ https://www.mturk.com/mturk/externalSubmit
 <div id="showTrial">
 <div id="fixation">+</div>
 <div id="allItems">
-<div id='itemA_abs' style="position:absolute; top:150px; left:0px; z-index:1">
+<div id='itemA_abs' style="position:absolute; top:150px; left:0px;">
 <canvas id="itemA" width=300 height=300></canvas></div>
-<div id='itemB_abs' style="position:absolute; top:150; left:300px; z-index:2">
+<div id='itemB_abs' style="position:absolute; top:150; left:300px;">
 <canvas id="itemB" width=300 height=300></canvas></div>
 <canvas id="CDitem" width=300 height=300></canvas>
 </div><br><br>
@@ -83,11 +83,11 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
-<div id='contItem_abs' style="position:absolute; top:150px; left:0px; z-index:2">
+<div id='contItem_abs' style="position:absolute; top:150px; left:0px;">
 <canvas id="contItemA" width=300 height=300></canvas></div>
-<div id='contItemB_abs' style="position:absolute; top:150; left:300px; z-index:3">
+<div id='contItemB_abs' style="position:absolute; top:150; left:300px;">
 <canvas id="contItemB" width=300 height=300></canvas></div>
-<canvas id="ringItem"  width=300 height=300 style="position: absolute; top:150px; left:0px; z-index:4"></canvas>
+<canvas id="ringItem"  width=300 height=300 style="position: absolute; top:150px; left:0px;"></canvas>
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
@@ -256,8 +256,6 @@ imgPop.crossOrigin = "anonymous";
 let ringImg = new Image();
 ringImg.crossOrigin = "anonymous";
 ringImg.src = $('#ring')[0].src;
-$('#ringItem').css({'left': centerX-330,
-                  'top': centerY-180});
 
 /* Setup CD images */
 let imgCD = new Image();
@@ -664,8 +662,8 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 0) {
-        $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-9,
-                          'top': centerY + Math.sin(curAngle)*ringSize-9});
+        $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize,
+                          'top': centerY + Math.sin(curAngle)*ringSize});
       } else {
         $('#pointer').hide();
       }
