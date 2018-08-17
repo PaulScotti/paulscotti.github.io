@@ -206,8 +206,8 @@ let flip = 0;
 let survey = 0;
 let readyRepeat = 0;
 let waitObject = 0;
-const radius = 242;
-const ringSize = 242;
+const radius = 121;
+const ringSize = 121;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
@@ -468,7 +468,7 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   ringctx.restore();
-  ringctx.drawImage(ringImg,50,50,500,500);
+  ringctx.drawImage(ringImg,50,50,300,300);
   ringctx.save();
 
   ShowContinuousReport(repeatTriTrials[numRepeats]);
@@ -511,7 +511,7 @@ function NextFeedTrial() {
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   ringctx.restore();
-  ringctx.drawImage(ringImg,50,50,500,500);
+  ringctx.drawImage(ringImg,50,50,300,300);
   ringctx.save();
   if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
     ringctx.clearRect(0, 0, 600, 600);
@@ -662,7 +662,7 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 0) {
-        $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
+        $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-9,
                           'top': centerY + Math.sin(curAngle)*ringSize-9});
       } else {
         $('#pointer').hide();
@@ -688,9 +688,9 @@ function ShowContinuousReport(trialStruct) {
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
         ringImg.onload = function() {
-          ringctx.drawImage(ringImg,50,50,500,500);
+          ringctx.drawImage(ringImg,50,50,300,300);
         }
-        ringctx.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
+        ringctx.drawImage(ringImg,50,50,300,300); // have to code it twice because Safari hates .onload
         ctx2.onload = function() {
           start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
         }
@@ -904,7 +904,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           }
           ctx2.drawImage(img, 50, 50,imgWidth,imgHeight);
 
-          ringctx.clearRect(50,50,500,500);
+          ringctx.clearRect(50,50,300,300);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
 
@@ -925,7 +925,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
               img.src = $('#999')[0].src;
           }
-          ringctx.clearRect(50,50,500,500);
+          ringctx.clearRect(50,50,300,300);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
 
@@ -954,7 +954,7 @@ function Survey() {
 
       /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
       ringctx.restore();
-      ringctx.drawImage(ringImg,50,50,500,500);
+      ringctx.drawImage(ringImg,50,50,300,300);
       ringctx.save();
 
       if (radioResp == 1) {
