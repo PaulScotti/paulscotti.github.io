@@ -47,7 +47,7 @@ originally modified from Tim Brady https://timbrady.org/turk/ensembleindivdiff/e
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see colored objects presented one at a time. Remember to memorize the colors associated with each object. After you have seen all the practice objects, you will then be asked to report the original colors of the objects. Please take your time to respond as accurately as possible; the hour and a half time estimate assumes a patient worker who takes their time for every reponse!</p>
 
-<p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
+<p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Loading... Please wait. &nbsp; &nbsp; <img src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -300,6 +300,7 @@ function GenerateTrials() {
   seed = Math.floor(Math.random()*360);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
+    randRetry = 1;
     let pickSeed = dx.r_TrialType[i];
     if (i%40 == 0) { // reset bin pseudo balancing at beginning of each block
       bin = Array.from(Array(5), () => 0);
@@ -309,23 +310,22 @@ function GenerateTrials() {
     } else {
       while (randRetry == 1) {
         var curMean = Math.ceil(Math.random()*358+.001); //.001 ensures min is 1 and max is 359
-        console.log(randRetry);
-        switch (curMean) { // pseudo counter balancing of non-Rich objects for the block
+        switch (true) { // pseudo counter balancing of non-Rich objects for the block
           case curMean <= 22:
             bin[0] = bin[0] + 1;
             if (bin[0]>4) { randRetry = 1; bin[0] = bin[0] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 67:
             bin[1] = bin[1] + 1;
-            if (bin[1]>4) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
+            if (bin[1]>7) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 112:
             bin[2] = bin[2] + 1;
-            if (bin[2]>4) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
+            if (bin[2]>7) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 157:
             bin[3] = bin[3] + 1;
-            if (bin[3]>4) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
+            if (bin[3]>7) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 202:
             bin[4] = bin[4] + 1;
@@ -333,15 +333,15 @@ function GenerateTrials() {
             break;
           case curMean <= 247:
             bin[3] = bin[3] + 1;
-            if (bin[3]>4) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
+            if (bin[3]>7) { randRetry = 1; bin[3] = bin[3] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 292:
             bin[2] = bin[2] + 1;
-            if (bin[2]>4) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
+            if (bin[2]>7) { randRetry = 1; bin[2] = bin[2] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 337:
             bin[1] = bin[1] + 1;
-            if (bin[1]>4) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
+            if (bin[1]>7) { randRetry = 1; bin[1] = bin[1] - 1; } else { randRetry = 0; }
             break;
           case curMean <= 359:
             bin[0] = bin[0] + 1;
@@ -393,7 +393,7 @@ function StartExperiment() {
 
   age = prompt('Before we start, can you tell me how old you are (in years)?');
 
-  while (!(age >0)) {
+  while (!(age>0)) {
     age = prompt('Can you tell me how old you are (in years)?');
   }
 
@@ -1074,13 +1074,13 @@ function SaveData() {
     "tooFastCount": tooFast,
     "Age": age,
     "Sex": sex,
-    "ExpName": 'ContLTMBlocked_Expt3b',
+    "ExpName": 'ContLTMBlocked_Expt3c',
     "SeedRNG": SeedRNG
   };
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('data_expt3b/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('data_expt3c/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
