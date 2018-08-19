@@ -206,8 +206,8 @@ let flip = 0;
 let survey = 0;
 let readyRepeat = 0;
 let waitObject = 0;
-const radius = 121;
-const ringSize = 121;
+const radius = 120;
+const ringSize = 120;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
@@ -468,7 +468,7 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   ringctx.restore();
-  ringctx.drawImage(ringImg,50,50,300,300);
+  ringctx.drawImage(ringImg,25,25,250,250);
   ringctx.save();
 
   ShowContinuousReport(repeatTriTrials[numRepeats]);
@@ -511,11 +511,11 @@ function NextFeedTrial() {
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   ringctx.restore();
-  ringctx.drawImage(ringImg,50,50,300,300);
+  ringctx.drawImage(ringImg,25,25,250,250);
   ringctx.save();
-  if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
-    ringctx.clearRect(0, 0, 600, 600);
-  }
+  // if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
+  //   ringctx.clearRect(15,15,300,300);
+  // }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
   mouseMoved = 0;
@@ -618,7 +618,7 @@ function ShowContinuousReport(trialStruct) {
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
-      relX = e.pageX - parentOffset.left - centerX;
+      relX = e.pageX - parentOffset.left - centerX + 150;
       relY = e.pageY - parentOffset.top - centerY;
       curAngle = Math.atan2(relY,relX);
       angleDeg = curAngle / Math.PI * 180.0;
@@ -636,34 +636,35 @@ function ShowContinuousReport(trialStruct) {
           imgA.src = $('#' + dx.pracimgA[currentFeedTrial])[0].src;
       } else if (survey == 0 && repeat == 0) {
           imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemA)[0].src;
+          imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemB)[0].src;
       } else if (survey == 1 && repeat == 0) {
           imgA.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, curAngle+180+Math.PI*4, curAngle, 1);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, curAngle+180-Math.PI*4, curAngle, 0);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
-          ctx2.lineWidth = 40;
+          ctx2.arc(centerX-150, centerY-150, radius, curAngle + Math.PI/4, curAngle, 1);
+          ctx2.lineWidth = 25;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
-          ctx2.lineWidth = 40;
+          ctx2.arc(centerX-150, centerY-150, radius, curAngle - Math.PI/4, curAngle, 0);
+          ctx2.lineWidth = 25;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
       }
 
       if (survey == 0) {
-        $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize,
-                          'top': centerY + Math.sin(curAngle)*ringSize});
+        $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-9,
+                          'top': centerY + Math.sin(curAngle)*ringSize-9});
       } else {
         $('#pointer').hide();
       }
@@ -671,7 +672,7 @@ function ShowContinuousReport(trialStruct) {
       if (survey == 1) {
         flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
-        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.item])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.item]));
+        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemA])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemA]));
       }
       if (curError > 180) {
           curError = 360-curError;
@@ -688,9 +689,9 @@ function ShowContinuousReport(trialStruct) {
         ringctx.rotate(randrotate*Math.PI/180);
         ringctx.translate(-50-500/2, -50-500/2);
         ringImg.onload = function() {
-          ringctx.drawImage(ringImg,50,50,300,300);
+          ringctx.drawImage(ringImg,25,25,250,250);
         }
-        ringctx.drawImage(ringImg,50,50,300,300); // have to code it twice because Safari hates .onload
+        ringctx.drawImage(ringImg,25,25,250,250); // have to code it twice because Safari hates .onload
         ctx2.onload = function() {
           start(ctx2,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
         }
@@ -765,42 +766,42 @@ function ShowConfidence(trialStruct,angleDeg) {
     /* Confidence report */
     $(document).bind('mousemove.curTrial', function(e) {
         parentOffset = $('#continuousReport').offset();
-        relX = e.pageX - parentOffset.left - centerX;
+        relX = e.pageX - parentOffset.left - centerX + 150;
         relY = e.pageY - parentOffset.top - centerY;
         curAngle = Math.atan2(relY,relX);
         angleDeg2 = curAngle / Math.PI * 180.0;
         diffAng2 = wrap([wrap([angleDeg])-wrap([angleDeg2])])>180? wrap([wrap([angleDeg2])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg2])]);
         if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle, curAngle, 1);
-          ctx2.lineWidth = 40;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
+          ctx2.lineWidth = 25;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           lastRot = 1; lastRotMat.push(lastRot);
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle, curAngle, 0);
-          ctx2.lineWidth = 40;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
+          ctx2.lineWidth = 25;
           ctx2.strokeStyle = 'black';
           ctx2.stroke();
           ctx2.beginPath();
-          ctx2.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
-          ctx2.lineWidth = 50;
+          ctx2.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
+          ctx2.lineWidth = 30;
           ctx2.strokeStyle = 'white';
           ctx2.stroke();
           lastRot = 0; lastRotMat.push(lastRot);
@@ -839,38 +840,38 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
   /* Confidence report */
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
-      relX = e.pageX - parentOffset.left - centerX;
+      relX = e.pageX - parentOffset.left - centerX + 150;
       relY = e.pageY - parentOffset.top - centerY;
       curAngle = Math.atan2(relY,relX);
       angleDeg3 = curAngle / Math.PI * 180.0;
       diffAng3 = wrap([wrap([angleDeg])-wrap([angleDeg3])])>180? wrap([wrap([angleDeg3])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg3])]);
       if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
         ctx2.beginPath();
-        ctx2.arc(centerX, centerY, radius, startAngle, curAngle, 1);
-        ctx2.lineWidth = 40;
+        ctx2.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
+        ctx2.lineWidth = 25;
         ctx2.strokeStyle = 'black';
         ctx2.stroke();
         ctx2.beginPath();
-        ctx2.arc(centerX, centerY, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
-        ctx2.lineWidth = 50;
+        ctx2.arc(centerX-150, centerY-150, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
+        ctx2.lineWidth = 30;
         ctx2.strokeStyle = 'white';
         ctx2.stroke();
       } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
         ctx2.beginPath();
-        ctx2.arc(centerX, centerY, radius, startAngle, curAngle, 0);
-        ctx2.lineWidth = 40;
+        ctx2.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
+        ctx2.lineWidth = 25;
         ctx2.strokeStyle = 'black';
         ctx2.stroke();
         ctx2.beginPath();
-        ctx2.arc(centerX, centerY, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
-        ctx2.lineWidth = 50;
+        ctx2.arc(centerX-150, centerY-150, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
+        ctx2.lineWidth = 30;
         ctx2.strokeStyle = 'white';
         ctx2.stroke();
       }
   });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2.clearRect(0, 0, 600, 600); // erases the black highlighting
+    ctx2.clearRect(15,15,300,300); // erases the black highlighting
     /* Show approximate feedback: amazing! < 15, good! < 30 */
     if (trialStruct.isPractice) {
       $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg!)<br><br>Click to continue.");
@@ -896,15 +897,15 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
           imgNum = Math.round(wrap([angleDeg-randrotate]));
           start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
-          imgNum = flip == 0? Math.round(trialStruct.item) : Math.round(wrap([180-trialStruct.item]));
+          imgNum = flip == 0? Math.round(trialStruct.itemA) : Math.round(wrap([180-trialStruct.itemA]));
           start(ctx4,imgNum,40,100, 200, 200, flip, imgA, itemA);
 
           if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-          img.src = $('#' + dx.pracimgA[currentFeedTrial+1])[0].src;
+          imgA.src = $('#' + dx.pracimgA[currentFeedTrial+1])[0].src;
           }
-          ctx2.drawImage(img, 50, 50,imgWidth,imgHeight);
+          ctx2.drawImage(imgA, 50, 50,imgWidth,imgHeight);
 
-          ringctx.clearRect(50,50,300,300);
+          ringctx.clearRect(15,15,300,300);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
 
@@ -921,11 +922,11 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
               imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
               numRepeats++;
           } else if (currentFeedTrial < numTrialsPerPart[1]-1) {
-              img.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemA)[0].src;
+              imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemA)[0].src;
           } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
-              img.src = $('#999')[0].src;
+              imgA.src = $('#999')[0].src;
           }
-          ringctx.clearRect(50,50,300,300);
+          ringctx.clearRect(15,15,300,300);
           flip = Math.round(Math.random());
           randrotate = Math.floor(Math.random()*360);
 
@@ -954,7 +955,7 @@ function Survey() {
 
       /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
       ringctx.restore();
-      ringctx.drawImage(ringImg,50,50,300,300);
+      ringctx.drawImage(ringImg,25,25,250,250);
       ringctx.save();
 
       if (radioResp == 1) {
@@ -1058,7 +1059,7 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image,itemID) {
     }
     if (context == ctx3 || context == ctx4) {
       context.drawImage(image, initX, initY, imgWidth, imgHeight);
-      recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY);
+      recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY,itemID);
     } else {
       image.onload = function() {
         context.drawImage(image, initX, initY, imgWidth, imgHeight);
