@@ -87,8 +87,8 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="contItemA" width=300 height=300></canvas></div>
 <div id='contItemB_abs' style="position:absolute; top:150; left:300px;">
 <canvas id="contItemB" width=300 height=300></canvas></div>
-<canvas id="ringItemA"  width=300 height=300 style="position: absolute; top:150px; left:0px;"></canvas>
-<canvas id="ringItemB"  width=300 height=300 style="position: absolute; top:150px; left:300px;"></canvas>
+<canvas id="ringItemA"  width=400 height=400 style="position: absolute; top:150px; left:0px;"></canvas>
+<canvas id="ringItemB"  width=400 height=400 style="position: absolute; top:150px; left:300px;"></canvas>
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
@@ -473,11 +473,11 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   if (left_or_right == 1) {
     ringctxA.restore();
-    ringctxA.drawImage(ringImg,25,25,250,250);
+    ringctxA.drawImage(ringImg,25,25,350,350);
     ringctxA.save();
   } else {
     ringctxB.restore();
-    ringctxB.drawImage(ringImg,25,25,250,250);
+    ringctxB.drawImage(ringImg,25,25,350,350);
     ringctxB.save();
   }
 
