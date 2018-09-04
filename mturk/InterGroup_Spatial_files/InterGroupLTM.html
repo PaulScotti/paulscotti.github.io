@@ -87,8 +87,8 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="contItemA" width=300 height=300></canvas></div>
 <div id='contItemB_abs' style="position:absolute; top:150; left:300px;">
 <canvas id="contItemB" width=300 height=300></canvas></div>
-<canvas id="ringItemA"  width=400 height=400 style="position: absolute; top:150px; left:0px;"></canvas>
-<canvas id="ringItemB"  width=400 height=400 style="position: absolute; top:150px; left:300px;"></canvas>
+<canvas id="ringItemA"  width=280 height=280 style="position: absolute; top:160px; left:10px;"></canvas>
+<canvas id="ringItemB"  width=280 height=280 style="position: absolute; top:160px; left:310px;"></canvas>
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
@@ -207,8 +207,8 @@ let flip = 0;
 let survey = 0;
 let readyRepeat = 0;
 let waitObject = 0;
-const radius = 120;
-const ringSize = 120;
+const radius = 134;
+const ringSize = 134;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
@@ -473,11 +473,11 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   if (left_or_right == 1) {
     ringctxA.restore();
-    ringctxA.drawImage(ringImg,25,25,350,350);
+    ringctxA.drawImage(ringImg,0,0,280,280);
     ringctxA.save();
   } else {
     ringctxB.restore();
-    ringctxB.drawImage(ringImg,25,25,350,350);
+    ringctxB.drawImage(ringImg,0,0,300,300);
     ringctxB.save();
   }
 
@@ -522,17 +522,17 @@ function NextFeedTrial() {
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
   if (left_or_right == 1) {
     ringctxA.restore();
-    ringctxA.drawImage(ringImg,25,25,250,250);
+    ringctxA.drawImage(ringImg,0,0,280,280);
     ringctxA.save();
   } else {
     ringctxB.restore();
-    ringctxB.drawImage(ringImg,25,25,250,250);
+    ringctxB.drawImage(ringImg,0,0,300,300);
     ringctxB.save();
   }
 
   if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
-    ringctxA.clearRect(25,25,250,250);
-    ringctxB.clearRect(25,25,250,250);
+    ringctxA.clearRect(0,0,300,300);
+    ringctxB.clearRect(0,0,300,300);
   }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
@@ -715,11 +715,11 @@ function ShowContinuousReport(trialStruct) {
 
       if (survey == 0) {
         if (left_or_right == 1) {
-          $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-9,
-                            'top': centerY + Math.sin(curAngle)*ringSize-9});
+          $('#pointer').css({'left': centerX-146 + Math.cos(curAngle)*ringSize-9,
+                            'top': centerY + Math.sin(curAngle)*ringSize-5});
         } else {
-          $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-9,
-                            'top': centerY + Math.sin(curAngle)*ringSize-9});
+          $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-10,
+                            'top': centerY + Math.sin(curAngle)*ringSize-10});
         }
       } else {
         $('#pointer').hide();
@@ -750,17 +750,17 @@ function ShowContinuousReport(trialStruct) {
           ringctxA.rotate(randrotate*Math.PI/180);
           ringctxA.translate(-25-250/2, -25-250/2);
           ringImg.onload = function() {
-            ringctxA.drawImage(ringImg,25,25,250,250);
+            ringctxA.drawImage(ringImg,0,0,280,280);
           }
-          ringctxA.drawImage(ringImg,25,25,250,250); // have to code it twice because Safari hates .onload
+          ringctxA.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
         } else {
           ringctxB.translate(25+250/2, 25+250/2);
           ringctxB.rotate(randrotate*Math.PI/180);
           ringctxB.translate(-25-250/2, -25-250/2);
           ringImg.onload = function() {
-            ringctxB.drawImage(ringImg,25,25,250,250);
+            ringctxB.drawImage(ringImg,0,0,300,300);
           }
-          ringctxB.drawImage(ringImg,25,25,250,250); // have to code it twice because Safari hates .onload
+          ringctxB.drawImage(ringImg,0,0,300,300); // have to code it twice because Safari hates .onload
         }
 
         if (left_or_right == 1) {
@@ -868,9 +868,9 @@ function ShowConfidence(trialStruct,angleDeg) {
     $(document).bind('mousemove.curTrial', function(e) {
         parentOffset = $('#continuousReport').offset();
         if (left_or_right == 1) {
-          relX = e.pageX - parentOffset.left - centerX + 150;
+          relX = e.pageX - parentOffset.left - centerX + 146;
         } else {
-          relX = e.pageX - parentOffset.left - centerX - 150;
+          relX = e.pageX - parentOffset.left - centerX - 146;
         }
         relY = e.pageY - parentOffset.top - centerY;
         curAngle = Math.atan2(relY,relX);
@@ -1136,11 +1136,11 @@ function Survey() {
       /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
       if (left_or_right == 1) {
         ringctxA.restore();
-        ringctxA.drawImage(ringImg,25,25,250,250);
+        ringctxA.drawImage(ringImg,0,0,280,280);
         ringctxA.save();
       } else {
         ringctxB.restore();
-        ringctxB.drawImage(ringImg,25,25,250,250);
+        ringctxB.drawImage(ringImg,0,0,300,300);
         ringctxB.save();
       }
 
