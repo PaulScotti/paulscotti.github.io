@@ -477,7 +477,7 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
     ringctxA.save();
   } else {
     ringctxB.restore();
-    ringctxB.drawImage(ringImg,0,0,300,300);
+    ringctxB.drawImage(ringImg,0,0,280,280);
     ringctxB.save();
   }
 
@@ -526,7 +526,7 @@ function NextFeedTrial() {
     ringctxA.save();
   } else {
     ringctxB.restore();
-    ringctxB.drawImage(ringImg,0,0,300,300);
+    ringctxB.drawImage(ringImg,0,0,280,280);
     ringctxB.save();
   }
 
@@ -715,8 +715,8 @@ function ShowContinuousReport(trialStruct) {
 
       if (survey == 0) {
         if (left_or_right == 1) {
-          $('#pointer').css({'left': centerX-146 + Math.cos(curAngle)*ringSize-9,
-                            'top': centerY + Math.sin(curAngle)*ringSize-5});
+          $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-10,
+                            'top': centerY + Math.sin(curAngle)*ringSize-10});
         } else {
           $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-10,
                             'top': centerY + Math.sin(curAngle)*ringSize-10});
@@ -746,21 +746,21 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.flip = flip;
         flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
         if (left_or_right == 1) {
-          ringctxA.translate(25+250/2, 25+250/2);
+          ringctxA.translate(280/2, 280/2);
           ringctxA.rotate(randrotate*Math.PI/180);
-          ringctxA.translate(-25-250/2, -25-250/2);
+          ringctxA.translate(-280/2, -280/2);
           ringImg.onload = function() {
             ringctxA.drawImage(ringImg,0,0,280,280);
           }
           ringctxA.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
         } else {
-          ringctxB.translate(25+250/2, 25+250/2);
+          ringctxB.translate(280/2, 280/2);
           ringctxB.rotate(randrotate*Math.PI/180);
-          ringctxB.translate(-25-250/2, -25-250/2);
+          ringctxB.translate(-280/2, -280/2);
           ringImg.onload = function() {
-            ringctxB.drawImage(ringImg,0,0,300,300);
+            ringctxB.drawImage(ringImg,0,0,280,280);
           }
-          ringctxB.drawImage(ringImg,0,0,300,300); // have to code it twice because Safari hates .onload
+          ringctxB.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
         }
 
         if (left_or_right == 1) {
@@ -868,9 +868,9 @@ function ShowConfidence(trialStruct,angleDeg) {
     $(document).bind('mousemove.curTrial', function(e) {
         parentOffset = $('#continuousReport').offset();
         if (left_or_right == 1) {
-          relX = e.pageX - parentOffset.left - centerX + 146;
+          relX = e.pageX - parentOffset.left - centerX + 150;
         } else {
-          relX = e.pageX - parentOffset.left - centerX - 146;
+          relX = e.pageX - parentOffset.left - centerX - 150;
         }
         relY = e.pageY - parentOffset.top - centerY;
         curAngle = Math.atan2(relY,relX);
@@ -1044,8 +1044,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2a.clearRect(15,15,300,300); // erases the black highlighting
-    ctx2b.clearRect(15,15,300,300); // erases the black highlighting
+    ctx2a.clearRect(0,0,300,300); // erases the black highlighting
+    ctx2b.clearRect(0,0,300,300); // erases the black highlighting
 
     if (curError <= 15) {
         feedText = 'Amazing!<br>(+$.01)';
@@ -1140,7 +1140,7 @@ function Survey() {
         ringctxA.save();
       } else {
         ringctxB.restore();
-        ringctxB.drawImage(ringImg,0,0,300,300);
+        ringctxB.drawImage(ringImg,0,0,280,280);
         ringctxB.save();
       }
 
