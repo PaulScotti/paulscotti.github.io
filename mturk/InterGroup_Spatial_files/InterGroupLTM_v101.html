@@ -84,12 +84,12 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
-<div id='contItem_abs' style="position:absolute; top:150px; left:0px;">
+<div id='contItem_abs' style="position:absolute; top:150px; left:150px;">
 <canvas id="contItemA" width=300 height=300></canvas></div>
-<div id='contItemB_abs' style="position:absolute; top:150; left:300px;">
-<canvas id="contItemB" width=300 height=300></canvas></div>
-<canvas id="ringItemA"  width=280 height=280 style="position: absolute; top:160px; left:10px;"></canvas>
-<canvas id="ringItemB"  width=280 height=280 style="position: absolute; top:160px; left:310px;"></canvas>
+<!-- <div id='contItemB_abs' style="position:absolute; top:150; left:300px;"> -->
+<!-- <canvas id="contItemB" width=300 height=300></canvas></div> -->
+<canvas id="ringItemA"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
+<!-- <canvas id="ringItemB"  width=280 height=280 style="position: absolute; top:160px; left:310px;"></canvas> -->
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
 <div id="underText"><p></p></div>
@@ -178,7 +178,8 @@ let imgNum = 0;
 const imgWidth = 200;
 const imgHeight = 200;
 const displayTime = 500;
-const isiTime = 200;
+const isiTime = 800;
+const maskTime = 200;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
 flippedColors = flippedColors.concat(flippedColors.splice(0,180)); // shift array 180
@@ -208,8 +209,8 @@ let flip = 0;
 let survey = 0;
 let readyRepeat = 0;
 let waitObject = 0;
-const radius = 134;
-const ringSize = 134;
+const radius = 242; //134;
+const ringSize = 242; //134;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
@@ -271,6 +272,7 @@ let imgCDtest = new Image();
 imgCDtest.crossOrigin = "anonymous";
 imgCDtest.src = $('#diff2')[0].src;
 let Mask = new Image();
+Mask.crossOrigin = "anonymous";
 Mask.src = $('#MaskImg')[0].src
 
 /* Setting up canvas contexts */
@@ -280,16 +282,16 @@ const itemB = document.getElementById("itemB");
 const ctxB = itemB.getContext("2d");
 const contItemA = document.getElementById("contItemA");
 const ctx2a = contItemA.getContext("2d");
-const contItemB = document.getElementById("contItemB");
-const ctx2b = contItemB.getContext("2d");
+// const contItemB = document.getElementById("contItemB");
+// const ctx2b = contItemB.getContext("2d");
 const feedbackReportedTri = document.getElementById("feedbackReportedTri");
 const ctx3 = feedbackReportedTri.getContext("2d");
 const feedbackCorrectTri = document.getElementById("feedbackCorrectTri");
 const ctx4 = feedbackCorrectTri.getContext("2d");
 const ringItemA = document.getElementById("ringItemA");
 const ringctxA = ringItemA.getContext("2d");
-const ringItemB = document.getElementById("ringItemB");
-const ringctxB = ringItemB.getContext("2d");
+// const ringItemB = document.getElementById("ringItemB");
+// const ringctxB = ringItemB.getContext("2d");
 const CDitem = document.getElementById("CDitem");
 const cdctx = CDitem.getContext("2d");
 
@@ -438,40 +440,42 @@ function ShowTrial(trialStruct) {
     setTimeout(function() {
         $('#allItems').css('margin-top', 0);
         setTimeout(function() {
-            ctx2a.onload = function() {
-              ctx2a.drawImage(Mask, 50, 50, imgWidth, imgHeight);
+            ctxA.onload = function() {
+              ctxA.drawImage(Mask, 50, 50, imgWidth, imgHeight);
             }
-            ctx2a.drawImage(Mask, 50, 50, imgWidth, imgHeight);
-            ctx2b.onload = function() {
-              ctx2b.drawImage(Mask, 50, 50, imgWidth, imgHeight);
+            ctxA.drawImage(Mask, 50, 50, imgWidth, imgHeight);
+            ctxB.onload = function() {
+              ctxB.drawImage(Mask, 50, 50, imgWidth, imgHeight);
             }
-            ctx2b.drawImage(Mask, 50, 50, imgWidth, imgHeight);
+            ctxB.drawImage(Mask, 50, 50, imgWidth, imgHeight);
             setTimeout(function() {
               $('#allItems').css('margin-top', -1000);
-              $('#showTrial').hide();
-                if (currentPart == 0) {
-                    NextTrial();
-                } else {
-                    if (readyRepeat == 1) {
-                      if (waitObject != 1) {
-                        readyRepeat = 0;
-                        RepeatTrial();
-                      } else {
-                        waitObject = 2;
-                        NextTrial();
-                      }
-                    } else {
-                      // if (dx.r_repeattrial.includes(currentTrial)) {
-                      //     waitObject = Math.random()<0.5? 0 : 1;
-                      //     imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
-                      //     if (currentTrial == numTrialsPerPart[1] - 1) { waitObject = 0; }
-                      //     readyRepeat = 1; NextTrial();
-                      // } else {
-                      //     readyRepeat = 0; NextTrial();
-                      // }
-                    }
-                }
-            }, isiTime);
+              setTimeout(function() {
+                $('#showTrial').hide();
+                  // if (currentPart == 0) {
+                  NextFeedTrial();
+                  // } else {
+                  //     if (readyRepeat == 1) {
+                  //       if (waitObject != 1) {
+                  //         readyRepeat = 0;
+                  //         RepeatTrial();
+                  //       } else {
+                  //         waitObject = 2;
+                  //         NextFeedTrial();
+                  //       }
+                  //     } else {
+                  //       // if (dx.r_repeattrial.includes(currentTrial)) {
+                  //       //     waitObject = Math.random()<0.5? 0 : 1;
+                  //       //     imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+                  //       //     if (currentTrial == numTrialsPerPart[1] - 1) { waitObject = 0; }
+                  //       //     readyRepeat = 1; NextTrial();
+                  //       // } else {
+                  //       //     readyRepeat = 0; NextTrial();
+                  //       // }
+                  //     }
+                  // }
+                }, isiTime);
+            }, maskTime);
         }, displayTime);
     }, 500);
 }
@@ -482,20 +486,20 @@ function RepeatTrial() { /* Should really be renamed abrupt-onset trial, not Rep
   // alert('Pop quiz! What color was this object?');
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
-  if (left_or_right == 1) {
+  // if (left_or_right == 1) {
     ringctxA.restore();
-    ringctxA.drawImage(ringImg,0,0,280,280);
+    ringctxA.drawImage(ringImg,50,50,500,500);
     ringctxA.save();
-  } else {
-    ringctxB.restore();
-    ringctxB.drawImage(ringImg,0,0,280,280);
-    ringctxB.save();
-  }
+  // } else {
+  //   ringctxB.restore();
+  //   ringctxB.drawImage(ringImg,0,0,280,280);
+  //   ringctxB.save();
+  // }
 
   ShowContinuousReport(repeatTriTrials[numRepeats]);
 
   /* Set starting color as grayscale */
-  ctx2.drawImage(imgPop, 50, 50,imgWidth,imgHeight);
+  ctx2a.drawImage(imgPop, 50, 50,imgWidth,imgHeight);
   recolor(ctx2,127.5,127.5,127.5,50, 50);
   mouseMoved = 0;
 };
@@ -531,19 +535,19 @@ function NextFeedTrial() {
   }
 
   /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
-  if (left_or_right == 1) {
+  // if (left_or_right == 1) {
     ringctxA.restore();
-    ringctxA.drawImage(ringImg,0,0,280,280);
+    ringctxA.drawImage(ringImg,50,50,500,500);
     ringctxA.save();
-  } else {
-    ringctxB.restore();
-    ringctxB.drawImage(ringImg,0,0,280,280);
-    ringctxB.save();
-  }
+  // } else {
+  //   ringctxB.restore();
+  //   ringctxB.drawImage(ringImg,0,0,280,280);
+  //   ringctxB.save();
+  // }
 
   if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
     ringctxA.clearRect(0,0,300,300);
-    ringctxB.clearRect(0,0,300,300);
+    // ringctxB.clearRect(0,0,300,300);
   }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
@@ -660,11 +664,11 @@ function ShowContinuousReport(trialStruct) {
       mouseMoved = 1;
 
       // if (repeat == 0) {
-      if (left_or_right == 1) {
+      // if (left_or_right == 1) {
         start(ctx2a,imgNum,50, 50,imgWidth,imgHeight,flip,imgA,itemA);
-      } else {
-        start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
-      }
+      // } else {
+      //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
+      // }
       // } else if (repeat == 1) {
       //   start(ctx2,imgNum,50, 50,imgWidth,imgHeight,flip,imgPop);
       // }
@@ -679,59 +683,59 @@ function ShowContinuousReport(trialStruct) {
           imgA.src = $('#999')[0].src;
           imgB.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
-          if (left_or_right == 1) {
+          // if (left_or_right == 1) {
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, curAngle+180+Math.PI*4, curAngle, 1);
+            ctx2a.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, curAngle+180-Math.PI*4, curAngle, 0);
+            ctx2a.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, curAngle + Math.PI/4, curAngle, 1);
+            ctx2a.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
             ctx2a.lineWidth = 25;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, curAngle - Math.PI/4, curAngle, 0);
+            ctx2a.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
             ctx2a.lineWidth = 25;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
-          } else {
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, curAngle+180+Math.PI*4, curAngle, 1);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, curAngle+180-Math.PI*4, curAngle, 0);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, curAngle + Math.PI/4, curAngle, 1);
-            ctx2b.lineWidth = 25;
-            ctx2b.strokeStyle = 'black';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, curAngle - Math.PI/4, curAngle, 0);
-            ctx2b.lineWidth = 25;
-            ctx2b.strokeStyle = 'black';
-            ctx2b.stroke();
-          }
+          // } else {
+          //   ctx2b.beginPath();
+          //   ctx2b.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
+          //   ctx2b.lineWidth = 30;
+          //   ctx2b.strokeStyle = 'white';
+          //   ctx2b.stroke();
+          //   ctx2b.beginPath();
+          //   ctx2b.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
+          //   ctx2b.lineWidth = 30;
+          //   ctx2b.strokeStyle = 'white';
+          //   ctx2b.stroke();
+          //   ctx2b.beginPath();
+          //   ctx2b.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
+          //   ctx2b.lineWidth = 25;
+          //   ctx2b.strokeStyle = 'black';
+          //   ctx2b.stroke();
+          //   ctx2b.beginPath();
+          //   ctx2b.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
+          //   ctx2b.lineWidth = 25;
+          //   ctx2b.strokeStyle = 'black';
+          //   ctx2b.stroke();
+          // }
       }
 
       if (survey == 0) {
-        if (left_or_right == 1) {
-          $('#pointer').css({'left': centerX-150 + Math.cos(curAngle)*ringSize-10,
-                            'top': centerY + Math.sin(curAngle)*ringSize-10});
-        } else {
-          $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-10,
-                            'top': centerY + Math.sin(curAngle)*ringSize-10});
-        }
+        // if (left_or_right == 1) {
+          $('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
+                            'top': centerY + Math.sin(curAngle)*ringSize-9});
+        // } else {
+        //   $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-10,
+        //                     'top': centerY + Math.sin(curAngle)*ringSize-10});
+        // }
       } else {
         $('#pointer').hide();
       }
@@ -756,66 +760,66 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
         flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-        if (left_or_right == 1) {
+        // if (left_or_right == 1) {
           ringctxA.translate(280/2, 280/2);
           ringctxA.rotate(randrotate*Math.PI/180);
           ringctxA.translate(-280/2, -280/2);
           ringImg.onload = function() {
-            ringctxA.drawImage(ringImg,0,0,280,280);
+            ringctxA.drawImage(ringImg,50,50,500,500);
           }
-          ringctxA.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
-        } else {
-          ringctxB.translate(280/2, 280/2);
-          ringctxB.rotate(randrotate*Math.PI/180);
-          ringctxB.translate(-280/2, -280/2);
-          ringImg.onload = function() {
-            ringctxB.drawImage(ringImg,0,0,280,280);
-          }
-          ringctxB.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
-        }
+          ringctxA.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
+        // } else {
+        //   ringctxB.translate(280/2, 280/2);
+        //   ringctxB.rotate(randrotate*Math.PI/180);
+        //   ringctxB.translate(-280/2, -280/2);
+        //   ringImg.onload = function() {
+        //     ringctxB.drawImage(ringImg,0,0,280,280);
+        //   }
+        //   ringctxB.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
+        // }
 
-        if (left_or_right == 1) {
+        // if (left_or_right == 1) {
           ctx2a.onload = function() {
             start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
           }
           start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
-          ctx2b.onload = function() {
-            start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
-          }
-          start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
-        } else {
-          ctx2b.onload = function() {
-            start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
-          }
-          start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
+          // ctx2b.onload = function() {
+          //   start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
+          // }
+          // start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
+        // } else {
+        //   ctx2b.onload = function() {
+        //     start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
+        //   }
+        //   start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
           ctx2a.onload = function() {
             start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA); //set starting color as grayscale
           }
           start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA);
-        }
+        // }
       }
       if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
         if (tempVar) {
           setTimeout(function() {
-            if (left_or_right == 1) {
+            // if (left_or_right == 1) {
               ctx2a.onload = function() {
                 start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
               }
-              start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
-              ctx2b.onload = function() {
-                start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
-              }
-              start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
-            } else {
-              ctx2b.onload = function() {
-                start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
-              }
-              start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
+            //   start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
+            //   ctx2b.onload = function() {
+            //     start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
+            //   }
+            //   start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
+            // } else {
+              // ctx2b.onload = function() {
+              //   start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
+              // }
+              // start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
               ctx2a.onload = function() {
                 start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA); //set starting color as grayscale
               }
               start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA);
-            }
+            // }
           }, 150);
           tempVar = false;
         }
@@ -878,88 +882,84 @@ function ShowConfidence(trialStruct,angleDeg) {
     /* Confidence report */
     $(document).bind('mousemove.curTrial', function(e) {
         parentOffset = $('#continuousReport').offset();
-        if (left_or_right == 1) {
-          relX = e.pageX - parentOffset.left - centerX + 150;
-        } else {
-          relX = e.pageX - parentOffset.left - centerX - 150;
-        }
+        relX = e.pageX - parentOffset.left - centerX;
         relY = e.pageY - parentOffset.top - centerY;
         curAngle = Math.atan2(relY,relX);
         angleDeg2 = curAngle / Math.PI * 180.0;
         diffAng2 = wrap([wrap([angleDeg])-wrap([angleDeg2])])>180? wrap([wrap([angleDeg2])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg2])]);
-        if (left_or_right == 1) {
+        // if (left_or_right == 1) {
           if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
+            ctx2a.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
+            ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 1);
             ctx2a.lineWidth = 25;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
+            ctx2a.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             lastRot = 1; lastRotMat.push(lastRot);
           } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
+            ctx2a.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
+            ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 0);
             ctx2a.lineWidth = 25;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
-            ctx2a.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
+            ctx2a.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
             ctx2a.lineWidth = 30;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             lastRot = 0; lastRotMat.push(lastRot);
           }
-        } else {
-          if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
-            ctx2b.lineWidth = 25;
-            ctx2b.strokeStyle = 'black';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            lastRot = 1; lastRotMat.push(lastRot);
-          } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle + Math.PI, curAngle, 0);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
-            ctx2b.lineWidth = 25;
-            ctx2b.strokeStyle = 'black';
-            ctx2b.stroke();
-            ctx2b.beginPath();
-            ctx2b.arc(centerX-150, centerY-150, radius, startAngle - Math.PI, curAngle, 1);
-            ctx2b.lineWidth = 30;
-            ctx2b.strokeStyle = 'white';
-            ctx2b.stroke();
-            lastRot = 0; lastRotMat.push(lastRot);
-          }
-        }
+        // } else {
+        //   if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
+        //     ctx2b.lineWidth = 30;
+        //     ctx2b.strokeStyle = 'white';
+        //     ctx2b.stroke();
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle, curAngle, 1);
+        //     ctx2b.lineWidth = 25;
+        //     ctx2b.strokeStyle = 'black';
+        //     ctx2b.stroke();
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
+        //     ctx2b.lineWidth = 30;
+        //     ctx2b.strokeStyle = 'white';
+        //     ctx2b.stroke();
+        //     lastRot = 1; lastRotMat.push(lastRot);
+        //   } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
+        //     ctx2b.lineWidth = 30;
+        //     ctx2b.strokeStyle = 'white';
+        //     ctx2b.stroke();
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle, curAngle, 0);
+        //     ctx2b.lineWidth = 25;
+        //     ctx2b.strokeStyle = 'black';
+        //     ctx2b.stroke();
+        //     ctx2b.beginPath();
+        //     ctx2b.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
+        //     ctx2b.lineWidth = 30;
+        //     ctx2b.strokeStyle = 'white';
+        //     ctx2b.stroke();
+        //     lastRot = 0; lastRotMat.push(lastRot);
+        //   }
+        // }
     });
 
     $(document).bind('click.curTrial', function(e) {
@@ -1003,60 +1003,60 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       curAngle = Math.atan2(relY,relX);
       angleDeg3 = curAngle / Math.PI * 180.0;
       diffAng3 = wrap([wrap([angleDeg])-wrap([angleDeg3])])>180? wrap([wrap([angleDeg3])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg3])]);
-      if (left_or_right == 1) {
+      // if (left_or_right == 1) {
         if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
           ctx2a.beginPath();
-          ctx2a.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
+          ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 1);
           ctx2a.lineWidth = 25;
           ctx2a.strokeStyle = 'black';
           ctx2a.stroke();
           ctx2a.beginPath();
-          ctx2a.arc(centerX-150, centerY-150, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
+          ctx2a.arc(centerX, centerY, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
           ctx2a.lineWidth = 30;
           ctx2a.strokeStyle = 'white';
           ctx2a.stroke();
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
           ctx2a.beginPath();
-          ctx2a.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
+          ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 0);
           ctx2a.lineWidth = 25;
           ctx2a.strokeStyle = 'black';
           ctx2a.stroke();
           ctx2a.beginPath();
-          ctx2a.arc(centerX-150, centerY-150, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
+          ctx2a.arc(centerX, centerY, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
           ctx2a.lineWidth = 30;
           ctx2a.strokeStyle = 'white';
           ctx2a.stroke();
         }
-      } else {
-        if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
-          ctx2b.beginPath();
-          ctx2b.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 1);
-          ctx2b.lineWidth = 25;
-          ctx2b.strokeStyle = 'black';
-          ctx2b.stroke();
-          ctx2b.beginPath();
-          ctx2b.arc(centerX-150, centerY-150, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
-          ctx2b.lineWidth = 30;
-          ctx2b.strokeStyle = 'white';
-          ctx2b.stroke();
-        } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
-          ctx2b.beginPath();
-          ctx2b.arc(centerX-150, centerY-150, radius, startAngle, curAngle, 0);
-          ctx2b.lineWidth = 25;
-          ctx2b.strokeStyle = 'black';
-          ctx2b.stroke();
-          ctx2b.beginPath();
-          ctx2b.arc(centerX-150, centerY-150, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
-          ctx2b.lineWidth = 30;
-          ctx2b.strokeStyle = 'white';
-          ctx2b.stroke();
-        }
-      }
+      // } else {
+      //   if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
+      //     ctx2b.beginPath();
+      //     ctx2b.arc(centerX, centerY, radius, startAngle, curAngle, 1);
+      //     ctx2b.lineWidth = 25;
+      //     ctx2b.strokeStyle = 'black';
+      //     ctx2b.stroke();
+      //     ctx2b.beginPath();
+      //     ctx2b.arc(centerX, centerY, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
+      //     ctx2b.lineWidth = 30;
+      //     ctx2b.strokeStyle = 'white';
+      //     ctx2b.stroke();
+      //   } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
+      //     ctx2b.beginPath();
+      //     ctx2b.arc(centerX, centerY, radius, startAngle, curAngle, 0);
+      //     ctx2b.lineWidth = 25;
+      //     ctx2b.strokeStyle = 'black';
+      //     ctx2b.stroke();
+      //     ctx2b.beginPath();
+      //     ctx2b.arc(centerX, centerY, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
+      //     ctx2b.lineWidth = 30;
+      //     ctx2b.strokeStyle = 'white';
+      //     ctx2b.stroke();
+      //   }
+      // }
     });
 
   $(document).bind('click.curTrial', function(e) {
     ctx2a.clearRect(0,0,300,300); // erases the black highlighting
-    ctx2b.clearRect(0,0,300,300); // erases the black highlighting
+    // ctx2b.clearRect(0,0,300,300); // erases the black highlighting
 
     if (curError <= 15) {
         feedText = 'Amazing!<br>(+$.01)';
@@ -1076,7 +1076,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     trialStruct.conf3 = diffAng3;
 
     if (trialStruct.isPractice) {
-        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 15 deg.!)<br><br>Click to continue.");
 
         if (left_or_right == 1) {
           imgNum = Math.round(wrap([angleDeg-randrotate]));
@@ -1101,7 +1101,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         $('#feedback').show();
         $(document).bind('click.feedback', function(e) {
             $('#feedback').hide();
-            NextFeedTrial();
+            NextTrial();
             document.getElementById("fixation").innerHTML = '+';
             $(document).unbind('click.feedback');
         });
@@ -1122,8 +1122,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         randrotate = Math.floor(Math.random()*360);
 
         setTimeout(function() {
-            if (repeat == 0) { $('#showTrial').hide(); }
-            repeat == 1? NextTrial() : NextFeedTrial();
+            NextTrial();
             document.getElementById("fixation").innerHTML = '+';
         }, isiTime);
     }
@@ -1145,15 +1144,15 @@ function Survey() {
       survey = 1;
 
       /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
-      if (left_or_right == 1) {
+      // if (left_or_right == 1) {
         ringctxA.restore();
-        ringctxA.drawImage(ringImg,0,0,280,280);
+        ringctxA.drawImage(ringImg,50,50,500,500);
         ringctxA.save();
-      } else {
-        ringctxB.restore();
-        ringctxB.drawImage(ringImg,0,0,280,280);
-        ringctxB.save();
-      }
+      // } else {
+      //   ringctxB.restore();
+      //   ringctxB.drawImage(ringImg,0,0,280,280);
+      //   ringctxB.save();
+      // }
 
       if (radioResp == 1) {
         document.getElementById("underText").innerHTML = "We actually did manipulate what colors were presented. Specifically, 40% of objects were sampled from one quarter of the color wheel (90 degree region). Please select the range of colors you think matches our preferential color sampling.";

@@ -42,8 +42,8 @@
 
 #ring {
 	position: absolute;
-	width: 280;
-	height: 280;
+	width: 600px; /* 280px; */
+	height: 600px; /* 280px; */
 	top: 0px;
 	left: 0px;
 	background: url(ring.png);
