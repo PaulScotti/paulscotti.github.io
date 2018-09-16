@@ -84,11 +84,11 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- Structure for continuous report after the trial: -->
 <div id="continuousReport">
-<div id='contItem_abs' style="position:absolute; top:150px; left:150px;">
-<canvas id="contItemA" width=300 height=300></canvas></div>
-<!-- <div id='contItemB_abs' style="position:absolute; top:150; left:300px;"> -->
-<!-- <canvas id="contItemB" width=300 height=300></canvas></div> -->
-<canvas id="ringItemA"  width=600 height=600 style="position: absolute; left: 0; top: 0;"></canvas>
+<div id='contItem_abs' style="position:absolute;">
+<canvas id="contItemA" width=600 height=600></canvas></div>
+<!-- <div id='contItemB_abs' style="position:absolute; top:150; left:300px;">
+<canvas id="contItemB" width=300 height=300></canvas></div> -->
+<canvas id="ringItemA"  width=600 height=600 style="position: absolute;"></canvas>
 <!-- <canvas id="ringItemB"  width=280 height=280 style="position: absolute; top:160px; left:310px;"></canvas> -->
 <div id="pointer"></div>
 <div id="popQuiz"><p>What was the color of this object?/p></div>
@@ -295,7 +295,6 @@ const ringctxA = ringItemA.getContext("2d");
 const CDitem = document.getElementById("CDitem");
 const cdctx = CDitem.getContext("2d");
 
-
 imgX.src = $('#' + dx.pracimgA[0])[0].src;
 // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
 
@@ -325,6 +324,13 @@ function GenerateTrials() {
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.trialtype[i];
     let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    if (Math.round(Math.random()) == 0) {
+      thisTarget = dx.testimgA[i];
+      thatRef = dx.testimgB[i];
+    } else {
+      thisTarget = dx.testimgB[i];
+      thatRef = dx.testimgA[i];
+    }
     wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
@@ -332,6 +338,8 @@ function GenerateTrials() {
                     'item': curMean,
                     'itemA': dx.testimgA[i],
                     'itemB': dx.testimgB[i],
+                    'itemT': thisTarget,
+                    'itemR': thatRef,
                     'origTrial': i});
   }
 
@@ -343,9 +351,28 @@ function GenerateTrials() {
   for (let i=0; i<numTrialsPerPart[0]; i++) {
     let cap = 360/numTrialsPerPart[0];
     let curMean = counter(1,360,cap);
+    wrap(curMean);
+    if (Math.round(Math.random()) == 0) {
+      thisTarget = dx.pracimgA[i];
+      thatRef = dx.pracimgB[i];
+      thisTargetCol = curMean[i];
+      thatRefCol = wrap(curMean[i]+180);
+    } else {
+      thisTarget = dx.pracimgB[i];
+      thatRef = dx.pracimgA[i];
+      thisTargetCol = wrap(curMean[i]+180);
+      thatRefCol = curMean[i];
+    }
     practiceTriTrials.push({'isPractice': 1,
-                    'itemA': curMean[i],
-                    'itemB': wrap(curMean[i]+180)});
+                    'itemA_id': dx.pracimgA[i],
+                    'itemB_id': dx.pracimgB[i],
+                    'itemA_col': curMean[i],
+                    'itemB_col': wrap(curMean[i]+180),
+                    'itemT_id': thisTarget,
+                    'itemR_id': thatRef,
+                    'itemT_col': thisTargetCol,
+                    'itemR_col':thatRefCol
+                  });
   }
 
   // for (let i=0; i<dx.trialtype.length; i++) {
@@ -425,11 +452,11 @@ function NextTrial() {
 /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct) {
     flip = 0;
-    start(ctxA,trialStruct.itemA,50, 50,imgWidth,imgHeight,flip,imgA,itemA);
-    start(ctxB,trialStruct.itemB,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
+    start(ctxA,trialStruct.itemA_col,50, 50,imgWidth,imgHeight,flip,imgA,itemA);
+    start(ctxB,trialStruct.itemB_col,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
     if (currentPart == 0) {
-        imgA.src = $('#' + dx.pracimgA[currentTrial])[0].src;
-        imgB.src = $('#' + dx.pracimgB[currentTrial])[0].src;
+        imgA.src = $('#' + trialStruct.itemA_id)[0].src;
+        imgB.src = $('#' + trialStruct.itemB_id)[0].src;
     } else {
         imgA.src = $('#' + dx.testimgA[currentTrial])[0].src;
         imgB.src = $('#' + dx.testimgB[currentTrial])[0].src;
@@ -546,8 +573,8 @@ function NextFeedTrial() {
   // }
 
   if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
-    ringctxA.clearRect(0,0,300,300);
-    // ringctxB.clearRect(0,0,300,300);
+    ringctxA.clearRect(0,0,600,600);
+    // ringctxB.clearRect(0,0,600,600);
   }
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
@@ -651,11 +678,7 @@ function ShowContinuousReport(trialStruct) {
 
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
-      if (left_or_right == 1) {
-        relX = e.pageX - parentOffset.left - centerX + 150;
-      } else {
-        relX = e.pageX - parentOffset.left - centerX - 150;
-      }
+      relX = e.pageX - parentOffset.left - centerX;
       relY = e.pageY - parentOffset.top - centerY;
       curAngle = Math.atan2(relY,relX);
       angleDeg = curAngle / Math.PI * 180.0;
@@ -665,7 +688,7 @@ function ShowContinuousReport(trialStruct) {
 
       // if (repeat == 0) {
       // if (left_or_right == 1) {
-        start(ctx2a,imgNum,50, 50,imgWidth,imgHeight,flip,imgA,itemA);
+      start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
       // } else {
       //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
       // }
@@ -674,34 +697,34 @@ function ShowContinuousReport(trialStruct) {
       // }
 
       if (currentPart == 0) {
-          imgA.src = $('#' + dx.pracimgA[currentFeedTrial])[0].src;
-          imgB.src = $('#' + dx.pracimgB[currentFeedTrial])[0].src;
+          imgA.src = $('#' + trialStruct.itemT_id)[0].src;
+          // imgB.src = $('#' + dx.pracimgB[currentFeedTrial])[0].src;
       } else if (survey == 0 && repeat == 0) {
-          imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemA)[0].src;
-          imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemB)[0].src;
+          imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemT)[0].src;
+          // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemB)[0].src;
       } else if (survey == 1 && repeat == 0) {
           imgA.src = $('#999')[0].src;
-          imgB.src = $('#999')[0].src;
+          // imgB.src = $('#999')[0].src;
           // Draw fixed 45 degree highlight
           // if (left_or_right == 1) {
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
-            ctx2a.lineWidth = 25;
+            ctx2a.lineWidth = 40;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
-            ctx2a.lineWidth = 25;
+            ctx2a.lineWidth = 40;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
           // } else {
@@ -743,11 +766,11 @@ function ShowContinuousReport(trialStruct) {
       if (survey == 1) {
         flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
-        if (left_or_right == 1) {
-          flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemA])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemA]));
-        } else {
-          flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
-        }
+        // if (left_or_right == 1) {
+        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemT_col]));
+        // } else {
+        //   flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
+        // }
       }
       if (curError > 180) {
           curError = 360-curError;
@@ -760,52 +783,26 @@ function ShowContinuousReport(trialStruct) {
         trialStruct.randrotate = randrotate;
         trialStruct.flip = flip;
         flip == 0? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
-        // if (left_or_right == 1) {
-          ringctxA.translate(280/2, 280/2);
-          ringctxA.rotate(randrotate*Math.PI/180);
-          ringctxA.translate(-280/2, -280/2);
-          ringImg.onload = function() {
-            ringctxA.drawImage(ringImg,50,50,500,500);
-          }
-          ringctxA.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
-        // } else {
-        //   ringctxB.translate(280/2, 280/2);
-        //   ringctxB.rotate(randrotate*Math.PI/180);
-        //   ringctxB.translate(-280/2, -280/2);
-        //   ringImg.onload = function() {
-        //     ringctxB.drawImage(ringImg,0,0,280,280);
-        //   }
-        //   ringctxB.drawImage(ringImg,0,0,280,280); // have to code it twice because Safari hates .onload
-        // }
-
-        // if (left_or_right == 1) {
-          ctx2a.onload = function() {
-            start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
-          }
-          start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
-          // ctx2b.onload = function() {
-          //   start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
-          // }
-          // start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
-        // } else {
-        //   ctx2b.onload = function() {
-        //     start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
-        //   }
-        //   start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
-          ctx2a.onload = function() {
-            start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA); //set starting color as grayscale
-          }
-          start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA);
-        // }
+        ringctxA.translate(50+500/2, 50+500/2);
+        ringctxA.rotate(randrotate*Math.PI/180);
+        ringctxA.translate(-50-500/2, -50-500/2);
+        ringImg.onload = function() {
+          ringctxA.drawImage(ringImg,50,50,500,500);
+        }
+        ringctxA.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
+        ctx2a.onload = function() {
+          start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
+        }
+        start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA);
       }
       if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
         if (tempVar) {
           setTimeout(function() {
             // if (left_or_right == 1) {
               ctx2a.onload = function() {
-                start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
+                start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
               }
-            //   start(ctx2a,'gray',50, 50, imgWidth, imgHeight, flip, imgA, itemA);
+            //   start(ctx2a,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA);
             //   ctx2b.onload = function() {
             //     start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
             //   }
@@ -816,9 +813,9 @@ function ShowContinuousReport(trialStruct) {
               // }
               // start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
               ctx2a.onload = function() {
-                start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA); //set starting color as grayscale
+                start(ctx2a,trialStruct.itemT_col,200, 200, imgWidth, imgHeight, 0, imgA, itemA); //set starting color as grayscale
               }
-              start(ctx2a,trialStruct.itemA,50, 50, imgWidth, imgHeight, 0, imgA, itemA);
+              start(ctx2a,trialStruct.itemT_col,200, 200, imgWidth, imgHeight, 0, imgA, itemA);
             // }
           }, 150);
           tempVar = false;
@@ -891,34 +888,34 @@ function ShowConfidence(trialStruct,angleDeg) {
           if (wrap([wrap([angleDeg])-wrap([angleDeg2])])<180 && noMore == 0) { /* conf is counterclockwise */
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 1);
-            ctx2a.lineWidth = 25;
+            ctx2a.lineWidth = 40;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             lastRot = 1; lastRotMat.push(lastRot);
           } else if (wrap([wrap([angleDeg])-wrap([angleDeg2])])>180 && noMore == 0) { /* conf is clockwise */
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle + Math.PI, curAngle, 0);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 0);
-            ctx2a.lineWidth = 25;
+            ctx2a.lineWidth = 40;
             ctx2a.strokeStyle = 'black';
             ctx2a.stroke();
             ctx2a.beginPath();
             ctx2a.arc(centerX, centerY, radius, startAngle - Math.PI, curAngle, 1);
-            ctx2a.lineWidth = 30;
+            ctx2a.lineWidth = 50;
             ctx2a.strokeStyle = 'white';
             ctx2a.stroke();
             lastRot = 0; lastRotMat.push(lastRot);
@@ -994,11 +991,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
   /* Confidence report */
   $(document).bind('mousemove.curTrial', function(e) {
       parentOffset = $('#continuousReport').offset();
-      if (left_or_right == 1) {
-        relX = e.pageX - parentOffset.left - centerX + 150;
-      } else {
-        relX = e.pageX - parentOffset.left - centerX - 150;
-      }
+      relX = e.pageX - parentOffset.left - centerX;
       relY = e.pageY - parentOffset.top - centerY;
       curAngle = Math.atan2(relY,relX);
       angleDeg3 = curAngle / Math.PI * 180.0;
@@ -1007,23 +1000,23 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 1);
-          ctx2a.lineWidth = 25;
+          ctx2a.lineWidth = 40;
           ctx2a.strokeStyle = 'black';
           ctx2a.stroke();
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle + diffAng2*Math.PI/180, curAngle, 0);
-          ctx2a.lineWidth = 30;
+          ctx2a.lineWidth = 50;
           ctx2a.strokeStyle = 'white';
           ctx2a.stroke();
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 0);
-          ctx2a.lineWidth = 25;
+          ctx2a.lineWidth = 40;
           ctx2a.strokeStyle = 'black';
           ctx2a.stroke();
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle - diffAng2*Math.PI/180, curAngle, 1);
-          ctx2a.lineWidth = 30;
+          ctx2a.lineWidth = 50;
           ctx2a.strokeStyle = 'white';
           ctx2a.stroke();
         }
@@ -1055,8 +1048,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     });
 
   $(document).bind('click.curTrial', function(e) {
-    ctx2a.clearRect(0,0,300,300); // erases the black highlighting
-    // ctx2b.clearRect(0,0,300,300); // erases the black highlighting
+    ctx2a.clearRect(0,0,600,600); // erases the black highlighting
+    // ctx2b.clearRect(0,0,600,600); // erases the black highlighting
 
     if (curError <= 15) {
         feedText = 'Amazing!<br>(+$.01)';
@@ -1078,22 +1071,20 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     if (trialStruct.isPractice) {
         $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 15 deg.!)<br><br>Click to continue.");
 
-        if (left_or_right == 1) {
+        // if (left_or_right == 1) {
           imgNum = Math.round(wrap([angleDeg-randrotate]));
           start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
-          imgNum = flip == 0? Math.round(trialStruct.itemA) : Math.round(wrap([180-trialStruct.itemA]));
+          imgNum = flip == 0? Math.round(trialStruct.itemT_col) : Math.round(wrap([180-trialStruct.itemT_col]));
           start(ctx4,imgNum,40,100, 200, 200, flip, imgA, itemA);
-        } else {
-          imgNum = Math.round(wrap([angleDeg-randrotate]));
-          start(ctx3,imgNum,80,100, 200, 200, flip, imgB, itemB);
-          imgNum = flip == 0? Math.round(trialStruct.itemB) : Math.round(wrap([180-trialStruct.itemB]));
-          start(ctx4,imgNum,40,100, 200, 200, flip, imgB, itemB);
-        }
+        // } else {
+        //   imgNum = Math.round(wrap([angleDeg-randrotate]));
+        //   start(ctx3,imgNum,80,100, 200, 200, flip, imgB, itemB);
+        //   imgNum = flip == 0? Math.round(trialStruct.itemB) : Math.round(wrap([180-trialStruct.itemB]));
+        //   start(ctx4,imgNum,40,100, 200, 200, flip, imgB, itemB);
+        // }
 
-        if (currentFeedTrial+1 < numTrialsPerPart[0]) {
-        imgA.src = $('#' + dx.pracimgA[currentFeedTrial+1])[0].src;
-        imgB.src = $('#' + dx.pracimgB[currentFeedTrial+1])[0].src;
-        }
+        // imgA.src = $('#' + trialStruct.itemT_id)[0].src;
+
 
         flip = Math.round(Math.random());
         randrotate = Math.floor(Math.random()*360);
@@ -1108,14 +1099,14 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     } else {
         $('#showTrial').show();
         if (repeat == 1) {
-            imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
+            imgPop.src = $('#' + trialStruct.itemT_id)[0].src;
             numRepeats++;
         } else if (currentFeedTrial < numTrialsPerPart[1]-1) {
-            imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemA)[0].src;
-            imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
+            imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemT)[0].src;
+            // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
         } else if (currentFeedTrial>=numTrialsPerPart[currentPart]-1) { /* this is to prepare the gray square in explicit test */
             imgA.src = $('#999')[0].src;
-            imgB.src = $('#999')[0].src;
+            // imgB.src = $('#999')[0].src;
         }
 
         flip = Math.round(Math.random());
