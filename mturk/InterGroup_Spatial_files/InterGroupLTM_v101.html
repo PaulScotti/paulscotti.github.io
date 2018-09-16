@@ -324,22 +324,29 @@ function GenerateTrials() {
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     let pickSeed = dx.trialtype[i];
     let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
+    wrap(curMean);
     if (Math.round(Math.random()) == 0) {
       thisTarget = dx.testimgA[i];
       thatRef = dx.testimgB[i];
+      thisTarget_col = curMean;
+      thatRef_col = wrap(180+curMean);
     } else {
       thisTarget = dx.testimgB[i];
       thatRef = dx.testimgA[i];
+      thisTarget_col = wrap(180+curMean);
+      thatRef_col = curMean;
     }
-    wrap(curMean);
     triTrials.push({'mean': seed[pickSeed],
                     'seed': pickSeed,
                     'isPractice': 0,
-                    'item': curMean,
-                    'itemA': dx.testimgA[i],
-                    'itemB': dx.testimgB[i],
-                    'itemT': thisTarget,
-                    'itemR': thatRef,
+                    'itemA_id': dx.testimgA[i],
+                    'itemB_id': dx.testimgB[i],
+                    'itemT_id': thisTarget,
+                    'itemR_id': thatRef,
+                    'itemA_col': curMean,
+                    'itemB_col': wrap(curMean+180),
+                    'itemT_col': thisTarget_col,
+                    'itemR_col': thatRef_col,
                     'origTrial': i});
   }
 
