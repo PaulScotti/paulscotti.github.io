@@ -366,7 +366,7 @@ let colors = [
 				"pracimgB": counter(101+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]-1),
         "testimgA": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
-				"trialtype": repmat([0,0,1,2,3],trialsPerBlock/5)
+				"trialtype": repmat([0,0,1,2,3],trialsPerBlock/5),
 	};
 
 	const tempRand = _.clone(dx.trialtype);
