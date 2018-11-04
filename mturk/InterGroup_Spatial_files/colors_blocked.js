@@ -378,9 +378,9 @@ let colors = [
 	// }
 
 	for (let colorInit=0; colorInit<numTrialsPerPart[1]; colorInit++) {
-		let randColor = Math.floor(Math.rand()*360);
+		let randColor = Math.floor(Math.random()*360);
 		let pos_or_neg = [];
-		Math.rand() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
+		Math.random() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
 		dx.imgAcolor = dx.imgAcolor.concat(randColor);
 		dx.imgBcolor = dx.imgBcolor.concat(randColor + (pos_or_neg*dx.imgType[colorInit]));
 		dx.sign = dx.sign.concat(pos_or_neg * dx.imgType[colorInit]);
