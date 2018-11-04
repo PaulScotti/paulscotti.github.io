@@ -378,7 +378,7 @@ let colors = [
 	}
 
 	for (let colorInit=0; colorInit<length(dx.testimgA); colorInit++) {
-		let randColor = Math.ceil(Math.rand()*360);
+		let randColor = Math.floor(Math.rand()*360);
 		let pos_or_neg = [];
 		Math.rand() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
 		dx.imgAcolor = dx.imgAcolor.concat(randColor);
