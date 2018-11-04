@@ -244,7 +244,6 @@ dx.pracimgA = chance1.shuffle(dx.pracimgA);
 dx.pracimgB = chance1.shuffle(dx.pracimgB);
 dx.testimgA = chance1.shuffle(dx.testimgA);
 dx.testimgB = chance1.shuffle(dx.testimgB);
-dx.trialtype = chance1.shuffle(dx.trialtype);
 
 /* Setup reused image variable */
 let imgA = new Image();
@@ -322,32 +321,27 @@ function GenerateTrials() {
   wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
-    let curMean = (Math.ceil(Math.random()*360));
-    let compareRand = Math.round(Math.random());
-    let compareMean = compareRand == 0 ? (Math.ceil(Math.random()*67)-45) : (Math.ceil(Math.random()*157)-45);
-    wrap(compareMean);
-    if (Math.round(Math.random()) == 0) {
+    if (Math.round(Math.random()) == 0) { //itemA is tested
       thisTarget = dx.testimgA[i];
       thatRef = dx.testimgB[i];
-      thisTarget_col = curMean;
-      thatRef_col = compareMean;
-    } else {
+      thisTarget_col = dx.imgAcolor[i];
+      thatRef_col = dx.imgBcolor[i];
+    } else { //itemB is tested
       thisTarget = dx.testimgB[i];
       thatRef = dx.testimgA[i];
-      thisTarget_col = compareMean;
-      thatRef_col = curMean;
+      thisTarget_col = dx.imgBcolor[i];
+      thatRef_col = dx.imgAcolor[i];
     }
     triTrials.push({'isPractice': 0,
                     'itemA_id': dx.testimgA[i],
                     'itemB_id': dx.testimgB[i],
                     'itemT_id': thisTarget,
                     'itemR_id': thatRef,
-                    'itemA_col': curMean,
-                    'itemB_col': wrap(curMean+180),
+                    'itemA_col': dx.imgAcolor[i],
+                    'itemB_col': dx.imgBcolor[i],
                     'itemT_col': thisTarget_col,
                     'itemR_col': thatRef_col,
-                    'bin': compareRand,
-                    'binAmnt': compareMean,
+                    'colorDiff': dx.sign[i],
                     'origTrial': i});
   }
 
@@ -360,40 +354,29 @@ function GenerateTrials() {
     let cap = 360/numTrialsPerPart[0];
     let curMean = counter(1,360,cap);
     wrap(curMean);
+    let amtchangepractice = Math.ceil(Math.rand()*90) + 45
     if (Math.round(Math.random()) == 0) {
       thisTarget = dx.pracimgA[i];
       thatRef = dx.pracimgB[i];
       thisTargetCol = curMean[i];
-      thatRefCol = wrap(curMean[i]+180);
+      thatRefCol = wrap(curMean[i]+amtchangepractice);
     } else {
       thisTarget = dx.pracimgB[i];
       thatRef = dx.pracimgA[i];
-      thisTargetCol = wrap(curMean[i]+180);
+      thisTargetCol = wrap(curMean[i]+amtchangepractice);
       thatRefCol = curMean[i];
     }
     practiceTriTrials.push({'isPractice': 1,
                     'itemA_id': dx.pracimgA[i],
                     'itemB_id': dx.pracimgB[i],
                     'itemA_col': curMean[i],
-                    'itemB_col': wrap(curMean[i]+180),
+                    'itemB_col': wrap(curMean[i]+amtchangepractice),
                     'itemT_id': thisTarget,
                     'itemR_id': thatRef,
                     'itemT_col': thisTargetCol,
                     'itemR_col':thatRefCol
                   });
   }
-
-  // for (let i=0; i<dx.trialtype.length; i++) {
-  //   let pickSeed = dx.trialtype[i];
-  //   let curMean = seed[pickSeed] + (Math.floor(Math.random()*90) - 45);
-  //   wrap(curMean);
-  //   repeatTriTrials.push({'mean': seed[pickSeed],
-  //                   'seed': pickSeed,
-  //                   'isPractice': 0,
-  //                   'item': curMean,
-  //                   'origTrial': dx.r_repeattrial[i] + 1});
-  // }
-  //   repeatTriTrials = chance1.shuffle(repeatTriTrials);
 }
 
 /* Start the experiment, this function is the first to operate! */
@@ -1200,7 +1183,9 @@ function SaveData() {
     "Bonus": points,
     "Seeds": seed,
     "StudyOrder": [dx.testimgA,dx.testimgB],
-    "SeedOrder": dx.trialtype,
+    "leftColor": dx.imgAcolor,
+    "rightColor": dx.imgBcolor,
+    "colorChange": dx.sign,
     "CDAccuracy": CDaccuracy,
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,

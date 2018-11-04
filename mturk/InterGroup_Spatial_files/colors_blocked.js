@@ -383,6 +383,7 @@ let colors = [
 		Math.rand() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
 		dx.imgAcolor = dx.imgAcolor.concat(randColor);
 		dx.imgBcolor = dx.imgBcolor.concat(randColor + (pos_or_neg*dx.imgType[colorInit]));
+		dx.sign = dx.sign.concat(pos_or_neg * dx.imgType[colorInit]);
 	}
 
 	function repmat(array, count) {
