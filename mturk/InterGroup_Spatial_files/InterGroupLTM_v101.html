@@ -97,7 +97,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- feedback -->
 <div id="feedback">
-    <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 10 degrees!).<br>Click to continue.</div></div>
+    <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 30 degrees!).<br>Click to continue.</div></div>
 
 <form id="survey1" style="display: none;">
     <center>
@@ -313,12 +313,6 @@ function GenerateTrials() {
     workerId = 'no_workerId';
   }
   Math.seedrandom(WORKERID); /* Use their ID as the Math random seed generator, so you can trace back their trials */
-
-  seed = Math.floor(Math.random()*360);
-  seed = [seed, (seed + 90)];
-  seed = [seed[0], seed[1], (seed[1] + 90)];
-  seed = [seed[0], seed[1], seed[2], (seed[2] + 90)];
-  wrap(seed);
 
   for (let i=0; i<numTrialsPerPart[1]; i++) {
     if (Math.round(Math.random()) == 0) { //itemA is tested
@@ -1035,7 +1029,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     trialStruct.conf3 = diffAng3;
 
     if (trialStruct.isPractice) {
-        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 15 deg.!)<br><br>Click to continue.");
+        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
         // if (left_or_right == 1) {
           imgNum = Math.round(wrap([angleDeg-randrotate]));
