@@ -366,7 +366,7 @@ let colors = [
 				"pracimgB": counter(101+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]-1),
         "testimgA": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
-				"trialtype": repmat([0,0,1,2,3],trialsPerBlock/5),
+				"imgType": shuffle(concat(repmat(45,numTrialsPerPart[1]),repmat(90,numTrialsPerPart[1])))
 	};
 
 	const tempRand = _.clone(dx.trialtype);
@@ -375,6 +375,14 @@ let colors = [
 	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
 		fooArray = _.clone(chance1.shuffle(tempRand));
 		dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
+	}
+
+	for (let colorInit=0; colorInit<length(dx.testimgA)+1; colorInit++) {
+		let randColor = Math.ceil(Math.rand()*360);
+		let pos_or_neg = [];
+		Math.rand() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
+		dx.imgAcolor = dx.imgAcolor.concat(randColor);
+		dx.imgAcolor = dx.imgBcolor.concat(randColor + (pos_or_neg*dx.imgType[colorInit]));
 	}
 
 	function repmat(array, count) {
