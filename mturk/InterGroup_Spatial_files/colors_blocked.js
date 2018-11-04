@@ -369,13 +369,13 @@ let colors = [
 				"imgType": chance1.shuffle(repmat(45,numTrialsPerPart[1]).concat(repmat(90,numTrialsPerPart[1])))
 	};
 
-	const tempRand = _.clone(dx.trialtype);
-	dx.trialtype = [];
+	// const tempRand = _.clone(dx.trialtype);
+	// dx.trialtype = [];
 
-	for (let blockNum=0; blockNum<totBlocks; blockNum++) {
-		fooArray = _.clone(chance1.shuffle(tempRand));
-		dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
-	}
+	// for (let blockNum=0; blockNum<totBlocks; blockNum++) {
+	// 	fooArray = _.clone(chance1.shuffle(tempRand));
+	// 	dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
+	// }
 
 	for (let colorInit=0; colorInit<length(dx.testimgA); colorInit++) {
 		let randColor = Math.floor(Math.rand()*360);
