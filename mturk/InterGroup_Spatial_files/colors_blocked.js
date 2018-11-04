@@ -377,7 +377,7 @@ let colors = [
 	// 	dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
 	// }
 
-	for (let colorInit=0; colorInit<length(dx.testimgA); colorInit++) {
+	for (let colorInit=0; colorInit<numTrialsPerPart[1]; colorInit++) {
 		let randColor = Math.floor(Math.rand()*360);
 		let pos_or_neg = [];
 		Math.rand() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
