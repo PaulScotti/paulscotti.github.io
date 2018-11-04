@@ -368,7 +368,7 @@ let colors = [
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
 				"imgType": chance1.shuffle(repmat(45,numTrialsPerPart[1]/2).concat(repmat(90,numTrialsPerPart[1]/2))),
 				"imgAcolor": [], "imgBcolor": []
-	};
+	}
 
 	// const tempRand = _.clone(dx.trialtype);
 	// dx.trialtype = [];
