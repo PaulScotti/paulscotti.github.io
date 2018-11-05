@@ -168,7 +168,7 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
 const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 20;
+const trialsPerBlock = 4;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked.js"> </script>
 
@@ -418,13 +418,9 @@ function NextTrial() {
       NextFeedTrial();
       return; // need return; otherwise the ShowTrial below executes
     } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) {
-        $('#showTrial').show();
-        $('#item').css('margin-top', -1000);
-        $('#allItems').css('margin-top', 0);
-        cdctx.drawImage(CDfix,0,0,600,600);
         numCD = 0; nextTrialStart = 1; currentTrial--;
-        tempVar = true;
-        ChangeDetection();
+        alert("starting next block");
+        NextTrial();
         return;
     }
   }
@@ -539,86 +535,6 @@ function NextFeedTrial() {
 
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
   mouseMoved = 0;
-}
-
-function ChangeDetection() { // filler change detection task before every test phase
-  $('#underText2').hide();
-  $('#SameButton').hide();
-  $('#DiffButton').hide();
-
-  if (numCD == 0) {
-    confirm('Before we test your memory, please complete a short change detection task. You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.\n\nPress [ENTER] to continue.');
-  }
-
-  if (numCD < 2) {
-      CDtrial++; numCD++;
-      CDtrialChange();
-
-      $('#showTrial').show();
-      $('#item').css('margin-top', -1000);
-      $('#allItems').css('margin-top', 0);
-      $('#CDitem').show();
-
-      cdctx.drawImage(CDfix,0,0,600,600);
-      setTimeout(function(){  // after 800 ms, show colored memory array
-        cdctx.drawImage(imgCD,0,0,600,600);
-            setTimeout(function(){  // after 200 ms, show fixation again
-              cdctx.drawImage(CDfix,0,0,600,600);
-                    setTimeout(function(){  // after 900 ms, show test array
-                            cdctx.drawImage(imgCDtest,0,0,600,600);
-                            $('#underText2').show();
-                            $('#SameButton').show();
-                            $('#DiffButton').show();
-                    }, 900);
-            }, 200);
-     }, 800);
-   } else {
-       currentPart = 2;
-       $('#showTrial').hide();
-       $('#item').css('margin-top', 0);
-       $('#allItems').css('margin-top', -1000);
-       $('#CDitem').hide();
-       blockStart = 1;
-       alert("Finished study phase of Block "+block+" of "+totBlocks+". You will now see all previous objects from this Block.\n\nMove your mouse around the color wheel and click your best guess of the original object color. Please be as precise as possible!");
-       block = block + 1;
-       NextFeedTrial();
-   }
-}
-
-function SamePress() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
-    CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
-  } else {
-    CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
-  }
-}
-function DiffPress() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) { //if CDtrial equals any of the numbers in the array (representing same trials)
-    CDaccuracy.push(0);
-    numCD < 2 ? alert('Incorrect...\n\nPress [ENTER] to start change detection trial.') : alert('Incorrect...\n\nPress [ENTER] to continue.');
-  } else {
-    CDaccuracy.push(1);
-    numCD < 2 ? alert('Correct!\n\nPress [ENTER] to start change detection trial.') : alert('Correct!\n\nPress [ENTER] to continue.');
-  }
-}
-function CDtrialChange() {
-  if ([1,3,4,7,10,11,12,15,16,18].indexOf(CDtrial) > -1) {
-    if (sameTally >= 9) {
-      sameTally = -1;
-    }
-    sameTally = sameTally + 2;
-    imgCD.src = $('#same'+sameTally)[0].src;
-    imgCDtest.src = $('#same'+(sameTally+1))[0].src;
-  } else {
-    if (diffTally >= 7) {
-      diffTally = -1;
-    }
-    diffTally = diffTally + 2;
-    imgCD.src = $('#diff'+diffTally)[0].src;
-    imgCDtest.src = $('#diff'+(diffTally+1))[0].src;
-  }
 }
 
 /* Always track the mouse */
