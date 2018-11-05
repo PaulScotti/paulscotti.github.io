@@ -16,7 +16,7 @@ var numTrialsPerPart = [3, 3, 60, 60];
 
 /* Choose which to start with before we seed the random number
     generator so it really is random across subjects */
-var startWithFaces = Math.random()<0.50; 
+var startWithFaces = Math.random()<0.50;
 
 var practiceEmotionTrials = [];
 var practiceTriTrials = [];
@@ -34,11 +34,11 @@ var setItem;
    random number generator the same every time. */
 function GenerateTrials() {
   Math.seedrandom('jasonhaberman');
-  for (var i=0; i<numTrialsPerPart[2]/3; i++) { 
+  for (var i=0; i<numTrialsPerPart[2]/3; i++) {
     var curMean = Math.floor(Math.random()*360);
     for (var j=0; j<3; j++) {
-      triTrials.push({'mean': curMean, 
-                      'type': 'color', 
+      triTrials.push({'mean': curMean,
+                      'type': 'color',
                       'isPractice': 0,
                       'items': wrap([curMean-15, curMean-5, curMean+5, curMean+15])});
     }
@@ -47,27 +47,27 @@ function GenerateTrials() {
   for (var i=0; i<numTrialsPerPart[3]/3; i++) {
     var curMean = Math.floor(Math.random()*360);
     for (var j=0; j<3; j++) {
-      emotionTrials.push({'mean': curMean, 
+      emotionTrials.push({'mean': curMean,
                         'type': 'emotion',
                         'isPractice': 0,
                         'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
      }
-  }  
+  }
   emotionTrials = Shuffle(emotionTrials);
   for (var i=0; i<numTrialsPerPart[0]; i++) { /* Always 3 practice trials */
     var curMean = Math.floor(Math.random()*360);
-    practiceTriTrials.push({'mean': curMean, 
-                    'type': 'color', 
+    practiceTriTrials.push({'mean': curMean,
+                    'type': 'color',
                     'isPractice': 1,
                     'items': wrap([curMean-15, curMean-5, curMean+5, curMean+15])});
   }
   for (var i=0; i<numTrialsPerPart[1]; i++) { /* Always 3 practice trials */
     var curMean = Math.floor(Math.random()*360);
-    practiceEmotionTrials.push({'mean': curMean, 
+    practiceEmotionTrials.push({'mean': curMean,
                       'type': 'emotion',
                       'isPractice': 1,
                       'items': wrap([curMean-30, curMean-10, curMean+10, curMean+30])});
-  }   
+  }
 }
 
 /* Start the experiment. Show the trials for either faces or emotions
@@ -111,7 +111,7 @@ function NextTrial() {
   ShowTrial(totalTrials[currentPart][currentTrial], setItem[currentPart]);
 }
 
-/* Basic trial structure: Wait for click; then show the stimuli for this trial; 
+/* Basic trial structure: Wait for click; then show the stimuli for this trial;
   then delay for fixed ISI; then call ShowContinuousReport */
 function ShowTrial(trialStruct, howToSet) {
   for (var i=0; i<4; i++) {
@@ -122,14 +122,14 @@ function ShowTrial(trialStruct, howToSet) {
   if (currentPart < 2) {
     $('#pressKey').html('<u><font color=navy>Practice for Part ' + (currentPart+1) + ' of 2</font></u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + ' (in this part)<br><br>Click anywhere to start this trial.');
   }  else {
-    $('#pressKey').html('<u>Part ' + (currentPart-1) + ' of 2</u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + ' (in this part)<br><br>Click anywhere to start this trial.');  
+    $('#pressKey').html('<u>Part ' + (currentPart-1) + ' of 2</u><br><br>Trial ' + (currentTrial+1) + ' of ' + numTrialsPerPart[currentPart] + ' (in this part)<br><br>Click anywhere to start this trial.');
   }
   $('#pressKey').show();
-  $(document).bind('click.startTrial', function(e) { 
+  $(document).bind('click.startTrial', function(e) {
       $(document).unbind('click.startTrial');
       setTimeout(function() {
         $('#allItems').css('margin-top', 0);
-        setTimeout(function() { 
+        setTimeout(function() {
             $('#allItems').css('margin-top', -1000);
             setTimeout(function() {
               $('#showTrial').hide();
@@ -158,9 +158,9 @@ function ShowContinuousReport(trialStruct, howToSet) {
   var angleDeg = 0;
   var curError = 360;
   var startTime = new Date();
-  
+
 	$(document).bind('mousemove.curTrial', function(e) {
-		var parentOffset = $('#continuousReport').offset(); 
+		var parentOffset = $('#continuousReport').offset();
    	var relX = e.pageX - parentOffset.left - centerX;
   	var relY = e.pageY - parentOffset.top - centerY;
 		var curAngle = Math.atan2(relY,relX);
@@ -168,18 +168,18 @@ function ShowContinuousReport(trialStruct, howToSet) {
     angleDeg = (angleDeg < 0) ? angleDeg+360:angleDeg;
 		var imgNum = Math.round(angleDeg);
     howToSet('#continuousStimulus', imgNum);
-		$('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9, 
+		$('#pointer').css({'left': centerX + Math.cos(curAngle)*ringSize-9,
                        'top': centerY + Math.sin(curAngle)*ringSize-9});
     if (trialStruct.isPractice) {
-        curError = Math.min(Math.abs(angleDeg-trialStruct.mean), 
-          Math.abs((angleDeg+360)-trialStruct.mean), 
+        curError = Math.min(Math.abs(angleDeg-trialStruct.mean),
+          Math.abs((angleDeg+360)-trialStruct.mean),
           Math.abs((angleDeg-360)-trialStruct.mean));
     }
     if (e.isFakeTrigger) {
       trialStruct.startedAngle = Math.round(angleDeg);
     }
 	});
-  
+
   $(document).bind('click.curTrial', function(e) {
 		trialStruct.reportedAngle = Math.round(angleDeg);
     trialStruct.rt = (new Date()) - startTime;
@@ -194,7 +194,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
       howToSet('#feedbackCorrect', imgNum);
       $('#feedback').show();
       $(document).bind('click.feedback', function(e) {
-        $('#feedback').hide(); 
+        $('#feedback').hide();
         NextTrial();
         $(document).unbind('click.feedback');
       });
@@ -202,7 +202,7 @@ function ShowContinuousReport(trialStruct, howToSet) {
       NextTrial();
      }
 	});
-  
+
   $("#continuousReport").show();
   e = $.Event('mousemove');
   e.pageX = mouseX;
@@ -222,16 +222,16 @@ function SaveData() {
   $('#saving').show();
   $('#assignmentId').val(GetAssignmentId());
   var newDate = new Date();
-  var curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " + 
+  var curID = (IsOnTurk())? GetAssignmentId() : prompt("Doesn't look like you " +
   "are on Turk, so you're probably testing. Enter an ID to save your data with:", "id");
-  d = { 
+  d = {
     "curID": curID,
     "curTime": newDate.today() + " @ " + newDate.timeNow(),
     "userAgent": navigator.userAgent,
     "windowWidth": $(window).width(),
     "windowHeight": $(window).height(),
     "screenWidth": screen.width,
-    "screenHeight": screen.height,    
+    "screenHeight": screen.height,
     "comments": $('#comments').val(),
     "totalTrials": totalTrials
   };
@@ -244,14 +244,14 @@ function SendToServer(id, curData) {
     'id': id,
     'experimentName': 'EnsembleIndivDifference9',
     'curData': JSON.stringify(curData)
-  }; 
+  };
   $.post("https://timbrady.org/turk/save.pl",
     dataToServer,
-    function(data) { 
+    function(data) {
       document.forms[0].submit();
     }
-  ).fail(function(data) { 
-      document.forms[0].submit();  
+  ).fail(function(data) {
+      document.forms[0].submit();
   });
 }
 
@@ -264,7 +264,7 @@ function ChangeToEmotions() {
 	$('#item1').removeClass("item1Tri").addClass("item1Emotion");
 	$('#item2').removeClass("item2Tri").addClass("item2Emotion");
 	$('#item3').removeClass("item3Tri").addClass("item3Emotion");
-	$('#item4').removeClass("item4Tri").addClass("item4Emotion");	
+	$('#item4').removeClass("item4Tri").addClass("item4Emotion");
   $('.itemDiv').css({'background-color': '#6c6c6c'});
   $('#item1').css({'background-color': '#6c6c6c'});
   $('#item2').css({'background-color': '#6c6c6c'});
@@ -276,7 +276,7 @@ function ChangeToEmotions() {
   $('#continuousReport').css({'background-color': '#6c6c6c'});
   $('#showTrial').css({'background-color': '#6c6c6c'});
   $('#feedback').css({'background-color': '#6c6c6c'});
-  
+
   $('.itemDiv').css({'background-image': "url('combinedEmotions.png')"});
   $('#item1').css({'background-image': "url('combinedEmotions.png')"});
   $('#item2').css({'background-image': "url('combinedEmotions.png')"});
@@ -304,7 +304,7 @@ function ChangeToTri() {
   $('#feedbackCorrect').css({'background-image': 'none'});
   $('#feedbackReported').css({'background-image': 'none'});
   $('#continuousStimulus').css({'background-image': 'none'});
-  
+
   $('#continuousReport').css({'background-color': '#DDDDDD'});
   $('#showTrial').css({'background-color': '#DDDDDD'});
 }
@@ -324,8 +324,8 @@ function SetEmotion(id, num) {
     xOffset -= 250*30;
   }
 	var deg = 0;
-	$(id).css({'transform':'rotate('+deg+'deg)', 
-		'-ms-transform':'rotate('+deg+'deg)', 
+	$(id).css({'transform':'rotate('+deg+'deg)',
+		'-ms-transform':'rotate('+deg+'deg)',
 		'-webkit-transform':'rotate('+deg+'deg)'});
   $(id).css({"background-position": -xOffset+"px " + -yOffset+"px"});
 }
@@ -337,7 +337,7 @@ function wrap(v) {
     if (v[i]<0) { v[i]+=360; }
   }
   return v;
-} 
+}
 
 $(window).load(function () {
   $('#startExperimentButton').show();
@@ -352,7 +352,7 @@ $(function() {
 
 </script>
 <style>
-.arrowRight { 
+.arrowRight {
   width: 130px;
   height: 130px;
   -webkit-border-radius: 65px;
@@ -466,11 +466,11 @@ $(function() {
   <p align="center"><img src="./timbrady.org_files/instrucTriangles2.png" width="400" border="1"></p>
   <p>Once you've decided what the average is, you'll click your mouse to lock your answer in and move onto the next trial. <em>It is important that you report the <strong>average</strong> of <strong>all</strong> of the circles, and that you not just pick one or two circles. </em></p>
   <p>In the second part, you will perform a similiar perceptual averaging task, but instead of circles you will see emotional faces, like this:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucEmotions.png" width="400" border="1"></p> 
+  <p align="center"><img src="./timbrady.org_files/instrucEmotions.png" width="400" border="1"></p>
   <p>And will then have to report, with the mouse, what the <strong>average</strong> of these emotions looked like. The faces will be different emotions (sad, happy, etc) and so on one particular trial, 3 faces might be somewhat happy and one might be more sad, making the average of the faces 'mostly happy'. To report the average emotion of the faces, you'll use a circle with different emotions on it and many subtle variations between those emotions present. As you move your mouse, the emotion of the faces will change between more happy, more neutal and more sad:</p>
-  <p align="center"><img src="./timbrady.org_files/instrucEmotions2.png" width="400" border="1"></p> 
+  <p align="center"><img src="./timbrady.org_files/instrucEmotions2.png" width="400" border="1"></p>
 	<p>You'll have to select the average emotion that you saw in the first display, and then click when you think you've come as close as possible.</p>
-  <p>To start off with, we'll give you <strong>3 practice trials</strong> of each type. During the practice trials, you'll get feedback on how far off you are. <strong>An error value close to 0 is better</strong>; further from 0 means you are far off.</p> 
+  <p>To start off with, we'll give you <strong>3 practice trials</strong> of each type. During the practice trials, you'll get feedback on how far off you are. <strong>An error value close to 0 is better</strong>; further from 0 means you are far off.</p>
   <p style="text-align: center"><a href="javascript:StartExperiment()" id="startExperimentButton" style="display: inline;">Start Experiment</a><span id="loading" style="display: none;">Images still loading. Please wait. &nbsp; &nbsp; <img src="./timbrady.org_files/spinner.gif" style="width: 30px; height: 30px"></span></p>
   <!-- Consent statement at bottom: -->
   <div id="consentDiv"><p><u>Consent to Participate in Research:</u></p><p>By answering the following questions, you are participating in a study being performed by cognitive scientists in the Harvard University Psychology Department.  The purpose of this research is to examine human visual performance.</p><p>By participating you are confirming that you are over 18 years of age and have normal or corrected-to-normal vision.</p><p>If you have questions about this research, or if you would like to receive a report of this research when it is completed please contact Timothy Brady at tbrady@wjh.harvard.edu.</p><p>Your participation in this research is completely voluntary.  If you choose to participate, you may change your mind and leave the study at any time.  Refusal to participate or stopping your participation will involve no penalty or loss of benefits to which you are otherwise entitled.</p><p>You may decline to answer any or all of the following questions. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. </p><p>For questions, concerns, or complaints that are not being addressed by the researcher, or research-related harm contact:  Committee on the Use of Human Subjects in Research at Harvard University, 1414 Massachusetts Avenue, Second Floor, Cambridge, MA  02138. Phone: 617-496-CUHS (2847).  Email: cuhs@fas.harvard.edu</p><p>By continuing, you are confirming that you understand these instructions and conditions of participation.</p></div>
