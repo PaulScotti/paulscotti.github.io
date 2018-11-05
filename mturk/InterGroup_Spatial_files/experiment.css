@@ -65,8 +65,10 @@ body {
 }
 
 #loading {
-  font-size: 14pt;
-  font-style: italic;
+  background: url('https://paulscotti.github.io/mturk/spinner.gif') no-repeat center center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 #consentDiv {
