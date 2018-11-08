@@ -162,9 +162,9 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [1, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [1, 4, 4]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 20;
+const trialsPerBlock = 2;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked.js"> </script>
 
@@ -414,8 +414,11 @@ function NextTrial() {
       NextFeedTrial();
       return; // need return; otherwise the ShowTrial below executes
     } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) {
+        if (trialsPerBlock==numTrialsPerPart[1]) {
+          $('#showTrial').hide(); Survey1(); return;
+        }
         numCD = 0; nextTrialStart = 1; currentTrial--;
-        alert("starting next block");
+        alert("starting next block");c
         NextTrial();
         return;
     }
@@ -489,7 +492,7 @@ function NextFeedTrial() {
     if (currentFeedTrial>numTrialsPerPart[currentPart]-1) {
       if (currentPart > 0) {
         $('showTrial').hide;
-        Survey1();
+        Survey();
         return;
       } else {
         currentFeedTrial = 0;
@@ -500,7 +503,7 @@ function NextFeedTrial() {
           NextTrial();
           return;
       }
-    } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 2 && blockStart == 0) {
+    } else if (currentFeedTrial % trialsPerBlock == 0 && currentPart == 1 && blockStart == 0) {
       currentPart = 1;
       /* Go back to study phase */
       alert("Starting study phase (Block "+block+" of "+totBlocks+").");
@@ -649,9 +652,7 @@ function ShowContinuousReport(trialStruct) {
         // }
       }
       if (curError > 180) {
-          curError = 360-curError;
-      } else if (curError < -180) {
-          curError = curError+360;
+          curError = Math.abs(360-curError);
       }
 
       if (e.isFakeTrigger) { // this code only executes once before anything else happens, e.g. otherwise randrotate would be next trial's randrotate
@@ -925,7 +926,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     ctx2a.clearRect(0,0,600,600); // erases the black highlighting
     // ctx2b.clearRect(0,0,600,600); // erases the black highlighting
 
-    pointsA = (curError - 90) / (0 - 90);
+    pointsA = (curError - 45) / (0 - 45);
     if (pointsA < 0) { pointsA = 0; }
 
     encap = 0;
@@ -933,34 +934,32 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     flip == 0? ang2 = wrap(imgNum2) : ang2 = wrap(180-imgNum2)
     flip == 0? ang3 = wrap(imgNum3) : ang3 = wrap(180-imgNum3)
 
-    console.log(ang1); console.log(ang2); console.log(ang3);
     if (lastRot==0) { //clockwise first
       highlightedColors = counter(ang1,ang2);
     } else {
       highlightedColors = counter(ang2,ang1);
     }
     if (lastRot==0) { //clockwise first
-      highlightedColors = highlightedColors.concat(counter(ang1,ang3))
-    } else {
       highlightedColors = highlightedColors.concat(counter(ang3,ang1))
+    } else {
+      highlightedColors = highlightedColors.concat(counter(ang1,ang3))
     }
     highlightedColors = wrap(highlightedColors);
-    console.log(trialStruct.itemT_col);
 
     if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
     if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
-    alert(encap)
 
-    totConfidence = Math.abs(diffAng2) + Math.abs(diffAng3);
-    pointsB = (parseInt(totConfidence) - 360) / (2 - 360);
+    var UniqueLen = highlightedColors.filter(function(val, i, arr) {
+      return arr.indexOf(val) === i; }).length;
+    pointsB = (UniqueLen - 360) / (2 - 360);
     if (pointsB < 0 || encap == 0) { pointsB = 0; }
 
     pointsSum = pointsA + pointsB; pointsSum = pointsSum.toFixed(2);
     points = points + pointsA + pointsB;
 
-    if (pointsSum > 1.5) {
+    if (pointsSum >= 1.75) {
         feedText = 'Amazing!<br>(+ ' + pointsSum + '&#x00A2)';
-    } else if (pointsSum > 1) {
+    } else if (pointsSum >= 1.25) {
         feedText = 'Good!<br>(+ ' + pointsSum + '&#x00A2)';
     } else {
         feedText = '(+ ' + pointsSum + '&#x00A2)';
@@ -1081,16 +1080,16 @@ function Survey3() {
 /* Done with the experiment; wait for comments and for them to hit Save */
 function Done() {
   //proceed only if they picked an option for survey3
-  if (document.querySelector('input[name="likertz"]:checked').value > 0) {
-      likertAns = document.querySelector('input[name="likertz"]:checked').value;
-      $("#survey3").hide();
+  // if (document.querySelector('input[name="likertz"]:checked').value > 0) {
+      // likertAns = document.querySelector('input[name="likertz"]:checked').value;
+      $("#survey1").hide();
       $('#done').show();
       let cashpoints = points + basepay;
       document.getElementById("cashPrize").innerHTML = "Total earnings: $" + cashpoints.toFixed(2);
       points = points.toFixed(2); //round to 2 decimal places
-  } else {
+  /* } else {
       alert('Please select an option.');
-  }
+  } */
 }
 
 /* Choose what to save and then put it on the server */
