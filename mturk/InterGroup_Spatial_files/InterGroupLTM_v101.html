@@ -27,7 +27,7 @@
 <div id="instructions" style="display: none">
 <p><b><center>This HIT lasts approximately one hour.</center><br>You will receive $6.00 for HIT completion, plus a bonus (up to $5.60) based on performance.<br>If you have previously completed this HIT then you are ineligible to participate.<br>Please do not disable the creation of text dialogs as these will be used to relay instructions.</b></p>
 <p>In this HIT, you will memorize the colors of a variety of objects and subsequently be tested on them.</p>
-<p><center><u>Below is an example of the task</u></center></p>
+<p><center><u>Below is an example of the task.</u></center></p>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/InterGroup_Instruct_edit.gif"><span id="loading"></span></p>
 
@@ -210,7 +210,7 @@ const ringSize = 242; //134;
 const centerX = 300; const centerY = 300;
 let points = 0;
 let feedText = '';
-let basepay = 9;
+let basepay = 6;
 let radioResp = 0;
 let likertAns = 0;
 let explicitColor = -999;
@@ -924,7 +924,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     if (pointsB < 0 || encap == 0) { pointsB = 0; }
 
     pointsSum = pointsA + pointsB; pointsSum = pointsSum.toFixed(2);
-    points = points + pointsA + pointsB;
+    points = points + (pointsSum*.01);
 
     if (pointsSum >= 1.75) {
         feedText = 'Amazing!<br>(+ ' + pointsSum + '&#x00A2)';
