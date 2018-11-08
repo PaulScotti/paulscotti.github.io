@@ -398,8 +398,8 @@ let colors = [
 	function counter(start, end, interval) {
 			if (interval == undefined) { interval = 1; }
 			let result = [];
-			if (end < start) {
-				start = start + 360;
+			if (start > end) {
+				end = end + 360;
 			}
 			while (start<=end) {
 					result = result.concat(start);
