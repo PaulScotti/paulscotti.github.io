@@ -399,9 +399,7 @@ let colors = [
 			if (interval == undefined) { interval = 1; }
 			let result = [];
 			if (start > end) {
-				temp = start;
-				start = end;
-				end = temp;
+				start = start - 360;
 			}
 			while (start<=end) {
 					result = result.concat(start);

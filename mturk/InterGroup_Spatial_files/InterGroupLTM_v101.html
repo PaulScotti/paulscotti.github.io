@@ -939,10 +939,10 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     } else {
       highlightedColors = counter(ang2,ang1);
     }
-    if (lastRot==0) {
-      highlightedColors = highlightedColors.concat(counter(ang3,ang1))
-    } else {
+    if (lastRot==0) { //clockwise first
       highlightedColors = highlightedColors.concat(counter(ang1,ang3))
+    } else {
+      highlightedColors = highlightedColors.concat(counter(ang3,ang1))
     }
     highlightedColors = wrap(highlightedColors);
     console.log(trialStruct.itemT_col);
