@@ -935,9 +935,9 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
     console.log(ang1); console.log(ang2); console.log(ang3);
     if (lastRot==0) { //clockwise first
-      highlightedColors = counter(ang2-wrapDiff(ang1,ang2),ang2);
+      highlightedColors = counter(ang1,ang2);
     } else {
-      highlightedColors = counter(ang1-wrapDiff(ang1,ang2),ang1);
+      highlightedColors = counter(ang2,ang1);
     }
     if (lastRot==0) {
       highlightedColors = highlightedColors.concat(counter(ang3,ang1))
@@ -947,7 +947,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     highlightedColors = wrap(highlightedColors);
     console.log(trialStruct.itemT_col);
 
-    if (highlightedColors.includes(trialStruct.itemT_col)) { encap = 1 }
+    if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
     if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
     alert(encap)
 
