@@ -44,8 +44,6 @@
 	position: absolute;
 	width: 600px; /* 280px; */
 	height: 600px; /* 280px; */
-	top: 0px;
-	left: 0px;
 	background: url(ring.png);
 }
 
