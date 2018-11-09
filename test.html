@@ -1,5 +1,5 @@
 <!-- Paul Scotti 2018 -->
-<!-- v101 WM test on one obj in center of screen, 500m study -->
+<!-- v101 WM test on one obj in center of screen, 1000m study -->
 
 <!-- Preload javascript and css files -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
@@ -1180,8 +1180,11 @@ function wrapDiff(input,comparison) { // deg difference in color space
 }
 
 $(window).load(function () {
-  $('#startExperimentButton').show();
   $('#loading').hide();
+});
+
+$(document).ready(function(){
+    $('#startExperimentButton').show();
 });
 
 $(function() {
