@@ -65,10 +65,14 @@ body {
 }
 
 #loading {
-  background: url('https://paulscotti.github.io/mturk/spinner.gif');
-  position: relative;
-  height: 100%;
-  width: 100%;
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
 }
 
 #consentDiv {
