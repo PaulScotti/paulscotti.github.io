@@ -66,6 +66,7 @@ body {
 
 #loading {
   display: inline-block;
+  text-align: center;
   color: black;
   border: 3px outset gray;
   background-color: #CCCCCC;
