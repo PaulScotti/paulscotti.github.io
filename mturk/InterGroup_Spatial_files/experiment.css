@@ -65,8 +65,8 @@ body {
 }
 
 #loading {
-  background: url('https://paulscotti.github.io/mturk/spinner.gif') no-repeat center center;
-  position: absolute;
+  background: url('https://paulscotti.github.io/mturk/spinner.gif');
+  position: relative;
   height: 100%;
   width: 100%;
 }
