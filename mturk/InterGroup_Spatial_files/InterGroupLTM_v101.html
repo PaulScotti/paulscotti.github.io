@@ -537,12 +537,16 @@ function ShowContinuousReport(trialStruct) {
           mouseMoved = 1;
           // if (repeat == 0) {
           // if (left_or_right == 1) {
-          start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
+          ctx2a.onload = function() {
+            start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
+          }
           mouseMoved = 1;
         }, 400); }
       } else {
         imgNum = Math.round(wrap([angleDeg-randrotate]));
-        start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
+        ctx2a.onload = function() {
+          start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
+        }
       }
       // } else {
       //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
@@ -963,7 +967,6 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
         // imgA.src = $('#' + trialStruct.itemT_id)[0].src;
 
-
         flip = Math.round(Math.random());
         randrotate = Math.floor(Math.random()*360);
 
@@ -987,7 +990,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
             // imgB.src = $('#999')[0].src;
         }
 
-        flip = 0; //Math.round(Math.random());
+        flip = Math.round(Math.random());
         randrotate = Math.floor(Math.random()*360);
 
         setTimeout(function() {
@@ -1181,9 +1184,8 @@ function wrapDiff(input,comparison) { // deg difference in color space
 }
 
 function ImagesReady() { // check that all images are loaded before starting expt
-    setTimeout(function(){
+    setTimeout(function(){ // dont start the check at the same time as the document is loading
     var totImages = 0; var readyLoad = 0;
-    alert('start')
     while (readyLoad == 0) {
       for (let k=101; k<700; k++) {
         if ($('#'+k)[0] != null) {
