@@ -1180,14 +1180,15 @@ function wrapDiff(input,comparison) { // deg difference in color space
   return wrap(degree);
 }
 
-function ImagesReady() {
+function ImagesReady() { // check that all images are loaded before starting expt
   $(window).load(function() {
     $('#startExperimentButton').hide();
     var totImages = 0; var readyLoad = 0;
     while (readyLoad == 0) {
       for (let k=101; k<700; k++) {
         if ($('#'+k)[0] != null) {
-          totImages++;
+          if ($('#'+k)[0].completed) {
+          totImages++; }
         }
       }
       if (totImages >= 599) { readyLoad = 1; } else { totImages = 0; }
