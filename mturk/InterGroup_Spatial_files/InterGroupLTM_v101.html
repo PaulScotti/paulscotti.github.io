@@ -502,7 +502,7 @@ function NextFeedTrial() {
     ringctxA.clearRect(0,0,600,600);
     // ringctxB.clearRect(0,0,600,600);
   }
-
+  mouseInit = mouseX;
   ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
   mouseMoved = 0;
 }
@@ -529,6 +529,7 @@ function ShowContinuousReport(trialStruct) {
       curAngle = Math.atan2(relY,relX);
       angleDeg = curAngle / Math.PI * 180.0;
       if (mouseMoved == 0) {
+        if (mouseInit != mouseX) {
         setTimeout(function() {
           imgNum = Math.round(wrap([angleDeg-randrotate]));
           startingColor = imgNum;
@@ -537,7 +538,7 @@ function ShowContinuousReport(trialStruct) {
           // if (left_or_right == 1) {
           start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
           mouseMoved = 1;
-        }, 500);
+        }, 400); }
       } else {
         imgNum = Math.round(wrap([angleDeg-randrotate]));
         start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
