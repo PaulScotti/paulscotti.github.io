@@ -1187,7 +1187,7 @@ function ImagesReady() { // check that all images are loaded before starting exp
     while (readyLoad == 0) {
       for (let k=101; k<700; k++) {
         if ($('#'+k)[0] != null) {
-          if ($('#'+k)[0].completed) {
+          if ($('#'+k)[0].complete) {
           totImages++; }
         }
       }
