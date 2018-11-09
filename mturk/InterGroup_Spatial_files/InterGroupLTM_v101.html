@@ -537,16 +537,12 @@ function ShowContinuousReport(trialStruct) {
           mouseMoved = 1;
           // if (repeat == 0) {
           // if (left_or_right == 1) {
-          ctx2a.onload = function() {
-            start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
-          }
+          start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
           mouseMoved = 1;
         }, 400); }
       } else {
         imgNum = Math.round(wrap([angleDeg-randrotate]));
-        ctx2a.onload = function() {
-          start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
-        }
+        start(ctx2a,imgNum,200,200,imgWidth,imgHeight,flip,imgA,itemA);
       }
       // } else {
       //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
@@ -967,6 +963,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
         // imgA.src = $('#' + trialStruct.itemT_id)[0].src;
 
+
         flip = Math.round(Math.random());
         randrotate = Math.floor(Math.random()*360);
 
@@ -990,7 +987,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
             // imgB.src = $('#999')[0].src;
         }
 
-        flip = Math.round(Math.random());
+        flip = 0; //Math.round(Math.random());
         randrotate = Math.floor(Math.random()*360);
 
         setTimeout(function() {
@@ -1134,6 +1131,7 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image,itemID) {
         context.drawImage(image, initX, initY, imgWidth, imgHeight);
         recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY,itemID);
       }
+      context.drawImage(image, initX, initY, imgWidth, imgHeight);
       recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY,itemID);
     }
 }

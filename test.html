@@ -1181,9 +1181,8 @@ function wrapDiff(input,comparison) { // deg difference in color space
 }
 
 function ImagesReady() { // check that all images are loaded before starting expt
-    setTimeout(function(){
+    setTimeout(function(){ // dont start the check at the same time as the document is loading
     var totImages = 0; var readyLoad = 0;
-    alert('start')
     while (readyLoad == 0) {
       for (let k=101; k<700; k++) {
         if ($('#'+k)[0] != null) {
