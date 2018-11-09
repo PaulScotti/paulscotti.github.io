@@ -162,9 +162,9 @@ const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you ca
 
 /* Options: */
 const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-const numTrialsPerPart = [2, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
+const numTrialsPerPart = [1, 20, 20]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
 let block = 1;
-const trialsPerBlock = 20;
+const trialsPerBlock = 5; //20
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 </script> <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked.js"> </script>
 
@@ -402,7 +402,7 @@ function NextTrial() {
 
   if (nextTrialStart == 0) { // if not first trial
     if (currentTrial>=numTrialsPerPart[currentPart] && currentPart == 0) { // if end of practice
-      alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
+      // alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
       $('#showTrial').hide();
       nextTrialStart = 1;
       NextFeedTrial(); /* Start continuous color report trials */
@@ -920,7 +920,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
     var UniqueLen = highlightedColors.filter(function(val, i, arr) {
       return arr.indexOf(val) === i; }).length;
-    pointsB = (UniqueLen - 360) / (2 - 360);
+    pointsB = (UniqueLen - 360) / (1 - 360);
     if (pointsB < 0 || encap == 0) { pointsB = 0; }
 
     pointsSum = pointsA + pointsB; pointsSum = pointsSum.toFixed(2);
