@@ -179,6 +179,7 @@ const imgWidth = 200;
 const imgHeight = 200;
 const displayTime = 1000;
 const isiTime = 800;
+const feedbackTime = 750;
 const maskTime = 200;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
 let flippedColors = _.clone(colors).reverse();
@@ -640,7 +641,6 @@ function ShowContinuousReport(trialStruct) {
         ringImg.onload = function() {
           ringctxA.drawImage(ringImg,50,50,500,500);
         }
-        ringctxA.drawImage(ringImg,50,50,500,500); // have to code it twice because Safari hates .onload
         ctx2a.onload = function() {
           start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
         }
@@ -653,6 +653,7 @@ function ShowContinuousReport(trialStruct) {
               ctx2a.onload = function() {
                 start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
               }
+              start(ctx2a,'gray',200, 200, imgWidth, imgHeight, flip, imgA, itemA);
             //   start(ctx2a,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA);
             //   ctx2b.onload = function() {
             //     start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
@@ -993,7 +994,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         setTimeout(function() {
             NextTrial();
             document.getElementById("fixation").innerHTML = '+';
-        }, isiTime);
+        }, feedbackTime);
     }
   });
 }
@@ -1131,6 +1132,7 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image,itemID) {
         context.drawImage(image, initX, initY, imgWidth, imgHeight);
         recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY,itemID);
       }
+      context.drawImage(image, initX, initY, imgWidth, imgHeight);
       recolor(context,Math.round(col[0]),Math.round(col[1]),Math.round(col[2]),initX,initY,itemID);
     }
 }
@@ -1198,8 +1200,13 @@ function ImagesReady() { // check that all images are loaded before starting exp
 };
 
 $(function() {
-  if (navigator.userAgent.indexOf('MSIE') != -1) {
-    $('body').html('Unfortunately this HIT does not work in IE. It works in Chrome, Firefox or Safari. Sorry!');
+  if (!!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)) {
+    $('body').html('Unfortunately this HIT does not work in Safari. It works in Chrome, Firefox, or Opera. Sorry!');
+  }
+  var ua = window.navigator.userAgent
+  var msie = ua.indexOf ( "MSIE " )
+  if (msie > 0) {
+    $('body').html('Unfortunately this HIT does not work in Internet Explorer. It works in Chrome, Firefox, or Opera. Sorry!');
   }
 });
 
