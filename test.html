@@ -1199,16 +1199,21 @@ function ImagesReady() { // check that all images are loaded before starting exp
     }, 3000);
 };
 
-$(function() {
-  if (!!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)) {
+function isIE() {
+  ua = navigator.userAgent;
+  var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+  return is_ie;
+}
+
+$(function() { // check if Safari or IE
+  if (!!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)) { // if Safari
+    $('body').html('Unfortunately this HIT does not work in Safari. It works in Chrome, Firefox, or Opera. Sorry!');
+  } else if (isIE) { // if IE
     $('body').html('Unfortunately this HIT does not work in Safari. It works in Chrome, Firefox, or Opera. Sorry!');
   }
-  var ua = window.navigator.userAgent
-  var msie = ua.indexOf ( "MSIE " )
-  if (msie > 0) {
-    $('body').html('Unfortunately this HIT does not work in Internet Explorer. It works in Chrome, Firefox, or Opera. Sorry!');
-  }
 });
+
+
 
 </script>
 </body></html>
