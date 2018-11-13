@@ -25,6 +25,29 @@ body {
   display: none;
 }
 
+#Button {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+
+#Button:hover {
+  border: 3px inset gray;
+}
+
+#Button:active {
+  border: 3px inset gray;
+}
+
+#Button {
+  display: none;
+}
+
 #SameButton {
   display: inline-block;
   color: black;
@@ -87,6 +110,18 @@ body {
 }
 
 #instructions {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions2 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions3 {
   max-width: 75%;
   margin: 0 auto;
   margin-top: 30px;
