@@ -2,7 +2,7 @@ body {
   font-family: Arial, Helvetica;
 }
 
-#startExperimentButton {
+#TextButton {
   display: inline-block;
   color: black;
   border: 3px outset gray;
@@ -13,38 +13,15 @@ body {
   font-weight: bold;
 }
 
-#startExperimentButton:hover {
+#TextButton:hover {
   border: 3px inset gray;
 }
 
-#startExperimentButton:active {
+#TextButton:active {
   border: 3px inset gray;
 }
 
-#startExperimentButton {
-  display: none;
-}
-
-#Button {
-  display: inline-block;
-  color: black;
-  border: 3px outset gray;
-  background-color: #CCCCCC;
-  padding: 8px;
-  text-decoration: none;
-  font-family: Arial, Helvetica;
-  font-weight: bold;
-}
-
-#Button:hover {
-  border: 3px inset gray;
-}
-
-#Button:active {
-  border: 3px inset gray;
-}
-
-#Button {
+#TextButton {
   display: none;
 }
 
