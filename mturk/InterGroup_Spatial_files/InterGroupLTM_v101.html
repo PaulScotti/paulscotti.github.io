@@ -28,45 +28,48 @@
 <center><b><p>This HIT lasts approximately one hour.</p>
 <p>You will receive $6.00 for HIT completion, plus a bonus (up to $5.60) based on performance.</p>
 <p>If you have previously completed this HIT then you are ineligible to participate.</p>
-<p>Please do not disable the creation of text dialogs as these will be used to relay instructions.</p></b>
-<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next</a></p>
+<p>Please do not disable the creation of text dialogs as these will be used to relay instructions.</p></b></center>
+<br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (1 of 4)</a></p>
 </div>
 
 <div id="instructions2" style="display:none"><center>
-<p>In this HIT, you will memorize the colors of a variety of objects and subsequently be tested on them.</p>
+<p>In this HIT, you will memorize the colors of a variety of objects and subsequently be tested on them.</p></center>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_top.png" width="650px"></p>
 
 <p>Two objects will be displayed for one second, followed by an irrelevant mask and a short delay. You will then be asked to recreate the original color of one of the objects.</p>
 
-<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions2').hide();$('#instructions3').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next</a></p>
+<br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions2').hide();$('#instructions3').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (2 of 4)</a></p>
 </div>
 
-<div id="instructions3" style="display:none"><center>
+<div id="instructions3" style="display:none">
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_bottom.png" width="650px"></p>
 
-<p>To do this, you can move your mouse around a color wheel to select your best guess. Once you feel you have matched the correct color of the object, click using your mouse to lock in your answer and move on to the next trial.</p>
+<p>One of the two objects will be presented in black and white. To recreate the color, move your mouse around the color wheel. Once you feel you have located the correct color on the wheel, click using your mouse to lock in your answer.</p>
 
-<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors of the objects. You can take short breaks at the end of every block (20 trials). There is a time limit to finish the HIT (3 hours), but this should allow plenty of time for short breaks.
+<p>It is important that you be as <em>precise and as accurate as possible</em> when reporting the original colors of the objects. (A poor graduate student will spend hours analysing your data.) You can take short breaks at the end of every block (20 trials). There is a time limit to finish the HIT (3 hours), but this should allow plenty of time for breaks.
 
 <p>If you do not know the correct color, move your mouse around the color wheel and select what feels right. You are not allowed to use any external tools to remember objects.</p>
 
-<p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how certain you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the smallest range of colors you think could contain the original object's color. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel. If you were very certain about your answer then you would highlight a small range of colors, and if you were completely guessing then you would highlight the entirety of the color wheel.</p>
-<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();$('a#TextButton').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next</a></p>
+<p>After you have selected your best guess, you will be asked to highlight the region of the color wheel that represents how confident you are about your answer. That is, the colors contained in this highlighted portion (shown as a black border around the color wheel) represent the smallest range of colors you think could contain the original object's color. If you believed the original color to be somewhere between red and purple then you would highlight that portion of the color wheel. If you were very certain about your answer then you would highlight a small range of colors, and if you were completely guessing then you would highlight the entirety of the color wheel.</p>
+
+<p><strong>Every trial has the potential for you to earn two bonus cents. Specifically, one cent is awarded based on how close your best guess is to the correct color. Another cent is awarded based on how small your highlighted regions is: a smaller highlighted region earns more but only if the highlighting encompasses the correct color.</strong> This means that you will often be earning fractions of cents on every trial, but this can add up!</p>
+
+<br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();$('a#TextButton').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;ImagesReady();" id="TextButton">Next (3 of 4)</a></p>
 </div>
 
-<div id="instructions4" style="display:none"><center>
-<p>The entire HIT includes 280 trials and takes approximately 1 hour to complete. <strong>Every trial has the potential for you to earn two bonus cents. Specifically, one cent is awarded based on how close your best guess is to the correct color. Another cent is awarded based on how small your highlighted regions is: a smaller highlighted region earns more but only if the highlighting encompasses the correct color.</strong> This means that you will often be earning fractions of cents on every trial, but this can add up!</p>
+<div id="instructions4" style="display:none">
+<center><p>The entire HIT includes 280 trials and takes approximately 1 hour to complete.</p>
 
-<p><u>Here is an animated example of a few trials to recap:</u></p>
+<p><u>As a recap, here is an animated example of a few trials of the experiment:</u></p></center>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/InterGroup_Instruct_edit.gif"></p>
 
-<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see two colored objects at a time. Remember to memorize the colors associated with each object. You will then be asked to report the original color of one of the objects. Please take your time to respond as accurately as possible; the hour time estimate assumes a patient worker who takes their time for every reponse!</p><br></center>
+<p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see two colored objects at a time. Remember to memorize the colors associated with each object. You will then be asked to report the original color of one of the objects. Please take your time to respond as accurately as possible. The hour time estimate assumes a patient worker who takes their time for every reponse!</p>
 
-<p style="text-align: center"><a href="javascript:void(0);" onclick="StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;ImagesReady();" id="TextButton">Start Experiment</a></p>
-<center><p id=loading>Images loading... Please wait.</p></center>
+<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('a#TextButton').hide();StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Start Experiment</a></p>
+<center><p id=loading>Images loading... Please wait.</p>
 </div>
 
 <!-- Start form here to capture comments -->
@@ -258,6 +261,7 @@ let age = 0;
 let sex = -999;
 let left_or_right = 2;
 let totConfidence = 0;
+let LastLock = -99;
 
 /* Randomize orderings */
 dx.pracimgA = chance1.shuffle(dx.pracimgA);
@@ -410,7 +414,7 @@ function StartExperiment() {
   sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
 
   while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-      sex = prompt('Are you male (M) or female (F) or other (O)?');
+      sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
   }
   if (sex == 'M' ||  sex == 'm' || sex == 'male' || sex == 'Male') {
     sex = 'm';
@@ -859,6 +863,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
   startTime = new Date();
   startAngle = angleDeg * Math.PI / 180;
   startAngle2 = angleDeg2 * Math.PI / 180;
+  LastLock = 0;
 
   /* Confidence report */
   $(document).bind('mousemove.curTrial', function(e) {
@@ -868,8 +873,10 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       curAngle = Math.atan2(relY,relX);
       angleDeg3 = curAngle / Math.PI * 180.0;
       diffAng3 = wrap([wrap([angleDeg])-wrap([angleDeg3])])>180? wrap([wrap([angleDeg3])-wrap([angleDeg])]) : wrap([wrap([angleDeg])-wrap([angleDeg3])]);
+      console.log(LastLock)
       // if (left_or_right == 1) {
         if (wrap([wrap([angleDeg])-wrap([angleDeg3])])<180+(180-diffAng2) && lastRot == 0) { /* conf is counterclockwise */
+          if (wrap([wrap([angleDeg2])-wrap([angleDeg3])])<180) { LastLock = 0; } else { LastLock = 1; }
           imgNum3 = Math.round(wrap([(curAngle / Math.PI * 180.0)-randrotate]));
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 1);
@@ -882,6 +889,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
           ctx2a.strokeStyle = 'white';
           ctx2a.stroke();
         } else if (wrap([wrap([angleDeg])-wrap([angleDeg3])])>180-(180-diffAng2) && lastRot == 1) { /* conf is clockwise */
+          if (wrap([wrap([angleDeg2])-wrap([angleDeg3])])<180) { LastLock = 1; } else { LastLock = 0; }
           imgNum3 = Math.round(wrap([(curAngle / Math.PI * 180.0)-randrotate]));
           ctx2a.beginPath();
           ctx2a.arc(centerX, centerY, radius, startAngle, curAngle, 0);
@@ -933,12 +941,12 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     flip == 0? ang2 = wrap(imgNum2) : ang2 = wrap(180-imgNum2)
     flip == 0? ang3 = wrap(imgNum3) : ang3 = wrap(180-imgNum3)
 
-    if (lastRot==0) { //clockwise first
+    if (lastRot==0 && ang1 != ang2) { //clockwise first
       highlightedColors = counter(ang1,ang2);
     } else {
       highlightedColors = counter(ang2,ang1);
     }
-    if (lastRot==0) { //clockwise first
+    if (lastRot==0 && ang2 != ang3 && LastLock == 1) { //clockwise first
       highlightedColors = highlightedColors.concat(counter(ang3,ang1))
     } else {
       highlightedColors = highlightedColors.concat(counter(ang1,ang3))
