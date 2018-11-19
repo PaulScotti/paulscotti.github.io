@@ -110,6 +110,12 @@ body {
   margin-top: 30px;
 }
 
+#instructions5 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
 #done {
   display: none;
   width: 600px;
