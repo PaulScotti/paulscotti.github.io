@@ -119,7 +119,7 @@ https://www.mturk.com/mturk/externalSubmit
 
 <!-- feedback -->
 <div id="feedback">
-    <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 30 degrees!).<br>Click to continue.</div></div>
+    <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas><div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=300 height=300></canvas><div id="feedbackError">Your error was: 10 deg (aim for less than 50 degrees!).<br>Click to continue.</div></div>
 
 <form id="survey1" style="display: none;">
     <center>
@@ -964,9 +964,9 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     pointsSum = pointsA + pointsB; pointsSum = pointsSum.toFixed(2);
     points = points + (pointsSum*.01);
 
-    if (pointsSum >= 1.75) {
+    if (pointsSum >= 1.50) {
         feedText = 'Amazing!<br>(+ ' + pointsSum + '&#x00A2)';
-    } else if (pointsSum >= 1.25) {
+    } else if (pointsSum >= 1.00) {
         feedText = 'Good!<br>(+ ' + pointsSum + '&#x00A2)';
     } else {
         feedText = '(+ ' + pointsSum + '&#x00A2)';
@@ -980,7 +980,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
     trialStruct.conf3 = diffAng3;
 
     if (trialStruct.isPractice) {
-        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+        $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 50 deg.!)<br><br>Click to continue.");
 
         // if (left_or_right == 1) {
           imgNum = Math.round(wrap([angleDeg-randrotate]));
