@@ -659,10 +659,8 @@ function ShowContinuousReport(trialStruct) {
         flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
         // if (left_or_right == 1) {
-        // flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemT_col]));
-        curError = Math.abs(wrap([imgNum-trialStruct.itemT_col]))
-        // flip == 0? ang1 = wrap(imgNum) : ang1 = wrap(180-imgNum);
-        ang1 = wrap(imgNum);
+        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([imgNum-trialStruct.itemT_col]));
+        flip == 0? ang1 = wrap(imgNum) : ang1 = wrap(180-imgNum);
         // } else {
         //   flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
         // }
@@ -964,8 +962,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         flip == 0? ang2 = wrap(imgNum2) : ang2 = wrap(180-imgNum2)
         flip == 0? ang3 = wrap(imgNum3) : ang3 = wrap(180-imgNum3)
 
-        // alert(ang1)
-        // alert(ang2)
+        alert(ang1)
+        alert(ang2)
 
         if (lastRot==0 && ang1 != ang2) { //clockwise first (opposite if flip==1)
           if (flip == 0) {

@@ -362,6 +362,7 @@
 // ];
 // // CIEL=65; CIEa=48; CIEb=-26; CIErad=25; CIEnpts=360; whitexyY=[.326,.336,148];converted from CIE to XYZ to RGB to Gamma-corrected RGB
 let colors = [
+	[254.4,65.3,82.2],
   [254.5,65.2,80.6],
   [254.7,65.2,79.1],
   [254.8,65.2,77.6],
