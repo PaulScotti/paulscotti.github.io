@@ -995,8 +995,12 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         }
         highlightedColors = wrap(highlightedColors);
 
-        if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
-
+        if (flip == 0) {
+          if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+        } else {
+          highlightedColors2 = wrap(highlightedColors + 180);
+          if (highlightedColors2.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+        }
         if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
 
         UniqueLen = highlightedColors.filter(function(val, i, arr) {
