@@ -60,13 +60,13 @@
 </div>
 
 <div id="instructions4" style="display:none"><center>
-<p>Performing well in this HIT is much, much easier if your monitor is well-lit and adjusted for our range of pink-purple colors. Below is an example color wheel. Please adjust the brightness/color settings of your monitor to best view the below color spectrum.</p></center>
+<p>Performing well in this HIT is much, much easier if your monitor is well-lit and adjusted for our range of colors. Below is an example color wheel. Please adjust the brightness/color settings of your monitor to best view the below color spectrum.</p></center>
 
 <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/fullColorWheel.png" width="400px"></p>
 
-<p>As an example, you should be able to easily tell that these two squares are distinct colors. If not, please further adjust your monitor's settings.</p>
+<p>As an example, you should be able to tell that these two squares are distinct colors. If not, please further adjust your monitor's settings.</p>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/color_compare2.png"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/color_compare.png"></p>
 
 <br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('#instructions5').show();$('a#TextButton').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (4 of 5)</a></p>
 </div>
@@ -80,7 +80,7 @@
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see two colored objects at a time. Remember to memorize the colors associated with each object. You will then be asked to report the original color of one of the objects. Please take your time to respond as accurately as possible. The hour time estimate assumes a patient worker who takes their time for every reponse!</p>
 
-<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions5').hide();$('a#TextButton').hide();StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Start Experiment</a></p>
+<p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions5').hide();StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Start Experiment</a></p>
 <center><p id=loading>Images loading... Please wait.</p>
 </div>
 
@@ -656,11 +656,11 @@ function ShowContinuousReport(trialStruct) {
       }
 
       if (survey == 1) {
-        flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
+        // flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
         // if (left_or_right == 1) {
-        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([imgNum-trialStruct.itemT_col]));
-        flip == 0? ang1 = wrap(imgNum) : ang1 = wrap(180-imgNum);
+        curError = Math.abs(wrap([imgNum-trialStruct.itemT_col]));
+        flip = 0 ? ang1 = wrap(imgNum) : ang1 = wrap(imgNum+180);
         // } else {
         //   flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
         // }
@@ -993,11 +993,11 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         }
         highlightedColors = wrap(highlightedColors);
 
-        if (flip == 0) {
-          if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+        howdy = trialStruct.itemT_col;
+        if (true) {
+          if (highlightedColors.includes(wrap(howdy))) { encap = 1 }
         } else {
-          highlightedColors2 = wrap(highlightedColors + 180);
-          if (highlightedColors2.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+          if (highlightedColors.includes(wrap(howdy+180))) { encap = 1 }
         }
         if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
 
@@ -1030,7 +1030,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         trialStruct.conf3 = diffAng3;
 
         if (trialStruct.isPractice) {
-            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 50 deg.!)<br><br>Click to continue.");
+            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
             imgNum = Math.round(wrap([angleDeg-randrotate]));
             start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
@@ -1148,7 +1148,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       trialStruct.conf3 = diffAng3;
 
       if (trialStruct.isPractice) {
-          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 50 deg.!)<br><br>Click to continue.");
+          $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
 
           imgNum = Math.round(wrap([angleDeg-randrotate]));
           start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
