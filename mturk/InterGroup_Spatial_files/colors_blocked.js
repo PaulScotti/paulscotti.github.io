@@ -359,7 +359,7 @@ let colors = [
 			[245,37,115.5],
 			[245,37,114],
 			[245.5,37,112.5]
-		];
+		];//
 
 	let dx = {
         "pracimgA": counter(101,101+numTrialsPerPart[0]-1),
