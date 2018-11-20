@@ -211,7 +211,7 @@ const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
 let imgNum = 0;
 const imgWidth = 200;
 const imgHeight = 200;
-const displayTime = 1500;
+const displayTime = 1000;
 const isiTime = 800;
 const feedbackTime = 750;
 const maskTime = 200;
@@ -659,8 +659,10 @@ function ShowContinuousReport(trialStruct) {
         flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
       } else {
         // if (left_or_right == 1) {
-        flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemT_col]));
-        flip == 0? ang1 = wrap(imgNum) : ang1 = wrap(180-imgNum)
+        // flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemT_col])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemT_col]));
+        curError = Math.abs(wrap([imgNum-trialStruct.itemT_col]))
+        // flip == 0? ang1 = wrap(imgNum) : ang1 = wrap(180-imgNum);
+        ang1 = wrap(imgNum);
         // } else {
         //   flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
         // }
@@ -668,6 +670,7 @@ function ShowContinuousReport(trialStruct) {
       if (curError > 180) {
           curError = Math.abs(360-curError);
       }
+      console.log(curError);
 
       if (e.isFakeTrigger) { // this code only executes once before anything else happens, e.g. otherwise randrotate would be next trial's randrotate
         trialStruct.startingColor = startingColor;
@@ -934,8 +937,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
   $(document).bind('mouseup.curTrial', function(e) {
     if (trialStruct.isPractice) {
-      var expConfirm2 = confirm("Want to redo your highlighting? [Cancel] to continue.");
-      if (expConfirm2 == true) {
+      var expConfirm2 = confirm("Continue or redo highlighting? [Cancel] to re-highlight.");
+      if (expConfirm2 == false) {
         highlightedColors = [];
         $(document).unbind('click.curTrial');
         $(document).unbind('mousemove.curTrial');
@@ -953,7 +956,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         ctx2a.clearRect(0,0,600,600); // erases the black highlighting
         // ctx2b.clearRect(0,0,600,600); // erases the black highlighting
 
-        pointsA = (curError - 45) / (0 - 45);
+        pointsA = (curError - 60) / (0 - 60);
         if (pointsA < 0) { pointsA = 0; }
 
         encap = 0;
@@ -961,8 +964,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         flip == 0? ang2 = wrap(imgNum2) : ang2 = wrap(180-imgNum2)
         flip == 0? ang3 = wrap(imgNum3) : ang3 = wrap(180-imgNum3)
 
-        alert(ang1)
-        alert(ang2)
+        // alert(ang1)
+        // alert(ang2)
 
         if (lastRot==0 && ang1 != ang2) { //clockwise first (opposite if flip==1)
           if (flip == 0) {
@@ -993,11 +996,12 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         highlightedColors = wrap(highlightedColors);
 
         if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+
         if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
 
-        var UniqueLen = highlightedColors.filter(function(val, i, arr) {
+        UniqueLen = highlightedColors.filter(function(val, i, arr) {
           return arr.indexOf(val) === i; }).length;
-        console.log(flip)
+
         console.log(UniqueLen)
 
         pointsB = (UniqueLen - 360) / (1 - 360);
@@ -1028,7 +1032,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
 
             imgNum = Math.round(wrap([angleDeg-randrotate]));
             start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
-            imgNum = flip == 0? Math.round(trialStruct.itemT_col) : Math.round(wrap([180-trialStruct.itemT_col]));
+            // imgNum = flip == 0? Math.round(trialStruct.itemT_col) : Math.round(wrap([180-trialStruct.itemT_col]));
+            imgNum = Math.round(trialStruct.itemT_col);
             start(ctx4,imgNum,40,100, 200, 200, flip, imgA, itemA);
 
             $('#feedback').show();
@@ -1068,7 +1073,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       ctx2a.clearRect(0,0,600,600); // erases the black highlighting
       // ctx2b.clearRect(0,0,600,600); // erases the black highlighting
 
-      pointsA = (curError - 45) / (0 - 45);
+      pointsA = (curError - 60) / (0 - 60);
       if (pointsA < 0) { pointsA = 0; }
 
       encap = 0;
@@ -1104,12 +1109,17 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
       }
       highlightedColors = wrap(highlightedColors);
 
-      if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+      if (flip == 0) {
+        if (highlightedColors.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+      } else {
+        highlightedColors2 = wrap(highlightedColors + 180);
+        if (highlightedColors2.includes(wrap(trialStruct.itemT_col))) { encap = 1 }
+      }
       if (angleDeg2 == angleDeg3 & curError != 0) { encap = 0 }
 
-      var UniqueLen = highlightedColors.filter(function(val, i, arr) {
+      UniqueLen = highlightedColors.filter(function(val, i, arr) {
         return arr.indexOf(val) === i; }).length;
-      console.log(flip)
+
       console.log(UniqueLen)
 
       pointsB = (UniqueLen - 360) / (1 - 360);
@@ -1301,9 +1311,9 @@ function start(context,deg,initX,initY,imgWidth,imgHeight,flip,image,itemID) {
     flip==0? colors=origColors : colors=flippedColors;
     var col = [146.83,146.83,146.83]; // luminance-corrected gray
     if (deg != 'gray') {
-        deg=(deg>=359)?deg-360:deg;
-        deg=(deg<=0)?deg+359:deg;
-        col = colors[deg-1]; //deg minus 1 because index starts at 0
+        deg=(deg>=360)?deg-360:deg;
+        deg=(deg<0)?deg+360:deg;
+        col = colors[deg];
     }
     if (context == ctx3 || context == ctx4) {
       context.drawImage(image, initX, initY, imgWidth, imgHeight);
