@@ -1400,7 +1400,9 @@ $(function() { // check if Safari or IE
     $('body').html('Unfortunately this HIT does not work in Safari. It works in Chrome, Firefox, or Opera. Sorry!');
   } else if (isIE()) { // if IE
     $('body').html('Unfortunately this HIT does not work in Internet Explorer. It works in Chrome, Firefox, or Opera. Sorry!');
-  }
+  } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) {
+    $('body').html('Unfortunately this HIT does not work on mobile devices. It works on desktop versions of Chrome, Firefox, or Opera. Sorry!');
+  })
 });
 
 
