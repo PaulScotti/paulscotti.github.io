@@ -435,6 +435,11 @@ function StartExperiment() {
 
   r_totalTrials = [practiceTriTrials, triTrials, triTrialsTest];
 
+  // save a file letting me know that someone made it this far
+  const blobx = new Blob([JSON.stringify(WORKERID)], {type: "application/json"});
+  const storageRefx = firebase.storage().ref('started/' + WORKERID + '.json');
+  storageRefx.put(blobx);
+
   $('#instructions').hide();
   NextTrial();
 }
