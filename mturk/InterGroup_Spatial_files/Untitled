@@ -1,0 +1,27 @@
+model.script <- "
+data {
+  int<lower = 0> N;
+  vector[N] coldiff;
+}
+
+parameters {
+  real mu;
+  real<lower=0> kappa;
+  real<lower=0,upper=1> pGuess;
+  real<lower=0,upper=1> pSwap;
+  real<lower=0,upper=1> pSwapC;
+}
+transformed parameters {
+  real<lower=0,upper=1> pTarget;
+  pTarget = 1 - pGuess - pSwap - pSwapC;
+}
+model {
+  kappa ~ normal(10,100);
+  mu ~ normal(0,5);
+  pGuess ~ beta(2,5);
+  pSwap ~ beta(2,5);
+  pSwapC ~ beta(2,5);
+  for (n in 1:N)
+    pDistribution += log( pSwap*exp(von_mises_lpdf(coldiff[n] | 3.14/2, kappa)) + pSwapC*exp(von_mises_lpdf(coldiff[n] | -3.14/2, kappa)) + pGuess*exp(uniform_lpdf(coldiff[n] | -3.14, 3.14)) + pTarget*exp(von_mises_lpdf(coldiff[n] | mu, kappa)));
+}
+"
