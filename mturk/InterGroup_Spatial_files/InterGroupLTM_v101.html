@@ -191,10 +191,10 @@ const config = {
 };
 firebase.initializeApp(config);
 
-/* disable context menu
+// isable context menu
 document.oncontextmenu = function() {
     return false;
-}*/
+}
 
 const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
@@ -268,6 +268,7 @@ let blockStart = 0;
 let numCD = 0;
 let CDtrial = 0; let sameTally = -1; let diffTally = -1;
 let tooFast = [];
+let totConfidence = [];
 let tempVar = true;
 let age = 0;
 let sex = -999;
@@ -1005,6 +1006,8 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         UniqueLen = highlightedColors.filter(function(val, i, arr) {
           return arr.indexOf(val) === i; }).length;
 
+        totConfidence.push(UniqueLen);
+
         pointsB = (UniqueLen - 360) / (1 - 360);
         if (pointsB < 0 || encap == 0) { pointsB = 0; }
 
@@ -1289,7 +1292,7 @@ function SaveData() {
     "leftColor": dx.imgAcolor,
     "rightColor": dx.imgBcolor,
     "colorChange": dx.sign,
-    "totConfidence": UniqueLen,
+    "totConfidence": totConfidence,
     "firstConfDir": lastRotMat,
     "tooFastCount": tooFast,
     "Age": age,
