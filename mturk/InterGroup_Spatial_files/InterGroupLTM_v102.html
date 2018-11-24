@@ -66,7 +66,7 @@
 
 <p>As an example, you should be able to tell that these two squares are distinct colors (the right square is a tad more yellow). If not, please further adjust your monitor's settings.</p>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/color_compare2.png"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/color_compare2.png"></p>
 
 <br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('#instructions5').show();$('a#TextButton').hide();ImagesReady();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (4 of 5)</a></p>
 </div>
@@ -1301,7 +1301,7 @@ function SaveData() {
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('intergroup/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('intergroup_pink/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
