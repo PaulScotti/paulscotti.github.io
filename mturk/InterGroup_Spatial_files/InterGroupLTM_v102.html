@@ -1030,7 +1030,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         trialStruct.conf3 = diffAng3;
 
         if (trialStruct.isPractice) {
-            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 50 deg.!)<br><br>Click to continue.");
 
             imgNum = Math.round(wrap([angleDeg-randrotate]));
             start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
