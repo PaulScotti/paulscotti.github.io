@@ -35,7 +35,7 @@
 <div id="instructions2" style="display:none"><center>
 <p>In this HIT, you will memorize the colors of a variety of objects and subsequently be tested on them.</p></center>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_top2.png" width="650px"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_top_pink.png" width="650px"></p>
 
 <p>Two objects will be displayed for one second, followed by an irrelevant mask and a short delay. You will then be asked to recreate the original color of one of the objects.</p>
 
@@ -44,7 +44,7 @@
 
 <div id="instructions3" style="display:none">
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_bottom.png" width="650px"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_bottom_pink.png" width="650px"></p>
 
 <p>One of the two objects will be presented in black and white. To recreate the color, move your mouse around the color wheel. Once you feel you have located the correct color on the wheel, click using your mouse to lock in your answer.</p>
 
@@ -62,11 +62,11 @@
 <div id="instructions4" style="display:none"><center>
 <p>Performing well in this HIT is much, much easier if your monitor is well-lit and adjusted for our range of colors. Below is an example color wheel. Please adjust the brightness/color settings of your monitor to best view the below color spectrum.</p></center>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/fullColorWheel.png" width="400px"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/fullColorWheel_pink.png" width="400px"></p>
 
 <p>As an example, you should be able to tell that these two squares are distinct colors (the right square is a tad more yellow). If not, please further adjust your monitor's settings.</p>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/color_compare.png"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/color_compare2.png"></p>
 
 <br><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('#instructions5').show();$('a#TextButton').hide();ImagesReady();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (4 of 5)</a></p>
 </div>
@@ -74,9 +74,9 @@
 <div id="instructions5" style="display:none">
 <center><p>The entire HIT includes 280 trials and takes approximately 1 hour to complete.</p>
 
-<p><u>As a recap, here is an animated example of a few trials:</u></p></center>
+<!-- <p><u>As a recap, here is an animated example of a few trials:</u></p></center>
 
-<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/InterGroup_Instruct_edit.gif"></p>
+<p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/InterGroup_Instruct_edit.gif"></p> -->
 
 <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see two colored objects at a time. Remember to memorize the colors associated with each object. You will then be asked to report the original color of one of the objects. Please take your time to respond as accurately as possible. The hour time estimate assumes a patient worker who takes their time for every reponse!</p>
 
@@ -173,7 +173,7 @@ https://www.mturk.com/mturk/externalSubmit
 </form>
 
 <!-- Preload images, needs to be below divs -->
-<script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/loadimg.js"></script>
+<script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/loadimg_pink.js"></script>
 
 <script>
 let WORKERID = (IsOnTurk())? GetWorkerId() : prompt("You don't look like an mTurker! " +
@@ -204,7 +204,7 @@ const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (shou
 let block = 1;
 const trialsPerBlock = 20;
 const totBlocks = numTrialsPerPart[1]/trialsPerBlock;
-</script> <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked.js"> </script>
+</script> <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked_pink.js"> </script>
 
 <script>
 
@@ -212,7 +212,7 @@ let imgNum = 0;
 const imgWidth = 200;
 const imgHeight = 200;
 const displayTime = 1000;
-const isiTime = 2800;
+const isiTime = 800;
 const feedbackTime = 750;
 const maskTime = 200;
 const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
@@ -1030,7 +1030,7 @@ function ShowConfidence2 (trialStruct,angleDeg,angleDeg2,diffAng2,lastRot) {
         trialStruct.conf3 = diffAng3;
 
         if (trialStruct.isPractice) {
-            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 30 deg.!)<br><br>Click to continue.");
+            $('#feedbackError').html("Your error was: " + Math.round(curError) + " deg (aim for less than 50 deg.!)<br><br>Click to continue.");
 
             imgNum = Math.round(wrap([angleDeg-randrotate]));
             start(ctx3,imgNum,80,100, 200, 200, flip, imgA, itemA);
@@ -1301,7 +1301,7 @@ function SaveData() {
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('intergroup/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('intergroup_pink/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
