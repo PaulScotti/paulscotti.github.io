@@ -438,7 +438,7 @@ function StartExperiment() {
 
   // save a file letting me know that someone made it this far
   const blobx = new Blob([JSON.stringify(WORKERID)], {type: "application/json"});
-  const storageRefx = firebase.storage().ref('started/' + WORKERID + '.json');
+  const storageRefx = firebase.storage().ref('started2/' + WORKERID + '.json');
   storageRefx.put(blobx);
 
   $('#instructions').hide();
@@ -1301,7 +1301,7 @@ function SaveData() {
 
     /* save to Firebase server */
     const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-    const storageRef = firebase.storage().ref('intergroup/' + WORKERID + '.json');
+    const storageRef = firebase.storage().ref('intergroup2/' + WORKERID + '.json');
     storageRef.put(blob);
 
     document.getElementById("saving").innerHTML = "Submitting HIT...";
