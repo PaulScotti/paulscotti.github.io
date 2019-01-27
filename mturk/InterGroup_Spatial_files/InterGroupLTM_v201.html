@@ -196,7 +196,7 @@
     <!-- Changing Color HTML -->
     <div id="continuousReport" style="display: none">
         <canvas id="contItemA" src="https://maxceylab.github.io/stimuli/compelling_objects/Object101.png" width=200 height=200 style="position:absolute; top:200px; left:200px;"></canvas>
-        <canvas id="ringItemA" width=600 height=600></canvas>
+        <canvas id="ringItemA" src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/ring.png" width=600 height=600></canvas>
         <div id="pointer"></div>
         <div id="underText"></div>
     </div>
@@ -334,8 +334,10 @@
         /* Setup reused image variable */
         let imgA = new Image();
         imgA.crossOrigin = "anonymous";
+        imgA.src = "https://paulscotti.github.io/mturk/InterGroup_Spatial_files/objects/Object101.png";
         let imgB = new Image();
         imgB.crossOrigin = "anonymous";
+        imgB.src = "https://paulscotti.github.io/mturk/InterGroup_Spatial_files/objects/Object101.png";
 
         /* Setup ring image */
         let ringImg = new Image();
@@ -516,8 +518,8 @@
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
         function ShowTrial() {
-            start(ctxA, r_totalTrials[currentPart][currentTrial].itemA_col, flip, itemA, $('#' + trialStruct.itemA_id)[0].src);
-            start(ctxB, r_totalTrials[currentPart][currentTrial].itemB_col, flip, itemB, $('#' + trialStruct.itemB_id)[0].src);
+            start(ctxA, r_totalTrials[currentPart][currentTrial].itemA_col, flip, imgA, $('#' + r_totalTrials[currentPart][currentTrial].itemA_id)[0].src);
+            start(ctxB, r_totalTrials[currentPart][currentTrial].itemB_col, flip, imgB, $('#' + r_totalTrials[currentPart][currentTrial].itemB_id)[0].src);
 
             isiTime = r_totalTrials[currentPart][currentTrial].isiTrial;
             isiArray.push(r_totalTrials[currentPart][currentTrial].isiTrial);
@@ -604,7 +606,7 @@
                     r_totalTrials[currentPart][currentTrial].startingColor = startingColor;
                     r_totalTrials[currentPart][currentTrial].randrotate = randrotate;
                     r_totalTrials[currentPart][currentTrial].flip = flip;
-                    flip == 0 ? $('#'+ringImg).attr('src', $('#ring')[0].src) : $('#'+ringImg).attr('src', $('#ringFlip')[0].src);
+                    flip == 0 ? $('#'+ringImg.id).attr('src', $('#ring')[0].src) : $('#'+ringImg.id).attr('src', $('#ringFlip')[0].src);
                     ringctxA.translate(50 + 500 / 2, 50 + 500 / 2);
                     ringctxA.rotate(randrotate * Math.PI / 180);
                     ringctxA.translate(-50 - 500 / 2, -50 - 500 / 2);
@@ -1149,7 +1151,7 @@
         }
 
         function start(context, deg, flip, itemID, source) {
-            $('#'+itemID).attr('src', source);
+            $('#'+itemID.id).attr('src', source);
 
             flip == 0 ? colors = origColors : colors = flippedColors;
             var col = [146.83, 146.83, 146.83]; // luminance-corrected gray
@@ -1159,11 +1161,11 @@
                 col = colors[deg];
             }
 
-            recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]));
+            recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), itemID);
         }
 
-        function recolor(context, newR, newG, newB) {
-            imgData = context.getImageData();
+        function recolor(context, newR, newG, newB, itemID) {
+            imgData = context.getImageData(200,200,200,200);
             let data = imgData.data;
             for (let i = 0; i < data.length; i += 4) {
                 let red = data[i];
@@ -1175,7 +1177,8 @@
                     data[i + 2] = newB;
                 }
             }
-            context.putImageData(imgData);
+            context.putImageData(imgData,200,200);
+            context.drawImage(itemID, 200, 200);
         }
 
         /* Make sure number is between 0 and 360: */
