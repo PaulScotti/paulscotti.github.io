@@ -186,11 +186,14 @@ https://www.mturk.com/mturk/externalSubmit
     </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     <!-- Changing Color HTML -->
     <div id="continuousReport" style="display: none">
         <canvas id="contItemA" src="https://maxceylab.github.io/stimuli/compelling_objects/Object101.png" width=200 height=200 style="position:absolute; top:200px; left:200px;"></canvas>
         <canvas id="ringItemA" src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/ring.png" width=600 height=600></canvas>
 =======
+=======
+>>>>>>> parent of 70dc9cb... lots
     <!-- Structure for continuous report after the trial: -->
     <div id="continuousReport">
         <div id='contItem_abs' style="position:absolute;">
@@ -199,6 +202,9 @@ https://www.mturk.com/mturk/externalSubmit
 <canvas id="contItemB" width=300 height=300></canvas></div> -->
         <canvas id="ringItemA" width=600 height=600 style="position: absolute;"></canvas>
         <!-- <canvas id="ringItemB"  width=280 height=280 style="position: absolute; top:160px; left:310px;"></canvas> -->
+<<<<<<< HEAD
+>>>>>>> parent of 70dc9cb... lots
+=======
 >>>>>>> parent of 70dc9cb... lots
         <div id="pointer"></div>
         <div id="popQuiz">
@@ -246,6 +252,7 @@ https://www.mturk.com/mturk/externalSubmit
         <center>
             <div id="doneText">
                 <p>How confident are you that the biased color region you selected is close to the actual experimental manipulation?</p>
+<<<<<<< HEAD
             </div>
             <br><br><br><br>
             <div class="likertButtons">
@@ -258,6 +265,20 @@ https://www.mturk.com/mturk/externalSubmit
                 <label for="likert6">6<input id="likertConfidence" type="radio" name="likertz" value="6"></label>
                 More certain
             </div>
+=======
+            </div>
+            <br><br><br><br>
+            <div class="likertButtons">
+                Less certain
+                <label for="likert1">1<input id="likertConfidence" type="radio" name="likertz" value="1"></label>
+                <label for="likert2">2<input id="likertConfidence" type="radio" name="likertz" value="2"></label>
+                <label for="likert3">3<input id="likertConfidence" type="radio" name="likertz" value="3"></label>
+                <label for="likert4">4<input id="likertConfidence" type="radio" name="likertz" value="4"></label>
+                <label for="likert5">5<input id="likertConfidence" type="radio" name="likertz" value="5"></label>
+                <label for="likert6">6<input id="likertConfidence" type="radio" name="likertz" value="6"></label>
+                More certain
+            </div>
+>>>>>>> parent of 70dc9cb... lots
             <br><br>
             <a href="javascript:void(0);" onclick="Done();" id="TextButton" style="display: inline;">Submit</a>
         </center>
@@ -389,12 +410,18 @@ https://www.mturk.com/mturk/externalSubmit
         let imgB = new Image();
         imgB.crossOrigin = "anonymous";
 <<<<<<< HEAD
+<<<<<<< HEAD
         imgB.src = "https://paulscotti.github.io/mturk/InterGroup_Spatial_files/objects/Object101.png";
 =======
+=======
+>>>>>>> parent of 70dc9cb... lots
         let imgX = new Image();
         imgX.crossOrigin = "anonymous";
         let imgPop = new Image();
         imgPop.crossOrigin = "anonymous";
+<<<<<<< HEAD
+>>>>>>> parent of 70dc9cb... lots
+=======
 >>>>>>> parent of 70dc9cb... lots
 
         /* Setup ring image */
@@ -596,6 +623,7 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
 <<<<<<< HEAD
+<<<<<<< HEAD
         function ShowTrial() {
             start(ctxA, r_totalTrials[currentPart][currentTrial].itemA_col, flip, imgA, $('#' + r_totalTrials[currentPart][currentTrial].itemA_id)[0].src);
             start(ctxB, r_totalTrials[currentPart][currentTrial].itemB_col, flip, imgB, $('#' + r_totalTrials[currentPart][currentTrial].itemB_id)[0].src);
@@ -603,6 +631,8 @@ https://www.mturk.com/mturk/externalSubmit
             isiTime = r_totalTrials[currentPart][currentTrial].isiTrial;
             isiArray.push(r_totalTrials[currentPart][currentTrial].isiTrial);
 =======
+=======
+>>>>>>> parent of 70dc9cb... lots
         function ShowTrial(trialStruct) {
             start(ctxA, trialStruct.itemA_col, 50, 50, imgWidth, imgHeight, flip, imgA, itemA);
             start(ctxB, trialStruct.itemB_col, 50, 50, imgWidth, imgHeight, flip, imgB, itemB);
@@ -619,6 +649,9 @@ https://www.mturk.com/mturk/externalSubmit
               num90++;
               isiArray.push(90);
             }
+<<<<<<< HEAD
+>>>>>>> parent of 70dc9cb... lots
+=======
 >>>>>>> parent of 70dc9cb... lots
 
             $('#allItems').css('margin-top', -1000);
@@ -822,15 +855,21 @@ https://www.mturk.com/mturk/externalSubmit
 
                 if (e.isFakeTrigger) { // this code only executes once before anything else happens, e.g. otherwise randrotate would be next trial's randrotate
 <<<<<<< HEAD
+<<<<<<< HEAD
                     r_totalTrials[currentPart][currentTrial].startingColor = startingColor;
                     r_totalTrials[currentPart][currentTrial].randrotate = randrotate;
                     r_totalTrials[currentPart][currentTrial].flip = flip;
                     flip == 0 ? $('#'+ringImg.id).attr('src', $('#ring')[0].src) : $('#'+ringImg.id).attr('src', $('#ringFlip')[0].src);
 =======
+=======
+>>>>>>> parent of 70dc9cb... lots
                     trialStruct.startingColor = startingColor;
                     trialStruct.randrotate = randrotate;
                     trialStruct.flip = flip;
                     flip == 0 ? ringImg.src = $('#ring')[0].src : ringImg.src = $('#ringFlip')[0].src;
+<<<<<<< HEAD
+>>>>>>> parent of 70dc9cb... lots
+=======
 >>>>>>> parent of 70dc9cb... lots
                     ringctxA.translate(50 + 500 / 2, 50 + 500 / 2);
                     ringctxA.rotate(randrotate * Math.PI / 180);
@@ -1521,9 +1560,13 @@ https://www.mturk.com/mturk/externalSubmit
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         function start(context, deg, flip, itemID, source) {
             $('#'+itemID.id).attr('src', source);
 
+=======
+        function start(context, deg, initX, initY, imgWidth, imgHeight, flip, image, itemID) {
+>>>>>>> parent of 70dc9cb... lots
 =======
         function start(context, deg, initX, initY, imgWidth, imgHeight, flip, image, itemID) {
 >>>>>>> parent of 70dc9cb... lots
@@ -1535,6 +1578,7 @@ https://www.mturk.com/mturk/externalSubmit
                 col = colors[deg];
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), itemID);
         }
@@ -1542,6 +1586,8 @@ https://www.mturk.com/mturk/externalSubmit
         function recolor(context, newR, newG, newB, itemID) {
             imgData = context.getImageData(200,200,200,200);
 =======
+=======
+>>>>>>> parent of 70dc9cb... lots
             if (context == ctx3 || context == ctx4) {
                 context.drawImage(image, initX, initY, imgWidth, imgHeight);
                 recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), initX, initY, itemID);
@@ -1556,6 +1602,9 @@ https://www.mturk.com/mturk/externalSubmit
 
         function recolor(context, newR, newG, newB, initX, initY, itemID) {
             imgData = context.getImageData(initX, initY, itemID.width, itemID.height);
+<<<<<<< HEAD
+>>>>>>> parent of 70dc9cb... lots
+=======
 >>>>>>> parent of 70dc9cb... lots
             let data = imgData.data;
             for (let i = 0; i < data.length; i += 4) {
@@ -1569,8 +1618,12 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
             context.putImageData(imgData,200,200);
             context.drawImage(itemID, 200, 200);
+=======
+            context.putImageData(imgData, initX, initY);
+>>>>>>> parent of 70dc9cb... lots
 =======
             context.putImageData(imgData, initX, initY);
 >>>>>>> parent of 70dc9cb... lots
