@@ -383,8 +383,11 @@ let colors = [
 	// 	dx.trialtype.push.apply(dx.trialtype,chance1.shuffle(fooArray));
 	// }
 
+	// attempt to make color selection less likely to be accidentally (randomly) non-uniform
+	const psuedoRandom = chance1.shuffle(counter(1,360));
+
 	for (let colorInit=0; colorInit<numTrialsPerPart[1]; colorInit++) {
-		let randColor = Math.floor(Math.random()*360);
+		let randColor = psuedoRandom[colorInit];
 		let pos_or_neg = [];
 		Math.random() < .5 ? pos_or_neg = 1 : pos_or_neg = -1;
 		dx.imgAcolor = dx.imgAcolor.concat(randColor);
