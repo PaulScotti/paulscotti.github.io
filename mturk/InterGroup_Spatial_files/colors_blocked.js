@@ -367,8 +367,8 @@ let colors = [
 				"pracimgB": counter(101+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]-1),
         "testimgA": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]-1),
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
-				"TimingType45": repmat([800, 2800], numTrialsPerPart[2]/2),
-				"TimingType90": repmat([800, 2800], numTrialsPerPart[2]/2),
+				"TimingType45": repmat([800, 2800], numTrialsPerPart[2]/4),
+				"TimingType90": repmat([800, 2800], numTrialsPerPart[2]/4),
 				"imgType": [], "imgAcolor": [], "imgBcolor": [], "sign": []
 	};
 

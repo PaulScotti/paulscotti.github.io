@@ -286,7 +286,7 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Options: */
         const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-        const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
+        const numTrialsPerPart = [1, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
         let block = 1;
         const trialsPerBlock = 20;
         const totBlocks = numTrialsPerPart[1] / trialsPerBlock;
@@ -561,6 +561,8 @@ https://www.mturk.com/mturk/externalSubmit
             repeat = 0;
             currentTrial++;
 
+            console.log(currentTrial)
+
             if (nextTrialStart == 0) { // if not first trial
                 if (currentTrial >= numTrialsPerPart[currentPart] && currentPart == 0) { // if end of practice
                     // alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
@@ -598,11 +600,11 @@ https://www.mturk.com/mturk/externalSubmit
               if (Math.abs(wrapDiff(trialStruct.itemA_col,trialStruct.itemB_col)) == 45) {
                 isiTime = trialStruct.isiTrial;
                 num45++;
-                isiArray.push(45);
+                isiArray.push(trialStruct.isiTrial);
               } else if (Math.abs(wrapDiff(trialStruct.itemA_col,trialStruct.itemB_col)) == 90) {
                 isiTime = trialStruct.isiTrial;
                 num90++;
-                isiArray.push(90);
+                isiArray.push(trialStruct.isiTrial);
               }
             } else {
               isiTime = 1800;
