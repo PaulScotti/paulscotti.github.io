@@ -286,9 +286,9 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Options: */
         const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-        const numTrialsPerPart = [5, 280, 280]; // [5, 280, 280] prac, study, test (should = study); 240 tested nonrepeat trials
+        const numTrialsPerPart = [2, 280, 280]; // [5, 280, 280] prac, study, test (should = study);
         let block = 1;
-        const trialsPerBlock = 20;
+        const trialsPerBlock = 10;
         const totBlocks = numTrialsPerPart[1] / trialsPerBlock;
     </script>
     <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked_301.js"> </script>
@@ -298,7 +298,7 @@ https://www.mturk.com/mturk/externalSubmit
         let isiTime = -999;
         const imgWidth = 200;
         const imgHeight = 200;
-        const displayTime = 1000;
+        const displayTime = 2000;
         const feedbackTime = 750;
         const maskTime = 200;
         const origColors = _.clone(colors); // clone is required to copy a variable without it accidentally referencing the same thing
@@ -561,10 +561,8 @@ https://www.mturk.com/mturk/externalSubmit
         function NextTrial() {
             repeat = 0;
             currentTrial++;
-
             console.log(currentTrial)
-
-            if (nextTrialStart == 0 && currentPart ~= 2) { // if not first trial
+            if (nextTrialStart == 0) { // if not first trial
                 if (currentTrial >= numTrialsPerPart[currentPart] && currentPart == 0) { // if end of practice
                     // alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
                     $('#showTrial').hide();
@@ -572,6 +570,13 @@ https://www.mturk.com/mturk/externalSubmit
                     NextFeedTrial(); /* Start continuous color report trials */
                     return; // need return; otherwise the ShowTrial below executes
                 } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) { //if end of a test block
+                    for (let i = 0; i < trialsPerBlock; i += 1) {
+                        if (dx.WMorLTM[i] == 1) {
+                          var kk = (block * trialsPerBlock) - i
+                          NextFeedTrial(i);
+                          return;
+                        }
+                    }
                     if (currentTrial == numTrialsPerPart[1]) { //if last trial
                         $('#showTrial').hide();
                         Survey1();
@@ -586,11 +591,7 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
             nextTrialStart = 0;
-            if (currentPart ~= 2) {
-              ShowTrial(r_totalTrials[currentPart][currentTrial]);
-            } else {
-              NextFeedTrial();
-            }
+            ShowTrial(r_totalTrials[currentPart][currentTrial]);
         }
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
@@ -632,7 +633,10 @@ https://www.mturk.com/mturk/externalSubmit
                         $('#allItems').css('margin-top', -1000);
                         setTimeout(function() {
                             $('#showTrial').hide();
-                            if (trialStruct.WMorLTM == 1) { // if LTM
+                            if (currentPart == 0) {
+                              NextFeedTrial();
+                            } else if (trialStruct.WMorLTM == 1) { // if LTM
+                              currentFeedTrial++;
                               NextTrial();
                             } else if (trialStruct.WMorLTM == 0) { // if WM
                               NextFeedTrial();
@@ -645,6 +649,7 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Show the next continuous color report trial: */
         function NextFeedTrial() {
+            console.log(currentFeedTrial)
             if (blockStart == 0) {
                 currentFeedTrial++;
                 if (currentFeedTrial > numTrialsPerPart[currentPart] - 1) { //if last test trial
@@ -694,6 +699,29 @@ https://www.mturk.com/mturk/externalSubmit
             ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
             mouseMoved = 0;
         }
+
+        // /* Show the next continuous color report trial: */
+        // function NextFeedTrialLTM(currentFeedTrial) {
+        //     /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
+        //     // if (left_or_right == 1) {
+        //     ringctxA.restore();
+        //     ringctxA.drawImage(ringImg, 50, 50, 500, 500);
+        //     ringctxA.save();
+        //     // } else {
+        //     //   ringctxB.restore();
+        //     //   ringctxB.drawImage(ringImg,0,0,280,280);
+        //     //   ringctxB.save();
+        //     // }
+        //
+        //     if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
+        //         ringctxA.clearRect(0, 0, 600, 600);
+        //         // ringctxB.clearRect(0,0,600,600);
+        //     }
+        //
+        //     mouseInit = mouseX;
+        //     ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+        //     mouseMoved = 0;
+        // }
 
         /* Always track the mouse */
         let mouseX, mouseY;
@@ -862,7 +890,7 @@ https://www.mturk.com/mturk/externalSubmit
             $(document).bind('click.curTrial', function(e) {
                 if (survey == 1) {
                     explicitColor = flip == 0 ? Math.round(wrap([angleDeg - randrotate])) : Math.round(wrap([180 - wrap([angleDeg - randrotate])]));
-                } else if (currentPart == 2 && ((new Date()) - startTime) < 500) {
+                } else if (currentPart > 0 && ((new Date()) - startTime) < 500) {
                     if (currentFeedTrial % trialsPerBlock != 0) {
                         alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
                     }
@@ -1587,27 +1615,20 @@ https://www.mturk.com/mturk/externalSubmit
             return wrap(degree);
         }
 
-        function ImagesReady() { // check that all images are loaded before starting expt
-            setTimeout(function() { // dont start the check at the same time as the document is loading
-                var totImages = 0;
-                var readyLoad = 0;
-                while (readyLoad == 0) {
-                    for (let k = 101; k < 700; k++) {
-                        if ($('#' + k)[0] != null) {
-                            if ($('#' + k)[0].complete) {
-                                totImages++;
-                            }
-                        }
-                    }
-                    if (totImages >= 599) {
-                        readyLoad = 1;
-                    } else {
-                        totImages = 0;
-                    }
-                }
-                $('#loading').hide();
-                $('a#TextButton').show();
-            }, 3000);
+        function ImagesReady() {
+          for (var i = 101; i < 700; i++) {
+              if (!$('#' + i)[0].complete) {
+                  var percentage = i * 100.0 / (700);
+                  percentage = percentage.toFixed(0).toString() + ' %';
+
+                  document.getElementById("loading").innerHTML =
+                    'Loading images ... ' + percentage + '<br>If more than a minute elapses, try refreshing page.';
+                  setTimeout('ImagesReady()', 20);
+                  return;
+              }
+          }
+          $('#loading').hide();
+          $('a#TextButton').show();
         };
 
         function isIE() {
