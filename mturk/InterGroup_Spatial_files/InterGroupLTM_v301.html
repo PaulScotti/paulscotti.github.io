@@ -288,7 +288,7 @@ https://www.mturk.com/mturk/externalSubmit
         const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
         const numTrialsPerPart = [2, 280, 280]; // [5, 280, 280] prac, study, test (should = study);
         let block = 1;
-        const trialsPerBlock = 10;
+        const trialsPerBlock = 4;
         const totBlocks = numTrialsPerPart[1] / trialsPerBlock;
     </script>
     <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked_301.js"> </script>
@@ -316,6 +316,7 @@ https://www.mturk.com/mturk/externalSubmit
         let currentTrial = -1;
         let currentPart = 0;
         let currentFeedTrial = -1;
+        let currentFeedTrialX = -999;
         let nextTrialStart = 1;
         let feedbackPhase = 0;
         let repeat = 0;
@@ -371,6 +372,8 @@ https://www.mturk.com/mturk/externalSubmit
         let num45 = 0;
         let num90 = 0;
         let isiArray = [];
+        let tempLTM = 0;
+        let testing = 0;
 
         /* Randomize orderings */
         dx.pracimgA = chance1.shuffle(dx.pracimgA);
@@ -562,6 +565,32 @@ https://www.mturk.com/mturk/externalSubmit
             repeat = 0;
             currentTrial++;
             console.log(currentTrial)
+            if (testing == 1) {
+              $('#showTrial').hide();
+              if (tempLTM < trialsPerBlock) {
+                  if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + tempLTM] == 1) {
+                    NextFeedTrialLTM();
+                    return;
+                  } else {
+                    tempLTM++;
+                    NextTrial();
+                    return;
+                  }
+              }
+              if (currentTrial == numTrialsPerPart[1]) { //if last trial
+                  Survey1();
+                  return;
+              }
+              numCD = 0;
+              nextTrialStart = 1;
+              block++;
+              tempLTM = 0;
+              testing = 0;
+              currentFeedTrial = currentFeedTrialX;
+              alert("Starting Block " + block + " of " + totBlocks + ".");
+              ShowTrial(r_totalTrials[currentPart][currentTrial]);
+              return;
+            }
             if (nextTrialStart == 0) { // if not first trial
                 if (currentTrial >= numTrialsPerPart[currentPart] && currentPart == 0) { // if end of practice
                     // alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
@@ -570,21 +599,29 @@ https://www.mturk.com/mturk/externalSubmit
                     NextFeedTrial(); /* Start continuous color report trials */
                     return; // need return; otherwise the ShowTrial below executes
                 } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) { //if end of a test block
-                    for (let i = 0; i < trialsPerBlock; i += 1) {
-                        if (dx.WMorLTM[i] == 1) {
-                          var kk = (block * trialsPerBlock) - i
-                          NextFeedTrial(i);
+                    alert('tempLTM starting!')
+                    $('#showTrial').hide();
+                    testing = 1;
+                    if (tempLTM < trialsPerBlock) {
+                        if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + tempLTM] == 1) {
+                          NextFeedTrialLTM();
+                          return;
+                        } else {
+                          tempLTM++;
+                          NextTrial();
                           return;
                         }
                     }
                     if (currentTrial == numTrialsPerPart[1]) { //if last trial
-                        $('#showTrial').hide();
                         Survey1();
                         return;
                     }
                     numCD = 0;
                     nextTrialStart = 1;
                     block++;
+                    tempLTM = 0;
+                    testing = 0;
+                    currentFeedTrial = currentFeedTrialX;
                     alert("Starting Block " + block + " of " + totBlocks + ".");
                     ShowTrial(r_totalTrials[currentPart][currentTrial]);
                     return;
@@ -637,6 +674,7 @@ https://www.mturk.com/mturk/externalSubmit
                               NextFeedTrial();
                             } else if (trialStruct.WMorLTM == 1) { // if LTM
                               currentFeedTrial++;
+                              currentFeedTrialX = currentFeedTrial;
                               NextTrial();
                             } else if (trialStruct.WMorLTM == 0) { // if WM
                               NextFeedTrial();
@@ -652,6 +690,7 @@ https://www.mturk.com/mturk/externalSubmit
             console.log(currentFeedTrial)
             if (blockStart == 0) {
                 currentFeedTrial++;
+                currentFeedTrialX = currentFeedTrial;
                 if (currentFeedTrial > numTrialsPerPart[currentPart] - 1) { //if last test trial
                     if (currentPart > 0) {
                         $('showTrial').hide;
@@ -700,28 +739,30 @@ https://www.mturk.com/mturk/externalSubmit
             mouseMoved = 0;
         }
 
-        // /* Show the next continuous color report trial: */
-        // function NextFeedTrialLTM(currentFeedTrial) {
-        //     /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
-        //     // if (left_or_right == 1) {
-        //     ringctxA.restore();
-        //     ringctxA.drawImage(ringImg, 50, 50, 500, 500);
-        //     ringctxA.save();
-        //     // } else {
-        //     //   ringctxB.restore();
-        //     //   ringctxB.drawImage(ringImg,0,0,280,280);
-        //     //   ringctxB.save();
-        //     // }
-        //
-        //     if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
-        //         ringctxA.clearRect(0, 0, 600, 600);
-        //         // ringctxB.clearRect(0,0,600,600);
-        //     }
-        //
-        //     mouseInit = mouseX;
-        //     ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
-        //     mouseMoved = 0;
-        // }
+        /* Show the next continuous color report trial: */
+        function NextFeedTrialLTM() {
+            currentFeedTrial = block * trialsPerBlock - trialsPerBlock + tempLTM;
+            /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
+            // if (left_or_right == 1) {
+            ringctxA.restore();
+            ringctxA.drawImage(ringImg, 50, 50, 500, 500);
+            ringctxA.save();
+            // } else {
+            //   ringctxB.restore();
+            //   ringctxB.drawImage(ringImg,0,0,280,280);
+            //   ringctxB.save();
+            // }
+
+            if (!(currentPart == 0 && currentFeedTrial == 0)) { //dont clear ring if its first time ever presented, otherwise first practice trial has no ring
+                ringctxA.clearRect(0, 0, 600, 600);
+                // ringctxB.clearRect(0,0,600,600);
+            }
+
+            mouseInit = mouseX;
+            ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
+            mouseMoved = 0;
+            tempLTM++;
+        }
 
         /* Always track the mouse */
         let mouseX, mouseY;
