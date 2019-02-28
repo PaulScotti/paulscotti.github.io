@@ -369,7 +369,7 @@ let colors = [
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
 				"TimingType45": repmat([800, 2800], numTrialsPerPart[2]/4),
 				"TimingType90": repmat([800, 2800], numTrialsPerPart[2]/4),
-				"WMorLTM": repmat([0, 1, 1, 1], numTrialsPerPart[2]/4),
+				"WMorLTM": repmat([0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], numTrialsPerPart[2]/4), // assumes numTrialsPerPart[2] = 12 and numTrialsPerPart[1] = numTrialsPerPart[2]
 				"imgType": [], "imgAcolor": [], "imgBcolor": [], "sign": []
 	};
 

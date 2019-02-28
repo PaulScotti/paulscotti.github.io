@@ -286,9 +286,9 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Options: */
         const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
-        const numTrialsPerPart = [2, 280, 280]; // [5, 280, 280] prac, study, test (should = study);
+        const numTrialsPerPart = [2, 276, 276]; // [5, 280, 280] prac, study, test (should = study);
         let block = 1;
-        const trialsPerBlock = 4;
+        const trialsPerBlock = 12;
         const totBlocks = numTrialsPerPart[1] / trialsPerBlock;
     </script>
     <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked_301.js"> </script>
@@ -372,8 +372,8 @@ https://www.mturk.com/mturk/externalSubmit
         let num45 = 0;
         let num90 = 0;
         let isiArray = [];
-        let tempLTM = 0;
         let testing = 0;
+        let testingList = [];
 
         /* Randomize orderings */
         dx.pracimgA = chance1.shuffle(dx.pracimgA);
@@ -567,15 +567,9 @@ https://www.mturk.com/mturk/externalSubmit
             console.log(currentTrial)
             if (testing == 1) {
               $('#showTrial').hide();
-              if (tempLTM < trialsPerBlock) {
-                  if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + tempLTM] == 1) {
-                    NextFeedTrialLTM();
-                    return;
-                  } else {
-                    tempLTM++;
-                    NextTrial();
-                    return;
-                  }
+              if (testingList.length != 0) {
+                  NextFeedTrialLTM();
+                  return;
               }
               if (currentTrial == numTrialsPerPart[1]) { //if last trial
                   Survey1();
@@ -584,8 +578,8 @@ https://www.mturk.com/mturk/externalSubmit
               numCD = 0;
               nextTrialStart = 1;
               block++;
-              tempLTM = 0;
               testing = 0;
+              testingList = [];
               currentFeedTrial = currentFeedTrialX;
               alert("Starting Block " + block + " of " + totBlocks + ".");
               ShowTrial(r_totalTrials[currentPart][currentTrial]);
@@ -599,31 +593,14 @@ https://www.mturk.com/mturk/externalSubmit
                     NextFeedTrial(); /* Start continuous color report trials */
                     return; // need return; otherwise the ShowTrial below executes
                 } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) { //if end of a test block
-                    alert('tempLTM starting!')
                     $('#showTrial').hide();
                     testing = 1;
-                    if (tempLTM < trialsPerBlock) {
-                        if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + tempLTM] == 1) {
-                          NextFeedTrialLTM();
-                          return;
-                        } else {
-                          tempLTM++;
-                          NextTrial();
-                          return;
-                        }
+                    for (let k = 0; k < trialsPerBlock; k += 1) {
+                      if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + k] == 1) {
+                        testingList.push(block * trialsPerBlock - trialsPerBlock + k);
+                      }
                     }
-                    if (currentTrial == numTrialsPerPart[1]) { //if last trial
-                        Survey1();
-                        return;
-                    }
-                    numCD = 0;
-                    nextTrialStart = 1;
-                    block++;
-                    tempLTM = 0;
-                    testing = 0;
-                    currentFeedTrial = currentFeedTrialX;
-                    alert("Starting Block " + block + " of " + totBlocks + ".");
-                    ShowTrial(r_totalTrials[currentPart][currentTrial]);
+                    ChangeDetection();
                     return;
                 }
             }
@@ -741,7 +718,8 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Show the next continuous color report trial: */
         function NextFeedTrialLTM() {
-            currentFeedTrial = block * trialsPerBlock - trialsPerBlock + tempLTM;
+            currentFeedTrial = testingList[0];
+            testingList.splice(0,1);
             /*Preload color wheel, first practice trial will have randrotate=0 and flip=0*/
             // if (left_or_right == 1) {
             ringctxA.restore();
@@ -761,7 +739,6 @@ https://www.mturk.com/mturk/externalSubmit
             mouseInit = mouseX;
             ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
             mouseMoved = 0;
-            tempLTM++;
         }
 
         /* Always track the mouse */
@@ -1495,6 +1472,61 @@ https://www.mturk.com/mturk/externalSubmit
             } else {
                 alert('Please select an option.');
             }
+        }
+
+        function ChangeDetection() {
+          $('#allItems').css('margin-top', 0);
+          if (CDtrial <= 2) { // 2 CD trials
+            ChangeDetectionTrial();
+          } else {
+            $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
+            $('#SameButton').hide();
+            $('#DiffButton').hide();
+            $('#allItems').css('margin-top', -1000); // show object items again and hide them off-screen
+            $('#itemA').show();
+
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Before we test your memory for the remaining images, we will do a short change-detection test. You will see images one at a time and be asked if you have seen the exact same image before. If so, press the <i>old</i> button. If you have not seen the image before, press the <i>new</i> button.';
+            window.location.href = '#openModal';
+            checkFlagCD();
+
+            function checkFlagCD() {
+              if (modalClosed == false) {
+                window.setTimeout(checkFlagCD, 100); /* this checks the flag every 100 milliseconds*/
+              } else {
+                NextFeedTrialLTM();
+              }
+            }
+          }
+        }
+
+        // Present CD trial
+        function ChangeDetectionTrial() {
+          if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
+            imgCD.src = $('#same' + (curCD % 25 + 1))[0].src; // memory array
+            imgCDtest.src = $('#same' + (curCD % 25 + 1) + 't')[0].src; // test array
+            CDType.push(0); // record what type of CD trial this was
+          } else { //diff
+            imgCD.src = $('#diff' + (curCD % 25 + 1))[0].src;
+            imgCDtest.src = $('#diff' + (curCD % 25 + 1) + 't')[0].src;
+            CDType.push(1);
+          }
+          CDtrial++;
+
+          $('#CDitem').attr('src', CDfix.src);
+          setTimeout(function() { // after 800 ms, show colored memory array
+            $('#CDitem').attr('src', imgCD.src);
+            setTimeout(function() { // after 500 ms, show fixation again
+              $('#CDitem').attr('src', CDfix.src);
+              setTimeout(function() { // after 900 ms, show test array
+                $('#CDitem').attr('src', imgCDtest.src);
+                $('#SameButton').show();
+                $('#DiffButton').show();
+              }, 900);
+            }, 500);
+          }, 800);
         }
 
         function Survey1() {
