@@ -575,29 +575,28 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Show the next trial or show the done screen if they are finished: */
         function NextTrial() {
-            repeat = 0;
-            currentTrial++;
-            console.log(currentTrial)
             if (testing == 1) {
+              console.log(testingList)
               if (testingList.length != 0) {
-                  NextFeedTrialLTM();
-                  return;
+                $('#showTrial').hide();
+                NextFeedTrialLTM();
+              } else {
+                if (currentTrial >= numTrialsPerPart[1]) { //if last trial
+                    Survey1();
+                    return;
+                }
+                numCD = 0;
+                nextTrialStart = 1;
+                block++;
+                testing = 0;
+                testingList = [];
+                currentFeedTrial = currentFeedTrialX;
+                alert("Starting Block " + block + " of " + totBlocks + ".");
+                ShowTrial(r_totalTrials[currentPart][currentTrial]);
+                return;
               }
-              if (currentTrial == numTrialsPerPart[1]) { //if last trial
-                  Survey1();
-                  return;
-              }
-              numCD = 0;
-              nextTrialStart = 1;
-              block++;
-              testing = 0;
-              testingList = [];
-              currentFeedTrial = currentFeedTrialX;
-              alert("Starting Block " + block + " of " + totBlocks + ".");
-              ShowTrial(r_totalTrials[currentPart][currentTrial]);
-              return;
-            }
-            if (nextTrialStart == 0) { // if not first trial
+            } else if (nextTrialStart == 0) { // if not first trial
+                currentTrial++;
                 if (currentTrial >= numTrialsPerPart[currentPart] && currentPart == 0) { // if end of practice
                     // alert("You will now see previously displayed objects again, one at a time. Please move your mouse around the color wheel to adjust the color of the object until it matches its original color (please be as precise as possible). Then click to lock in your response.\n\nPress [ENTER] to continue.");
                     $('#showTrial').hide();
@@ -611,6 +610,8 @@ https://www.mturk.com/mturk/externalSubmit
                         testingList.push(block * trialsPerBlock - trialsPerBlock + k);
                       }
                     }
+                    testingList = chance1.shuffle(testingList);
+                    console.log(testingList)
 
                     // open pop-up:
                     modalClosed = false;
@@ -628,10 +629,17 @@ https://www.mturk.com/mturk/externalSubmit
                       }
                     }
                     return;
+                } else {
+                  console.log(currentTrial)
+                  nextTrialStart = 0;
+                  ShowTrial(r_totalTrials[currentPart][currentTrial]);
                 }
+            } else {
+              currentTrial++;
+              console.log(currentTrial)
+              nextTrialStart = 0;
+              ShowTrial(r_totalTrials[currentPart][currentTrial]);
             }
-            nextTrialStart = 0;
-            ShowTrial(r_totalTrials[currentPart][currentTrial]);
         }
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
@@ -738,6 +746,9 @@ https://www.mturk.com/mturk/externalSubmit
                 // ringctxB.clearRect(0,0,600,600);
             }
             mouseInit = mouseX;
+
+            imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemT_id)[0].src;
+
             ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
             mouseMoved = 0;
         }
@@ -763,6 +774,7 @@ https://www.mturk.com/mturk/externalSubmit
             }
 
             mouseInit = mouseX;
+            imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial].itemT_id)[0].src;
             ShowContinuousReport(r_totalTrials[currentPart][currentFeedTrial]);
             mouseMoved = 0;
         }
@@ -794,28 +806,15 @@ https://www.mturk.com/mturk/externalSubmit
                             imgNum = Math.round(wrap([angleDeg - randrotate]));
                             startingColor = imgNum;
                             mouseMoved = 1;
-                            // if (repeat == 0) {
-                            // if (left_or_right == 1) {
                             start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imgA, itemA);
-                            mouseMoved = 1;
                         }, 400);
                     }
                 } else {
                     imgNum = Math.round(wrap([angleDeg - randrotate]));
                     start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imgA, itemA);
                 }
-                // } else {
-                //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
-                // }
-                // } else if (repeat == 1) {
-                //   start(ctx2,imgNum,50, 50,imgWidth,imgHeight,flip,imgPop);
-                // }
-
                 if (survey == 1 && repeat == 0) {
                     imgA.src = $('#999')[0].src;
-                    // imgB.src = $('#999')[0].src;
-                    // Draw fixed 45 degree highlight
-                    // if (left_or_right == 1) {
                     ctx2a.beginPath();
                     ctx2a.arc(centerX, centerY, radius, curAngle + 180 + Math.PI * 4, curAngle, 1);
                     ctx2a.lineWidth = 50;
@@ -909,22 +908,10 @@ https://www.mturk.com/mturk/externalSubmit
                 if ((currentFeedTrial % trialsPerBlock) == 0) { // needed special code for first item of test phase showing as grayscale, no idea why
                     if (tempVar) {
                         setTimeout(function() {
-                            // if (left_or_right == 1) {
                             ctx2a.onload = function() {
                                 start(ctx2a, 'gray', 200, 200, imgWidth, imgHeight, flip, imgA, itemA); //set starting color as grayscale
                             }
                             start(ctx2a, 'gray', 200, 200, imgWidth, imgHeight, flip, imgA, itemA);
-                            //   start(ctx2a,'gray',175, 175, imgWidth, imgHeight, flip, imgA, itemA);
-                            //   ctx2b.onload = function() {
-                            //     start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB); //set starting color as grayscale
-                            //   }
-                            //   start(ctx2b,trialStruct.itemB,50, 50, imgWidth, imgHeight, 0, imgB, itemB);
-                            // } else {
-                            // ctx2b.onload = function() {
-                            //   start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB); //set starting color as grayscale
-                            // }
-                            // start(ctx2b,'gray',50, 50, imgWidth, imgHeight, flip, imgB, itemB);
-                            // }
                         }, 150);
                         tempVar = false;
                     }
@@ -1298,14 +1285,7 @@ https://www.mturk.com/mturk/externalSubmit
                                 });
                             }, 500); // why do I need a timeout function here? i have no idea
                         } else {
-                            $('#showTrial').show();
-                            if (repeat == 1) {
-                                imgPop.src = $('#' + trialStruct.itemT_id)[0].src;
-                                numRepeats++;
-                            } else if (currentFeedTrial < numTrialsPerPart[1] - 1) {
-                                imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial + 1].itemT_id)[0].src;
-                                // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
-                            } else if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
+                            if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
                                 /* this is to prepare the gray square in explicit test */
                                 imgA.src = $('#999')[0].src;
                                 // imgB.src = $('#999')[0].src;
@@ -1430,13 +1410,7 @@ https://www.mturk.com/mturk/externalSubmit
                         }, 500); // why do I need a timeout function here? i have no idea
                     } else {
                         $('#showTrial').show();
-                        if (repeat == 1) {
-                            imgPop.src = $('#' + trialStruct.itemT_id)[0].src;
-                            numRepeats++;
-                        } else if (currentFeedTrial < numTrialsPerPart[1] - 1) {
-                            imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial + 1].itemT_id)[0].src;
-                            // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
-                        } else if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
+                        if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
                             /* this is to prepare the gray square in explicit test */
                             imgA.src = $('#999')[0].src;
                             // imgB.src = $('#999')[0].src;
@@ -1504,6 +1478,7 @@ https://www.mturk.com/mturk/externalSubmit
           $('#itemA_abs').hide();
           $('#itemB_abs').hide();
           $('#Mask').hide();
+          $('#showTrial').show();
           $('#allItems').css('margin-top', 0);
           $('#CDitem').show();
           if (CDtrial <= 2) { // 2 CD trials
@@ -1531,6 +1506,7 @@ https://www.mturk.com/mturk/externalSubmit
                 $('#itemA_abs').show();
                 $('#itemB_abs').show();
                 $('#Mask').show();
+                $('#showTrial').hide();
                 NextFeedTrialLTM();
               }
             }
