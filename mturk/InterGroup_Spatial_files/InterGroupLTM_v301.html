@@ -1501,6 +1501,9 @@ https://www.mturk.com/mturk/externalSubmit
         }
 
         function ChangeDetection() {
+          $('#itemA_abs').hide();
+          $('#itemB_abs').hide();
+          $('#Mask').hide();
           $('#allItems').css('margin-top', 0);
           $('#CDitem').show();
           if (CDtrial <= 2) { // 2 CD trials
@@ -1525,6 +1528,9 @@ https://www.mturk.com/mturk/externalSubmit
               } else {
                 CDtrial = 0;
                 $('#CDitem').hide();
+                $('#itemA_abs').show();
+                $('#itemB_abs').show();
+                $('#Mask').show();
                 NextFeedTrialLTM();
               }
             }

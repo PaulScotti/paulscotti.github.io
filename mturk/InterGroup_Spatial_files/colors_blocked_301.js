@@ -369,14 +369,13 @@ let colors = [
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
 				"TimingType45": repmat([800, 2800], numTrialsPerPart[2]/4),
 				"TimingType90": repmat([800, 2800], numTrialsPerPart[2]/4),
-				"WMorLTM": repmat([0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], numTrialsPerPart[2]/4), // assumes numTrialsPerPart[2] = 12 and numTrialsPerPart[1] = numTrialsPerPart[2]
+				"WMorLTM": repmat(chance1.shuffle([0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]), numTrialsPerPart[2]/4), // assumes numTrialsPerPart[2] = 12 and numTrialsPerPart[1] = numTrialsPerPart[2]
 				"imgType": [], "imgAcolor": [], "imgBcolor": [], "sign": []
 	};
 
 	dx.imgType = chance1.shuffle(repmat(45,numTrialsPerPart[1]/2).concat(repmat(90,numTrialsPerPart[1]/2)));
   dx.TimingType45 = chance1.shuffle(dx.TimingType45);
 	dx.TimingType90 = chance.shuffle(dx.TimingType90);
-	dx.WMorLTM = chance1.shuffle(dx.WMorLTM);
 
 	let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
 
