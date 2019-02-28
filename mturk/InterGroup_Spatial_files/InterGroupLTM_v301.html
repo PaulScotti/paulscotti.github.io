@@ -315,6 +315,8 @@ https://www.mturk.com/mturk/externalSubmit
         let flippedColors = _.clone(colors).reverse();
         flippedColors = flippedColors.concat(flippedColors.splice(0, 180)); // shift array 180
 
+        const average = arr => arr.reduce((sume, el) => sume + el, 0) / arr.length;
+
         let practiceTriTrials = [];
         let triTrials = [];
         let triTrialsTest = [];
@@ -386,6 +388,8 @@ https://www.mturk.com/mturk/externalSubmit
         let isiArray = [];
         let testing = 0;
         let testingList = [];
+        let proxyAcc_WM = [];
+        let proxyAcc_LTM = [];
 
         /* Randomize orderings */
         dx.pracimgA = chance1.shuffle(dx.pracimgA);
@@ -591,9 +595,27 @@ https://www.mturk.com/mturk/externalSubmit
                 testing = 0;
                 testingList = [];
                 currentFeedTrial = currentFeedTrialX;
-                alert("Starting Block " + block + " of " + totBlocks + ".");
-                ShowTrial(r_totalTrials[currentPart][currentTrial]);
-                return;
+
+                var text = "Starting Block " + block + " of " + totBlocks + ".";
+
+                // open pop-up:
+                modalClosed = false;
+                document.getElementById("openModal_text").innerHTML = text +
+                  '<br><br>Working Memory Accuracy for Block ' + parseInt(block-1) + ': ' + parseInt(average(proxyAcc_WM)*100) + '%' +
+                  '<br><br>Long-Term Memory Accuracy for Block ' + parseInt(block-1) + ': ' + parseInt(average(proxyAcc_LTM)*100) + '%';
+                window.location.href = '#openModal';
+                checkFlag3();
+
+                function checkFlag3() {
+                  if (modalClosed == false) {
+                    window.setTimeout(checkFlag3, 100); /* this checks the flag every 100 milliseconds*/
+                  } else {
+                    proxyAcc_WM = [];
+                    proxyAcc_LTM = [];
+                    ShowTrial(r_totalTrials[currentPart][currentTrial]);
+                    return; // need return; otherwise the ShowTrial below executes
+                  }
+                }
               }
             } else if (nextTrialStart == 0) { // if not first trial
                 currentTrial++;
@@ -710,12 +732,23 @@ https://www.mturk.com/mturk/externalSubmit
                     } else { //if last practice trial
                         currentFeedTrial = -1;
                         currentPart++;
-                        alert("Okay, time for the real experiment. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
                         points = 0;
                         currentTrial = -1;
-                        // imgX.src = $('#' + r_totalTrials[2][0].itemA)[0].src; /* preload first image of test phase */
-                        NextTrial();
-                        return;
+
+                        // open pop-up:
+                        modalClosed = false;
+                        document.getElementById("openModal_text").innerHTML = "Okay, time for the real experiment. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!";
+                        window.location.href = '#openModal';
+                        checkFlag4();
+
+                        function checkFlag4() {
+                          if (modalClosed == false) {
+                            window.setTimeout(checkFlag4, 100); /* this checks the flag every 100 milliseconds*/
+                          } else {
+                            NextTrial();
+                            return; // need return; otherwise the ShowTrial below executes
+                          }
+                        }
                     }
                     //} else if (currentFeedTrial > 0 && currentFeedTrial % trialsPerBlock == 0 && currentPart == 1 && blockStart == 0) { //if last test trial in block
                     //currentPart = 1;
@@ -922,10 +955,8 @@ https://www.mturk.com/mturk/externalSubmit
                 if (survey == 1) {
                     explicitColor = flip == 0 ? Math.round(wrap([angleDeg - randrotate])) : Math.round(wrap([180 - wrap([angleDeg - randrotate])]));
                 } else if (currentPart > 0 && ((new Date()) - startTime) < 500) {
-                    if (currentFeedTrial % trialsPerBlock != 0) {
-                        alert('Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.');
-                    }
                     tooFast.push(1);
+                    alert("Please take your time when making responses! We will not be able to use your data if it is too noisy! Thanks.");
                 }
 
                 if (mouseMoved != 0) {
@@ -934,13 +965,28 @@ https://www.mturk.com/mturk/externalSubmit
                     trialStruct.rt = (new Date()) - startTime;
                     trialStruct.trialTimeStart = startTime;
                     trialStruct.col_diff = curError;
+
+                    if (dx.WMorLTM[currentFeedTrial] == 0) {
+                      if (curError > 45) {
+                        proxyAcc_WM.push(0);
+                      } else {
+                        proxyAcc_WM.push(1);
+                      }
+                    } else {
+                      if (curError > 45) {
+                        proxyAcc_LTM.push(0);
+                      } else {
+                        proxyAcc_LTM.push(1);
+                      }
+                    }
+
                     $(document).unbind('click.curTrial');
                     $(document).unbind('mousemove.curTrial');
                     $(document).unbind('mousedown.curTrial');
                     $(document).unbind('mouseup.curTrial');
                     $("#continuousReport").hide();
                     if (currentPart == 0 && currentFeedTrial == 0) {
-                        alert('Now highlight the smallest range of colors you think contains the correct color. To highlight, click and drag, starting from one end of the highlight to the other end of the highlight.')
+                        alert("Now highlight the smallest range of colors you think contains the correct color. To highlight, click and drag, starting from one end of the highlight to the other end of the highlight.");
                     }
                     if (survey == 0) {
                         ShowConfidence(trialStruct, angleDeg);
