@@ -177,9 +177,11 @@ https://www.mturk.com/mturk/externalSubmit
                 <canvas id="itemA" width=300 height=300></canvas></div>
             <div id='itemB_abs' style="position:absolute; top:150; left:300px;">
                 <canvas id="itemB" width=300 height=300></canvas></div>
-            <canvas id="CDitem" width=300 height=300></canvas>
-        </div><br><br>
-        <center><a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; ">Same</a>
+            <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
+        </div>
+        <br><br>
+        <center>
+            <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; ">Same</a>
             <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
             <div id="underText2">
                 <p>Did this square stay the same color or change to a different color?</p>
@@ -214,7 +216,7 @@ https://www.mturk.com/mturk/externalSubmit
     <!-- Modal Pop-up Box -->
     <div id="openModal" class="modalDialog">
       <div>
-        <a href="#close" onclick="requestFullScreen();modalContinue();" title="Close" class="close">X</a>
+        <a href="#close" onclick="modalContinue();" title="Close" class="close">X</a>
         <p id="openModal_text">Hi!</p>
       </div>
     </div>
@@ -293,7 +295,6 @@ https://www.mturk.com/mturk/externalSubmit
         const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
         /* Options: */
-        const totalRepeats = 0; // 30 need be factor of r_TrialType.length (in this case it's 5)
         const numTrialsPerPart = [2, 276, 276]; // [5, 280, 280] prac, study, test (should = study);
         let block = 1;
         const trialsPerBlock = 12;
@@ -413,13 +414,15 @@ https://www.mturk.com/mturk/externalSubmit
         imgCD.src = $('#diff1')[0].src;
         let CDfix = new Image();
         CDfix.crossOrigin = "anonymous";
-        CDfix.src = $('#CDfixation')[0].src; //lowercase CDfixation refers to the actual image, CDFixation refers to the class
+        CDfix.src = $('#CDfix')[0].src;
         let imgCDtest = new Image();
         imgCDtest.crossOrigin = "anonymous";
-        imgCDtest.src = $('#diff2')[0].src;
+        imgCDtest.src = $('#diff1t')[0].src;
         let Mask = new Image();
         Mask.crossOrigin = "anonymous";
         Mask.src = $('#MaskImg')[0].src
+
+        $('#CDitem').hide();
 
         /* Setting up canvas contexts */
         const itemA = document.getElementById("itemA");
@@ -439,7 +442,6 @@ https://www.mturk.com/mturk/externalSubmit
         // const ringItemB = document.getElementById("ringItemB");
         // const ringctxB = ringItemB.getContext("2d");
         const CDitem = document.getElementById("CDitem");
-        const cdctx = CDitem.getContext("2d");
 
         imgX.src = $('#' + dx.pracimgA[0])[0].src;
         // imgPop.src = $('#' + dx.repeatimg[numRepeats])[0].src;
@@ -577,7 +579,6 @@ https://www.mturk.com/mturk/externalSubmit
             currentTrial++;
             console.log(currentTrial)
             if (testing == 1) {
-              $('#showTrial').hide();
               if (testingList.length != 0) {
                   NextFeedTrialLTM();
                   return;
@@ -604,7 +605,6 @@ https://www.mturk.com/mturk/externalSubmit
                     NextFeedTrial(); /* Start continuous color report trials */
                     return; // need return; otherwise the ShowTrial below executes
                 } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) { //if end of a test block
-                    $('#showTrial').hide();
                     testing = 1;
                     for (let k = 0; k < trialsPerBlock; k += 1) {
                       if (dx.WMorLTM[block * trialsPerBlock - trialsPerBlock + k] == 1) {
@@ -1502,6 +1502,7 @@ https://www.mturk.com/mturk/externalSubmit
 
         function ChangeDetection() {
           $('#allItems').css('margin-top', 0);
+          $('#CDitem').show();
           if (CDtrial <= 2) { // 2 CD trials
             ChangeDetectionTrial();
           } else {
@@ -1523,6 +1524,7 @@ https://www.mturk.com/mturk/externalSubmit
                 window.setTimeout(checkFlagCD, 100); /* this checks the flag every 100 milliseconds*/
               } else {
                 CDtrial = 0;
+                $('#CDitem').hide();
                 NextFeedTrialLTM();
               }
             }
@@ -1534,11 +1536,9 @@ https://www.mturk.com/mturk/externalSubmit
           if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
             imgCD.src = $('#same' + (curCD % 25 + 1))[0].src; // memory array
             imgCDtest.src = $('#same' + (curCD % 25 + 1) + 't')[0].src; // test array
-            CDType.push(0); // record what type of CD trial this was
           } else { //diff
             imgCD.src = $('#diff' + (curCD % 25 + 1))[0].src;
             imgCDtest.src = $('#diff' + (curCD % 25 + 1) + 't')[0].src;
-            CDType.push(1);
           }
           CDtrial++;
 
