@@ -179,8 +179,8 @@ https://www.mturk.com/mturk/externalSubmit
                 <canvas id="itemB" width=300 height=300></canvas></div>
             <canvas id="CDitem" width=300 height=300></canvas>
         </div><br><br>
-        <center><a href="javascript:void(0);" onclick="SamePress();ChangeDetection();" id="SameButton" style="display: hidden; ">Same</a>
-            <a href="javascript:void(0);" onclick="DiffPress();ChangeDetection();" id="DiffButton" style="display: hidden;">Different</a>
+        <center><a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; ">Same</a>
+            <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
             <div id="underText2">
                 <p>Did this square stay the same color or change to a different color?</p>
             </div>
@@ -209,6 +209,14 @@ https://www.mturk.com/mturk/externalSubmit
         <div id="feedbackReportedText">Your response:</div><canvas id="feedbackReportedTri" width=300 height=300></canvas>
         <div id="feedbackCorrectText">Correct response:</div><canvas id="feedbackCorrectTri" width=295 height=300></canvas>
         <div id="feedbackError">Your error was: 10 deg (aim for less than 50 degrees!).<br>Click to continue.</div>
+    </div>
+
+    <!-- Modal Pop-up Box -->
+    <div id="openModal" class="modalDialog">
+      <div>
+        <a href="#close" onclick="requestFullScreen();modalContinue();" title="Close" class="close">X</a>
+        <p id="openModal_text">Hi!</p>
+      </div>
     </div>
 
     <form id="survey1" style="display: none;">
@@ -294,6 +302,7 @@ https://www.mturk.com/mturk/externalSubmit
     <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked_301.js"> </script>
 
     <script>
+        let modalClosed = false;
         let imgNum = 0;
         let isiTime = -999;
         const imgWidth = 200;
@@ -360,6 +369,8 @@ https://www.mturk.com/mturk/externalSubmit
         let blockStart = 0;
         let numCD = 0;
         let CDtrial = 0;
+        let curCD = 0;
+        let CDaccuracy = [];
         let sameTally = -1;
         let diffTally = -1;
         let tooFast = [];
@@ -600,7 +611,22 @@ https://www.mturk.com/mturk/externalSubmit
                         testingList.push(block * trialsPerBlock - trialsPerBlock + k);
                       }
                     }
-                    ChangeDetection();
+
+                    // open pop-up:
+                    modalClosed = false;
+                    document.getElementById("openModal_text").innerHTML =
+                      'Before we test your memory for the remaining objects in the block, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
+                    window.location.href = '#openModal';
+                    checkFlag2();
+
+                    function checkFlag2() {
+                      if (modalClosed == false) {
+                        window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
+                      } else {
+                        ChangeDetection(); // start Practice Phase
+                        return; // need return; otherwise the ShowTrial below executes
+                      }
+                    }
                     return;
                 }
             }
@@ -1488,7 +1514,7 @@ https://www.mturk.com/mturk/externalSubmit
             // open pop-up:
             modalClosed = false;
             document.getElementById("openModal_text").innerHTML =
-              'Before we test your memory for the remaining images, we will do a short change-detection test. You will see images one at a time and be asked if you have seen the exact same image before. If so, press the <i>old</i> button. If you have not seen the image before, press the <i>new</i> button.';
+              'Good job! Now back to testing your color memory for the remaining objects in the block.';
             window.location.href = '#openModal';
             checkFlagCD();
 
@@ -1496,6 +1522,7 @@ https://www.mturk.com/mturk/externalSubmit
               if (modalClosed == false) {
                 window.setTimeout(checkFlagCD, 100); /* this checks the flag every 100 milliseconds*/
               } else {
+                CDtrial = 0;
                 NextFeedTrialLTM();
               }
             }
@@ -1527,6 +1554,57 @@ https://www.mturk.com/mturk/externalSubmit
               }, 900);
             }, 500);
           }, 800);
+        }
+
+
+        // Responses for Change Detection
+        function SamePress() {
+          if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
+            CDaccuracy.push(1);
+
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Correct! Keep going!';
+            window.location.href = '#openModal';
+
+            checkFlag5();
+
+          } else if ([1].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // diff
+            CDaccuracy.push(0);
+
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Incorrect...';
+            window.location.href = '#openModal';
+
+            checkFlag5();
+          }
+        }
+
+        function DiffPress() {
+          if ([1].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // diff
+            CDaccuracy.push(1);
+
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Correct! Keep going!';
+            window.location.href = '#openModal';
+
+            checkFlag5();
+          } else if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
+            CDaccuracy.push(0);
+
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Incorrect...';
+            window.location.href = '#openModal';
+
+            checkFlag5();
+          }
         }
 
         function Survey1() {
@@ -1646,6 +1724,21 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
             context.putImageData(imgData, initX, initY);
+        }
+
+        function modalContinue() {
+          modalClosed = true;
+        }
+
+        function checkFlag5() {
+          if (modalClosed == false) {
+            window.setTimeout(checkFlag5, 100); /* this checks the flag every 100 milliseconds*/
+          } else {
+            $('#SameButton').hide();
+            $('#DiffButton').hide();
+            curCD++;
+            ChangeDetection()
+          }
         }
 
         /* Make sure number is between 0 and 360: */

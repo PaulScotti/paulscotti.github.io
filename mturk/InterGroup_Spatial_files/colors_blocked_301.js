@@ -377,6 +377,9 @@ let colors = [
   dx.TimingType45 = chance1.shuffle(dx.TimingType45);
 	dx.TimingType90 = chance.shuffle(dx.TimingType90);
 	dx.WMorLTM = chance1.shuffle(dx.WMorLTM);
+
+	let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
+
 	// const tempRand = _.clone(dx.trialtype);
 	// dx.trialtype = [];
 
@@ -417,12 +420,16 @@ let colors = [
 			return result;
 	}
 
-/*
-TrialType is for test objects
-r_TrialType is for the repeat-detection objects
-rep_TrialType is the seeds used for repeated objects
-r_repeattrial determines what trial to repeat on
-repeatimg are the IDs for the repeated images
-r_study are the presented objects that will be tested
-colors is for CIE LAB RGB conversions
-*/
+	function perm_concat(array1, array2) {
+	  let result = [];
+	  for (let i = 0; i < array1.length; i++) {
+	    for (let j = 0; j < array2.length; j++) {
+	      if (array1[i] < 10) {
+	        result = result.concat('0' + array1[i].toString() + '_' + array2[j].toString());
+	      } else {
+	        result = result.concat(array1[i].toString() + '_' + array2[j].toString());
+	      }
+	    }
+	  }
+	  return result;
+	}
