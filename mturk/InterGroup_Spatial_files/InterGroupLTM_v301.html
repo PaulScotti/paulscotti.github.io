@@ -295,7 +295,7 @@ https://www.mturk.com/mturk/externalSubmit
         const chance1 = Chance(WORKERID); // Use their ID as the shuffle seed, so you can trace back their trials
 
         /* Options: */
-        const numTrialsPerPart = [2, 276, 276]; // [5, 280, 280] prac, study, test (should = study);
+        const numTrialsPerPart = [5, 276, 276]; // [5, 280, 280] prac, study, test (should = study);
         let block = 1;
         const trialsPerBlock = 12;
         const totBlocks = numTrialsPerPart[1] / trialsPerBlock;
