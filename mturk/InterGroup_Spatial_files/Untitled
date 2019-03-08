@@ -1,6 +1,0 @@
-target += log(
-pSwap*exp(von_mises_lpdf(coldiff[n] | 3.14/2, kappa)) +
-pSwapC*exp(von_mises_lpdf(coldiff[n] | -3.14/2, kappa)) +
-pGuess*exp(uniform_lpdf(coldiff[n] | -3.14, 3.14)) +
-pTarget*exp(von_mises_lpdf(coldiff[n] | mu, kappa))
-)
