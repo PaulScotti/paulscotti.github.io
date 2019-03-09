@@ -3,8 +3,8 @@ body {
 }
 
 .sizeimg{
-width:300px;
-height:300px;
+width:250px;
+height:250px;
 cursor:pointer;
 }
 .selected{border:solid 2px black; margin:10px;}
