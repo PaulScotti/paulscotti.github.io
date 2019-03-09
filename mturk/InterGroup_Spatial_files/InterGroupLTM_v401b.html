@@ -180,7 +180,8 @@ https://www.mturk.com/mturk/externalSubmit
         </div>
         <div id="sizeItems">
             <img class="sizeimg" id="size1" src="https://paulscotti.github.io/mturk/sizestim/small001.png" style="position:absolute; top:0px; left:175px;"></img>
-            <img class="sizeimg" id="size2" src="https://paulscotti.github.io/mturk/sizestim/big001.png" style="position:absolute; bottom:0px; left:175px;"></img>
+            <img class="sizeimg" id="size2" src="https://paulscotti.github.io/mturk/sizestim/big002.png" style="position:absolute; bottom:0px; left:0px;"></img>
+            <img class="sizeimg" id="size3" src="https://paulscotti.github.io/mturk/sizestim/big003.png" style="position:absolute; bottom:0px; right:0px;"></img>
         </div>
     </div>
 
@@ -577,13 +578,15 @@ https://www.mturk.com/mturk/externalSubmit
 
             SizeDetermine = Math.round(chance1.random());
             sizenums = [Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200) + 1];
-            sizeorder = chance1.shuffle([1,2]);
+            sizeorder = chance1.shuffle([1,2,3]);
             if (SizeDetermine == 0) { // small is outlier
               $('#size' + sizeorder[0]).attr('src', $('#small' + leading(sizenums[0]))[0].src);
               $('#size' + sizeorder[1]).attr('src', $('#big' + leading(sizenums[1]))[0].src);
+              $('#size' + sizeorder[2]).attr('src', $('#big' + leading(sizenums[2]))[0].src);
             } else { // big is outlier
               $('#size' + sizeorder[0]).attr('src', $('#big' + leading(sizenums[0]))[0].src);
               $('#size' + sizeorder[1]).attr('src', $('#small' + leading(sizenums[1]))[0].src);
+              $('#size' + sizeorder[2]).attr('src', $('#small' + leading(sizenums[2]))[0].src);
             }
 
             nextTrialStart = 0;
