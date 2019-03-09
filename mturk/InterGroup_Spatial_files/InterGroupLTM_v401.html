@@ -179,9 +179,9 @@ https://www.mturk.com/mturk/externalSubmit
                 <canvas id="itemB" width=300 height=300></canvas></div>
         </div>
         <div id="sizeItems">
-            <img id="size1" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small001.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
-            <img id="size2" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small002.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
-            <img id="size3" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small003.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
+            <img id="size1" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small001.png" width=300 height=300 style="position:absolute; top:0px; left:150px;"></img>
+            <img id="size2" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small002.png" width=300 height=300 style="position:absolute; bottom:0px; left:0px;"></img>
+            <img id="size3" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small003.png" width=300 height=300 style="position:absolute; bottom:0px; right:0px;"></img>
         </div>
     </div>
 
@@ -1354,10 +1354,9 @@ https://www.mturk.com/mturk/externalSubmit
           $('#Mask').hide();
           $('#sizeItems').css('margin-top', 0);
 
-          $('#Size1').attr('src', CDfix.src);
-          $('#Size2').attr('src', CDfix.src);
-          $('#Size3').attr('src', CDfix.src);
-
+          // $('#Size1').attr('src', CDfix.src);
+          // $('#Size2').attr('src', CDfix.src);
+          // $('#Size3').attr('src', CDfix.src);
         }
 
         function sizeClick() {
