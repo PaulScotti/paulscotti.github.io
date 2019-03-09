@@ -178,6 +178,11 @@ https://www.mturk.com/mturk/externalSubmit
             <div id='itemB_abs' style="position:absolute; top:150; left:300px;">
                 <canvas id="itemB" width=300 height=300></canvas></div>
         </div>
+        <div id="sizeItems">
+            <img id="size1" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small001.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
+            <img id="size2" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small002.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
+            <img id="size3" onclick="sizeClick()" src="https://paulscotti.github.io/mturk/sizestim/small003.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
+        </div>
     </div>
 
     <!-- Structure for continuous report after the trial: -->
@@ -288,7 +293,7 @@ https://www.mturk.com/mturk/externalSubmit
 
     <script>
         let imgNum = 0;
-        let isiTime = -999;
+        let isiTime = 2800;
         const imgWidth = 200;
         const imgHeight = 200;
         const displayTime = 1000;
@@ -378,6 +383,10 @@ https://www.mturk.com/mturk/externalSubmit
         imgX.crossOrigin = "anonymous";
         let imgPop = new Image();
         imgPop.crossOrigin = "anonymous";
+
+        let Mask = new Image();
+        Mask.crossOrigin = "anonymous";
+        Mask.src = $('#MaskImg')[0].src
 
         /* Setup ring image */
         let ringImg = new Image();
@@ -571,20 +580,6 @@ https://www.mturk.com/mturk/externalSubmit
             imgA.src = $('#' + trialStruct.itemA_id)[0].src;
             imgB.src = $('#' + trialStruct.itemB_id)[0].src;
 
-            if (currentPart == 1) {
-              if (Math.abs(wrapDiff(trialStruct.itemA_col,trialStruct.itemB_col)) == 45) {
-                isiTime = trialStruct.isiTrial;
-                num45++;
-                isiArray.push(trialStruct.isiTrial);
-              } else if (Math.abs(wrapDiff(trialStruct.itemA_col,trialStruct.itemB_col)) == 90) {
-                isiTime = trialStruct.isiTrial;
-                num90++;
-                isiArray.push(trialStruct.isiTrial);
-              }
-            } else {
-              isiTime = 1800;
-            }
-
             $('#allItems').css('margin-top', -1000);
             $('#showTrial').show();
             setTimeout(function() {
@@ -600,10 +595,16 @@ https://www.mturk.com/mturk/externalSubmit
                     ctxB.drawImage(Mask, 50, 50, imgWidth, imgHeight);
                     setTimeout(function() {
                         $('#allItems').css('margin-top', -1000);
-                        setTimeout(function() {
-                            $('#showTrial').hide();
-                            NextFeedTrial();
-                        }, isiTime);
+                        if (trialStruct.SizeOrNot == 0) { // no filler
+                          setTimeout(function() {
+                              $('#showTrial').hide();
+                              NextFeedTrial();
+                          }, isiTime); // default 2800 ms
+                        } else { // size distractor task
+                          setTimeout(function() {
+                              SizeComparison();
+                          }, 800); // because 2000 ms size task
+                        }
                     }, maskTime);
                 }, displayTime);
             }, 500);
@@ -1347,6 +1348,23 @@ https://www.mturk.com/mturk/externalSubmit
             });
         }
 
+        function SizeComparison() {
+          $('#itemA_abs').hide();
+          $('#itemB_abs').hide();
+          $('#Mask').hide();
+          $('#sizeItems').css('margin-top', 0);
+
+          $('#Size1').attr('src', CDfix.src);
+          $('#Size2').attr('src', CDfix.src);
+          $('#Size3').attr('src', CDfix.src);
+
+        }
+
+        function sizeClick() {
+          $('.selected').removeClass('selected'); // removes the previous selected class
+          $(this).addClass('selected'); // adds the class to the clicked image
+        }
+
         function Survey() {
             if (document.getElementById("surveyresponseRand").checked) {
                 radioResp = 1;
@@ -1554,27 +1572,20 @@ https://www.mturk.com/mturk/externalSubmit
             return wrap(degree);
         }
 
-        function ImagesReady() { // check that all images are loaded before starting expt
-            setTimeout(function() { // dont start the check at the same time as the document is loading
-                var totImages = 0;
-                var readyLoad = 0;
-                while (readyLoad == 0) {
-                    for (let k = 101; k < 700; k++) {
-                        if ($('#' + k)[0] != null) {
-                            if ($('#' + k)[0].complete) {
-                                totImages++;
-                            }
-                        }
-                    }
-                    if (totImages >= 599) {
-                        readyLoad = 1;
-                    } else {
-                        totImages = 0;
-                    }
-                }
-                $('#loading').hide();
-                $('a#TextButton').show();
-            }, 3000);
+        function ImagesReady() {
+          for (var i = 101; i < 700; i++) {
+              if (!$('#' + i)[0].complete) {
+                  var percentage = i * 100.0 / (700);
+                  percentage = percentage.toFixed(0).toString() + ' %';
+
+                  document.getElementById("loading").innerHTML =
+                    'Loading images ... ' + percentage + '<br>If more than a minute elapses, try refreshing page.';
+                  setTimeout('ImagesReady()', 20);
+                  return;
+              }
+          }
+          $('#loading').hide();
+          $('a#TextButton').show();
         };
 
         function isIE() {
