@@ -73,7 +73,7 @@
                 <p>Please do not disable the creation of text dialogs as these will be used to relay instructions.</p>
             </b></center>
         <br>
-        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (1 of 5)</a></p>
+        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (1 of 6)</a></p>
     </div>
 
     <div id="instructions2" style="display:none">
@@ -81,12 +81,15 @@
             <p>In this HIT, you will memorize the colors of a variety of objects and subsequently be tested on them.</p>
         </center>
 
-        <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_top2.png" width="650px"></p>
+        <p align="center"><img src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/trial_procedure_InterGroup_401.png" width="650px"></p>
 
         <p>Two objects will be displayed for one second, followed by an irrelevant mask and a short delay. You will then be asked to recreate the original color of one of the objects.</p>
 
+        <p>Sometimes the short delay will be replaced by a size comparison task. Click on the larger object (according to real-world size) by clicking the larger object with your mouse. You will have exactly two seconds to
+        figure out which object is larger and then click on the object.</p>
+
         <br>
-        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions2').hide();$('#instructions3').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (2 of 5)</a></p>
+        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions2').hide();$('#instructions3').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (2 of 6)</a></p>
     </div>
 
     <div id="instructions3" style="display:none">
@@ -103,15 +106,28 @@
             <p>After you have selected your best guess, you will be asked to highlight the smallest range of colors you think could contain the original object's color (highlighting shown as black border). If you were very certain about your answer
                 then you would highlight a small range of colors, and if you were completely guessing then you would highlight the entirety of the color wheel.</p>
 
-            <p><strong>Every trial has the potential for you to earn two bonus cents. Specifically, one cent is awarded based on how close your best guess is to the correct color. Another cent is awarded based on how small your highlighted regions
-                    is: a smaller highlighted region earns more but only if the highlighting encompasses the correct color.</strong> This means that you will often be earning fractions of cents on every trial, but this can add up!</p>
-
             <br>
-            <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (3 of 5)</a></p>
+            <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next (3 of 6)</a></p>
     </div>
 
     <div id="instructions4" style="display:none">
         <center>
+          <h3> Bonus Payments: </h3>
+
+          <p><strong>Every trial has the potential for you to earn two bonus cents. Specifically, one cent is awarded based on how close your best guess is to the correct color. Another cent is awarded based on how small your highlighted region
+                  is: a smaller highlighted region earns more but only if the highlighting encompasses the correct color.</strong> On trials with the size-comparison task, an incorrect response or the lack of any response will halve your bonus for that trial.</p>
+
+          <p>You will often be earning fractions of cents on every trial, but this definitely adds up!</p>
+
+        <br>
+        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('#instructions5').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
+                (4 of 6)</a></p>
+    </div>
+
+    <div id="instructions5" style="display:none">
+        <center>
+            <h3> Color Calibration: </h3>
+
             <p>Performing well in this HIT is much, much easier if your monitor is well-lit and adjusted for our range of colors. Below is an example color wheel. Please adjust the brightness/color settings of your monitor to best view the below
                 color spectrum.</p>
         </center>
@@ -123,11 +139,11 @@
         <p align="center"><img src="https://paulscotti.github.io/mturk/color_compare.png"></p>
 
         <br>
-        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();$('#instructions5').show();$('a#TextButton').hide();ImagesReady();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
-                (4 of 5)</a></p>
+        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions5').hide();$('#instructions6').show();$('a#TextButton').hide();ImagesReady();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
+                (5 of 6)</a></p>
     </div>
 
-    <div id="instructions5" style="display:none">
+    <div id="instructions6" style="display:none">
         <center>
             <p>The entire HIT includes 280 trials and takes approximately 1 hour to complete.</p>
 
@@ -139,7 +155,7 @@
         <p><strong>To start off with, we'll give you a few practice trials</strong>. During practice, you will see two colored objects at a time. Remember to memorize the colors associated with each object. You will then be asked to report the
             original color of one of the objects. Please take your time to respond as accurately as possible. The hour time estimate assumes a patient worker who takes their time for every reponse!</p>
 
-        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions5').hide();StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Start Experiment</a></p>
+        <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions6').hide();StartExperiment();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Start Experiment</a></p>
         <center>
             <p id=loading>Images loading... Please wait a minute or refresh the page.</p>
     </div>
@@ -367,10 +383,10 @@ https://www.mturk.com/mturk/externalSubmit
         let num90 = 0;
         let isiArray = [];
         let SizeOrNotPrac = [0,1,0,1,1];
-        let SizeDetermine = 0; //0 for small is outlier, 1 for big is outlier
+        let BigTopOrBottom = 0; //0 for small is outlier, 1 for big is outlier
         let sizenums = [];
         let sizeorder = [];
-        let sizeresp = [];
+        let sizeacc = [];
 
         /* Randomize orderings */
         dx.pracimgA = chance1.shuffle(dx.pracimgA);
@@ -575,15 +591,14 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
 
-            SizeDetermine = Math.round(chance1.random());
-            sizenums = [Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200) + 1];
-            sizeorder = chance1.shuffle([1,2]);
-            if (SizeDetermine == 0) { // small is outlier
-              $('#size' + sizeorder[0]).attr('src', $('#small' + leading(sizenums[0]))[0].src);
-              $('#size' + sizeorder[1]).attr('src', $('#big' + leading(sizenums[1]))[0].src);
-            } else { // big is outlier
-              $('#size' + sizeorder[0]).attr('src', $('#big' + leading(sizenums[0]))[0].src);
-              $('#size' + sizeorder[1]).attr('src', $('#small' + leading(sizenums[1]))[0].src);
+            BigTopOrBottom = Math.round(chance1.random());
+            sizenums = [Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200)];
+            if (BigTopOrBottom == 0) { // large on top = 0
+              $('#size1').attr('src', $('#big' + leading(sizenums[0]))[0].src);
+              $('#size2').attr('src', $('#small' + leading(sizenums[1]))[0].src);
+            } else { // big is on bottom = 1
+              $('#size1').attr('src', $('#small' + leading(sizenums[0]))[0].src);
+              $('#size2').attr('src', $('#big' + leading(sizenums[1]))[0].src);
             }
 
             nextTrialStart = 0;
@@ -614,17 +629,21 @@ https://www.mturk.com/mturk/externalSubmit
                     setTimeout(function() {
                         $('#allItems').css('margin-top', -1000);
                         if (trialStruct.SizeOrNot == 0) { // no filler
-                          console.log('no size');
                           setTimeout(function() {
                               $('#showTrial').hide();
-                              sizeresp.push(-999); // input something for sizeresp
+                              sizeacc.push(-999); // input something for sizeacc
                               NextFeedTrial();
                           }, isiTime); // default 2800 ms
                         } else { // size distractor task
-                          console.log('size');
                           setTimeout(function() {
                               SizeComparison();
                               setTimeout(function() {
+                                if ($('#size1').attr('class') == 'sizeimg selected') {
+                                  BigTopOrBottom==0 ? sizeacc.push(1) : sizeacc.push(0);
+                                } else if ($('#size2').attr('class') == 'sizeimg selected') {
+                                  BigTopOrBottom==1 ? sizeacc.push(1) : sizeacc.push(0);
+                                }
+                                console.log(sizeacc);
                                 $('.selected').removeClass('selected');
                                 $('#sizeItems').hide();
                                 $('#itemA_abs').show();
@@ -651,6 +670,7 @@ https://www.mturk.com/mturk/externalSubmit
                         return;
                     } else { //if last practice trial
                         currentFeedTrial = -1;
+                        sizeacc = [];
                         currentPart++;
                         alert("Okay, time for the real experiment. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
                         points = 0;
@@ -1313,8 +1333,9 @@ https://www.mturk.com/mturk/externalSubmit
                     }
 
                     pointsSum = pointsA + pointsB;
+                    if (sizeacc.slice(-1)==0) { pointsSum = pointsSum/2; } //bonus halved if incorrect filler
                     pointsSum = pointsSum.toFixed(2);
-                    points = points + (pointsSum * .01);
+                    points = points + (pointsSum * .01); //adding to total bonus amount
 
                     if (pointsSum >= 1.50) {
                         feedText = 'Amazing!<br>(+ ' + pointsSum + '&#x00A2)';
@@ -1388,8 +1409,6 @@ https://www.mturk.com/mturk/externalSubmit
             $('.selected').removeClass('selected'); // removes the previous selected class
             $(this).addClass('selected'); // adds the class to the clicked image
           });
-
-          sizeresp.push(this.id);
         }
 
         function Survey() {
