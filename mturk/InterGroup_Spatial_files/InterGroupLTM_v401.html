@@ -596,7 +596,7 @@ https://www.mturk.com/mturk/externalSubmit
             }
 
             BigTopOrBottom = Math.round(chance1.random());
-            sizenums = [Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 200)];
+            sizenums = [Math.floor(Math.random() * 200) + 1, Math.floor(Math.random() * 200) + 1];
             if (BigTopOrBottom == 0) { // large on top = 0
               $('#size1').attr('src', $('#big' + leading(sizenums[0]))[0].src);
               $('#size2').attr('src', $('#small' + leading(sizenums[1]))[0].src);
@@ -647,7 +647,6 @@ https://www.mturk.com/mturk/externalSubmit
                                 } else if ($('#size2').attr('class') == 'sizeimg selected') {
                                   BigTopOrBottom==1 ? sizeacc.push(1) : sizeacc.push(0);
                                 }
-                                console.log(sizeacc);
                                 $('.selected').removeClass('selected');
                                 $('#sizeItems').hide();
                                 $('#itemA_abs').show();
