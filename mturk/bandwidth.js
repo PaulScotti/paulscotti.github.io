@@ -16,7 +16,7 @@ xhr.onreadystatechange = function () {
     // Also, calculate the file-size which has transferred
     fileSize = xhr.responseText.length;
 
-    // Calculate the connection-speed in kbps
+    // Calculate band_speed as global variable; the connection-speed in kbps
     band_speed = (fileSize * 8) / ((endTime - startedTime)/1000) / 1024;
 
   }
