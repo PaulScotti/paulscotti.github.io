@@ -369,10 +369,11 @@ let colors = [
 				"testimgB": counter(101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1],101+numTrialsPerPart[0]+numTrialsPerPart[0]+numTrialsPerPart[1]+numTrialsPerPart[1]-1),
 				"TimingType45": repmat([800, 2800], numTrialsPerPart[2]/4),
 				"TimingType90": repmat([800, 2800], numTrialsPerPart[2]/4),
-				"SizeOrNot": repmat([0, 1], numTrialsPerPart[2]/4),
+				"SizeOrNot": repmat([0, 1], numTrialsPerPart[2]/2),
 				"imgType": [], "imgAcolor": [], "imgBcolor": [], "sign": []
 	};
 
+	dx.SizeOrNot = chance1.shuffle(dx.SizeOrNot);
 	dx.imgType = chance1.shuffle(repmat(45,numTrialsPerPart[1]/2).concat(repmat(90,numTrialsPerPart[1]/2)));
   dx.TimingType45 = chance1.shuffle(dx.TimingType45);
 	dx.TimingType90 = chance.shuffle(dx.TimingType90);
