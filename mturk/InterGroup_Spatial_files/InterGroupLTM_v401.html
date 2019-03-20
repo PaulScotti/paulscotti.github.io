@@ -11,6 +11,7 @@
     <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
     <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jcanvas.min.js"></script>
     <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
+    <script src="https://paulscotti.github.io/mturk/bandwidth.js"></script>
     <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js"></script> <!-- Allows _clone -->
 
     <!-- load Firebase server javascript, we are using it for storage -->
@@ -611,11 +612,13 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
         function ShowTrial(trialStruct) {
-            start(ctxA, trialStruct.itemA_col, 50, 50, imgWidth, imgHeight, flip, imgA, itemA);
-            start(ctxB, trialStruct.itemB_col, 50, 50, imgWidth, imgHeight, flip, imgB, itemB);
+            console.log(trialStruct.itemA_id);
 
-            imgA.src = $('#' + trialStruct.itemA_id)[0].src;
-            imgB.src = $('#' + trialStruct.itemB_id)[0].src;
+            start(ctxA, trialStruct.itemA_col, 50, 50, imgWidth, imgHeight, flip, imageDic[trialStruct.itemA_id], itemA);
+            start(ctxB, trialStruct.itemB_col, 50, 50, imgWidth, imgHeight, flip, imageDic[trialStruct.itemB_id], itemB);
+
+            // imgA.src = $('#' + trialStruct.itemA_id)[0].src;
+            // imgB.src = $('#' + trialStruct.itemB_id)[0].src;
 
             $('#allItems').css('margin-top', -1000);
             $('#showTrial').show();
@@ -1554,16 +1557,8 @@ https://www.mturk.com/mturk/externalSubmit
                 deg = (deg < 0) ? deg + 360 : deg;
                 col = colors[deg];
             }
-            if (context == ctx3 || context == ctx4) {
-                context.drawImage(image, initX, initY, imgWidth, imgHeight);
-                recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), initX, initY, itemID);
-            } else {
-                image.onload = function() {
-                    context.drawImage(image, initX, initY, imgWidth, imgHeight);
-                    recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), initX, initY, itemID);
-                }
-                recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), initX, initY, itemID);
-            }
+            context.drawImage(image, initX, initY, imgWidth, imgHeight);
+            recolor(context, Math.round(col[0]), Math.round(col[1]), Math.round(col[2]), initX, initY, itemID);
         }
 
         function recolor(context, newR, newG, newB, initX, initY, itemID) {
@@ -1623,6 +1618,7 @@ https://www.mturk.com/mturk/externalSubmit
         }
 
         function ImagesReady() {
+          imageDic = [];
           for (var i = 101; i < 700; i++) {
               if (!$('#' + i)[0].complete) {
                   var percentage = i * 100.0 / (700);
@@ -1632,6 +1628,10 @@ https://www.mturk.com/mturk/externalSubmit
                     'Loading images ... ' + percentage + '<br>If more than a minute elapses, try refreshing page.';
                   setTimeout('ImagesReady()', 20);
                   return;
+              } else {
+                imageDic[i] = new Image();
+                imageDic[i].crossOrigin = "anonymous";
+                imageDic[i].src = $('#' + i)[0].src;
               }
           }
           $('#loading').hide();
