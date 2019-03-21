@@ -1276,7 +1276,7 @@ https://www.mturk.com/mturk/externalSubmit
                     }
 
                     pointsSum = pointsA + pointsB;
-                    if (sizeacc.slice(-1)==0) { pointsSum = pointsSum/2; } //bonus halved if incorrect filler
+                    if (sizeacc.slice(-1)==0 || sizeacc.slice(-1)==-666) { pointsSum = pointsSum/2; } //bonus halved if incorrect filler
                     pointsSum = pointsSum.toFixed(2);
                     points = points + (pointsSum * .01); //adding to total bonus amount
 
