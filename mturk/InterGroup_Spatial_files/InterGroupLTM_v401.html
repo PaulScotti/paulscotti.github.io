@@ -645,8 +645,6 @@ https://www.mturk.com/mturk/externalSubmit
 
         /* Basic trial structure: Wait for click; then show the stimuli for this trial; then delay for fixed ISI; then call ShowContinuousReport */
         function ShowTrial(trialStruct) {
-            console.log(trialStruct.itemA_id);
-
             start(ctxA, trialStruct.itemA_col, 50, 50, imgWidth, imgHeight, flip, imageDic[trialStruct.itemA_id], itemA);
             start(ctxB, trialStruct.itemB_col, 50, 50, imgWidth, imgHeight, flip, imageDic[trialStruct.itemB_id], itemB);
 
