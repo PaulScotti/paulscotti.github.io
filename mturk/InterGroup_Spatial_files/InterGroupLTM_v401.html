@@ -675,7 +675,6 @@ https://www.mturk.com/mturk/externalSubmit
                                   BigTopOrBottom==1 ? sizeacc.push(1) : sizeacc.push(0);
                                 } else {
                                   sizeacc.push(-666);
-                                  alert('You did not click an object, remember to click the larger object as quick as possible!');
                                 }
                                 $('.selected').removeClass('selected');
                                 $('#sizeItems').hide();
@@ -770,6 +769,9 @@ https://www.mturk.com/mturk/externalSubmit
             curError = 360;
             startTime = new Date();
             $("#continuousReport").show(); /* Refresh the page to update same context set to new img src */
+            if (sizeacc.slice(-1) == -666) {
+              alert('You did not click an object, remember to click the larger object as quick as possible!');
+            }
 
             $(document).bind('mousemove.curTrial', function(e) {
                 parentOffset = $('#continuousReport').offset();
