@@ -609,7 +609,6 @@ https://www.mturk.com/mturk/externalSubmit
 
                     // open pop-up:
                     modalClosed = false;
-                    requestFullScreen()
                     document.getElementById("openModal_text").innerHTML = text;
                     window.location.href = '#openModal';
                     checkFlag3();
@@ -676,6 +675,7 @@ https://www.mturk.com/mturk/externalSubmit
                                   BigTopOrBottom==1 ? sizeacc.push(1) : sizeacc.push(0);
                                 } else {
                                   sizeacc.push(-666);
+                                  alert('You did not click one of the object, remember to click the larger object as quick as possible!');
                                 }
                                 $('.selected').removeClass('selected');
                                 $('#sizeItems').hide();
@@ -709,8 +709,7 @@ https://www.mturk.com/mturk/externalSubmit
                         currentTrial = -1;
                         // open pop-up:
                         modalClosed = false;
-                        requestFullScreen()
-                        document.getElementById("openModal_text").innerHTML = "Okay, time for the real experiment. Please run this experiment in fullscreen if possible. Thank you and we wish you the best of luck!";
+                        document.getElementById("openModal_text").innerHTML = "Okay, time for the real experiment. Thank you and we wish you the best of luck!";
                         window.location.href = '#openModal';
                         checkFlag4();
 
@@ -1489,30 +1488,6 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
             context.putImageData(imgData, initX, initY);
-        }
-
-        function requestFullScreen() {
-
-          var el = document.body;
-
-          // Supports most browsers and their versions.
-          var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen ||
-            el.mozRequestFullScreen || el.msRequestFullScreen;
-
-          if (requestMethod) {
-
-            // Native full screen.
-            requestMethod.call(el);
-
-          } else if (typeof window.ActiveXObject !== "undefined") {
-
-            // Older IE.
-            var wscript = new ActiveXObject("WScript.Shell");
-
-            if (wscript !== null) {
-              wscript.SendKeys("{F11}");
-            }
-          }
         }
 
         function modalContinue() {
