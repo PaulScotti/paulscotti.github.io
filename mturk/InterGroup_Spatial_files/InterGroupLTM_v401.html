@@ -228,6 +228,14 @@ https://www.mturk.com/mturk/externalSubmit
         <div id="feedbackError">Your error was: 10 deg (aim for less than 50 degrees!).<br>Click to continue.</div>
     </div>
 
+    <!-- Modal Pop-up Box -->
+    <div id="openModal" class="modalDialog">
+      <div>
+        <a href="#close" onclick="modalContinue();" title="Close" class="close">X</a>
+        <p id="openModal_text">Hi!</p>
+      </div>
+    </div>
+
     <form id="survey1" style="display: none;">
         <center>
             <div id="doneText">
@@ -311,6 +319,7 @@ https://www.mturk.com/mturk/externalSubmit
     <script src="https://paulscotti.github.io/mturk/InterGroup_Spatial_files/colors_blocked.js"> </script>
 
     <script>
+        let modalClosed = false;
         let imgNum = 0;
         let isiTime = 2800;
         const imgWidth = 200;
@@ -399,8 +408,6 @@ https://www.mturk.com/mturk/externalSubmit
         dx.testimgB = chance1.shuffle(dx.testimgB);
 
         /* Setup reused image variable */
-        let imgA = new Image();
-        imgA.crossOrigin = "anonymous";
         let imgB = new Image();
         imgB.crossOrigin = "anonymous";
         let imgX = new Image();
@@ -585,13 +592,39 @@ https://www.mturk.com/mturk/externalSubmit
                 } else if (currentTrial % trialsPerBlock == 0 && currentPart == 1) { //if end of a test block
                     if (currentTrial == numTrialsPerPart[1]) { //if last trial
                         $('#showTrial').hide();
+                        // close full screen if still full-screened
+                        if (document.cancelFullScreen) {
+                            document.cancelFullScreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitCancelFullScreen) {
+                            document.webkitCancelFullScreen();
+                        }
                         Survey1();
                         return;
                     }
                     nextTrialStart = 1;
                     block++;
-                    alert("Starting Block " + block + " of " + totBlocks + ".");
-                    ShowTrial(r_totalTrials[currentPart][currentTrial]);
+                    var text = "Starting Block " + block + " of " + totBlocks + ".";
+
+                    // open pop-up:
+                    modalClosed = false;
+                    requestFullScreen()
+                    document.getElementById("openModal_text").innerHTML = text +
+                      '<br><br>Total bonus so far (not inc. $7 base pay): $' + points.toFixed(4);
+                    window.location.href = '#openModal';
+                    checkFlag3();
+
+                    function checkFlag3() {
+                      if (modalClosed == false) {
+                        window.setTimeout(checkFlag3, 100); /* this checks the flag every 100 milliseconds*/
+                      } else {
+                        proxyAcc_WM = [];
+                        proxyAcc_LTM = [];
+                        ShowTrial(r_totalTrials[currentPart][currentTrial]);
+                        return; // need return; otherwise the ShowTrial below executes
+                      }
+                    }
                     return;
                 }
             }
@@ -675,11 +708,23 @@ https://www.mturk.com/mturk/externalSubmit
                         currentFeedTrial = -1;
                         sizeacc = [];
                         currentPart++;
-                        alert("Okay, time for the real experiment. You will receive a monetary bonus the better you perform. Thank you and we wish you the best of luck!");
                         points = 0;
                         currentTrial = -1;
-                        // imgX.src = $('#' + r_totalTrials[2][0].itemA)[0].src; /* preload first image of test phase */
-                        NextTrial();
+                        // open pop-up:
+                        modalClosed = false;
+                        requestFullScreen()
+                        document.getElementById("openModal_text").innerHTML = "Okay, time for the real experiment. Please run this experiment in fullscreen if possible. Thank you and we wish you the best of luck!";
+                        window.location.href = '#openModal';
+                        checkFlag4();
+
+                        function checkFlag4() {
+                          if (modalClosed == false) {
+                            window.setTimeout(checkFlag4, 100); /* this checks the flag every 100 milliseconds*/
+                          } else {
+                            NextTrial();
+                            return; // need return; otherwise the ShowTrial below executes
+                          }
+                        }
                         return;
                     }
                     //} else if (currentFeedTrial > 0 && currentFeedTrial % trialsPerBlock == 0 && currentPart == 1 && blockStart == 0) { //if last test trial in block
@@ -744,96 +789,22 @@ https://www.mturk.com/mturk/externalSubmit
                             mouseMoved = 1;
                             // if (repeat == 0) {
                             // if (left_or_right == 1) {
-                            start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imgA, itemA);
+                            start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imageDic[trialStruct.itemT_id], itemA);
                             mouseMoved = 1;
                         }, 400);
                     }
                 } else {
                     imgNum = Math.round(wrap([angleDeg - randrotate]));
-                    start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imgA, itemA);
-                }
-                // } else {
-                //   start(ctx2b,imgNum,50, 50,imgWidth,imgHeight,flip,imgB,itemB);
-                // }
-                // } else if (repeat == 1) {
-                //   start(ctx2,imgNum,50, 50,imgWidth,imgHeight,flip,imgPop);
-                // }
-
-                if (survey == 1 && repeat == 0) {
-                    imgA.src = $('#999')[0].src;
-                    // imgB.src = $('#999')[0].src;
-                    // Draw fixed 45 degree highlight
-                    // if (left_or_right == 1) {
-                    ctx2a.beginPath();
-                    ctx2a.arc(centerX, centerY, radius, curAngle + 180 + Math.PI * 4, curAngle, 1);
-                    ctx2a.lineWidth = 50;
-                    ctx2a.strokeStyle = 'white';
-                    ctx2a.stroke();
-                    ctx2a.beginPath();
-                    ctx2a.arc(centerX, centerY, radius, curAngle + 180 - Math.PI * 4, curAngle, 0);
-                    ctx2a.lineWidth = 50;
-                    ctx2a.strokeStyle = 'white';
-                    ctx2a.stroke();
-                    ctx2a.beginPath();
-                    ctx2a.arc(centerX, centerY, radius, curAngle + Math.PI / 4, curAngle, 1);
-                    ctx2a.lineWidth = 40;
-                    ctx2a.strokeStyle = 'black';
-                    ctx2a.stroke();
-                    ctx2a.beginPath();
-                    ctx2a.arc(centerX, centerY, radius, curAngle - Math.PI / 4, curAngle, 0);
-                    ctx2a.lineWidth = 40;
-                    ctx2a.strokeStyle = 'black';
-                    ctx2a.stroke();
-                    // } else {
-                    //   ctx2b.beginPath();
-                    //   ctx2b.arc(centerX, centerY, radius, curAngle+180+Math.PI*4, curAngle, 1);
-                    //   ctx2b.lineWidth = 30;
-                    //   ctx2b.strokeStyle = 'white';
-                    //   ctx2b.stroke();
-                    //   ctx2b.beginPath();
-                    //   ctx2b.arc(centerX, centerY, radius, curAngle+180-Math.PI*4, curAngle, 0);
-                    //   ctx2b.lineWidth = 30;
-                    //   ctx2b.strokeStyle = 'white';
-                    //   ctx2b.stroke();
-                    //   ctx2b.beginPath();
-                    //   ctx2b.arc(centerX, centerY, radius, curAngle + Math.PI/4, curAngle, 1);
-                    //   ctx2b.lineWidth = 25;
-                    //   ctx2b.strokeStyle = 'black';
-                    //   ctx2b.stroke();
-                    //   ctx2b.beginPath();
-                    //   ctx2b.arc(centerX, centerY, radius, curAngle - Math.PI/4, curAngle, 0);
-                    //   ctx2b.lineWidth = 25;
-                    //   ctx2b.strokeStyle = 'black';
-                    //   ctx2b.stroke();
-                    // }
-                } else {
-                    // imgA.src = $('#' + trialStruct.itemT_id)[0].src;
-                    // imgB.src = $('#' + dx.pracimgB[currentFeedTrial])[0].src;
+                    start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imageDic[trialStruct.itemT_id], itemA);
                 }
 
-                if (survey == 0) {
-                    // if (left_or_right == 1) {
-                    $('#pointer').css({
-                        'left': centerX + Math.cos(curAngle) * ringSize - 9,
-                        'top': centerY + Math.sin(curAngle) * ringSize - 9
-                    });
-                    // } else {
-                    //   $('#pointer').css({'left': centerX+150 + Math.cos(curAngle)*ringSize-10,
-                    //                     'top': centerY + Math.sin(curAngle)*ringSize-10});
-                    // }
-                } else {
-                    $('#pointer').hide();
-                }
+                $('#pointer').css({
+                    'left': centerX + Math.cos(curAngle) * ringSize - 9,
+                    'top': centerY + Math.sin(curAngle) * ringSize - 9
+                });
 
-                if (survey == 1) {
-                    // flip == 0? curError = Math.abs(wrap([imgNum-seed[0]])) : curError = Math.abs(wrap([wrap([180-imgNum])-seed[0]]));
-                } else {
-                    // if (left_or_right == 1) {
-                    curError = Math.abs(wrap([imgNum - trialStruct.itemT_col]));
-                    // } else {
-                    //   flip == 0? curError = Math.abs(wrap([imgNum-trialStruct.itemB])) : curError = Math.abs(wrap([wrap([180-imgNum])-trialStruct.itemB]));
-                    // }
-                }
+                curError = Math.abs(wrap([imgNum - trialStruct.itemT_col]));
+
                 if (curError > 180) {
                     curError = Math.abs(360 - curError);
                 }
@@ -1226,17 +1197,6 @@ https://www.mturk.com/mturk/externalSubmit
                             }, 500); // why do I need a timeout function here? i have no idea
                         } else {
                             $('#showTrial').show();
-                            if (repeat == 1) {
-                                imgPop.src = $('#' + trialStruct.itemT_id)[0].src;
-                                numRepeats++;
-                            } else if (currentFeedTrial < numTrialsPerPart[1] - 1) {
-                                // imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial + 1].itemT_id)[0].src;
-                                // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
-                            } else if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
-                                /* this is to prepare the gray square in explicit test */
-                                imgA.src = $('#999')[0].src;
-                                // imgB.src = $('#999')[0].src;
-                            }
 
                             setTimeout(function() {
                                 flip = Math.round(Math.random());
@@ -1358,18 +1318,6 @@ https://www.mturk.com/mturk/externalSubmit
                         }, 500); // why do I need a timeout function here? i have no idea
                     } else {
                         $('#showTrial').show();
-                        if (repeat == 1) {
-                            imgPop.src = $('#' + trialStruct.itemT_id)[0].src;
-                            numRepeats++;
-                        } else if (currentFeedTrial < numTrialsPerPart[1] - 1) {
-                            // imgA.src = $('#' + r_totalTrials[currentPart][currentFeedTrial + 1].itemT_id)[0].src;
-                            // imgB.src = $('#' + r_totalTrials[currentPart][currentFeedTrial+1].itemB)[0].src;
-                        } else if (currentFeedTrial >= numTrialsPerPart[currentPart] - 1) {
-                            /* this is to prepare the gray square in explicit test */
-                            imgA.src = $('#999')[0].src;
-                            // imgB.src = $('#999')[0].src;
-                        }
-
                         setTimeout(function() {
                             flip = Math.round(Math.random());
                             randrotate = Math.floor(Math.random() * 360);
@@ -1544,6 +1492,34 @@ https://www.mturk.com/mturk/externalSubmit
                 }
             }
             context.putImageData(imgData, initX, initY);
+        }
+
+        function requestFullScreen() {
+
+          var el = document.body;
+
+          // Supports most browsers and their versions.
+          var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen ||
+            el.mozRequestFullScreen || el.msRequestFullScreen;
+
+          if (requestMethod) {
+
+            // Native full screen.
+            requestMethod.call(el);
+
+          } else if (typeof window.ActiveXObject !== "undefined") {
+
+            // Older IE.
+            var wscript = new ActiveXObject("WScript.Shell");
+
+            if (wscript !== null) {
+              wscript.SendKeys("{F11}");
+            }
+          }
+        }
+
+        function modalContinue() {
+          modalClosed = true;
         }
 
         /* Make sure number is between 0 and 360: */
