@@ -610,8 +610,7 @@ https://www.mturk.com/mturk/externalSubmit
                     // open pop-up:
                     modalClosed = false;
                     requestFullScreen()
-                    document.getElementById("openModal_text").innerHTML = text +
-                      '<br><br>Total bonus so far (not inc. $7 base pay): $' + points.toFixed(4);
+                    document.getElementById("openModal_text").innerHTML = text;
                     window.location.href = '#openModal';
                     checkFlag3();
 
@@ -619,8 +618,6 @@ https://www.mturk.com/mturk/externalSubmit
                       if (modalClosed == false) {
                         window.setTimeout(checkFlag3, 100); /* this checks the flag every 100 milliseconds*/
                       } else {
-                        proxyAcc_WM = [];
-                        proxyAcc_LTM = [];
                         ShowTrial(r_totalTrials[currentPart][currentTrial]);
                         return; // need return; otherwise the ShowTrial below executes
                       }
@@ -677,6 +674,8 @@ https://www.mturk.com/mturk/externalSubmit
                                   BigTopOrBottom==0 ? sizeacc.push(1) : sizeacc.push(0);
                                 } else if ($('#size2').attr('class') == 'sizeimg selected') {
                                   BigTopOrBottom==1 ? sizeacc.push(1) : sizeacc.push(0);
+                                } else {
+                                  sizeacc.push(-666);
                                 }
                                 $('.selected').removeClass('selected');
                                 $('#sizeItems').hide();
