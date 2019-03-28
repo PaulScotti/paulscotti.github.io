@@ -1456,8 +1456,8 @@ https://www.mturk.com/mturk/externalSubmit
             function SendToServer(id, curData) {
               var dataToServer = {
                 'id': id,
-                'experimentName': 'MonthType',
-                'curData': JSON.stringify(curData)
+                'experimentName': 'InterGroup_v401',
+                'curData': curData
               };
               $.post("https://paulscotti.github.io/mturk/save.py",
                 dataToServer,
