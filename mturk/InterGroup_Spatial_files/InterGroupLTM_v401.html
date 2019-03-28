@@ -1452,12 +1452,31 @@ https://www.mturk.com/mturk/externalSubmit
                 "Sex": sex
             };
 
+            /* save JSON to paulscotti server */
+            function SendToServer(id, curData) {
+              var dataToServer = {
+                'id': id,
+                'experimentName': 'MonthType',
+                'curData': JSON.stringify(curData)
+              };
+              $.post("https://paulscotti.github.io/mturk/save.py",
+                dataToServer,
+                function(data) {
+                  document.forms[0].submit();
+                }
+              ).fail(function(data) {
+                document.forms[0].submit();
+              });
+            }
+
             /* save to Firebase server */
             const blob = new Blob([JSON.stringify(d)], {
                 type: "application/json"
             });
             const storageRef = firebase.storage().ref('intergroup403/' + WORKERID + '.json');
             storageRef.put(blob);
+
+            SendToServer(WORKERID, blob);
 
             document.getElementById("saving").innerHTML = "Submitting HIT...";
 
