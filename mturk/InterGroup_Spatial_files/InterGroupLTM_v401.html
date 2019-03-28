@@ -1456,7 +1456,7 @@ https://www.mturk.com/mturk/externalSubmit
             const blob = new Blob([JSON.stringify(d)], {
                 type: "application/json"
             });
-            const storageRef = firebase.storage().ref('intergroup402/' + WORKERID + '.json');
+            const storageRef = firebase.storage().ref('intergroup403/' + WORKERID + '.json');
             storageRef.put(blob);
 
             document.getElementById("saving").innerHTML = "Submitting HIT...";
