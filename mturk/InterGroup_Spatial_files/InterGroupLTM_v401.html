@@ -1453,11 +1453,11 @@ https://www.mturk.com/mturk/externalSubmit
             };
 
             /* save JSON to paulscotti server */
-            function SendToServer(id, curData) {
+            function SendToServer(id, d) {
               var dataToServer = {
                 'id': id,
                 'experimentName': 'InterGroup_v401',
-                'curData': curData
+                'curData': JSON.stringify(d)
               };
               $.post("https://paulscotti.github.io/mturk/save.py",
                 dataToServer,
@@ -1476,7 +1476,7 @@ https://www.mturk.com/mturk/externalSubmit
             const storageRef = firebase.storage().ref('intergroup403/' + WORKERID + '.json');
             storageRef.put(blob);
 
-            SendToServer(WORKERID, blob);
+            SendToServer(WORKERID, d);
 
             document.getElementById("saving").innerHTML = "Submitting HIT...";
 
