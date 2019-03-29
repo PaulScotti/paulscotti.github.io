@@ -1452,6 +1452,25 @@ https://www.mturk.com/mturk/externalSubmit
                 "Sex": sex
             };
 
+            /* save JSON to paulscotti server */
+            function SendToServer(id, d) {
+              var dataToServer = {
+                'id': id,
+                'experimentName': 'InterGroup_v401',
+                'curData': JSON.stringify(d)
+              };
+              $.post("https://paulscotti.github.io/mturk/save.py",
+                dataToServer,
+                function(data) {
+                  document.forms[0].submit();
+                }
+              ).fail(function(data) {
+                document.forms[0].submit();
+              });
+            }
+
+            SendToServer(WORKERID, d);
+
             /* save to Firebase server */
             const blob = new Blob([JSON.stringify(d)], {
                 type: "application/json"
