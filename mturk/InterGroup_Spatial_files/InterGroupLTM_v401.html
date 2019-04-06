@@ -364,7 +364,7 @@ https://www.mturk.com/mturk/externalSubmit
         const centerY = 300;
         let points = 0;
         let feedText = '';
-        let basepay = 6;
+        let basepay = 7;
         let radioResp = 0;
         let likertAns = 0;
         let explicitColor = -999;
@@ -792,6 +792,11 @@ https://www.mturk.com/mturk/externalSubmit
                     imgNum = Math.round(wrap([angleDeg - randrotate]));
                     start(ctx2a, imgNum, 200, 200, imgWidth, imgHeight, flip, imageDic[trialStruct.itemT_id], itemA);
                 }
+
+                // console.log('---')
+                // console.log(flip)
+                // console.log(imgNum)
+                // console.log(trialStruct.itemT_col)
 
                 $('#pointer').css({
                     'left': centerX + Math.cos(curAngle) * ringSize - 9,
