@@ -58,7 +58,7 @@ function Sandwich(jam,crust) {
 function InsertLetter(array,text){
   let result = [];
   for (let i = 0; i < array.length; i++) {
-    result = result.concat(text + array[i].toString);
+    result = result.concat(text + array[i].toString());
   }
   return result
 }
