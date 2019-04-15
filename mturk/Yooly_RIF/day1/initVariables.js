@@ -3,8 +3,7 @@ let SceneSet = chance1.shuffle(repmat(perm_cat([0,1],counter(1,68)),4)); // rand
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,60)),'o');
-let PracLuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
-let RpTestLuresExem = chance1.shuffle(counter(1,30));
+let LuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
 
 let RpTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
@@ -54,4 +53,12 @@ function Sandwich(jam,crust) {
     result = result.concat(crust[i*2+1]);
   }
   return result;
+}
+
+function InsertLetter(array,text){
+  let result = [];
+  for (let i = 0; i < array.length; i++) {
+    result = result.concat(text + array[i].toString);
+  }
+  return result
 }
