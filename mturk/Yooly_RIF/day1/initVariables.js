@@ -8,8 +8,7 @@ let LuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
 let RpPlusTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
 RpPlusTriplets = Sandwich(RpPlusExem,RpMinusExem.slice(0,30));
-RpMinusTriplets = InsertLetter(RpMinusExem.slice(30,60)),'o');
-
+RpMinusTriplets = RpMinusExem.slice(30,60);
 
 let AllImages = [];
 AllImages = AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets);
