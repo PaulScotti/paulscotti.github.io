@@ -1,0 +1,315 @@
+/* ensure full screen doesnt chang bg to black */
+html {
+  background-color: #ffffff !important;
+}
+html:-webkit-full-screen-ancestor {
+	background-color: inherit;
+}
+html:-moz-full-screen-ancestor {
+	background-color: inherit;
+}
+
+/* further ensure white bg; determine fonts */
+body {
+  font-family: Arial, Helvetica;
+  background-color: #ffffff !important;
+}
+
+#TextButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+
+#TextButton:hover {
+  border: 3px inset gray;
+}
+
+#TextButton:active {
+  border: 3px inset gray;
+}
+
+#SameButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-right: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#SameButton:hover {
+  border: 3px inset gray;
+}
+#SameButton:active {
+  border: 3px inset gray;
+}
+#SameButton {
+  display: none;
+}
+#DiffButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-left: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#DiffButton:hover {
+  border: 3px inset gray;
+}
+#DiffButton:active {
+  border: 3px inset gray;
+}
+#DiffButton {
+  display: none;
+}
+#Old {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-right: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#Old:hover {
+  border: 3px inset gray;
+}
+#Old:active {
+  border: 3px inset gray;
+}
+#Old {
+  display: none;
+}
+#New {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-left: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#New:hover {
+  border: 3px inset gray;
+}
+#New:active {
+  border: 3px inset gray;
+}
+#New {
+  display: none;
+}
+
+#loading {
+  display: inline-block;
+  text-align: center;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+
+#consentDiv {
+  font-size:9pt;
+  font-family: Arial, Helvetica;
+  padding:10px;
+  border:1px dashed gray;
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions2 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions3 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions4 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#instructions5 {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+#done {
+  display: none;
+  width: 600px;
+  height: 600px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+
+#doneText {
+  position: relative;
+  width: 600px;
+  top: 55px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#popQuiz {
+  position: absolute;
+  width: 600px;
+  top: 550px;
+  text-align: center;
+  font-size: 18px;
+}
+
+#underText {
+  position: relative;
+  width: 600px;
+  top: 620px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#underText2 {
+  position: relative;
+  width: 600px;
+  top: 0px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#saving {
+  display: none;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 230px;
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+#survey2text {
+  position: relative;
+  width: 600px;
+  top: 55px;
+  text-align: center;
+  font-size: 20px;
+}
+
+
+#submitForm {
+  font-weight: bold;
+  color: black;
+  border: 3px outset gray;
+  background: #CCC;
+  padding: 5px;
+  text-decoration: none;
+  position: relative;
+  top: 60px;
+}
+
+#submitForm:hover {
+  border: 3px solid gray;
+}
+
+#submitForm:active {
+  border: 3px inset gray;
+}
+
+.likertButtons label {
+  display: inline-block;
+  text-align: center;
+  margin: 0 0.2em;
+}
+.likertButtons label input[type="radio"] {
+  display: block;
+  margin: 0.5em auto;
+}
+
+#openModal {
+  /* display: none; */
+}
+
+.modalDialog {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0);
+	z-index: 99999;
+	opacity:0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
+}
+
+.modalDialog:target {
+	opacity:1;
+	pointer-events: auto;
+}
+
+.modalDialog > div {
+	width: 400px;
+	position: relative;
+	margin: 10% auto;
+	padding: 5px 20px 13px 20px;
+	border-radius: 10px;
+	background: #fff;
+	background: -moz-linear-gradient(#fff, #999);
+	background: -webkit-linear-gradient(#fff, #999);
+	background: -o-linear-gradient(#fff, #999);
+}
+
+.close {
+	background: #606061;
+	color: #FFFFFF;
+	line-height: 25px;
+	position: absolute;
+	right: -12px;
+	text-align: center;
+	top: -10px;
+	width: 24px;
+	text-decoration: none;
+	font-weight: bold;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	-moz-box-shadow: 1px 1px 3px #000;
+	-webkit-box-shadow: 1px 1px 3px #000;
+	box-shadow: 1px 1px 3px #000;
+}
+
+.close:hover { background: #00d9ff; }
