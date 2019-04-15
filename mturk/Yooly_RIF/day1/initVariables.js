@@ -2,13 +2,13 @@ let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // rand
 let SceneSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,68)),4)); // randomize beach (0) and mountain (1)
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
-let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,90)),'o');
+let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,75)),'o');
 let LuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
 
 let RpPlusTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
 RpPlusTriplets = Sandwich(RpPlusExem,RpMinusExem.slice(0,30));
-RpMinusTriplets = RpMinusExem.slice(30,90);
+RpMinusTriplets = RpMinusExem.slice(30,75);
 
 let AllImages = [];
 AllImages = AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets);
