@@ -1,5 +1,5 @@
 let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
-let SceneSet = chance1.shuffle(repmat(perm_cat([0,1],counter(1,68)),4)); // randomize beach (0) and mountain (1)
+let SceneSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,68)),4)); // randomize beach (0) and mountain (1)
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,60)),'o');
