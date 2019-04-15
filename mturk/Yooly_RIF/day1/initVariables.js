@@ -5,12 +5,14 @@ let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,60)),'o');
 let LuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
 
-let RpTriplets = [];
+let RpPlusTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
-RpTriplets = Sandwich(RpPlusExem,RpMinusExem);
+RpPlusTriplets = Sandwich(RpPlusExem,RpMinusExem.slice(0,30));
+RpMinusTriplets = InsertLetter(RpMinusExem.slice(30,60)),'o');
+
 
 let AllImages = [];
-AllImages = AllImages.concat(RpTriplets,NrpTriplets);
+AllImages = AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets);
 
 function repmat(array, count) {
   let result = [];

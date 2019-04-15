@@ -663,7 +663,7 @@
     /*check all images are loaded before starting*/
     function ImagesReady() {
       for (var i = 0; i < AllImages.length; i++) {
-          if (!$(AllImages[i])[0].complete) {
+          if (!$('#'+AllImages[i])[0].complete) {
               var percentage = i * 100.0 / (AllImages.length);
               percentage = percentage.toFixed(0).toString() + ' %';
 
