@@ -77,10 +77,13 @@
     <div id="fixation">+</div>
     <div id="allItems">
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
+      <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
     </div>
     <br><br>
     <center>
+      <a href="javascript:void(0);" onclick="Beach();" id="Beach" style="display: hidden;">Old</a>
+      <a href="javascript:void(0);" onclick="Mountain();" id="Mountain" style="display: hidden;">Old</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old</a>
       <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
@@ -155,6 +158,7 @@
     /* Setting up image contexts */
     const itemA = document.getElementById("itemA");
     const CDitem = document.getElementById("CDitem");
+    const Scene = document.getElementById("Scene");
 
     /* Start Experiment */
     function StartExperiment() {
@@ -298,13 +302,27 @@
       now = new Date().getTime();
       now2 = now;
       scenecounter = scenecounter+1;
-      $('#itemA').hide(); // hide object from last trial
-      $('#Old').hide(); // hide Old button
-      $('#New').hide(); // hide New button
+      $('#itemA').hide();
       $('#allItems').css('margin-top', 0);
       $('#Scene').attr('src', SceneSet[scenecounter]);
       $('#BeachButton').show();
       $('#MountainButton').show();
+      setTimeout(function() {
+        $('#allItems').css('margin-top', -1000);
+        $('#BeachButton').hide();
+        $('#MountainButton').hide();
+        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
+        setTimeout(function() {
+          ShowStudy();
+        }, itiTime);
+      }, 3000);
+    }
+
+    function Beach() {
+      SceneResp.push(0);
+    }
+    function Mountain() {
+      SceneResp.push(1);
     }
 
     /* Filler Start */
@@ -572,12 +590,13 @@
       $('#saving').show();
       const endDate = new Date().getTime();
       const d = {
-        "ID": subjID,
+        "WORKERID": WORKERID,
+        "ASSIGNMENTID": ASSIGNMENTID,
         "age": age,
         "sex": sex,
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
-        "SceneAcc": SceneAcc,
+        "SceneResp": SceneResp,
         "SceneSet": SceneSet,
         "RpPlusExem": RpPlusExem,
         "RpMinusExem": RpMinusExem,
