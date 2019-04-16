@@ -13,6 +13,8 @@ RpMinusTriplets = RpMinusExem.slice(30,75);
 let AllImages = [];
 AllImages = AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets);
 
+Triplets = repmat(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
+
 function repmat(array, count) {
   let result = [];
   while (count--) {
@@ -62,4 +64,25 @@ function InsertLetter(array,text){
     result = result.concat(text + array[i].toString());
   }
   return result
+}
+
+function ThreeSlice(tripA,tripB,tripC){
+  let result = [];
+  let A = []; let B = []; let C = []; let D = [];
+  for (let i = 0; i < tripA.length/3; i++) {
+    A[i] = tripA.slice(i,i+3);
+  }
+  for (let i = 0; i < tripB.length/3; i++) {
+    B[i] = tripB.slice(i,i+3);
+  }
+  for (let i = 0; i < tripC.length/3; i++) {
+    C[i] = tripC.slice(i,i+3);
+  }
+  D = D.concat([A,B,C]);
+  D = chance1.shuffle(D);
+  for (let i = 0; i < D.length; i++) {
+    for (let j = 0; i < D[0].length; i++) {
+      result = result.concat(D[i][j]);
+    }
+  }
 }
