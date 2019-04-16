@@ -78,10 +78,10 @@ function ThreeSlice(tripA,tripB,tripC){
   for (let i = 0; i < tripC.length/3; i++) {
     C[i] = tripC.slice(i,i+3);
   }
-  D = D.concat([A,B,C]);
+  D = D.concat([chance1.shuffle(A),chance1.shuffle(B),chance1.shuffle(C)]);
   D = chance1.shuffle(D);
   for (let i = 0; i < D.length; i++) {
-    for (let j = 0; i < D[0].length; i++) {
+    for (let j = 0; i < D[i].length; j++) {
       result = result.concat(D[i][j]);
     }
   }
