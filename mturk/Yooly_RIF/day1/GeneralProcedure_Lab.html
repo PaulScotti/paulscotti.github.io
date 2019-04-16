@@ -135,6 +135,7 @@
     let TestResp = [];
     let TestAcc = [];
     let TestRT = [];
+    let scenecounter = -1;
 
     /* Setup reused image variable */
     let imgA = new Image();
@@ -157,42 +158,17 @@
 
     /* Start Experiment */
     function StartExperiment() {
-      age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-      while (!(age > 0)) {
-        age = prompt('Can you tell me how old you are (in years)?');
-      }
-
-      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
-
-      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
-      }
-      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
-        sex = 'm';
-      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
-        sex = 'f';
-      } else if (sex == 'B' || sex == 'b') {
-        sex = 'b';
-      } else if (sex == 'NA' || sex == 'na') {
-        sex = 'na';
-      }
-
-      initials = prompt('What are your initials (e.g., John Smith would be "JS")?');
-
-      subjID = initials + '_' + startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours();
-
-      // // save a file letting me know that someone made it this far
-      // const blobx = new Blob([JSON.stringify(chance1.seed)], {
-      //   type: "application/json"
-      // });
-      // const storageRefx = firebase.storage().ref('started/' + subjID + '.json');
-      // storageRefx.put(blobx);
+      // save a file letting me know that someone made it this far
+      const blobx = new Blob([JSON.stringify(chance1.seed)], {
+        type: "application/json"
+      });
+      const storageRefx = firebase.storage().ref('started_y/' + WORKERID + '.json');
+      storageRefx.put(blobx);
 
       // open pop-up:
       modalClosed = false;
       document.getElementById("openModal_text").innerHTML =
-        'Your subject ID is: ' + subjID + '<br>Experiment will now begin. Good luck!';
+        'Experiment will now begin. Good luck!';
       window.location.href = '#openModal';
       checkFlag1();
 
@@ -236,24 +212,12 @@
             return; // need return; otherwise the ShowTrial below executes
           }
         }
+      } else if ((curStudy-1)%3==0 && curStudy!=1) {
+        SceneJudgment();
+        return;
       } else {
         // Preload the image of next trial
-        if (StudyTrialType[curStudy] == 0) { //RpPlus
-          $('#itemA').attr('src', $('#Obj' + RpPlus[RpPlusCnt])[0].src);
-          if (RpPlusCnt <= RpPlus.length) {
-            RpPlusCnt++;
-          } // prevent problems if on last trial of condition
-        } else if (StudyTrialType[curStudy] == 1) { //RpMinus
-          $('#itemA').attr('src', $('#Obj' + RpMinus[RpMinusCnt])[0].src);
-          if (RpMinusCnt <= RpMinus.length) {
-            RpMinusCnt++;
-          }
-        } else if (StudyTrialType[curStudy] == 2) { //Nrp
-          $('#itemA').attr('src', $('#Obj' + Nrp[NrpCnt])[0].src);
-          if (NrpCnt <= Nrp.length) {
-            NrpCnt++;
-          }
-        }
+        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
       }
       setTimeout(function() {
         ShowStudy();
@@ -274,6 +238,8 @@
 
     /* Practice Phase Start */
     function NextPracTrial() {
+      Done();
+      return;
       $('#allItems').css('margin-top', -1000);
       // Preload the image of next trial
       if (PracTrialType[curPractice] == 0) { //RpPlus
@@ -325,6 +291,20 @@
       $('#allItems').css('margin-top', 0);
       $('#Old').show();
       $('#New').show();
+    }
+
+    /* Scene Judgment (mountain or beach) */
+    function SceneJudgment() {
+      now = new Date().getTime();
+      now2 = now;
+      scenecounter = scenecounter+1;
+      $('#itemA').hide(); // hide object from last trial
+      $('#Old').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#allItems').css('margin-top', 0);
+      $('#Scene').attr('src', SceneSet[scenecounter]);
+      $('#BeachButton').show();
+      $('#MountainButton').show();
     }
 
     /* Filler Start */
@@ -597,41 +577,16 @@
         "sex": sex,
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
-        "PracticeResp": PracticeResp,
-        "PracticeAcc": PracticeAcc,
-        "PracticeRT": PracticeRT,
-        "TestResp": TestResp,
-        "TestAcc": TestAcc,
-        "TestRT": TestRT,
-        "RpPlusCnt": RpPlusCnt,
-        "RpMinusCnt": RpMinusCnt,
-        "NrpCnt": NrpCnt,
-        "PracLuresCnt": PracLuresCnt,
-        "RpTestLuresCnt": RpTestLuresCnt,
-        "NrpTestLuresCnt": NrpTestLuresCnt,
-        "CDaccuracy": CDaccuracy,
-        "RpCats": RpCats,
-        "NrpCats": NrpCats,
+        "SceneAcc": SceneAcc,
+        "SceneSet": SceneSet,
         "RpPlusExem": RpPlusExem,
         "RpMinusExem": RpMinusExem,
-        "PracLuresExem": PracLuresExem,
-        "RpTestLuresExem": RpTestLuresExem,
-        "NrpExem": NrpExem,
-        "NrpTestLuresExem": NrpTestLuresExem,
-        "RpPlus": RpPlus,
-        "RpMinus": RpMinus,
-        "Nrp": Nrp,
-        "PracLures": PracLures,
-        "RpTestLures": RpTestLures,
-        "NrpTestLures": NrpTestLures,
-        "RpPlus_StudyOrder": RpPlus_StudyOrder,
-        "RpMinus_StudyOrder": RpMinus_StudyOrder,
-        "Nrp_StudyOrder": Nrp_StudyOrder,
-        "RpPlus_PracticeOrder": RpPlusPrac,
-        "StudyTrialType": StudyTrialType,
-        "PracTrialType": PracTrialType,
-        "TestTrialType": TestTrialType,
+        "LuresExem": LuresExem,
+        "NrpTriplets": NrpTriplets,
+        "RpPlusTriplets": RpPlusTriplets,
+        "RpMinusTriplets": RpMinusTriplets,
         "AllImages": AllImages,
+        "Triplets": Triplets,
         "seed": chance1.seed,
         "comments": $('#comments').val()
       };
@@ -662,6 +617,31 @@
 
     /*check all images are loaded before starting*/
     function ImagesReady() {
+      age = prompt('Before we start, can you tell me how old you are (in years)?');
+
+      while (!(age > 0)) {
+        age = prompt('Can you tell me how old you are (in years)?');
+      }
+
+      if (age > 45) {
+        $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
+      }
+
+      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
+
+      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
+      }
+      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
+        sex = 'm';
+      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
+        sex = 'f';
+      } else if (sex == 'B' || sex == 'b') {
+        sex = 'b';
+      } else if (sex == 'NA' || sex == 'na') {
+        sex = 'na';
+      }
+
       for (var i = 0; i < AllImages.length; i++) {
           if (!$('#'+AllImages[i])[0].complete) {
               var percentage = i * 100.0 / (AllImages.length);

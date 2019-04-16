@@ -74,6 +74,49 @@ body {
 #DiffButton {
   display: none;
 }
+
+#BeachButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-right: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#BeachButton:hover {
+  border: 3px inset gray;
+}
+#BeachButton:active {
+  border: 3px inset gray;
+}
+#BeachButton {
+  display: none;
+}
+
+#MountainButton {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-right: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#MountainButton:hover {
+  border: 3px inset gray;
+}
+#MountainButton:active {
+  border: 3px inset gray;
+}
+#MountainButton {
+  display: none;
+}
+
 #Old {
   display: inline-block;
   color: black;
