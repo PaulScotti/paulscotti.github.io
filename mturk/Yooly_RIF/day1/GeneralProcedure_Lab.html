@@ -55,7 +55,7 @@
   <!-- Modal Pop-up Box -->
   <div id="openModal" class="modalDialog">
     <div>
-      <a href="#close" onclick="requestFullScreen();modalContinue();" title="Close" class="close">X</a>
+      <a href="#close" onclick="modalContinue();" title="Close" class="close">X</a>
       <p id="openModal_text">Hi!</p>
     </div>
   </div>
@@ -83,8 +83,8 @@
     </div>
     <br><br>
     <center>
-      <a href="javascript:void(0);" onclick="Beach();" id="Beach" style="display: hidden;">Beach</a>
-      <a href="javascript:void(0);" onclick="Mountain();" id="Mountain" style="display: hidden;">Mountain</a>
+      <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden;">Beach</a>
+      <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden;">Mountain</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old</a>
       <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
@@ -318,7 +318,7 @@
       $('#itemA').hide();
       $('#Scene').show();
       $('#allItems').css('margin-top', 0);
-      $('#Scene').attr('src', SceneSet[scenecounter]);
+      $('#Scene').attr('src', $('#' + SceneSet[scenecounter])[0].src);
       $('#BeachButton').show();
       $('#MountainButton').show();
       setTimeout(function() {
@@ -335,9 +335,15 @@
     }
 
     function Beach() {
+      $('#Scene').hide();
+      $('#BeachButton').hide();
+      $('#MountainButton').hide();
       SceneResp.push(0);
     }
     function Mountain() {
+      $('#Scene').hide();
+      $('#BeachButton').hide();
+      $('#MountainButton').hide();
       SceneResp.push(1);
     }
 
