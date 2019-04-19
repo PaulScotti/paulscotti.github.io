@@ -9,6 +9,7 @@
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jquery.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
+  <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>const startDate = new Date(); const chance1 = Chance(startDate); Math.seedrandom(chance1.seed); // Use current time as the shuffle seed, so you can trace back their trials</script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js">// Allows _clone</script>
 
@@ -82,8 +83,8 @@
     </div>
     <br><br>
     <center>
-      <a href="javascript:void(0);" onclick="Beach();" id="Beach" style="display: hidden;">Old</a>
-      <a href="javascript:void(0);" onclick="Mountain();" id="Mountain" style="display: hidden;">Old</a>
+      <a href="javascript:void(0);" onclick="Beach();" id="Beach" style="display: hidden;">Beach</a>
+      <a href="javascript:void(0);" onclick="Mountain();" id="Mountain" style="display: hidden;">Mountain</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old</a>
       <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
@@ -93,6 +94,10 @@
 
   <!-- Initializing JS -->
   <script>
+    let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
+        "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+    let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
+
     /* Initialize Firebase */
     const config = {
         apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -138,6 +143,7 @@
     let TestResp = [];
     let TestAcc = [];
     let TestRT = [];
+    let SceneResp = [];
     let scenecounter = -1;
 
     /* Setup reused image variable */
@@ -159,9 +165,16 @@
     const itemA = document.getElementById("itemA");
     const CDitem = document.getElementById("CDitem");
     const Scene = document.getElementById("Scene");
+    $('#Scene').hide();
+    $('#CDitem').hide();
 
     /* Start Experiment */
     function StartExperiment() {
+      if (IsOnTurk() && IsTurkPreview()) {
+          alert("Please accept the HIT before continuing.");
+          return false;
+      }
+
       // save a file letting me know that someone made it this far
       const blobx = new Blob([JSON.stringify(chance1.seed)], {
         type: "application/json"
@@ -303,12 +316,15 @@
       now2 = now;
       scenecounter = scenecounter+1;
       $('#itemA').hide();
+      $('#Scene').show();
       $('#allItems').css('margin-top', 0);
       $('#Scene').attr('src', SceneSet[scenecounter]);
       $('#BeachButton').show();
       $('#MountainButton').show();
       setTimeout(function() {
         $('#allItems').css('margin-top', -1000);
+        $('#Scene').hide();
+        $('#itemA').show();
         $('#BeachButton').hide();
         $('#MountainButton').hide();
         $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
