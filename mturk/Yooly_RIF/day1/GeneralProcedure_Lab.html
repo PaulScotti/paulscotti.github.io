@@ -225,7 +225,8 @@
             window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
           } else {
             RpPlusCnt = 0; //reset counter for RpPlus
-            ChangeDetection(); // start Practice Phase
+            Done();
+            //ChangeDetection(); // start Practice Phase
             return; // need return; otherwise the ShowTrial below executes
           }
         }
@@ -255,8 +256,6 @@
 
     /* Practice Phase Start */
     function NextPracTrial() {
-      Done();
-      return;
       $('#allItems').css('margin-top', -1000);
       // Preload the image of next trial
       if (PracTrialType[curPractice] == 0) { //RpPlus
