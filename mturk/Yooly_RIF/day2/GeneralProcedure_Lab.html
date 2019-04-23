@@ -10,7 +10,11 @@
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
-  <script>const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
+  <script>
+  let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
+      "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+  let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
+  const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js">// Allows _clone</script>
 
   <!-- Preload images -->
@@ -101,10 +105,6 @@
 
   <!-- Initializing JS -->
   <script>
-    let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
-        "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
-    let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
-
     /* Initialize Firebase */
     const config = {
         apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -123,11 +123,11 @@
 
     /* Define more variables */
     let modalClosed = false;
-    const numStudy = 180; // 60;
-    const numPractice = 0; // 60;
-    const numTest = 0; // 120;
+    const numStudy = 90;
+    const numPractice = 60;
+    const numTest = 180;
     const displayTime = 1500;
-    const itiTime = 500; //500 ms
+    const itiTime = 500;
     const imgWidth = 300;
     const imgHeight = 300;
     let curStudy = 0;
@@ -368,7 +368,7 @@
     /* Filler Start */
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
-      if (now2 < (now + 300000)) { // 300000 for 5 minutes long filler task
+      if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
@@ -616,7 +616,7 @@
       // calculate their overall accuracy (Practice + Test)
       const OverallAcc = (((TestAcc.reduce((a, b) => a + b, 0) + PracticeAcc.reduce((a, b) => a + b, 0)) / (TestAcc.length + PracticeAcc.length)) * 100).toFixed(2);
       if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
+        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
           '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       } else {
         document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +

@@ -10,7 +10,11 @@
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
-  <script>const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
+  <script>
+  let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
+      "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
+  let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
+  const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js">// Allows _clone</script>
 
   <!-- Preload images -->
@@ -29,7 +33,7 @@
 <body>
   <!-- Instructions page1 -->
   <div id="instructions">
-    <p>This HIT is a memory experiment composed of two parts. <b>This first part will take 10 minutes ($1 reward) and the second part will take 30 minutes ($3 reward plus up to $3 bonus based on performance).</b> The second part must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
+    <p>This HIT is a memory experiment composed of two parts. <b>This first part will take 10 minutes ($1 reward) and the second part will take 45 minutes ($4.5 reward plus up to $4 bonus based on performance).</b> The second part must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
     <p><b>Please only complete this first part if you are also able to complete the second part (data is only usable if both parts are completed).</b></p>
     <br>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
@@ -101,10 +105,6 @@
 
   <!-- Initializing JS -->
   <script>
-    let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
-        "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
-    let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
-
     /* Initialize Firebase */
     const config = {
         apiKey: "AIzaSyBeD1E8RCvOck3CeWzXbg2hGURf-sSrx8A",
@@ -368,7 +368,7 @@
     /* Filler Start */
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
-      if (now2 < (now + 300000)) { // 300000 for 5 minutes long filler task
+      if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
