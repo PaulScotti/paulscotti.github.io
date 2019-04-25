@@ -137,6 +137,28 @@ body {
 #Old {
   display: none;
 }
+
+#OldUnsure {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-right: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#OldUnsure:hover {
+  border: 3px inset gray;
+}
+#OldUnsure:active {
+  border: 3px inset gray;
+}
+#OldUnsure {
+  display: none;
+}
+
 #New {
   display: inline-block;
   color: black;
@@ -155,6 +177,27 @@ body {
   border: 3px inset gray;
 }
 #New {
+  display: none;
+}
+
+#NewUnsure {
+  display: inline-block;
+  color: black;
+  border: 3px outset gray;
+  background-color: #CCCCCC;
+  padding: 8px;
+  margin-left: 30px;
+  text-decoration: none;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+}
+#NewUnsure:hover {
+  border: 3px inset gray;
+}
+#NewUnsure:active {
+  border: 3px inset gray;
+}
+#NewUnsure {
   display: none;
 }
 

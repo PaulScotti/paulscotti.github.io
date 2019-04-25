@@ -96,8 +96,10 @@
     <center>
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden;">Mountain</a>
-      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New</a>
+      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old (confident)</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="Old" style="display: hidden;">Old (unconfident)</a>
+      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New (unconfident)</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="New" style="display: hidden;">New (confident)</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
@@ -218,7 +220,9 @@
         now2 = now;
         $('#itemA').hide(); // hide object from last trial
         $('#Old').hide(); // hide Old button
+        $('#OldUnsure').hide(); // hide Old button
         $('#New').hide(); // hide New button
+        $('#NewUnsure').hide(); // hide New button
 
         // open pop-up:
         modalClosed = false;
@@ -234,8 +238,7 @@
             window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
           } else {
             RpPlusCnt = 0; //reset counter for RpPlus
-            Done();
-            //ChangeDetection(); // start Practice Phase
+            ChangeDetection(); // start Practice Phase
             return; // need return; otherwise the ShowTrial below executes
           }
         }
@@ -244,7 +247,7 @@
         return;
       } else {
         // Preload the image of next trial
-        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
+        $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
       }
       setTimeout(function() {
         ShowStudy();
@@ -287,7 +290,9 @@
           now2 = now;
           $('#itemA').hide(); // hide object from last trial
           $('#Old').hide(); // hide Old button
+          $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
+          $('#NewUnsure').hide(); // hide New button
 
           // open pop-up:
           modalClosed = false;
@@ -316,6 +321,8 @@
       $('#allItems').css('margin-top', 0);
       $('#Old').show();
       $('#New').show();
+      $('#OldUnsure').show();
+      $('#NewUnsure').show();
     }
 
     /* Scene Judgment (mountain or beach) */
@@ -335,7 +342,7 @@
         $('#itemA').show();
         $('#BeachButton').hide();
         $('#MountainButton').hide();
-        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
+        $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
         setTimeout(function() {
           ShowStudy();
         }, itiTime);
@@ -377,20 +384,10 @@
         $('#allItems').css('margin-top', -1000); // show object items again and hide them off-screen
         $('#itemA').show();
 
-        RpPlus_StudyOrder = RpPlus;
-        RpPlusCnt = 0; //reset counter for RpPlus
-        RpPlus = chance1.shuffle(RpPlus); //reshuffle ordering of RpPlus
-        RpMinus_StudyOrder = RpMinus;
-        RpMinusCnt = 0;
-        RpMinus = chance1.shuffle(RpMinus);
-        Nrp_StudyOrder = Nrp;
-        NrpCnt = 0;
-        Nrp = chance1.shuffle(Nrp);
-
         // open pop-up:
         modalClosed = false;
         document.getElementById("openModal_text").innerHTML =
-          'Great job! <br><br> We will now test your memory for the initial study images. <br><br> You will see images one at a time and be asked if you have seen the exact same image before. If so, press the <i>old</i> button. If you have not seen the image before, press the <i>new</i> button.';
+          'Great job! <br><br> We will now test your memory for the initial study images. <br><br> You will see images one at a time and be asked if you have seen the exact same image before.';
         window.location.href = '#openModal';
         checkFlag6();
 
@@ -520,7 +517,9 @@
         if (curTest >= numTest) { // if end of test
           $('#itemA').hide(); // hide object from last trial
           $('#Old').hide(); // hide Old button
+          $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
+          $('#NewUnsure').hide(); // hide New button
 
           // open pop-up:
           modalClosed = false;
@@ -652,6 +651,7 @@
         "RpMinusTriplets": RpMinusTriplets,
         "AllImages": AllImages,
         "Triplets": Triplets,
+        "Triplets2": Triplets2,
         "seed": chance1.seed,
         "comments": $('#comments').val()
       };
