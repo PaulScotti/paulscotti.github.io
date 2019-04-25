@@ -67,7 +67,7 @@ function InsertLetter(array,text){
 }
 
 function ThreeSlice(tripA,tripB,tripC){
-  let result = [];
+  let result = []; let result2 = [];
   let A = []; let B = []; let C = []; let D = []; let E = [];
   for (let i = 0; i < tripA.length/3; i++) {
     A[i] = tripA.slice(i,i+3);
