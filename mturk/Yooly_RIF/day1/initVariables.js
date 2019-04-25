@@ -69,14 +69,14 @@ function InsertLetter(array,text){
 function ThreeSlice(tripA,tripB,tripC){
   let result = []; let result2 = [];
   let A = []; let B = []; let C = []; let D = []; let E = [];
-  for (let i = 0; i < tripA.length/3; i++) {
-    A[i] = tripA.slice(i,i+3);
+  for (let i = 0; i < tripA.length; i=i+3) {
+    A[i/3] = tripA.slice(i,i+3);
   }
-  for (let i = 0; i < tripB.length/3; i++) {
-    B[i] = tripB.slice(i,i+3);
+  for (let i = 0; i < tripB.length; i=i+3) {
+    B[i/3] = tripB.slice(i,i+3);
   }
-  for (let i = 0; i < tripC.length/3; i++) {
-    C[i] = tripC.slice(i,i+3);
+  for (let i = 0; i < tripC.length; i=i+3) {
+    C[i/3] = tripC.slice(i,i+3);
   }
   D = D.concat(A,B,C);
   E = E.concat(A,chance1.shuffle(C).slice(0,C.length/2));
