@@ -3,7 +3,7 @@ let SceneSet = chance1.shuffle(InsertLetter(counter(1,68),'b').concat(InsertLett
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,75)),'o');
-let LuresExem = InsertLetter(chance1.shuffle(counter(1,30)),'lure');
+let LuresExem = InsertLetter(counter(1,30),'lure');
 
 let RpPlusTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
