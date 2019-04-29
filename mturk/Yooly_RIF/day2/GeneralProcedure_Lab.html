@@ -319,12 +319,18 @@
     function OldNewJudgment() {
       startTrial = new Date().getTime();
       $('#allItems').css('margin-top', 0);
-      $('#Old').show();
-      $('#New').show();
-      $('#OldUnsure').show();
-      $('#NewUnsure').show();
-      $('#rating').show();
-      $('#rating_q').show();
+      if (curPractice > numPractice) {  // if test phase
+        $('#Old').show();
+        $('#New').show();
+        $('#OldUnsure').show();
+        $('#NewUnsure').show();
+        $('#rating').show();
+        $('#rating_q').show();
+      } else {
+        $('#Old').show();
+        $('#New').show();
+        $('#rating_q').show();
+      }
     }
 
     /* Scene Judgment (mountain or beach) */
@@ -389,9 +395,15 @@
 
         // open pop-up:
         modalClosed = false;
-        document.getElementById("openModal_text").innerHTML =
-          'Great job! <br><br> We will now test your memory for the initial study images. <br><br> You will see images one at a time and be asked if you have seen the exact same image before.';
-        window.location.href = '#openModal';
+        if (curPractice > numPractice) { // test phase
+          document.getElementById("openModal_text").innerHTML =
+            'Great job! <br><br> We will now test your memory for all studied objects. <br><br> The same testing procedure will take place as before. We now ask (1) whether you have seen the object before during today&#39;s study session (within the past 24 horus) and (2) how confident you are in your decision (confident or unconfident).';
+          window.location.href = '#openModal';
+        } else {
+          document.getElementById("openModal_text").innerHTML =
+            'Great job! <br><br> We will now test your memory for studied objects. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
+          window.location.href = '#openModal';
+        }
         checkFlag6();
 
         function checkFlag6() {
