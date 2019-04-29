@@ -92,6 +92,7 @@
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
+      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; bottom:0px;"></p>
     </div>
     <br><br>
     <center>
@@ -180,6 +181,7 @@
     $('#Scene').hide();
     $('#CDitem').hide();
     $('#rating').hide();
+    $('#rating_q').hide();
 
     /* Start Experiment */
     function StartExperiment() {
@@ -227,6 +229,7 @@
         $('#New').hide(); // hide New button
         $('#NewUnsure').hide(); // hide New button
         $('#rating').hide();
+        $('#rating_q').hide();
 
         // open pop-up:
         modalClosed = false;
@@ -289,6 +292,7 @@
           $('#New').hide(); // hide New button
           $('#NewUnsure').hide(); // hide New button
           $('#rating').hide();
+          $('#rating_q').hide();
 
           // open pop-up:
           modalClosed = false;
@@ -320,6 +324,7 @@
       $('#OldUnsure').show();
       $('#NewUnsure').show();
       $('#rating').show();
+      $('#rating_q').show();
     }
 
     /* Scene Judgment (mountain or beach) */
@@ -495,6 +500,7 @@
           $('#New').hide(); // hide New button
           $('#NewUnsure').hide(); // hide New button
           $('#rating').hide();
+          $('#rating_q').hide();
 
           // open pop-up:
           modalClosed = false;
