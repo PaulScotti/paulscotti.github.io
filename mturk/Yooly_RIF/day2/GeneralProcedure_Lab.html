@@ -33,16 +33,18 @@
 <body>
   <!-- Instructions page1 -->
   <div id="instructions">
-    <p>This HIT is a memory experiment composed of two parts. <b>This first part will take 10 minutes ($1 reward) and the second part will take 30 minutes ($3 reward plus up to $3 bonus based on performance).</b> The second part must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
-    <p><b>Please only complete this first part if you are also able to complete the second part (data is only usable if both parts are completed).</b></p>
-    <br>
+    <p>This HIT is the second and final part of a memory experiment. If you have not participated in the first part, there has been a mistake. </p>
+    <p><b>This HIT will take 30 minutes. You will receive $3 base payment plus a bonus up to $3 depending on your performance.</b></p>
+    <p>This HIT should only be completed within the time window of 24 to 48 hours since completion of the first part of this HIT. If this is not the case, you are ineligible to participate. We require a strict time window so that we can ensure all participants have approximately the same decay in long-term memory representations.</p>
+    <br><br>
+    <center><p>If you have any questions, please email hong.503@buckeyemail.osu.edu.</p></center>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
         (1 of 3)</a></p>
   </div>
 
   <!-- Instructions page2 -->
   <div id="instructions2" style="display:none">
-    <p>You will be presented with objects, presented one at a time for 1.5 seconds each. You will be tested on your memory for these objects in the second part, so please pay attention!</p>
+    <p>We will begin this HIT by studying objects, identical in procedure to the first HIT. To recap, objects will be presented one at a time for 1.5 seconds each. Study the visual details of each object, as you will eventually be tested on every object.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study.png" width="600px"></p>
     <p>Sometimes a scene will be presented instead of an object. When this happens, you will have 3 seconds to click a button indicating whether the scene is a beach or a mountain.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study2.png" width="300px"></p>
@@ -54,8 +56,7 @@
   <!-- Instructions page3 -->
   <div id="instructions3" style="display:none">
     <center>
-      <p>After completion of this HIT, you will be emailed with a link to the second HIT. Please complete this second HIT between 24-48 hours after completion of the current HIT.</p>
-      <p>Please email hong.503@buckeyemail.osu.edu if you have any questions.</p>
+      <p>We will provide details on how you will be tested on the studied objects once you reach that section of the HIT. Essentially, your memory for every studied object will be tested and better performance will be associated with a larger bonus pay.</p>
     </center>
     <br>
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
@@ -96,10 +97,10 @@
     <center>
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden;">Mountain</a>
-      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old (confident)</a>
-      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">Old (unconfident)</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New (unconfident)</a>
-      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">New (confident)</a>
+      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">1</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">2</a>
+      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">3</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">4</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
@@ -227,8 +228,7 @@
         // open pop-up:
         modalClosed = false;
         document.getElementById("openModal_text").innerHTML =
-        'End of Study Phase!';
-          //'End of Study Phase! <br><br> Before we test your memory for the studied letters, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
+          'End of Study Phase! <br><br> Before we test your memory, you will complete a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
         window.location.href = '#openModal';
         checkFlag2();
         return;
@@ -575,14 +575,8 @@
 
     /* Done with the experiment */
     function Done() {
-      // calculate their overall accuracy (Practice + Test)
-      if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
-          '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
-      } else {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
-          '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
-      }
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to calculate and process your monetary bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Any comments? (What strategy did you use? Any technical difficulties?)<br><br>' +
+        '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -652,37 +646,6 @@
 
     /*check all images are loaded before starting*/
     function ImagesReady() {
-      age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-      while (!(age > 0)) {
-        age = prompt('Can you tell me how old you are (in years)?');
-      }
-
-      if (age > 45) {
-        $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
-      }
-
-      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
-
-      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
-      }
-      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
-        sex = 'm';
-      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
-        sex = 'f';
-      } else if (sex == 'B' || sex == 'b') {
-        sex = 'b';
-      } else if (sex == 'NA' || sex == 'na') {
-        sex = 'na';
-      }
-
-      email = prompt('What is your email? We will send you a link to the second part of this HIT. We will not send any further emails.');
-
-      while (!(email.indexOf('@') > -1)) {
-        email = prompt('Please provide a valid email address.');
-      }
-
       for (var i = 0; i < AllImages.length; i++) {
           if (!$('#'+AllImages[i])[0].complete) {
               var percentage = i * 100.0 / (AllImages.length);
