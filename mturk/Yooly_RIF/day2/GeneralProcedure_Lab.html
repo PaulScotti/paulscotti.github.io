@@ -277,8 +277,10 @@
       $('#allItems').css('margin-top', -1000);
       // Preload the image of next trial
 
-      $('#itemA').attr('src', $('#' + PracImages[curPractice])[0].src);
-      PracImg.push(PracImages[curPractice])
+      if (curPractice < numPractice) {
+        $('#itemA').attr('src', $('#' + PracImages[curPractice])[0].src);
+        PracImg.push(PracImages[curPractice])
+      }
 
       setTimeout(function() {
         if (curPractice >= numPractice) { // if end of study
@@ -501,8 +503,10 @@
       $('#allItems').css('margin-top', -1000);
 
       // Preload the image of next trial
-      $('#itemA').attr('src', $('#' + AllImages[curTest])[0].src);
-      TestImg.push(AllImages[curTest])
+      if (curTest < numTest) {
+        $('#itemA').attr('src', $('#' + AllImages[curTest])[0].src);
+        TestImg.push(AllImages[curTest])
+      }
 
       setTimeout(function() { // fixation at beginning of trial for itiTime
         if (curTest >= numTest) { // if end of test
