@@ -270,17 +270,8 @@
     function NextPracTrial() {
       $('#allItems').css('margin-top', -1000);
       // Preload the image of next trial
-      if (PracTrialType[curPractice] == 0) { //RpPlus
-        $('#itemA').attr('src', $('#Obj' + RpPlusPrac[RpPlusCnt])[0].src);
-        if (RpPlusCnt <= RpPlus.length*2) {
-          RpPlusCnt++;
-        }
-      } else if (PracTrialType[curPractice] == 3) { //PracLure
-        $('#itemA').attr('src', $('#Obj' + PracLures[PracLuresCnt])[0].src);
-        if (PracLuresCnt <= PracLures.length) {
-          PracLuresCnt++;
-        }
-      }
+
+      $('#itemA').attr('src', $('#' + PracImages[curPractice])[0].src);
 
       setTimeout(function() {
         if (curPractice >= numPractice) { // if end of study
@@ -375,6 +366,7 @@
     /* Filler Start */
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
+      $('#CDitem').show();
       if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
         ChangeDetectionTrial();
       } else {

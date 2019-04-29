@@ -16,7 +16,7 @@ AllImages = chance1.shuffle(AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpT
 [Triplets,Triplets2] = repmat(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
 
 let PracImages = [];
-PracImages = chance1.shuffle(PracImages.concat(RpPlusExem,RpPlusExem,Lures));
+PracImages = chance1.shuffle(PracImages.concat(RpPlusExem,RpPlusExem,LuresExem));
 
 function repmat(array, count) {
   let result = [];
