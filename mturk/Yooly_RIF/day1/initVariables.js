@@ -11,9 +11,12 @@ RpPlusTriplets = Sandwich(RpPlusExem,RpMinusExem.slice(0,30));
 RpMinusTriplets = RpMinusExem.slice(30,75);
 
 let AllImages = [];
-AllImages = AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets);
+AllImages = chance1.shuffle(AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets));
 
 [Triplets,Triplets2] = repmat(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
+
+let PracImages = [];
+PracImages = chance1.shuffle(PracImages.concat(RpPlusExem,RpPlusExem,Lures));
 
 function repmat(array, count) {
   let result = [];
