@@ -104,7 +104,7 @@
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
-    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" width="600px"></p>
+    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" width="600px"></p>
   </div>
 
   <!-- Initializing JS -->
@@ -179,6 +179,7 @@
     const Scene = document.getElementById("Scene");
     $('#Scene').hide();
     $('#CDitem').hide();
+    $('#rating').hide();
 
     /* Start Experiment */
     function StartExperiment() {
@@ -225,6 +226,7 @@
         $('#OldUnsure').hide(); // hide Old button
         $('#New').hide(); // hide New button
         $('#NewUnsure').hide(); // hide New button
+        $('#rating').hide();
 
         // open pop-up:
         modalClosed = false;
@@ -286,6 +288,7 @@
           $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
           $('#NewUnsure').hide(); // hide New button
+          $('#rating').hide();
 
           // open pop-up:
           modalClosed = false;
@@ -316,6 +319,7 @@
       $('#New').show();
       $('#OldUnsure').show();
       $('#NewUnsure').show();
+      $('#rating').show();
     }
 
     /* Scene Judgment (mountain or beach) */
@@ -490,6 +494,7 @@
           $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
           $('#NewUnsure').hide(); // hide New button
+          $('#rating').hide();
 
           // open pop-up:
           modalClosed = false;
