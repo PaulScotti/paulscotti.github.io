@@ -97,9 +97,9 @@
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden;">Mountain</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old (confident)</a>
-      <a href="javascript:void(0);" onclick="OldUnsure();" id="Old" style="display: hidden;">Old (unconfident)</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">Old (unconfident)</a>
       <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New (unconfident)</a>
-      <a href="javascript:void(0);" onclick="NewUnsure();" id="New" style="display: hidden;">New (confident)</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">New (confident)</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
@@ -147,14 +147,14 @@
     let CDaccuracy = [];
     let CDType = [];
     let PracticeResp = [];
-    let PracticeAcc = [];
     let PracticeRT = [];
     let TestResp = [];
-    let TestAcc = [];
     let TestRT = [];
     let SceneResp = [];
     let SceneAcc = [];
     let scenecounter = -1;
+    let PracImg = [];
+    let TestImg = [];
 
     /* Setup reused image variable */
     let imgA = new Image();
@@ -272,6 +272,7 @@
       // Preload the image of next trial
 
       $('#itemA').attr('src', $('#' + PracImages[curPractice])[0].src);
+      PracImg.push(PracImages[curPractice])
 
       setTimeout(function() {
         if (curPractice >= numPractice) { // if end of study
@@ -478,32 +479,8 @@
       $('#allItems').css('margin-top', -1000);
 
       // Preload the image of next trial
-      if (TestTrialType[curTest] == 0) { //RpPlus
-        $('#itemA').attr('src', $('#Obj' + RpPlus[RpPlusCnt])[0].src);
-        if (RpPlusCnt <= RpPlus.length) {
-          RpPlusCnt++;
-        }
-      } else if (TestTrialType[curTest] == 1) { //RpMinus
-        $('#itemA').attr('src', $('#Obj' + RpMinus[RpMinusCnt])[0].src);
-        if (RpMinusCnt <= RpMinus.length) {
-          RpMinusCnt++;
-        }
-      } else if (TestTrialType[curTest] == 2) { //Nrp
-        $('#itemA').attr('src', $('#Obj' + Nrp[NrpCnt])[0].src);
-        if (NrpCnt <= Nrp.length) {
-          NrpCnt++;
-        }
-      } else if (TestTrialType[curTest] == 4) { //RpTestLures
-        $('#itemA').attr('src', $('#Obj' + RpTestLures[RpTestLuresCnt])[0].src);
-        if (RpTestLuresCnt <= RpTestLures.length) {
-          RpTestLuresCnt++;
-        }
-      } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-        $('#itemA').attr('src', $('#Obj' + NrpTestLures[NrpTestLuresCnt])[0].src);
-        if (NrpTestLuresCnt <= NrpTestLures.length) {
-          NrpTestLuresCnt++;
-        }
-      }
+      $('#itemA').attr('src', $('#' + AllImages[curTest])[0].src);
+      TestImg.push(AllImages[curTest])
 
       setTimeout(function() { // fixation at beginning of trial for itiTime
         if (curTest >= numTest) { // if end of test
@@ -536,57 +513,51 @@
     function New() {
       if (curPractice > numPractice) { // if test phase
         TestResp.push(1);
-        if (TestTrialType[curTest] == 0) { //RpPlus
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 1) { //RpMinus
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 2) { //Nrp
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 4) { //RpTestLures
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-          TestAcc.push(1);
-        }
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(1);
-        if (PracTrialType[curPractice] == 0) { //RpPlus
-          PracticeAcc.push(0);
-        } else if (PracTrialType[curPractice] == 3) { //PracLure
-          PracticeAcc.push(1);
-        }
+        PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        curPractice++;
+        NextPracTrial();
+      }
+    }
+    function NewUnsure() {
+      if (curPractice > numPractice) { // if test phase
+        TestResp.push(2);
+        TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        curTest++;
+        NextTestTrial();
+      } else { // if practice phase
+        PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
         NextPracTrial();
       }
     }
 
-    function Old() {
+    function OldUnsure() {
       if (curPractice > numPractice) { // if test phase
-        TestResp.push(0);
-        if (TestTrialType[curTest] == 0) { //RpPlus
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 1) { //RpMinus
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 2) { //Nrp
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 4) { //RpTestLures
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-          TestAcc.push(0);
-        }
+        TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(0);
-        if (PracTrialType[curPractice] == 0) { //RpPlus
-          PracticeAcc.push(1);
-        } else if (PracTrialType[curPractice] == 3) { //PracLure
-          PracticeAcc.push(0);
-        }
+        PracticeResp.push(3);
+        PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        curPractice++;
+        NextPracTrial();
+      }
+    }
+    function Old() {
+      if (curPractice > numPractice) { // if test phase
+        TestResp.push(4);
+        TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        curTest++;
+        NextTestTrial();
+      } else { // if practice phase
+        PracticeResp.push(4);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
         NextPracTrial();
@@ -602,10 +573,9 @@
       });
     });
 
-    /* Done with the experiment*/
+    /* Done with the experiment */
     function Done() {
       // calculate their overall accuracy (Practice + Test)
-      const OverallAcc = (((TestAcc.reduce((a, b) => a + b, 0) + PracticeAcc.reduce((a, b) => a + b, 0)) / (TestAcc.length + PracticeAcc.length)) * 100).toFixed(2);
       if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
         document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
           '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
@@ -641,10 +611,18 @@
         "NrpTriplets": NrpTriplets,
         "RpPlusTriplets": RpPlusTriplets,
         "RpMinusTriplets": RpMinusTriplets,
+        "PracImages": PracImages,
         "AllImages": AllImages,
         "Triplets": Triplets,
         "Triplets2": Triplets2,
         "seed": chance1.seed,
+        "CDaccuracy": CDaccuracy,
+        "PracImg": PracImg,
+        "TestImg": TestImg,
+        "PracticeResp": PracticeResp,
+        "PracticeRT": PracticeRT,
+        "TestResp": TestResp,
+        "TestRT": TestRT,
         "comments": $('#comments').val()
       };
 
@@ -652,7 +630,7 @@
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('Yooly_day1/' + WORKERID + '.json');
+      const storageRef = firebase.storage().ref('Yooly_day2/' + WORKERID + '_day2.json');
       storageRef.put(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
