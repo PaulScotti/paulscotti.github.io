@@ -3,7 +3,8 @@ let SceneSet = chance1.shuffle(InsertLetter(counter(1,68),'b').concat(InsertLett
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,75)),'o');
-let LuresExem = InsertLetter(counter(1,30),'lure');
+let LuresExem1 = InsertLetter(counter(1,14),'lure');
+let LuresExem2 = InsertLetter(counter(15,30),'lure');
 
 let RpPlusTriplets = [];
 let NrpTriplets = InsertLetter(chance1.shuffle(counter(1,90)),'nrp');
@@ -16,7 +17,7 @@ AllImages = chance1.shuffle(AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpT
 [Triplets,Triplets2] = repmat(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
 
 let PracImages = [];
-PracImages = chance1.shuffle(PracImages.concat(RpPlusExem,RpPlusExem,LuresExem));
+PracImages = PracImages.concat(chance1.shuffle(LuresExem1,RpPlusExem),chance1.shuffle(LuresExem2,RpPlusExem))
 
 function repmat(array, count) {
   let result = [];
