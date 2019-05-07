@@ -44,9 +44,9 @@
 
   <!-- Instructions page2 -->
   <div id="instructions2" style="display:none">
-    <p>We will begin this HIT by studying objects, identical in procedure to the first HIT. To recap, objects will be presented one at a time for 1.5 seconds each. Study the visual details of each object, as you will eventually be tested on every object.</p>
+    <p>We will begin this HIT by studying objects, identical in procedure to the first HIT. To recap, objects will be presented one at a time. Study the visual details of each object, as you will eventually be tested on every object.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study.png" width="600px"></p>
-    <p>Sometimes a scene will be presented instead of an object. When this happens, you will have 3 seconds to click a button indicating whether the scene is a beach or a mountain.</p>
+    <p>While you are memorizing the visual details of each object, sometimes an irrelevant scene will be presented. When this happens, you will have 3 seconds to click a button indicating whether the scene is a beach or a mountain. Please remember that the most important thing is that you memorize the visual details of the objects.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study2.png" width="300px"></p>
     <br>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions2').hide();$('#instructions3').show();$('a#TextButton').hide();ImagesReady();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
@@ -343,7 +343,6 @@
       now2 = now;
       scenecounter = scenecounter+1;
       $('#itemA').hide();
-      $('#memorizethis').hide();
       $('#Scene').show();
       $('#allItems').css('margin-top', 0);
       $('#Scene').attr('src', $('#' + SceneSet[scenecounter])[0].src);
@@ -353,7 +352,6 @@
         $('#allItems').css('margin-top', -1000);
         $('#Scene').hide();
         $('#itemA').show();
-        $('#memorizethis').show();
         $('#BeachButton').hide();
         $('#MountainButton').hide();
         $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
@@ -389,6 +387,7 @@
     /* Filler Start */
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
+      $('#memorizethis').hide();
       $('#CDitem').show();
       if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
         ChangeDetectionTrial();
@@ -705,6 +704,8 @@
     $(function() {
       if (!!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)) { // if Safari
         $('body').html('Unfortunately this experiment does not work in Safari. It works in Chrome, Firefox, or Opera. Sorry!');
+      } else if (navigator.userAgent.indexOf('Firefox') !== -1) {
+        $('body').html('Unfortunately this experiment does not work in Firefox. It works in Chrome. Sorry!');
       } else if (isIE()) { // if IE
         $('body').html('Unfortunately this experiment does not work in Internet Explorer. It works in Chrome, Firefox, or Opera. Sorry!');
       } else if (
