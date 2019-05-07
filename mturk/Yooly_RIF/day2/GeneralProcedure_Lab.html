@@ -90,14 +90,15 @@
     <div id="fixation">+</div>
     <div id="allItems">
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
-      <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=300 height=300></img>
+      <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
+      <p id="memorizethis" align="center" style="position:absolute; bottom:-645px; left:150px">Memorize the visual details of these objects.</p>
       <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; bottom:0px;"></p>
     </div>
     <br><br>
     <center>
-      <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden;">Beach</a>
-      <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden;">Mountain</a>
+      <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden; position:absolute; top:650px; left:180px;">Beach</a>
+      <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden; position:absolute; top:650px; right:150px;">Mountain</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">No</a>
       <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">No</a>
       <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">Yes</a>
@@ -224,6 +225,7 @@
         now = new Date().getTime();
         now2 = now;
         $('#itemA').hide(); // hide object from last trial
+        $('#memorizethis').hide();
         $('#Old').hide(); // hide Old button
         $('#OldUnsure').hide(); // hide Old button
         $('#New').hide(); // hide New button
@@ -289,6 +291,7 @@
           now = new Date().getTime();
           now2 = now;
           $('#itemA').hide(); // hide object from last trial
+          $('#memorizethis').hide();
           $('#Old').hide(); // hide Old button
           $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
@@ -341,6 +344,7 @@
       now2 = now;
       scenecounter = scenecounter+1;
       $('#itemA').hide();
+      $('#memorizethis').hide();
       $('#Scene').show();
       $('#allItems').css('margin-top', 0);
       $('#Scene').attr('src', $('#' + SceneSet[scenecounter])[0].src);
@@ -350,6 +354,7 @@
         $('#allItems').css('margin-top', -1000);
         $('#Scene').hide();
         $('#itemA').show();
+        $('#memorizethis').show();
         $('#BeachButton').hide();
         $('#MountainButton').hide();
         $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
@@ -394,6 +399,7 @@
         $('#DiffButton').hide();
         $('#allItems').css('margin-top', -1000); // show object items again and hide them off-screen
         $('#itemA').show();
+        $('#memorizethis').show();
 
         // open pop-up:
         modalClosed = false;
@@ -511,6 +517,7 @@
       setTimeout(function() { // fixation at beginning of trial for itiTime
         if (curTest >= numTest) { // if end of test
           $('#itemA').hide(); // hide object from last trial
+          $('#memorizethis').hide();
           $('#Old').hide(); // hide Old button
           $('#OldUnsure').hide(); // hide Old button
           $('#New').hide(); // hide New button
