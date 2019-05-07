@@ -390,6 +390,7 @@
       $('#memorizethis').hide();
       $('#CDitem').show();
       if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
+        CDaccuracy.push(-999);
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
