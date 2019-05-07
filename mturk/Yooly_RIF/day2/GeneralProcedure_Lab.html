@@ -106,7 +106,7 @@
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" width="600px"></p>
-    <p id="memorizethis" align="center" style="position:absolute; bottom:-10px; left:150px">Memorize the visual details of these objects.</p>
+    <p id="memorizethis" align="center" style="position:absolute; top:-35px; left:150px">Memorize the visual details of these objects.</p>
   </div>
 
   <!-- Initializing JS -->
@@ -397,7 +397,7 @@
         $('#DiffButton').hide();
         $('#allItems').css('margin-top', -1000); // show object items again and hide them off-screen
         $('#itemA').show();
-        $('#memorizethis').show();
+        $('#memorizethis').hide();
 
         // open pop-up:
         modalClosed = false;
