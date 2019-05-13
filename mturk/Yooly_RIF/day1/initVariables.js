@@ -1,5 +1,5 @@
 let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
-let SceneSet = chance1.shuffle(InsertLetter(counter(1,68),'b').concat(InsertLetter(counter(1,68),'m'))); // randomize beach and mountain
+let SceneSet = repmat(chance1.shuffle(InsertLetter(counter(1,68),'b').concat(InsertLetter(counter(1,68),'m'))),3); // randomize beach and mountain
 
 let RpPlusExem = InsertLetter(chance1.shuffle(counter(1,15)),'plus');
 let RpMinusExem = InsertLetter(chance1.shuffle(counter(1,75)),'o');
@@ -19,6 +19,25 @@ AllImages = chance1.shuffle(AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpT
 let PracImages = [];
 PracImages = PracImages.concat(chance1.shuffle([].concat.apply(LuresExem1, RpPlusExem)),chance1.shuffle([].concat.apply(LuresExem2, RpPlusExem)))
 
+StudyArray = [];
+aa=0;bb=0;cc=0;dd=0;ee=0;ff=0;
+for (var i = 0; i < 180; i++) {
+  ff++
+  if (Triplets[i].includes("plus")) {
+    StudyArray.push(Triplets[i]); aa++
+  } else if (Triplets[i].includes("nrp") && Triplets2.includes(Triplets[i])) {
+    StudyArray.push("d2"+Triplets[i]); bb++
+  } else if (Triplets[i].includes("o") && Triplets[i+1].includes("plus")) {
+    StudyArray.push("pos1minus"+Triplets[i]); cc++
+  } else if (i==0){
+    StudyArray.push("d1"+Triplets[i]); ee++
+  } else if (Triplets[i].includes("o") && Triplets[i-1].includes("plus")) {
+    StudyArray.push("pos3minus"+Triplets[i]); dd++
+  } else {
+    StudyArray.push("d1"+Triplets[i]); ee++
+  }
+}
+
 function repmat(array, count) {
   let result = [];
   while (count--) {
@@ -30,7 +49,7 @@ function repmat(array, count) {
 function repmat2(array, count) {
   let result = []; let result2 = [];
   while (count--) {
-    result = result.concat(array[0]);
+    result = result.concat(TripScramble(array[0]));
   }
   result2 = array[1];
   return [result,result2];
@@ -102,4 +121,25 @@ function ThreeSlice(tripA,tripB,tripC){
     result2 = result2.concat(E[i]);
   }
   return [result,result2]
+}
+
+function TripScramble(array) {
+  let result = [];
+  let A = [];
+  for (let i = 0; i < array.length; i=i+3) {
+    A[i/3] = array.slice(i,i+3);
+  }
+  A = chance1.shuffle(A);
+  for (let i = 0; i < A.length; i++) {
+    result = result.concat(A[i]);
+  }
+  return result
+}
+
+function ComplexIncludes(array,text){
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].includes(text)) {
+      return array[i]
+    }
+  }
 }

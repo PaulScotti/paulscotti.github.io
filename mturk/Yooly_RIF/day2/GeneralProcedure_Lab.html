@@ -78,6 +78,8 @@
     </div>
     <div>
       <center>
+        <center>
+        <div id="cashPrize">text</div><br>
         <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
       </center>
     </div>
@@ -159,6 +161,9 @@
     let scenecounter = -1;
     let PracImg = [];
     let TestImg = [];
+    let PracAccuracy = [];
+    let TestAccuracy = [];
+    let basepay = 4;
 
     /* Setup reused image variable */
     let imgA = new Image();
@@ -249,10 +254,11 @@
             return; // need return; otherwise the ShowTrial below executes
           }
         }
-      } else if ((curStudy)%3==0 && curStudy!=0) {
+      } else if ((curStudy)%3==0 && curStudy!=0 && locked==0) {
         SceneJudgment();
         return;
       } else {
+        locked=0;
         // Preload the image of next trial
         $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
       }
@@ -339,6 +345,7 @@
 
     /* Scene Judgment (mountain or beach) */
     function SceneJudgment() {
+      locked=1;
       now = new Date().getTime();
       now2 = now;
       scenecounter = scenecounter+1;
@@ -549,11 +556,21 @@
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
+        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+          TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
+        }
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(1);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
+        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+          PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
+        }
         NextPracTrial();
       }
     }
@@ -562,11 +579,21 @@
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
+        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+          TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
+        }
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
+        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+          PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
+        }
         NextPracTrial();
       }
     }
@@ -576,11 +603,21 @@
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
+        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+          TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
+        }
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
+        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+          PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
+        }
         NextPracTrial();
       }
     }
@@ -589,11 +626,21 @@
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curTest++;
+        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+          TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
+        }
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(4);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         curPractice++;
+        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+          PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
+        }
         NextPracTrial();
       }
     }
@@ -609,7 +656,11 @@
 
     /* Done with the experiment */
     function Done() {
-      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to calculate and process your monetary bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Any comments? (What strategy did you use? Any technical difficulties?)<br><br>' +
+      let average = (array) => array.reduce((a, b) => a + b) / array.length;
+      bonus = average(TestAcc);
+      let cashpoints = basepay + bonus;
+      document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints.toFixed(2);
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Any comments? (What strategy did you use? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
@@ -641,6 +692,7 @@
         "PracImages": PracImages,
         "AllImages": AllImages,
         "Triplets": Triplets,
+        "Day1StudyArray": StudyArray,
         "Triplets2": Triplets2,
         "seed": chance1.seed,
         "CDaccuracy": CDaccuracy,
@@ -648,8 +700,10 @@
         "TestImg": TestImg,
         "PracticeResp": PracticeResp,
         "PracticeRT": PracticeRT,
+        "PracAccuracy": PracAccuracy,
         "TestResp": TestResp,
         "TestRT": TestRT,
+        "TestAccuracy": TestAccuracy,
         "comments": $('#comments').val()
       };
 

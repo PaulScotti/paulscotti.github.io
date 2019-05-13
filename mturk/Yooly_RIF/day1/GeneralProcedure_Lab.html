@@ -35,7 +35,7 @@
   <div id="instructions">
     <p>This HIT is a <b>multi-session</b> memory experiment composed of two parts. <b>You will need to finish both parts.</b>
     <br><br>
-    <b>This first part will take 15 minutes ($1.5 reward) and the second part will take 40 minutes ($4.00 reward plus up to $2.50 bonus based on performance).</b> After you complete the first part, you will be emailed with a link to the second part that must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
+    <b>This first part will take 1 hour ($6 reward) and the second part will take 40 minutes ($4.00 reward plus up to $2.50 bonus based on performance).</b> After you complete the first part, you will be emailed with a link to the second part that must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
     <p><b>Please only complete this first part if you are also able to complete the second part (data is only usable if both parts are completed).</b></p>
     <br>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
@@ -125,6 +125,7 @@
     }
 
     /* Define more variables */
+    aa=0;bb=0;cc=0;dd=0;ee=0;ff=0;
     let modalClosed = false;
     const numStudy = 180*5; // 60;
     const numPractice = 0; // 60;
@@ -156,7 +157,8 @@
     let SceneResp = [];
     let SceneAcc = [];
     let scenecounter = -1;
-    let StudyArray = [];
+    let StudyArray_check = [];
+    let scenetime = 30; //3000
 
     /* Setup reused image variable */
     let imgA = new Image();
@@ -243,24 +245,26 @@
             return; // need return; otherwise the ShowTrial below executes
           }
         }
-      } else if ((curStudy)%3==0 && curStudy!=0) {
+      } else if ((curStudy)%3==0 && curStudy!=0 && locked==0) {
         SceneJudgment();
         return;
       } else {
+        locked=0;
         // Preload the image of next trial
         $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
-        if (Triplets[curStudy].includes("plus") {
-          StudyArray.push(Triplets[curStudy]);
-        } else if (Triplets[curStudy].includes("nrp") & Triplets2.includes(Triplets[curStudy])) {
-          StudyArray.push("d2"+Triplets[curStudy]);
-        } else if (Triplets[curStudy].includes("nrp")) {
-          StudyArray.push("d1"+Triplets[curStudy]);
-        } else if (Triplets[curStudy].includes("o") & Triplets[curStudy+1].includes("plus")) {
-          StudyArray.push("pos1minus"+Triplets[curStudy]);
-        } else if (Triplets[curStudy].includes("o") & Triplets[curStudy-1].includes("plus")) {
-          StudyArray.push("pos3minus"+Triplets[curStudy]);
+        ff++
+        if (Triplets[curStudy].includes("plus")) {
+          StudyArray_check.push(Triplets[curStudy]); aa++
+        } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
+          StudyArray_check.push("d2"+Triplets[curStudy]); bb++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
+        } else if (curStudy==0){
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
+          StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
         } else {
-          StudyArray.push("o"+Triplets[curStudy]);
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         }
       }
       setTimeout(function() {
@@ -275,7 +279,27 @@
         $('#allItems').css('margin-top', -1000);
         setTimeout(function() {
           curStudy++;
-          NextStudyTrial();
+          $('#instructions').hide();
+          $('#showTrial').show();
+          if (curStudy%60 == 0 && locked==0) {
+            // open pop-up:
+            modalClosed = false;
+            document.getElementById("openModal_text").innerHTML =
+              'Block ' + ((curStudy)/60).toString() + ' of 15.';
+            window.location.href = '#openModal';
+            checkFlagB();
+
+            function checkFlagB() {
+              if (modalClosed == false) {
+                window.setTimeout(checkFlagB, 100); /* this checks the flag every 100 milliseconds*/
+              } else {
+                NextStudyTrial();
+                return;
+              }
+            }
+          } else {
+            NextStudyTrial();
+          }
         }, itiTime);
       }, displayTime);
     }
@@ -338,6 +362,8 @@
 
     /* Scene Judgment (mountain or beach) */
     function SceneJudgment() {
+      locked=1;
+      curStudy--;
       now = new Date().getTime();
       now2 = now;
       scenecounter = scenecounter+1;
@@ -357,7 +383,7 @@
         setTimeout(function() {
           ShowStudy();
         }, itiTime);
-      }, 3000);
+      }, scenetime);
     }
 
     function Beach() {
@@ -676,6 +702,8 @@
         "AllImages": AllImages,
         "Triplets": Triplets,
         "Triplets2": Triplets2,
+        "StudyArray": StudyArray,
+        "StudyArray_check": StudyArray_check,
         "seed": chance1.seed,
         "comments": $('#comments').val()
       };
