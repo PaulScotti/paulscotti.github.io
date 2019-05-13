@@ -411,11 +411,11 @@
         modalClosed = false;
         if (curPractice > numPractice) { // test phase
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
           window.location.href = '#openModal';
         } else {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
           window.location.href = '#openModal';
         }
         checkFlag6();
@@ -656,9 +656,9 @@
 
     /* Done with the experiment */
     function Done() {
-      let average = (array) => array.reduce((a, b) => a + b) / array.length;
-      bonus = average(TestAcc);
-      let cashpoints = basepay + bonus;
+      bonus = PracAccuracy + TestAccuracy;
+      let cashpoints = basepay + bonus/100;
+      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints.toFixed(2);
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Any comments? (What strategy did you use? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
@@ -704,6 +704,7 @@
         "TestResp": TestResp,
         "TestRT": TestRT,
         "TestAccuracy": TestAccuracy,
+        "bonus": bonus/100,
         "comments": $('#comments').val()
       };
 
