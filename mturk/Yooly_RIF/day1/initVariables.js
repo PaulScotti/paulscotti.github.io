@@ -41,11 +41,15 @@ StudyArrayFull = [];
 for (var i = 0; i < StudyArray.length; i++) {
   if (StudyArray[i].includes("d1") && i%3==1) {
     StudyArrayFull.push("pos1" + StudyArray[i]);
-  } else if (StudyArray[i].includes("d1") && i%3==3) {
+  } else if (StudyArray[i].includes("d1") && i%3==0) {
     StudyArrayFull.push("pos3" + StudyArray[i]);
+  } else if (StudyArray[i].includes("d1") && i%3==2) {
+    StudyArrayFull.push("pos2" + StudyArray[i]);
   } else if (StudyArray[i].includes("d2") && i%3==1) {
     StudyArrayFull.push("pos1" + StudyArray[i]);
-  } else if (StudyArray[i].includes("d2") && i%3==3) {
+  } else if (StudyArray[i].includes("d2") && i%3==2) {
+    StudyArrayFull.push("pos2" + StudyArray[i]);
+  } else if (StudyArray[i].includes("d2") && i%3==0) {
     StudyArrayFull.push("pos3" + StudyArray[i]);
   } else {
     StudyArrayFull.push(StudyArray[i]);
