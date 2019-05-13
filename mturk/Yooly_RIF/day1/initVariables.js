@@ -14,7 +14,7 @@ RpMinusTriplets = RpMinusExem.slice(30,75);
 let AllImages = [];
 AllImages = chance1.shuffle(AllImages.concat(RpPlusTriplets,RpMinusTriplets,NrpTriplets));
 
-[Triplets,Triplets2] = repmat(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
+[Triplets,Triplets2] = repmat2(ThreeSlice(RpPlusTriplets,RpMinusTriplets,NrpTriplets),5);
 
 let PracImages = [];
 PracImages = PracImages.concat(chance1.shuffle([].concat.apply(LuresExem1, RpPlusExem)),chance1.shuffle([].concat.apply(LuresExem2, RpPlusExem)))
@@ -25,6 +25,15 @@ function repmat(array, count) {
     result = result.concat(array);
   }
   return result;
+}
+
+function repmat2(array, count) {
+  let result = []; let result2 = [];
+  while (count--) {
+    result = result.concat(array[0]);
+  }
+  result2 = array[1];
+  return [result,result2];
 }
 
 function counter(start, end, interval) {
