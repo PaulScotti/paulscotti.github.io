@@ -21,7 +21,7 @@ PracImages = PracImages.concat(chance1.shuffle([].concat.apply(LuresExem1, RpPlu
 
 StudyArray = [];
 aa=0;bb=0;cc=0;dd=0;ee=0;ff=0;
-for (var i = 0; i < 180; i++) {
+for (var i = 0; i < Triplets.length; i++) {
   ff++
   if (Triplets[i].includes("plus")) {
     StudyArray.push(Triplets[i]); aa++
@@ -38,7 +38,7 @@ for (var i = 0; i < 180; i++) {
   }
 }
 StudyArrayFull = [];
-for (var i = 0; i < 180; i++) {
+for (var i = 0; i < StudyArray.length; i++) {
   if (StudyArray[i].includes("d1") && i%3==1) {
     StudyArrayFull.push("pos1" + StudyArray[i]);
   } else if (StudyArray[i].includes("d1") && i%3==3) {
