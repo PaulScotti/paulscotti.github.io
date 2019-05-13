@@ -37,6 +37,20 @@ for (var i = 0; i < 180; i++) {
     StudyArray.push("d1"+Triplets[i]); ee++
   }
 }
+StudyArrayFull = [];
+for (var i = 0; i < 180; i++) {
+  if (StudyArray[i].includes("d1") && i%3==1) {
+    StudyArrayFull.push("pos1" + StudyArray[i]);
+  } else if (StudyArray[i].includes("d1") && i%3==3) {
+    StudyArrayFull.push("pos3" + StudyArray[i]);
+  } else if (StudyArray[i].includes("d2") && i%3==1) {
+    StudyArrayFull.push("pos1" + StudyArray[i]);
+  } else if (StudyArray[i].includes("d2") && i%3==3) {
+    StudyArrayFull.push("pos3" + StudyArray[i]);
+  } else {
+    StudyArrayFull.push(StudyArray[i]);
+  }
+}
 
 function repmat(array, count) {
   let result = [];
