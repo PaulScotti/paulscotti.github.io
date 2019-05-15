@@ -245,11 +245,10 @@
             return; // need return; otherwise the ShowTrial below executes
           }
         }
-      } else if ((curStudy)%3==0 && curStudy!=0 && locked==0) {
+      } else if ((curStudy)%3==0 && curStudy!=0) {
         SceneJudgment();
         return;
       } else {
-        locked=0;
         // Preload the image of next trial
         $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
         ff++
@@ -281,7 +280,7 @@
           curStudy++;
           $('#instructions').hide();
           $('#showTrial').show();
-          if (curStudy%60 == 0 && locked==0 && 0) {
+          if (curStudy%60 == 0 && curStudy>0) {
             // open pop-up:
             modalClosed = false;
             document.getElementById("openModal_text").innerHTML =
@@ -362,8 +361,6 @@
 
     /* Scene Judgment (mountain or beach) */
     function SceneJudgment() {
-      locked=1;
-      curStudy--;
       now = new Date().getTime();
       now2 = now;
       scenecounter = scenecounter+1;
@@ -379,7 +376,22 @@
         $('#itemA').show();
         $('#BeachButton').hide();
         $('#MountainButton').hide();
+        // Preload the image of next trial
         $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
+        ff++
+        if (Triplets[curStudy].includes("plus")) {
+          StudyArray_check.push(Triplets[curStudy]); aa++
+        } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
+          StudyArray_check.push("d2"+Triplets[curStudy]); bb++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
+        } else if (curStudy==0){
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
+          StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
+        } else {
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        }
         setTimeout(function() {
           ShowStudy();
         }, itiTime);
