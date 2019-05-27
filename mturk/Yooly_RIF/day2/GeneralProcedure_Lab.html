@@ -136,10 +136,11 @@
     const numStudy = 90;
     const numPractice = 60;
     const numTest = 180;
-    const displayTime = 2000;
-    const itiTime = 500;
+    const displayTime = 200; //2000
+    const itiTime = 200; //500
     const imgWidth = 300;
     const imgHeight = 300;
+    let scenetime = 30; //3000
     let curStudy = 0;
     let curPractice = 0;
     let curTest = 0;
@@ -292,8 +293,6 @@
 
       setTimeout(function() {
         if (curPractice >= numPractice) { // if end of study
-          curPractice++;
-
           now = new Date().getTime();
           now2 = now;
           $('#itemA').hide(); // hide object from last trial
@@ -330,7 +329,7 @@
     function OldNewJudgment() {
       startTrial = new Date().getTime();
       $('#allItems').css('margin-top', 0);
-      if (curPractice > numPractice) {  // if test phase
+      if (curPractice >= numPractice) {  // if test phase
         $('#Old').show();
         $('#New').show();
         $('#OldUnsure').show();
@@ -366,7 +365,7 @@
         setTimeout(function() {
           ShowStudy();
         }, itiTime);
-      }, 3000);
+      }, scenetime);
     }
 
     function Beach() {
@@ -397,7 +396,7 @@
       $('#allItems').css('margin-top', 0);
       $('#memorizethis').hide();
       $('#CDitem').show();
-      if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
+      if (now2 < (now + 100)) { // 180000 for 3 minutes long filler task
         CDaccuracy.push(-999);
         ChangeDetectionTrial();
       } else {
@@ -410,7 +409,7 @@
 
         // open pop-up:
         modalClosed = false;
-        if (curPractice > numPractice) { // test phase
+        if (curPractice >= numPractice) { // test phase
           document.getElementById("openModal_text").innerHTML =
             'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
           window.location.href = '#openModal';
@@ -424,7 +423,7 @@
         function checkFlag6() {
           if (modalClosed == false) {
             window.setTimeout(checkFlag6, 100); /* this checks the flag every 100 milliseconds*/
-          } else if (curPractice > numPractice) {
+          } else if (curPractice >= numPractice) {
             NextTestTrial();
           } else {
             NextPracTrial();
@@ -553,95 +552,99 @@
     }
 
     function New() {
-      if (curPractice > numPractice) { // if test phase
+      if (curPractice >= numPractice) { // if test phase
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curTest++;
-        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
           TestAccuracy.push(0);
         } else {
           TestAccuracy.push(1);
         }
+        curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(1);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curPractice++;
-        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
           PracAccuracy.push(0);
         } else {
           PracAccuracy.push(1);
         }
+        curPractice++;
         NextPracTrial();
       }
     }
     function NewUnsure() {
-      if (curPractice > numPractice) { // if test phase
+      if (curPractice >= numPractice) { // if test phase
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curTest++;
-        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
           TestAccuracy.push(0);
         } else {
           TestAccuracy.push(1);
         }
+        curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curPractice++;
         if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
           PracAccuracy.push(0);
         } else {
           PracAccuracy.push(1);
         }
+        curPractice++;
         NextPracTrial();
       }
     }
 
     function OldUnsure() {
-      if (curPractice > numPractice) { // if test phase
+      if (curPractice >= numPractice) { // if test phase
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curTest++;
-        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
           TestAccuracy.push(1);
         } else {
           TestAccuracy.push(0);
         }
+        curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curPractice++;
         if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
           PracAccuracy.push(1);
         } else {
           PracAccuracy.push(0);
         }
+        curPractice++;
         NextPracTrial();
       }
     }
     function Old() {
-      if (curPractice > numPractice) { // if test phase
+      if (curPractice >= numPractice) { // if test phase
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curTest++;
-        if (ComplexIncludes(StudyArray,TestImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,TestImages[curTest]).includes("plus")) {
+        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
           TestAccuracy.push(1);
         } else {
           TestAccuracy.push(0);
         }
+        curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(4);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        curPractice++;
-        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
           PracAccuracy.push(1);
         } else {
           PracAccuracy.push(0);
         }
+        curPractice++;
         NextPracTrial();
       }
     }
@@ -661,7 +664,7 @@
       let cashpoints = basepay + bonus/100;
       cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
-      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Any comments? (What strategy did you use? Any technical difficulties?)<br><br>' +
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
