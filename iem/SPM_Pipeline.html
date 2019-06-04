@@ -12630,10 +12630,23 @@ JEIIIbxAAYkQQggv/H/DryN1diSNSQAAAABJRU5ErkJggg==
 
 </div>
 </div>
-</div>cd '/Applications/freesurfer/subjects/sub-101/surf'
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cd</span> <span class="s1">&#39;/Applications/freesurfer/subjects/sub-101/surf&#39;</span>
 
-mris_flatten -w 0 -distances 20 7 lh.occip.patch.3d  lh.occip.patch.flat && \
-mris_flatten -w 0 -distances 20 7 rh.occip.patch.3d  rh.occip.patch.flat
+<span class="n">mris_flatten</span> <span class="o">-</span><span class="n">w</span> <span class="mi">0</span> <span class="o">-</span><span class="n">distances</span> <span class="mi">20</span> <span class="mi">7</span> <span class="n">lh</span><span class="o">.</span><span class="n">occip</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="mi">3</span><span class="n">d</span>  <span class="n">lh</span><span class="o">.</span><span class="n">occip</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">flat</span> <span class="o">&amp;&amp;</span> \
+<span class="n">mris_flatten</span> <span class="o">-</span><span class="n">w</span> <span class="mi">0</span> <span class="o">-</span><span class="n">distances</span> <span class="mi">20</span> <span class="mi">7</span> <span class="n">rh</span><span class="o">.</span><span class="n">occip</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="mi">3</span><span class="n">d</span>  <span class="n">rh</span><span class="o">.</span><span class="n">occip</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">flat</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12778,92 +12791,105 @@ Dorsal always starts green-&gt;blue-&gt;red for one half-rotation (next half-rot
 
 </div>
 </div>
-</div>% function img = Colour_Wheel(wheel, start, cycles, direc)
-%%
-% img = Colour_Wheel(wheel, start, cycles, direc)
-%
-% Generates the polar angle RYGB colour wheel for Freesurfer.
-%   
-%   wheel :     'Polar' or 'Eccen'
-%
-%   start :     Polar angle or position where cycling begins (0=3 o'clock, 90=12 o'clock)
-%
-%   cycles :    Number of cycles for the colour wheel. This is the same as the 
-%               "angle cycles" defined in the Freesurfer options. You must use 
-%               an integer here. Freesurfer does funky stuff when using fractions 
-%               for this value, but this script does not support it.
-%
-%   direc :     Direction of cycling: 
-%                   0 = Clockwise rotating wedge / Expanding ring
-%                   1 = Anticlockwise rotating wedge / Contracting ring
-%
-% The output of this function is a bitmap which can be displayed or saved.
-%   (Written by Sam Schwarzkopf, 2nd June 2010)
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span> <span class="n">function</span> <span class="n">img</span> <span class="o">=</span> <span class="n">Colour_Wheel</span><span class="p">(</span><span class="n">wheel</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">cycles</span><span class="p">,</span> <span class="n">direc</span><span class="p">)</span>
+<span class="o">%%</span>
+<span class="o">%</span> <span class="n">img</span> <span class="o">=</span> <span class="n">Colour_Wheel</span><span class="p">(</span><span class="n">wheel</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">cycles</span><span class="p">,</span> <span class="n">direc</span><span class="p">)</span>
+<span class="o">%</span>
+<span class="o">%</span> <span class="n">Generates</span> <span class="n">the</span> <span class="n">polar</span> <span class="n">angle</span> <span class="n">RYGB</span> <span class="n">colour</span> <span class="n">wheel</span> <span class="k">for</span> <span class="n">Freesurfer</span><span class="o">.</span>
+<span class="o">%</span>   
+<span class="o">%</span>   <span class="n">wheel</span> <span class="p">:</span>     <span class="s1">&#39;Polar&#39;</span> <span class="ow">or</span> <span class="s1">&#39;Eccen&#39;</span>
+<span class="o">%</span>
+<span class="o">%</span>   <span class="n">start</span> <span class="p">:</span>     <span class="n">Polar</span> <span class="n">angle</span> <span class="ow">or</span> <span class="n">position</span> <span class="n">where</span> <span class="n">cycling</span> <span class="n">begins</span> <span class="p">(</span><span class="mi">0</span><span class="o">=</span><span class="mi">3</span> <span class="n">o</span><span class="s1">&#39;clock, 90=12 o&#39;</span><span class="n">clock</span><span class="p">)</span>
+<span class="o">%</span>
+<span class="o">%</span>   <span class="n">cycles</span> <span class="p">:</span>    <span class="n">Number</span> <span class="n">of</span> <span class="n">cycles</span> <span class="k">for</span> <span class="n">the</span> <span class="n">colour</span> <span class="n">wheel</span><span class="o">.</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">the</span> 
+<span class="o">%</span>               <span class="s2">&quot;angle cycles&quot;</span> <span class="n">defined</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">Freesurfer</span> <span class="n">options</span><span class="o">.</span> <span class="n">You</span> <span class="n">must</span> <span class="n">use</span> 
+<span class="o">%</span>               <span class="n">an</span> <span class="n">integer</span> <span class="n">here</span><span class="o">.</span> <span class="n">Freesurfer</span> <span class="n">does</span> <span class="n">funky</span> <span class="n">stuff</span> <span class="n">when</span> <span class="n">using</span> <span class="n">fractions</span> 
+<span class="o">%</span>               <span class="k">for</span> <span class="n">this</span> <span class="n">value</span><span class="p">,</span> <span class="n">but</span> <span class="n">this</span> <span class="n">script</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">it</span><span class="o">.</span>
+<span class="o">%</span>
+<span class="o">%</span>   <span class="n">direc</span> <span class="p">:</span>     <span class="n">Direction</span> <span class="n">of</span> <span class="n">cycling</span><span class="p">:</span> 
+<span class="o">%</span>                   <span class="mi">0</span> <span class="o">=</span> <span class="n">Clockwise</span> <span class="n">rotating</span> <span class="n">wedge</span> <span class="o">/</span> <span class="n">Expanding</span> <span class="n">ring</span>
+<span class="o">%</span>                   <span class="mi">1</span> <span class="o">=</span> <span class="n">Anticlockwise</span> <span class="n">rotating</span> <span class="n">wedge</span> <span class="o">/</span> <span class="n">Contracting</span> <span class="n">ring</span>
+<span class="o">%</span>
+<span class="o">%</span> <span class="n">The</span> <span class="n">output</span> <span class="n">of</span> <span class="n">this</span> <span class="n">function</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">bitmap</span> <span class="n">which</span> <span class="n">can</span> <span class="n">be</span> <span class="n">displayed</span> <span class="ow">or</span> <span class="n">saved</span><span class="o">.</span>
+<span class="o">%</span>   <span class="p">(</span><span class="n">Written</span> <span class="n">by</span> <span class="n">Sam</span> <span class="n">Schwarzkopf</span><span class="p">,</span> <span class="mi">2</span><span class="n">nd</span> <span class="n">June</span> <span class="mi">2010</span><span class="p">)</span>
 
-%% INPUT
-wheel = 'Polar';
-start = 0;
-cycles = 2; 
-direc = 1;
-%%
+<span class="o">%%</span> <span class="n">INPUT</span>
+<span class="n">wheel</span> <span class="o">=</span> <span class="s1">&#39;Polar&#39;</span><span class="p">;</span>
+<span class="n">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">cycles</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> 
+<span class="n">direc</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="o">%%</span>
 
-radius = 280;    % radius of colour wheel
-steps = 360 / 4 / cycles;   % steps from one colour to the next
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">280</span><span class="p">;</span>    <span class="o">%</span> <span class="n">radius</span> <span class="n">of</span> <span class="n">colour</span> <span class="n">wheel</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">360</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">cycles</span><span class="p">;</span>   <span class="o">%</span> <span class="n">steps</span> <span class="kn">from</span> <span class="nn">one</span> <span class="n">colour</span> <span class="n">to</span> <span class="n">the</span> <span class="nb">next</span>
 
-% colour peaks
-R = [1 0 0];
-Y = [1 1 0];
-G = [0 1 0];
-B = [0 0 1];
+<span class="o">%</span> <span class="n">colour</span> <span class="n">peaks</span>
+<span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">];</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">];</span>
+<span class="n">G</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">];</span>
+<span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">];</span>
 
-% create the colour map
-cmap = [];
-for c = 1:cycles
-    cmap = [cmap; linspace(R(1), Y(1), steps)', linspace(R(2), Y(2), steps)', linspace(R(3), Y(3), steps)'];
-    cmap = [cmap; linspace(Y(1), G(1), steps)', linspace(Y(2), G(2), steps)', linspace(Y(3), G(3), steps)'];
-    cmap = [cmap; linspace(G(1), B(1), steps)', linspace(G(2), B(2), steps)', linspace(G(3), B(3), steps)'];
-    cmap = [cmap; linspace(B(1), R(1), steps)', linspace(B(2), R(2), steps)', linspace(B(3), R(3), steps)'];
-end
+<span class="o">%</span> <span class="n">create</span> <span class="n">the</span> <span class="n">colour</span> <span class="nb">map</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">cycles</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">;</span> <span class="n">linspace</span><span class="p">(</span><span class="n">R</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;, linspace(R(2), Y(2), steps)&#39;</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="n">R</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">Y</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;];</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">;</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">G</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;, linspace(Y(2), G(2), steps)&#39;</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Y</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">G</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;];</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">;</span> <span class="n">linspace</span><span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">B</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;, linspace(G(2), B(2), steps)&#39;</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">B</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;];</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">;</span> <span class="n">linspace</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">R</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;, linspace(B(2), R(2), steps)&#39;</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">R</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span><span class="s1">&#39;];</span>
+<span class="n">end</span>
 
-% image pixels
-[x y] = meshgrid(-radius:radius, -radius:radius);
-if ~direc
-    x = flipud(x); y = flipud(y);   % flipping upside down because of the way matlab matrices work
-end
-[t r] = cart2pol(x,y);
-t = t / pi * 180;   % convert to degrees
-t = t + 90 + start;  % calibrate angles to stimulus starting position
-t = mod(ceil(t),360) + 1;   % ensure between 1-360
-nr = ceil(r/max(r(:))*360); % normalized rho in degrees
-nr = mod(nr + 240 + start,360);  % calibrate angles to stimulus starting position
-nr(nr==0) = 1;
-if direc 
-    nr = 360-nr+1;
-end
+<span class="o">%</span> <span class="n">image</span> <span class="n">pixels</span>
+<span class="p">[</span><span class="n">x</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="o">-</span><span class="n">radius</span><span class="p">:</span><span class="n">radius</span><span class="p">,</span> <span class="o">-</span><span class="n">radius</span><span class="p">:</span><span class="n">radius</span><span class="p">);</span>
+<span class="k">if</span> <span class="o">~</span><span class="n">direc</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">flipud</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">y</span> <span class="o">=</span> <span class="n">flipud</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>   <span class="o">%</span> <span class="n">flipping</span> <span class="n">upside</span> <span class="n">down</span> <span class="n">because</span> <span class="n">of</span> <span class="n">the</span> <span class="n">way</span> <span class="n">matlab</span> <span class="n">matrices</span> <span class="n">work</span>
+<span class="n">end</span>
+<span class="p">[</span><span class="n">t</span> <span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">pi</span> <span class="o">*</span> <span class="mi">180</span><span class="p">;</span>   <span class="o">%</span> <span class="n">convert</span> <span class="n">to</span> <span class="n">degrees</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">+</span> <span class="n">start</span><span class="p">;</span>  <span class="o">%</span> <span class="n">calibrate</span> <span class="n">angles</span> <span class="n">to</span> <span class="n">stimulus</span> <span class="n">starting</span> <span class="n">position</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">mod</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="mi">360</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>   <span class="o">%</span> <span class="n">ensure</span> <span class="n">between</span> <span class="mi">1</span><span class="o">-</span><span class="mi">360</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">(:))</span><span class="o">*</span><span class="mi">360</span><span class="p">);</span> <span class="o">%</span> <span class="n">normalized</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">degrees</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="n">mod</span><span class="p">(</span><span class="n">nr</span> <span class="o">+</span> <span class="mi">240</span> <span class="o">+</span> <span class="n">start</span><span class="p">,</span><span class="mi">360</span><span class="p">);</span>  <span class="o">%</span> <span class="n">calibrate</span> <span class="n">angles</span> <span class="n">to</span> <span class="n">stimulus</span> <span class="n">starting</span> <span class="n">position</span>
+<span class="n">nr</span><span class="p">(</span><span class="n">nr</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">if</span> <span class="n">direc</span> 
+    <span class="n">nr</span> <span class="o">=</span> <span class="mi">360</span><span class="o">-</span><span class="n">nr</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+<span class="n">end</span>
 
-% image for output
-imgR = zeros(2*radius+1, 2*radius+1);
-imgG = zeros(2*radius+1, 2*radius+1);
-imgB = zeros(2*radius+1, 2*radius+1);
+<span class="o">%</span> <span class="n">image</span> <span class="k">for</span> <span class="n">output</span>
+<span class="n">imgR</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">imgG</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">imgB</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">radius</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
 
-if strcmpi(wheel, 'Polar')
-    imgR(r<radius) = cmap(t(r<radius),1);
-    imgG(r<radius) = cmap(t(r<radius),2);
-    imgB(r<radius) = cmap(t(r<radius),3);
-elseif strcmpi(wheel, 'Eccen')
-    imgR(r<radius) = cmap(nr(r<radius),1);
-    imgG(r<radius) = cmap(nr(r<radius),2);
-    imgB(r<radius) = cmap(nr(r<radius),3);
-else
-    error('What the hell are you asking of me?!');
-end
+<span class="k">if</span> <span class="n">strcmpi</span><span class="p">(</span><span class="n">wheel</span><span class="p">,</span> <span class="s1">&#39;Polar&#39;</span><span class="p">)</span>
+    <span class="n">imgR</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">imgG</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">imgB</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">elseif</span> <span class="n">strcmpi</span><span class="p">(</span><span class="n">wheel</span><span class="p">,</span> <span class="s1">&#39;Eccen&#39;</span><span class="p">)</span>
+    <span class="n">imgR</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">nr</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">imgG</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">nr</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">imgB</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">)</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">nr</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="n">radius</span><span class="p">),</span><span class="mi">3</span><span class="p">);</span>
+<span class="k">else</span>
+    <span class="n">error</span><span class="p">(</span><span class="s1">&#39;What the hell are you asking of me?!&#39;</span><span class="p">);</span>
+<span class="n">end</span>
 
-img = imgR;
-img(:,:,2) = imgG;
-img(:,:,3) = imgB;
+<span class="n">img</span> <span class="o">=</span> <span class="n">imgR</span><span class="p">;</span>
+<span class="n">img</span><span class="p">(:,:,</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">imgG</span><span class="p">;</span>
+<span class="n">img</span><span class="p">(:,:,</span><span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="n">imgB</span><span class="p">;</span>
 
-% Flip left & right
-img = flipdim(img, 2);
+<span class="o">%</span> <span class="n">Flip</span> <span class="n">left</span> <span class="o">&amp;</span> <span class="n">right</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">flipdim</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12892,17 +12918,30 @@ img = flipdim(img, 2);
 
 </div>
 </div>
-</div>cd '/Applications/freesurfer/subjects/sub-101/mri/'
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cd</span> <span class="s1">&#39;/Applications/freesurfer/subjects/sub-101/mri/&#39;</span>
 
-for labelID in lh.V1d lh.V1d lh.V2v lh.V2d lh.V3v lh.V3d lh.V4v lh.V3ab lh.V7
-do
-  mri_label2vol --label ../label/$labelID.label --temp orig.mgz --regheader orig.mgz --fillthresh .2 --proj frac 0 1 .1 --subject sub-101 --hemi lh --o $labelID.nii
-done
+<span class="k">for</span> <span class="n">labelID</span> <span class="ow">in</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">lh</span><span class="o">.</span><span class="n">V7</span>
+<span class="n">do</span>
+  <span class="n">mri_label2vol</span> <span class="o">--</span><span class="n">label</span> <span class="o">../</span><span class="n">label</span><span class="o">/</span><span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">label</span> <span class="o">--</span><span class="n">temp</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">regheader</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">fillthresh</span> <span class="o">.</span><span class="mi">2</span> <span class="o">--</span><span class="n">proj</span> <span class="n">frac</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">.</span><span class="mi">1</span> <span class="o">--</span><span class="n">subject</span> <span class="n">sub</span><span class="o">-</span><span class="mi">101</span> <span class="o">--</span><span class="n">hemi</span> <span class="n">lh</span> <span class="o">--</span><span class="n">o</span> <span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span>
+<span class="n">done</span>
 
-for labelID in rh.V1v rh.V1d rh.V2v rh.V2d rh.V3v rh.V3d rh.V4v rh.V3ab rh.V7
-do
-  mri_label2vol --label ../label/$labelID.label --temp orig.mgz --regheader orig.mgz --fillthresh .2 --proj frac 0 1 .1 --subject sub-101 --hemi rh --o $labelID.nii
-done
+<span class="k">for</span> <span class="n">labelID</span> <span class="ow">in</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">rh</span><span class="o">.</span><span class="n">V7</span>
+<span class="n">do</span>
+  <span class="n">mri_label2vol</span> <span class="o">--</span><span class="n">label</span> <span class="o">../</span><span class="n">label</span><span class="o">/</span><span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">label</span> <span class="o">--</span><span class="n">temp</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">regheader</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">fillthresh</span> <span class="o">.</span><span class="mi">2</span> <span class="o">--</span><span class="n">proj</span> <span class="n">frac</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">.</span><span class="mi">1</span> <span class="o">--</span><span class="n">subject</span> <span class="n">sub</span><span class="o">-</span><span class="mi">101</span> <span class="o">--</span><span class="n">hemi</span> <span class="n">rh</span> <span class="o">--</span><span class="n">o</span> <span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span>
+<span class="n">done</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12913,26 +12952,39 @@ done
 
 </div>
 </div>
-</div>cd '/Applications/freesurfer/subjects/sub-101/mri/'
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cd</span> <span class="s1">&#39;/Applications/freesurfer/subjects/sub-101/mri/&#39;</span>
 
-for labelID in lh.V1v lh.V1d lh.V2v lh.V2d lh.V3v lh.V3d lh.V4v lh.V3ab lh.V7
-do
-  mri_label2vol --label ../label/$labelID.label --temp orig.mgz --regheader orig.mgz --fillthresh .2 --proj frac 0 1 .1 --subject sub-101 --hemi lh --o $labelID.nii
-done
+<span class="k">for</span> <span class="n">labelID</span> <span class="ow">in</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">lh</span><span class="o">.</span><span class="n">V7</span>
+<span class="n">do</span>
+  <span class="n">mri_label2vol</span> <span class="o">--</span><span class="n">label</span> <span class="o">../</span><span class="n">label</span><span class="o">/</span><span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">label</span> <span class="o">--</span><span class="n">temp</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">regheader</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">fillthresh</span> <span class="o">.</span><span class="mi">2</span> <span class="o">--</span><span class="n">proj</span> <span class="n">frac</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">.</span><span class="mi">1</span> <span class="o">--</span><span class="n">subject</span> <span class="n">sub</span><span class="o">-</span><span class="mi">101</span> <span class="o">--</span><span class="n">hemi</span> <span class="n">lh</span> <span class="o">--</span><span class="n">o</span> <span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span>
+<span class="n">done</span>
 
-for labelID in rh.V1v rh.V1d rh.V2v rh.V2d rh.V3v rh.V3d rh.V4v rh.V3ab rh.V7
-do
-  mri_label2vol --label ../label/$labelID.label --temp orig.mgz --regheader orig.mgz --fillthresh .2 --proj frac 0 1 .1 --subject sub-101 --hemi rh --o $labelID.nii
-done
+<span class="k">for</span> <span class="n">labelID</span> <span class="ow">in</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">rh</span><span class="o">.</span><span class="n">V7</span>
+<span class="n">do</span>
+  <span class="n">mri_label2vol</span> <span class="o">--</span><span class="n">label</span> <span class="o">../</span><span class="n">label</span><span class="o">/</span><span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">label</span> <span class="o">--</span><span class="n">temp</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">regheader</span> <span class="n">orig</span><span class="o">.</span><span class="n">mgz</span> <span class="o">--</span><span class="n">fillthresh</span> <span class="o">.</span><span class="mi">2</span> <span class="o">--</span><span class="n">proj</span> <span class="n">frac</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">.</span><span class="mi">1</span> <span class="o">--</span><span class="n">subject</span> <span class="n">sub</span><span class="o">-</span><span class="mi">101</span> <span class="o">--</span><span class="n">hemi</span> <span class="n">rh</span> <span class="o">--</span><span class="n">o</span> <span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span>
+<span class="n">done</span>
 
-for labelID in lh.V1v lh.V1d lh.V2v lh.V2d lh.V3v lh.V3d lh.V4v lh.V3ab lh.V7 rh.V1v rh.V1d rh.V2v rh.V2d rh.V3v rh.V3d rh.V4v rh.V3ab rh.V7
-do
-antsApplyTransforms \
-    -i /Applications/freesurfer/subjects/sub-101/mri/$labelID.nii \
-    -t /Volumes/Passport/ContLTM_IEM/bids/dockerout/out/fmriprep/sub-101/anat/sub-101_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5 \
-    -r /Applications/freesurfer/average/mni_icbm152_t1_tal_nlin_asym_09c.nii \
-    -o $labelID.nii
-done
+<span class="k">for</span> <span class="n">labelID</span> <span class="ow">in</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">lh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">lh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">lh</span><span class="o">.</span><span class="n">V7</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V1d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V2d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3d</span> <span class="n">rh</span><span class="o">.</span><span class="n">V4v</span> <span class="n">rh</span><span class="o">.</span><span class="n">V3ab</span> <span class="n">rh</span><span class="o">.</span><span class="n">V7</span>
+<span class="n">do</span>
+<span class="n">antsApplyTransforms</span> \
+    <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">freesurfer</span><span class="o">/</span><span class="n">subjects</span><span class="o">/</span><span class="n">sub</span><span class="o">-</span><span class="mi">101</span><span class="o">/</span><span class="n">mri</span><span class="o">/</span><span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span> \
+    <span class="o">-</span><span class="n">t</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">dockerout</span><span class="o">/</span><span class="n">out</span><span class="o">/</span><span class="n">fmriprep</span><span class="o">/</span><span class="n">sub</span><span class="o">-</span><span class="mi">101</span><span class="o">/</span><span class="n">anat</span><span class="o">/</span><span class="n">sub</span><span class="o">-</span><span class="mi">101</span><span class="n">_from</span><span class="o">-</span><span class="n">T1w_to</span><span class="o">-</span><span class="n">MNI152NLin2009cAsym_mode</span><span class="o">-</span><span class="n">image_xfm</span><span class="o">.</span><span class="n">h5</span> \
+    <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">freesurfer</span><span class="o">/</span><span class="n">average</span><span class="o">/</span><span class="n">mni_icbm152_t1_tal_nlin_asym_09c</span><span class="o">.</span><span class="n">nii</span> \
+    <span class="o">-</span><span class="n">o</span> <span class="err">$</span><span class="n">labelID</span><span class="o">.</span><span class="n">nii</span>
+<span class="n">done</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13010,13 +13062,26 @@ done
 <h3 id="Docker-commands-to-convert-DICOMS-to-BIDS">Docker commands to convert DICOMS to BIDS<a class="anchor-link" href="#Docker-commands-to-convert-DICOMS-to-BIDS">&#182;</a></h3>
 </div>
 </div>
-</div>// to setup the heuristics
-docker run --rm -it -v /Volumes/Passport/ContLTM_IEM:/base nipy/heudiconv:latest -d /base/{subject}/Session_{session}/DICOMS/* -o /base/bids/Nifti/ -f convertall -s 101 -ss 1 -c none --overwrite && \
-docker run --rm -it -v /Volumes/Passport/ContLTM_IEM:/base nipy/heudiconv:latest -d /base/{subject}/Session_{session}/DICOMS/* -o /base/bids/Nifti/ -f convertall -s 101 -ss 2 -c none --overwrite
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">//</span> <span class="n">to</span> <span class="n">setup</span> <span class="n">the</span> <span class="n">heuristics</span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="p">:</span><span class="o">/</span><span class="n">base</span> <span class="n">nipy</span><span class="o">/</span><span class="n">heudiconv</span><span class="p">:</span><span class="n">latest</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="p">{</span><span class="n">subject</span><span class="p">}</span><span class="o">/</span><span class="n">Session_</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="n">DICOMS</span><span class="o">/*</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span><span class="o">/</span> <span class="o">-</span><span class="n">f</span> <span class="n">convertall</span> <span class="o">-</span><span class="n">s</span> <span class="mi">101</span> <span class="o">-</span><span class="n">ss</span> <span class="mi">1</span> <span class="o">-</span><span class="n">c</span> <span class="n">none</span> <span class="o">--</span><span class="n">overwrite</span> <span class="o">&amp;&amp;</span> \
+<span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="p">:</span><span class="o">/</span><span class="n">base</span> <span class="n">nipy</span><span class="o">/</span><span class="n">heudiconv</span><span class="p">:</span><span class="n">latest</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="p">{</span><span class="n">subject</span><span class="p">}</span><span class="o">/</span><span class="n">Session_</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="n">DICOMS</span><span class="o">/*</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span><span class="o">/</span> <span class="o">-</span><span class="n">f</span> <span class="n">convertall</span> <span class="o">-</span><span class="n">s</span> <span class="mi">101</span> <span class="o">-</span><span class="n">ss</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">none</span> <span class="o">--</span><span class="n">overwrite</span>
 
-// to convert to BIDS
-docker run --rm -it -v /Volumes/Passport/ContLTM_IEM:/base nipy/heudiconv:latest -d /base/{subject}/Session_{session}/DICOMS/* -o /base/bids/Nifti -f /base/bids/Nifti/code/heuristic1.py -s 101 -ss 1 -c dcm2niix -b --overwrite --minmeta && \
-docker run --rm -it -v /Volumes/Passport/ContLTM_IEM:/base nipy/heudiconv:latest -d /base/{subject}/Session_{session}/DICOMS/* -o /base/bids/Nifti -f /base/bids/Nifti/code/heuristic2.py -s 101 -ss 2 -c dcm2niix -b --overwrite --minmeta
+<span class="o">//</span> <span class="n">to</span> <span class="n">convert</span> <span class="n">to</span> <span class="n">BIDS</span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="p">:</span><span class="o">/</span><span class="n">base</span> <span class="n">nipy</span><span class="o">/</span><span class="n">heudiconv</span><span class="p">:</span><span class="n">latest</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="p">{</span><span class="n">subject</span><span class="p">}</span><span class="o">/</span><span class="n">Session_</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="n">DICOMS</span><span class="o">/*</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">heuristic1</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">s</span> <span class="mi">101</span> <span class="o">-</span><span class="n">ss</span> <span class="mi">1</span> <span class="o">-</span><span class="n">c</span> <span class="n">dcm2niix</span> <span class="o">-</span><span class="n">b</span> <span class="o">--</span><span class="n">overwrite</span> <span class="o">--</span><span class="n">minmeta</span> <span class="o">&amp;&amp;</span> \
+<span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="p">:</span><span class="o">/</span><span class="n">base</span> <span class="n">nipy</span><span class="o">/</span><span class="n">heudiconv</span><span class="p">:</span><span class="n">latest</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="p">{</span><span class="n">subject</span><span class="p">}</span><span class="o">/</span><span class="n">Session_</span><span class="p">{</span><span class="n">session</span><span class="p">}</span><span class="o">/</span><span class="n">DICOMS</span><span class="o">/*</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">heuristic2</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">s</span> <span class="mi">101</span> <span class="o">-</span><span class="n">ss</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">dcm2niix</span> <span class="o">-</span><span class="n">b</span> <span class="o">--</span><span class="n">overwrite</span> <span class="o">--</span><span class="n">minmeta</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13025,31 +13090,43 @@ docker run --rm -it -v /Volumes/Passport/ContLTM_IEM:/base nipy/heudiconv:latest
 
 </div>
 </div>
-</div>import os
-def create_key(template, outtype=('nii.gz',), annotation_classes=None):
-    if template is None or not template:
-        raise ValueError('Template must be a valid format string')
-    return template, outtype, annotation_classes
-def infotodict(seqinfo):
-    t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
-    colorencoder = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-colorencoder_run-00{item:01d}_bold')
-    objectscram = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-objectscram_run-00{item:01d}_bold')
-    colorgray = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-colorgray_run-00{item:01d}_bold')
-    retmap = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-retmap_run-00{item:01d}_bold')
-    info = {t1w: [], colorencoder: [], objectscram: [], colorgray: [], retmap: []}
-    for s in seqinfo:
-        if ('MPRAGE' in s.protocol_name):
-          info[t1w] = [s.series_id] # assign if a single series meets criteria
-        if (s.dim4 > 1) and ('ColorEncoder' in s.protocol_name):
-          info[colorencoder].append(s.series_id) # append if multiple series meet criteria
-        if (s.dim4 > 1) and ('ObjectScram' in s.protocol_name):
-          info[objectscram].append(s.series_id) # append if multiple series meet criteria
-        if (s.dim4 > 1) and ('ColorGray' in s.protocol_name):
-          info[colorgray].append(s.series_id) # append if multiple series meet criteria
-        if (s.dim4 > 1) and ('retMap' in s.protocol_name):
-          info[retmap].append(s.series_id) # append if multiple series meet criteria
-    return info
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="k">def</span> <span class="nf">create_key</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">outtype</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">,),</span> <span class="n">annotation_classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">template</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Template must be a valid format string&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span><span class="p">,</span> <span class="n">outtype</span><span class="p">,</span> <span class="n">annotation_classes</span>
+<span class="k">def</span> <span class="nf">infotodict</span><span class="p">(</span><span class="n">seqinfo</span><span class="p">):</span>
+    <span class="n">t1w</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/anat/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_T1w&#39;</span><span class="p">)</span>
+    <span class="n">colorencoder</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/func/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_task-colorencoder_run-00</span><span class="si">{item:01d}</span><span class="s1">_bold&#39;</span><span class="p">)</span>
+    <span class="n">objectscram</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/func/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_task-objectscram_run-00</span><span class="si">{item:01d}</span><span class="s1">_bold&#39;</span><span class="p">)</span>
+    <span class="n">colorgray</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/func/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_task-colorgray_run-00</span><span class="si">{item:01d}</span><span class="s1">_bold&#39;</span><span class="p">)</span>
+    <span class="n">retmap</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/func/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_task-retmap_run-00</span><span class="si">{item:01d}</span><span class="s1">_bold&#39;</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="n">t1w</span><span class="p">:</span> <span class="p">[],</span> <span class="n">colorencoder</span><span class="p">:</span> <span class="p">[],</span> <span class="n">objectscram</span><span class="p">:</span> <span class="p">[],</span> <span class="n">colorgray</span><span class="p">:</span> <span class="p">[],</span> <span class="n">retmap</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seqinfo</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;MPRAGE&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">t1w</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">]</span> <span class="c1"># assign if a single series meets criteria</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">dim4</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;ColorEncoder&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">colorencoder</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">)</span> <span class="c1"># append if multiple series meet criteria</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">dim4</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;ObjectScram&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">objectscram</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">)</span> <span class="c1"># append if multiple series meet criteria</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">dim4</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;ColorGray&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">colorgray</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">)</span> <span class="c1"># append if multiple series meet criteria</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">dim4</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;retMap&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">retmap</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">)</span> <span class="c1"># append if multiple series meet criteria</span>
+    <span class="k">return</span> <span class="n">info</span>
+</pre></div>
 
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13057,22 +13134,34 @@ def infotodict(seqinfo):
 <h2 id="heuristic2.py-contents:">heuristic2.py contents:<a class="anchor-link" href="#heuristic2.py-contents:">&#182;</a></h2>
 </div>
 </div>
-</div>import os
-def create_key(template, outtype=('nii.gz',), annotation_classes=None):
-    if template is None or not template:
-        raise ValueError('Template must be a valid format string')
-    return template, outtype, annotation_classes
-def infotodict(seqinfo):
-    t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
-    sizejudge = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-sizejudge_run-00{item:01d}_bold')
-    info = {t1w: [], sizejudge: []}
-    for s in seqinfo:
-        if ('MPRAGE' in s.protocol_name):
-          info[t1w] = [s.series_id] # assign if a single series meets criteria
-        if (s.dim4 > 1) and ('SizeJudge' in s.protocol_name):
-          info[sizejudge].append(s.series_id) # append if multiple series meet criteria
-    return info
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="k">def</span> <span class="nf">create_key</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">outtype</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">,),</span> <span class="n">annotation_classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">template</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Template must be a valid format string&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">template</span><span class="p">,</span> <span class="n">outtype</span><span class="p">,</span> <span class="n">annotation_classes</span>
+<span class="k">def</span> <span class="nf">infotodict</span><span class="p">(</span><span class="n">seqinfo</span><span class="p">):</span>
+    <span class="n">t1w</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/anat/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_T1w&#39;</span><span class="p">)</span>
+    <span class="n">sizejudge</span> <span class="o">=</span> <span class="n">create_key</span><span class="p">(</span><span class="s1">&#39;sub-</span><span class="si">{subject}</span><span class="s1">/</span><span class="si">{session}</span><span class="s1">/func/sub-</span><span class="si">{subject}</span><span class="s1">_</span><span class="si">{session}</span><span class="s1">_task-sizejudge_run-00</span><span class="si">{item:01d}</span><span class="s1">_bold&#39;</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="n">t1w</span><span class="p">:</span> <span class="p">[],</span> <span class="n">sizejudge</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seqinfo</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;MPRAGE&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">t1w</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">]</span> <span class="c1"># assign if a single series meets criteria</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">dim4</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;SizeJudge&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">protocol_name</span><span class="p">):</span>
+          <span class="n">info</span><span class="p">[</span><span class="n">sizejudge</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">series_id</span><span class="p">)</span> <span class="c1"># append if multiple series meet criteria</span>
+    <span class="k">return</span> <span class="n">info</span>
+</pre></div>
 
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13086,14 +13175,27 @@ def infotodict(seqinfo):
 
 </div>
 </div>
-</div>docker run --rm \
-    -v /Volumes/Passport/ContLTM_IEM/bids/Nifti:/data:ro \
-    -v /Volumes/Passport/ContLTM_IEM/bids/dockerout:/out \
-    -v /Volumes/Passport/ContLTM_IEM/bids/license.txt:/opt/freesurfer/license.txt \
-    poldracklab/fmriprep:latest \
-    /data /out/out \
-    participant --participant-label 101 \
-    -w /out/work/
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> \
+    <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">Nifti</span><span class="p">:</span><span class="o">/</span><span class="n">data</span><span class="p">:</span><span class="n">ro</span> \
+    <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">dockerout</span><span class="p">:</span><span class="o">/</span><span class="n">out</span> \
+    <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Passport</span><span class="o">/</span><span class="n">ContLTM_IEM</span><span class="o">/</span><span class="n">bids</span><span class="o">/</span><span class="n">license</span><span class="o">.</span><span class="n">txt</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">freesurfer</span><span class="o">/</span><span class="n">license</span><span class="o">.</span><span class="n">txt</span> \
+    <span class="n">poldracklab</span><span class="o">/</span><span class="n">fmriprep</span><span class="p">:</span><span class="n">latest</span> \
+    <span class="o">/</span><span class="n">data</span> <span class="o">/</span><span class="n">out</span><span class="o">/</span><span class="n">out</span> \
+    <span class="n">participant</span> <span class="o">--</span><span class="n">participant</span><span class="o">-</span><span class="n">label</span> <span class="mi">101</span> \
+    <span class="o">-</span><span class="n">w</span> <span class="o">/</span><span class="n">out</span><span class="o">/</span><span class="n">work</span><span class="o">/</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13121,23 +13223,36 @@ def infotodict(seqinfo):
 
 </div>
 </div>
-</div>function unzipfmri(runHead,runTail,numRuns) 
-    for i = 1:numRuns
-        orig = strcat(runHead,num2str(i),runTail(1:end-1));
-        try
-            gunzip(strcat(orig,'.nii.gz'));
-        catch
-            fprintf('No .nii.gz, assuming it''s already unzipped...\n');
-            break;
-        end
-        V=strcat(orig,'.nii');
-        [p,n,e] = spm_fileparts(V);
-        V = spm_vol(fullfile(p,[n e]));
-        spm_file_split(V);
-        delete(strcat(orig,'.nii.gz'));
-        delete(strcat(orig,'.nii'));
-    end
-end
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">function</span> <span class="n">unzipfmri</span><span class="p">(</span><span class="n">runHead</span><span class="p">,</span><span class="n">runTail</span><span class="p">,</span><span class="n">numRuns</span><span class="p">)</span> 
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">numRuns</span>
+        <span class="n">orig</span> <span class="o">=</span> <span class="n">strcat</span><span class="p">(</span><span class="n">runHead</span><span class="p">,</span><span class="n">num2str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">runTail</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+        <span class="k">try</span>
+            <span class="n">gunzip</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span><span class="s1">&#39;.nii.gz&#39;</span><span class="p">));</span>
+        <span class="n">catch</span>
+            <span class="n">fprintf</span><span class="p">(</span><span class="s1">&#39;No .nii.gz, assuming it&#39;&#39;s already unzipped...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="n">end</span>
+        <span class="n">V</span><span class="o">=</span><span class="n">strcat</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span><span class="s1">&#39;.nii&#39;</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">spm_fileparts</span><span class="p">(</span><span class="n">V</span><span class="p">);</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">spm_vol</span><span class="p">(</span><span class="n">fullfile</span><span class="p">(</span><span class="n">p</span><span class="p">,[</span><span class="n">n</span> <span class="n">e</span><span class="p">]));</span>
+        <span class="n">spm_file_split</span><span class="p">(</span><span class="n">V</span><span class="p">);</span>
+        <span class="n">delete</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span><span class="s1">&#39;.nii.gz&#39;</span><span class="p">));</span>
+        <span class="n">delete</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span><span class="s1">&#39;.nii&#39;</span><span class="p">));</span>
+    <span class="n">end</span>
+<span class="n">end</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">

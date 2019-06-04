@@ -11882,12 +11882,24 @@ div#notebook {
 
 </div>
 </div>
-</div>function mydata2nii(mydata,MPRAGE,filename)
-    Y = niftiread(MPRAGE);
-    Y(Y>0) = mean(mydata.betas)';
-    niftiwrite(Y,filename,niftiinfo(MPRAGE));
-end
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-matlab"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="nf">mydata2nii</span><span class="p">(</span>mydata,MPRAGE,filename<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">Y</span> <span class="p">=</span> <span class="n">niftiread</span><span class="p">(</span><span class="n">MPRAGE</span><span class="p">);</span>
+    <span class="n">Y</span><span class="p">(</span><span class="n">Y</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">mydata</span><span class="p">.</span><span class="n">betas</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">niftiwrite</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="n">niftiinfo</span><span class="p">(</span><span class="n">MPRAGE</span><span class="p">));</span>
+<span class="k">end</span>
+</pre></div>
 
+</div>
+</div>
+</div>
+
+</div>
     </div>
   </div>
 </body>
