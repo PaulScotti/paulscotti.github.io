@@ -10,7 +10,7 @@ catch
     load([root_dir runName '_scripts.mat']);
 end
 
-mydata.betas=[];mydata.conds=[];mydata.condsX=[];mydata.object=[];
+mydata.betas=[];mydata.conds=[];mydata.condsX=[];mydata.object=[];mydata.runs=[];
 
 % load subject's ROI
 seedroi = [roi_dir roi_file];
@@ -24,7 +24,6 @@ indx = find(Y>0);
 XYZ = [x y z]'; 
 
 fprintf('num voxels: %i \n',length(XYZ));
-
 
 for j = 1:numObjects %for every object
     counter = 0;
@@ -46,13 +45,13 @@ for j = 1:numObjects %for every object
         condID = closestIndex;
 
         if isnan(condID)
-            continue;
         else
             counter = counter + 1;
             
             mydata.object = [mydata.object; j];
             mydata.conds = [mydata.conds; condID];
             mydata.condsX = [mydata.condsX; condIDexact];
+            mydata.runs = [mydata.runs; r];
 
             Betas = strvcat(Betas,SPM.Vbeta(which).fname);
             if ischar(Betas)
@@ -65,21 +64,6 @@ for j = 1:numObjects %for every object
             mydata.betas = [mydata.betas; est];
         end
     end
-    temp = nanmean(mydata.betas(end-counter+1:end,:));
-    mydata.betas(end-counter+1:end,:) = [];
-    mydata.betas = [mydata.betas; temp];
-    
-    temp = mean(mydata.object(end-counter+1:end));
-    mydata.object(end-counter+1:end) = [];
-    mydata.object = [mydata.object; temp];
-
-    temp = mean(mydata.conds(end-counter+1:end));
-    mydata.conds(end-counter+1:end) = [];
-    mydata.conds = [mydata.conds; temp];
-
-    temp = mean(mydata.condsX(end-counter+1:end));
-    mydata.condsX(end-counter+1:end) = [];
-    mydata.condsX = [mydata.condsX; temp];
 end
 cd(root_dir)
 save([roi_file '_obj_betas'],'mydata', '-v7.3');

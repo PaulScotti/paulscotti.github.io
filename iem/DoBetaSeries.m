@@ -22,10 +22,6 @@ Y = niftiread(seedroi); % Y is an [x,y,z] matrix
 indx = find(Y>0);
 [x,y,z] = ind2sub(size(Y),indx);
 XYZ = [x y z]'; 
-
-% our betas are returned via spm_get_data, which needs/returns a [3 x m] matrix
-% indicating betas for the voxels, so we need to first transform Y
-% into [3 x m] matrix, and then reverse this process in the end
  
 fprintf('num voxels: %i \n',length(XYZ));
  
@@ -41,14 +37,14 @@ for r = 1:numRuns
         condID = imgcolor(r,j);
  
         if isnan(condID)
-            Betas = strvcat(Betas,SPM.Vbeta(which).fname);
-            if ischar(Betas)
-                P = spm_vol(Betas);
-            end
- 
-            est = spm_get_data(P,XYZ);
-            
-            mydata.blankbetas = [mydata.blankbetas; est];
+%             Betas = strvcat(Betas,SPM.Vbeta(which).fname);
+%             if ischar(Betas)
+%                 P = spm_vol(Betas);
+%             end
+%  
+%             est = spm_get_data(P,XYZ);
+%             
+%             mydata.blankbetas = [mydata.blankbetas; est];
         else
  
             Betas = strvcat(Betas,SPM.Vbeta(which).fname);
@@ -62,6 +58,9 @@ for r = 1:numRuns
             end
  
             est = spm_get_data(P,XYZ);
+            if any(isnan(est))
+                break;
+            end
  
             mydata.betas = [mydata.betas; est];
         end
