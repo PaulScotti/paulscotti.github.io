@@ -734,7 +734,13 @@
 
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
-        document.getElementById("saving").innerHTML = "Data saved. Thanks for your participation! You will receive an email soon for part 2, which must be completed 24-48 hours from now.";
+        if (SceneAcc.length == 0) {
+          document.getElementById("saving").innerHTML = "Data saved. Thanks for your participation!";
+        } else if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
+          document.getElementById("saving").innerHTML = "Data saved. Thanks for your participation! You will receive an email soon for part 2, which must be completed 24-48 hours from now.";
+        } else {
+          document.getElementById("saving").innerHTML = "Data saved. Thanks for your participation!";
+        }
 
         // close full screen if still full-screened
         if (document.cancelFullScreen) {
