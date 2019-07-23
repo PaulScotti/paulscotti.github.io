@@ -660,8 +660,11 @@
 
     /* Done with the experiment */
     function Done() {
-      bonus = PracAccuracy.reduce(function(a, b) { return a + b; }, 0) + TestAccuracy.reduce(function(a, b) { return a + b; }, 0);
-      let cashpoints = basepay + bonus/100;
+      bonus = (((TestAccuracy.reduce( ( p, c ) => p + c, 0 ) / TestAccuracy.length))-.5)*5;
+      if (bonus<0) {
+        bonus=0;
+      }
+      let cashpoints = basepay + bonus;
       cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
@@ -709,7 +712,7 @@
         "TestRT": TestRT,
         "TestAccuracy": TestAccuracy,
         "TestArray": TestArray,
-        "bonus": bonus/100,
+        "bonus": bonus,
         "comments": $('#comments').val()
       };
 
