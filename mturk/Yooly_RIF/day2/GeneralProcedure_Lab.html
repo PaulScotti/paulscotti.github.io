@@ -136,8 +136,8 @@
     const numStudy = 90;
     const numPractice = 60;
     const numTest = 180;
-    const displayTime = 200; //2000
-    const itiTime = 200; //500
+    const displayTime = 2000; //2000
+    const itiTime = 500; //500
     const imgWidth = 300;
     const imgHeight = 300;
     let scenetime = 30; //3000
@@ -396,7 +396,7 @@
       $('#allItems').css('margin-top', 0);
       $('#memorizethis').hide();
       $('#CDitem').show();
-      if (now2 < (now + 100)) { // 180000 for 3 minutes long filler task
+      if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
         CDaccuracy.push(-999);
         ChangeDetectionTrial();
       } else {
