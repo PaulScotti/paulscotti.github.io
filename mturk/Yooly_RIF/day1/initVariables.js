@@ -58,9 +58,7 @@ for (var i = 0; i < StudyArray.length; i++) {
 
 TestArray = [];
 for (var i = 0; i < AllImages.length; i++) {
-  if (AllImages[i].includes("plus")) {
-    TestArray.push(AllImages[i]);
-  } else if (AllImages[i].includes("nrp") && Triplets2.includes(AllImages[i])) {
+  if (Triplets2.includes(AllImages[i])) {
     if (i%3==0) {
       TestArray.push("pos1d2"+AllImages[i]);
     } else if (i%3==1) {
@@ -68,18 +66,6 @@ for (var i = 0; i < AllImages.length; i++) {
     } else if (i%3==2) {
       TestArray.push("pos3d2"+AllImages[i]);
     }
-  } else if (AllImages[i].includes("o") && AllImages[i+1].includes("plus")) {
-    TestArray.push("pos1minus"+AllImages[i]);
-  } else if (i==0){
-    if (i%3==0) {
-      TestArray.push("pos1d1"+AllImages[i]);
-    } else if (i%3==1) {
-      TestArray.push("pos2d1"+AllImages[i]);
-    } else if (i%3==2) {
-      TestArray.push("pos3d1"+AllImages[i]);
-    }
-  } else if (AllImages[i].includes("o") && AllImages[i-1].includes("plus")) {
-    TestArray.push("pos3minus"+AllImages[i]);
   } else {
     if (i%3==0) {
       TestArray.push("pos1d1"+AllImages[i]);
