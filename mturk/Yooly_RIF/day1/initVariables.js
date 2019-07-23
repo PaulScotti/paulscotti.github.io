@@ -57,22 +57,22 @@ for (var i = 0; i < StudyArray.length; i++) {
 }
 
 TestArray = [];
-for (var i = 0; i < Triplets.length; i++) {
-  if (Triplets2.includes(AllImages[i])) {
+for (var i = 0; i < 180; i++) {
+  if (Triplets2.includes(Triplets[i])) {
     if (i%3==0) {
-      TestArray.push("pos1d2"+AllImages[i]);
+      TestArray.push("pos1d2"+Triplets[i]);
     } else if (i%3==1) {
-      TestArray.push("pos2d2"+AllImages[i]);
+      TestArray.push("pos2d2"+Triplets[i]);
     } else if (i%3==2) {
-      TestArray.push("pos3d2"+AllImages[i]);
+      TestArray.push("pos3d2"+Triplets[i]);
     }
   } else {
     if (i%3==0) {
-      TestArray.push("pos1d1"+AllImages[i]);
+      TestArray.push("pos1d1"+Triplets[i]);
     } else if (i%3==1) {
-      TestArray.push("pos2d1"+AllImages[i]);
+      TestArray.push("pos2d1"+Triplets[i]);
     } else if (i%3==2) {
-      TestArray.push("pos3d1"+AllImages[i]);
+      TestArray.push("pos3d1"+Triplets[i]);
     }
   }
 }
