@@ -72,22 +72,22 @@
     </div>
   </div>
 
-  <!-- Screen after submitting expt -->
-  <div id="done">
-    <center>
-    <div id="cashPrize">text</div>
-    </center>
-    <div id="doneText">
-    </div>
-    <div>
-      <center>
-        <center>
-        <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
-      </center>
-    </div>
-  </div>
-  <div id="saving">Saving . . .</div>
-  </div>
+  <!-- Start form here to capture comments -->
+  <form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
+  <input type="hidden" name="assignmentId" id="assignmentId" value="" >
+  <input type="hidden" name="foo" value="" >
+  <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
+  <!-- submit to turk
+  https://workersandbox.mturk.com/mturk/externalSubmit
+  https://www.mturk.com/mturk/externalSubmit
+  -->
+
+  <!-- Screen for collecting comments when they are done: -->
+  <div id="done"><div id="doneText">Thanks very much for your participation! Your bonus may take a few extra days to process.<br><br>Any comments for us? (Was it fun? Any technical difficulties?)<br><br>
+  <textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea>
+  <center><p><div id="cashPrize">text</center></div></p>
+  <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit HIT</a>
+  </div><div id="saving">Saving . . .</div></div>
 
   <!-- Display Object HTML -->
   <div id="showTrial">
@@ -725,19 +725,8 @@
 
       document.getElementById("saving").innerHTML = "Submitting...";
 
-      /* submit after waiting a few seconds to make sure data got sent */
-      setTimeout(function() {
-        document.getElementById("saving").innerHTML = "Data saved. Thanks for your participation!";
-
-        // close full screen if still full-screened
-        if (document.cancelFullScreen) {
-            document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-            document.webkitCancelFullScreen();
-        }
-      }, 3000);
+      // submit HIT after waiting a few seconds to make sure data got sent
+      setTimeout(function(){ document.forms[0].submit(); }, 3000);
     }
 
     /*check all images are loaded before starting*/
