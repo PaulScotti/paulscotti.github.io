@@ -57,7 +57,7 @@ for (var i = 0; i < StudyArray.length; i++) {
 }
 
 TestArray = [];
-for (var i = 0; i < AllImages.length; i++) {
+for (var i = 0; i < Triplets.length; i++) {
   if (Triplets2.includes(AllImages[i])) {
     if (i%3==0) {
       TestArray.push("pos1d2"+AllImages[i]);
