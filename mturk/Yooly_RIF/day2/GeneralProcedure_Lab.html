@@ -555,7 +555,9 @@
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
         } else {
           TestAccuracy.push(1);
@@ -567,7 +569,7 @@
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(1);
-        } else if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
         } else {
           PracAccuracy.push(1);
@@ -580,7 +582,9 @@
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
         } else {
           TestAccuracy.push(1);
@@ -590,7 +594,9 @@
       } else { // if practice phase
         PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
         } else {
           PracAccuracy.push(1);
@@ -604,7 +610,9 @@
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
         } else {
           TestAccuracy.push(0);
@@ -614,7 +622,9 @@
       } else { // if practice phase
         PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
         } else {
           PracAccuracy.push(0);
@@ -627,7 +637,9 @@
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
-        if (ComplexIncludes(StudyArray,AllImages[curTest]).includes("d2") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("pos") || ComplexIncludes(StudyArray,AllImages[curTest]).includes("plus")) {
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
         } else {
           TestAccuracy.push(0);
@@ -639,7 +651,7 @@
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(0);
-        } else if (ComplexIncludes(StudyArray,PracImages[curPractice]).includes("d2") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("pos") || ComplexIncludes(StudyArray,PracImages[curPractice]).includes("plus")) {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
         } else {
           PracAccuracy.push(0);
@@ -660,7 +672,8 @@
 
     /* Done with the experiment */
     function Done() {
-      bonus = (((TestAccuracy.reduce( ( p, c ) => p + c, 0 ) / TestAccuracy.length))-.5)*5;
+      tempAr = Complex2(TestAccuracy,TestArray);
+      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
       if (bonus<0) {
         bonus=0;
       }

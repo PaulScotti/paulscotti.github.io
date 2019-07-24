@@ -182,3 +182,13 @@ function ComplexIncludes(array,text){
     }
   }
 }
+
+function Complex2(array1,array2){
+  var array3=[];
+  for (let i = 0; i < array1.length; i++){
+    if (array2[i].includes("nrp")){
+      array3.push(array1[i]);
+    }
+  }
+  return array3
+}
