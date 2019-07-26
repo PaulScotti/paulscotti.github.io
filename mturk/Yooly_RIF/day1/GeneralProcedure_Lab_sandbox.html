@@ -134,11 +134,11 @@
     const numStudy = 180*5; // 60;
     const numPractice = 0; // 60;
     const numTest = 0; // 120;
-    const displayTime = 2000; //2000
-    const itiTime = 500; //500 ms
+    const displayTime = 20; //2000
+    const itiTime = 50; //500 ms
     const imgWidth = 300;
     const imgHeight = 300;
-    let scenetime = 3000; //3000
+    let scenetime = 1000; //3000
     let curStudy = 0;
     let curPractice = 0;
     let curTest = 0;
@@ -433,7 +433,7 @@
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
       $('#memorizethis').hide();
-      if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
+      if (now2 < (now + 18)) { // 180000 for 3 minutes long filler task
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
@@ -705,6 +705,7 @@
       $('#done').children().hide();
       $('#done').hide();
       $('#saving').show();
+      $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
       const d = {
         "WORKERID": WORKERID,

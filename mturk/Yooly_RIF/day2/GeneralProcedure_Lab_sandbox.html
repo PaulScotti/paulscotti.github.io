@@ -694,6 +694,7 @@
       $('#done').children().hide();
       $('#done').hide();
       $('#saving').show();
+      $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
       const d = {
         "WORKERID": WORKERID,
