@@ -33,18 +33,18 @@
 <body>
   <!-- Instructions page1 -->
   <div id="instructions">
-    <p>This HIT is a <b>multi-session</b> memory experiment composed of two parts. <b>You will need to finish both parts.</b>
+    <p>This HIT is the second and final part of a memory experiment. If you have not participated in the first part, there has been a mistake. </p>
+    <p><b>This HIT will take 40 minutes. You will receive $4.00 base payment plus a bonus up to $2.50 depending on your performance.</b></p>
+    <p>This HIT should only be completed within the time window of 24 to 48 hours since completion of the first part of this HIT. If this is not the case, you are ineligible to participate. We require a strict time window so that we can ensure all participants have approximately the same decay in long-term memory representations.</p>
     <br><br>
-    <b>This first part will take 1 hour ($6 reward) and the second part will take 40 minutes ($4.00 reward plus up to $2.50 bonus based on performance).</b> After you complete the first part, you will be emailed with a link to the second part that must be completed 24-48 hours after the completion of the first part. This is because we are studying long-term memory processes in this experiment.</p>
-    <p><b>Please only complete this first part if you are also able to complete the second part (data is only usable if both parts are completed).</b></p>
-    <br>
+    <center><p>If you have any questions, please email hong.503@buckeyemail.osu.edu.</p></center>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
         (1 of 3)</a></p>
   </div>
 
   <!-- Instructions page2 -->
   <div id="instructions2" style="display:none">
-    <p>You will be presented with objects, displayed one at a time. Study the visual details of each object, as <b>you will be tested on every object in the second part.</b></p>
+    <p>We will begin this HIT by studying objects, identical in procedure to the first HIT. To recap, objects will be presented one at a time. Study the visual details of each object, as you will eventually be tested on every object.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study.png" width="600px"></p>
     <p>While you are memorizing the visual details of each object, sometimes an irrelevant scene will be presented. When this happens, you will have 3 seconds to click a button indicating whether the scene is a beach or a mountain. Please remember that the most important thing is that you memorize the visual details of the objects.</p>
     <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/day_study2.png" width="300px"></p>
@@ -56,8 +56,7 @@
   <!-- Instructions page3 -->
   <div id="instructions3" style="display:none">
     <center>
-      <p>After completion of this HIT, you will be emailed with a link to the second HIT. Please complete this second HIT between 24-48 hours after completion of the current HIT.</p>
-      <p>Please email hong.503@buckeyemail.osu.edu if you have any questions.</p>
+      <p>We will provide details on how you will be tested on the studied objects once you reach that section of the HIT. Essentially, your memory for every studied object will be tested and better performance will be associated with a larger bonus pay.</p>
     </center>
     <br>
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
@@ -74,7 +73,7 @@
   </div>
 
   <!-- Start form here to capture comments -->
-  <form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
+  <form name="turkSubmit" id="turkSubmit" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
   <input type="hidden" name="assignmentId" id="assignmentId" value="" >
   <input type="hidden" name="foo" value="" >
   <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
@@ -97,16 +96,20 @@
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
+      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; bottom:0px;"></p>
     </div>
     <br><br>
     <center>
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden; position:absolute; top:615px; left:180px;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden; position:absolute; top:615px; right:150px;">Mountain</a>
-      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">Old</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">New</a>
+      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">No</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">No</a>
+      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">Yes</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">Yes</a>
       <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
       <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
     </center>
+    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" width="600px"></p>
     <p id="memorizethis" align="center" style="position:absolute; top:-35px; left:150px">Memorize the visual details of these objects.</p>
   </div>
 
@@ -129,13 +132,12 @@
     }
 
     /* Define more variables */
-    aa=0;bb=0;cc=0;dd=0;ee=0;ff=0;
     let modalClosed = false;
-    const numStudy = 180*5; // 60;
-    const numPractice = 0; // 60;
-    const numTest = 0; // 120;
+    const numStudy = 90;
+    const numPractice = 60;
+    const numTest = 180;
     const displayTime = 2000; //2000
-    const itiTime = 500; //500 ms
+    const itiTime = 500; //500
     const imgWidth = 300;
     const imgHeight = 300;
     let scenetime = 3000; //3000
@@ -154,15 +156,17 @@
     let CDaccuracy = [];
     let CDType = [];
     let PracticeResp = [];
-    let PracticeAcc = [];
     let PracticeRT = [];
     let TestResp = [];
-    let TestAcc = [];
     let TestRT = [];
     let SceneResp = [];
     let SceneAcc = [];
     let scenecounter = -1;
-    let StudyArray_check = [];
+    let PracImg = [];
+    let TestImg = [];
+    let PracAccuracy = [];
+    let TestAccuracy = [];
+    let basepay = 4;
 
     /* Setup reused image variable */
     let imgA = new Image();
@@ -185,6 +189,8 @@
     const Scene = document.getElementById("Scene");
     $('#Scene').hide();
     $('#CDitem').hide();
+    $('#rating').hide();
+    $('#rating_q').hide();
 
     /* Start Experiment */
     function StartExperiment() {
@@ -228,13 +234,16 @@
         now2 = now;
         $('#itemA').hide(); // hide object from last trial
         $('#Old').hide(); // hide Old button
+        $('#OldUnsure').hide(); // hide Old button
         $('#New').hide(); // hide New button
+        $('#NewUnsure').hide(); // hide New button
+        $('#rating').hide();
+        $('#rating_q').hide();
 
         // open pop-up:
         modalClosed = false;
         document.getElementById("openModal_text").innerHTML =
-        'End of Study Phase!';
-          //'End of Study Phase! <br><br> Before we test your memory for the studied letters, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
+          'End of Study Phase! <br><br> Before we test your memory, you will complete a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
         window.location.href = '#openModal';
         checkFlag2();
         return;
@@ -244,31 +253,16 @@
             window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
           } else {
             RpPlusCnt = 0; //reset counter for RpPlus
-            Done();
-            //ChangeDetection(); // start Practice Phase
+            ChangeDetection(); // start Practice Phase
             return; // need return; otherwise the ShowTrial below executes
           }
         }
-      } else if ((curStudy)%3==0 && curStudy!=0) {
+      } else if ((curStudy)%3==0 && curStudy>0) {
         SceneJudgment();
         return;
       } else {
         // Preload the image of next trial
-        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
-        ff++
-        if (Triplets[curStudy].includes("plus")) {
-          StudyArray_check.push(Triplets[curStudy]); aa++
-        } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
-          StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
-        } else if (curStudy==0){
-          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
-          StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
-        } else {
-          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
-        }
+        $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
       }
       setTimeout(function() {
         ShowStudy();
@@ -282,27 +276,7 @@
         $('#allItems').css('margin-top', -1000);
         setTimeout(function() {
           curStudy++;
-          $('#instructions').hide();
-          $('#showTrial').show();
-          if (curStudy%60 == 0 && curStudy>0) {
-            // open pop-up:
-            modalClosed = false;
-            document.getElementById("openModal_text").innerHTML =
-              'Block ' + ((curStudy)/60).toString() + ' of 15.';
-            window.location.href = '#openModal';
-            checkFlagB();
-
-            function checkFlagB() {
-              if (modalClosed == false) {
-                window.setTimeout(checkFlagB, 100); /* this checks the flag every 100 milliseconds*/
-              } else {
-                NextStudyTrial();
-                return;
-              }
-            }
-          } else {
-            NextStudyTrial();
-          }
+          NextStudyTrial();
         }, itiTime);
       }, displayTime);
     }
@@ -311,28 +285,24 @@
     function NextPracTrial() {
       $('#allItems').css('margin-top', -1000);
       // Preload the image of next trial
-      if (PracTrialType[curPractice] == 0) { //RpPlus
-        $('#itemA').attr('src', $('#Obj' + RpPlusPrac[RpPlusCnt])[0].src);
-        if (RpPlusCnt <= RpPlus.length*2) {
-          RpPlusCnt++;
-        }
-      } else if (PracTrialType[curPractice] == 3) { //PracLure
-        $('#itemA').attr('src', $('#Obj' + PracLures[PracLuresCnt])[0].src);
-        if (PracLuresCnt <= PracLures.length) {
-          PracLuresCnt++;
-        }
+
+      if (curPractice < numPractice) {
+        $('#itemA').attr('src', $('#' + PracImages[curPractice])[0].src);
+        PracImg.push(PracImages[curPractice])
       }
 
       setTimeout(function() {
         if (curPractice >= numPractice) { // if end of study
-          curPractice++;
-
           now = new Date().getTime();
           now2 = now;
           $('#itemA').hide(); // hide object from last trial
-          $('#Old').hide(); // hide Old button
-          $('#New').hide(); // hide New button
           $('#memorizethis').hide();
+          $('#Old').hide(); // hide Old button
+          $('#OldUnsure').hide(); // hide Old button
+          $('#New').hide(); // hide New button
+          $('#NewUnsure').hide(); // hide New button
+          $('#rating').hide();
+          $('#rating_q').hide();
 
           // open pop-up:
           modalClosed = false;
@@ -359,8 +329,18 @@
     function OldNewJudgment() {
       startTrial = new Date().getTime();
       $('#allItems').css('margin-top', 0);
-      $('#Old').show();
-      $('#New').show();
+      if (curPractice >= numPractice) {  // if test phase
+        $('#Old').show();
+        $('#New').show();
+        $('#OldUnsure').show();
+        $('#NewUnsure').show();
+        $('#rating').show();
+        $('#rating_q').show();
+      } else {
+        $('#Old').show();
+        $('#New').show();
+        $('#rating_q').show();
+      }
     }
 
     /* Scene Judgment (mountain or beach) */
@@ -381,21 +361,7 @@
         $('#BeachButton').hide();
         $('#MountainButton').hide();
         // Preload the image of next trial
-        $('#itemA').attr('src', $('#' + Triplets[curStudy])[0].src);
-        ff++
-        if (Triplets[curStudy].includes("plus")) {
-          StudyArray_check.push(Triplets[curStudy]); aa++
-        } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
-          StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
-        } else if (curStudy==0){
-          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
-          StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
-        } else {
-          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
-        }
+        $('#itemA').attr('src', $('#' + Triplets2[curStudy])[0].src);
         setTimeout(function() {
           ShowStudy();
         }, itiTime);
@@ -429,7 +395,9 @@
     function ChangeDetection() {
       $('#allItems').css('margin-top', 0);
       $('#memorizethis').hide();
+      $('#CDitem').show();
       if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
+        CDaccuracy.push(-999);
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
@@ -437,29 +405,25 @@
         $('#DiffButton').hide();
         $('#allItems').css('margin-top', -1000); // show object items again and hide them off-screen
         $('#itemA').show();
-        $('#memorizethis').show();
-
-        RpPlus_StudyOrder = RpPlus;
-        RpPlusCnt = 0; //reset counter for RpPlus
-        RpPlus = chance1.shuffle(RpPlus); //reshuffle ordering of RpPlus
-        RpMinus_StudyOrder = RpMinus;
-        RpMinusCnt = 0;
-        RpMinus = chance1.shuffle(RpMinus);
-        Nrp_StudyOrder = Nrp;
-        NrpCnt = 0;
-        Nrp = chance1.shuffle(Nrp);
+        $('#memorizethis').hide();
 
         // open pop-up:
         modalClosed = false;
-        document.getElementById("openModal_text").innerHTML =
-          'Great job! <br><br> We will now test your memory for the initial study images. <br><br> You will see images one at a time and be asked if you have seen the exact same image before. If so, press the <i>old</i> button. If you have not seen the image before, press the <i>new</i> button.';
-        window.location.href = '#openModal';
+        if (curPractice >= numPractice) { // test phase
+          document.getElementById("openModal_text").innerHTML =
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
+          window.location.href = '#openModal';
+        } else {
+          document.getElementById("openModal_text").innerHTML =
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
+          window.location.href = '#openModal';
+        }
         checkFlag6();
 
         function checkFlag6() {
           if (modalClosed == false) {
             window.setTimeout(checkFlag6, 100); /* this checks the flag every 100 milliseconds*/
-          } else if (curPractice > numPractice) {
+          } else if (curPractice >= numPractice) {
             NextTestTrial();
           } else {
             NextPracTrial();
@@ -551,39 +515,21 @@
       $('#allItems').css('margin-top', -1000);
 
       // Preload the image of next trial
-      if (TestTrialType[curTest] == 0) { //RpPlus
-        $('#itemA').attr('src', $('#Obj' + RpPlus[RpPlusCnt])[0].src);
-        if (RpPlusCnt <= RpPlus.length) {
-          RpPlusCnt++;
-        }
-      } else if (TestTrialType[curTest] == 1) { //RpMinus
-        $('#itemA').attr('src', $('#Obj' + RpMinus[RpMinusCnt])[0].src);
-        if (RpMinusCnt <= RpMinus.length) {
-          RpMinusCnt++;
-        }
-      } else if (TestTrialType[curTest] == 2) { //Nrp
-        $('#itemA').attr('src', $('#Obj' + Nrp[NrpCnt])[0].src);
-        if (NrpCnt <= Nrp.length) {
-          NrpCnt++;
-        }
-      } else if (TestTrialType[curTest] == 4) { //RpTestLures
-        $('#itemA').attr('src', $('#Obj' + RpTestLures[RpTestLuresCnt])[0].src);
-        if (RpTestLuresCnt <= RpTestLures.length) {
-          RpTestLuresCnt++;
-        }
-      } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-        $('#itemA').attr('src', $('#Obj' + NrpTestLures[NrpTestLuresCnt])[0].src);
-        if (NrpTestLuresCnt <= NrpTestLures.length) {
-          NrpTestLuresCnt++;
-        }
+      if (curTest < numTest) {
+        $('#itemA').attr('src', $('#' + AllImages[curTest])[0].src);
+        TestImg.push(AllImages[curTest])
       }
 
       setTimeout(function() { // fixation at beginning of trial for itiTime
         if (curTest >= numTest) { // if end of test
           $('#itemA').hide(); // hide object from last trial
-          $('#Old').hide(); // hide Old button
-          $('#New').hide(); // hide New button
           $('#memorizethis').hide();
+          $('#Old').hide(); // hide Old button
+          $('#OldUnsure').hide(); // hide Old button
+          $('#New').hide(); // hide New button
+          $('#NewUnsure').hide(); // hide New button
+          $('#rating').hide();
+          $('#rating_q').hide();
 
           // open pop-up:
           modalClosed = false;
@@ -606,60 +552,110 @@
     }
 
     function New() {
-      if (curPractice > numPractice) { // if test phase
+      if (curPractice >= numPractice) { // if test phase
         TestResp.push(1);
-        if (TestTrialType[curTest] == 0) { //RpPlus
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 1) { //RpMinus
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 2) { //Nrp
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 4) { //RpTestLures
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-          TestAcc.push(1);
-        }
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
+          TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
+        }
         curTest++;
         NextTestTrial();
       } else { // if practice phase
         PracticeResp.push(1);
-        if (PracTrialType[curPractice] == 0) { //RpPlus
-          PracticeAcc.push(0);
-        } else if (PracTrialType[curPractice] == 3) { //PracLure
-          PracticeAcc.push(1);
-        }
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
+          PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
+        }
+        curPractice++;
+        NextPracTrial();
+      }
+    }
+    function NewUnsure() {
+      if (curPractice >= numPractice) { // if test phase
+        TestResp.push(2);
+        TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
+          TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
+        }
+        curTest++;
+        NextTestTrial();
+      } else { // if practice phase
+        PracticeResp.push(2);
+        PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(1);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
+          PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
+        }
         curPractice++;
         NextPracTrial();
       }
     }
 
-    function Old() {
-      if (curPractice > numPractice) { // if test phase
-        TestResp.push(0);
-        if (TestTrialType[curTest] == 0) { //RpPlus
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 1) { //RpMinus
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 2) { //Nrp
-          TestAcc.push(1);
-        } else if (TestTrialType[curTest] == 4) { //RpTestLures
-          TestAcc.push(0);
-        } else if (TestTrialType[curTest] == 5) { //NrpTestLures
-          TestAcc.push(0);
-        }
+    function OldUnsure() {
+      if (curPractice >= numPractice) { // if test phase
+        TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
+          TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
+        }
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(0);
-        if (PracTrialType[curPractice] == 0) { //RpPlus
-          PracticeAcc.push(1);
-        } else if (PracTrialType[curPractice] == 3) { //PracLure
-          PracticeAcc.push(0);
-        }
+        PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
+          PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
+        }
+        curPractice++;
+        NextPracTrial();
+      }
+    }
+    function Old() {
+      if (curPractice >= numPractice) { // if test phase
+        TestResp.push(4);
+        TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (AllImages[curTest].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
+          TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
+        }
+        curTest++;
+        NextTestTrial();
+      } else { // if practice phase
+        PracticeResp.push(4);
+        PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
+        if (PracImages[curPractice].includes("lure")) {
+          PracAccuracy.push(0);
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
+          PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
+        }
         curPractice++;
         NextPracTrial();
       }
@@ -674,19 +670,18 @@
       });
     });
 
-    /* Done with the experiment*/
+    /* Done with the experiment */
     function Done() {
-      // calculate their overall accuracy (Practice + Test)
-      if (SceneAcc.length == 0) {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
-          '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
-      } else if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
-          '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
-      } else {
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
-          '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
+      tempAr = Complex2(TestAccuracy,TestArray);
+      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
+      if (bonus<0) {
+        bonus=0;
       }
+      let cashpoints = basepay + bonus;
+      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
+      document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
+        '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -702,9 +697,6 @@
       const d = {
         "WORKERID": WORKERID,
         "ASSIGNMENTID": ASSIGNMENTID,
-        "age": age,
-        "sex": sex,
-        "email": email,
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
         "SceneAcc": SceneAcc,
@@ -720,10 +712,20 @@
         "PracImages": PracImages,
         "AllImages": AllImages,
         "Triplets": Triplets,
+        "Day1StudyArray": StudyArrayFull,
         "Triplets2": Triplets2,
-        "StudyArray": StudyArrayFull,
-        "D2TestArray": TestArray,
         "seed": chance1.seed,
+        "CDaccuracy": CDaccuracy,
+        "PracImg": PracImg,
+        "TestImg": TestImg,
+        "PracticeResp": PracticeResp,
+        "PracticeRT": PracticeRT,
+        "PracAccuracy": PracAccuracy,
+        "TestResp": TestResp,
+        "TestRT": TestRT,
+        "TestAccuracy": TestAccuracy,
+        "TestArray": TestArray,
+        "bonus": bonus,
         "comments": $('#comments').val()
       };
 
@@ -731,54 +733,17 @@
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('Yooly_day1/' + WORKERID + '_day1.json');
+      const storageRef = firebase.storage().ref('Yooly_day2/' + WORKERID + '_day2.json');
       storageRef.put(blob);
 
-      if (SceneAcc.length == 0) {
-        document.getElementById("saving").innerHTML = "Submitting...";
-      } else if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
-        document.getElementById("saving").innerHTML = "Submitting... You will receive an email soon for part 2, which must be completed 24-48 hours from now.";
-      } else {
-        document.getElementById("saving").innerHTML = "Submitting...";
-      }
+      document.getElementById("saving").innerHTML = "Submitting...";
 
       // submit HIT after waiting a few seconds to make sure data got sent
-      setTimeout(function(){ document.forms[0].submit(); }, 6000);
+      setTimeout(function(){ document.forms[0].submit(); }, 3000);
     }
 
     /*check all images are loaded before starting*/
     function ImagesReady() {
-      age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-      while (!(age < 110)) {
-        age = prompt('Can you tell me how old you are (e.g., 18, not the year you were born)?');
-      }
-
-      if (age > 45) {
-        $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
-      }
-
-      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
-
-      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
-      }
-      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
-        sex = 'm';
-      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
-        sex = 'f';
-      } else if (sex == 'B' || sex == 'b') {
-        sex = 'b';
-      } else if (sex == 'NA' || sex == 'na') {
-        sex = 'na';
-      }
-
-      email = prompt('What is your email? We will send you a link to the second part of this HIT. We will not send any further emails.');
-
-      while (!(email.indexOf('@') > -1)) {
-        email = prompt('Please provide a valid email address.');
-      }
-
       for (var i = 0; i < AllImages.length; i++) {
           if (!$('#'+AllImages[i])[0].complete) {
               var percentage = i * 100.0 / (AllImages.length);
