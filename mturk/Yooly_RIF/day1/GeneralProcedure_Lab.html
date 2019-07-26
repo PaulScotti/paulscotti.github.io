@@ -14,7 +14,7 @@
   let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
       "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
-  const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
+  let ageok=0; const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/lodash.core.js">// Allows _clone</script>
 
   <!-- Preload images -->
@@ -260,12 +260,14 @@
           StudyArray_check.push(Triplets[curStudy]); aa++
         } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
           StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else if (curStudy==0){
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
           StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
+        } else if (curStudy==899) {
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else {
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         }
@@ -387,12 +389,14 @@
           StudyArray_check.push(Triplets[curStudy]); aa++
         } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
           StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else if (curStudy==0){
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
           StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
+        } else if (curStudy==899){
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else {
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         }
@@ -752,35 +756,39 @@
 
     /*check all images are loaded before starting*/
     function ImagesReady() {
-      age = prompt('Before we start, can you tell me how old you are (in years)?');
+      if (ageok == 0) {
+        age = prompt('Before we start, can you tell me how old you are (in years)?');
 
-      while (!(age < 110)) {
-        age = prompt('Can you tell me how old you are (e.g., 18, not the year you were born)?');
-      }
+        while (!(age < 110)) {
+          age = prompt('Can you tell me how old you are (e.g., 18, not the year you were born)?');
+        }
 
-      if (age > 45) {
-        $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
-      }
+        if (age > 45) {
+          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
+        }
 
-      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
+        sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
 
-      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
-      }
-      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
-        sex = 'm';
-      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
-        sex = 'f';
-      } else if (sex == 'B' || sex == 'b') {
-        sex = 'b';
-      } else if (sex == 'NA' || sex == 'na') {
-        sex = 'na';
-      }
+        while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
+          sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
+        }
+        if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
+          sex = 'm';
+        } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
+          sex = 'f';
+        } else if (sex == 'B' || sex == 'b') {
+          sex = 'b';
+        } else if (sex == 'NA' || sex == 'na') {
+          sex = 'na';
+        }
 
-      email = prompt('What is your email? We will send you a link to the second part of this HIT. We will not send any further emails.');
+        email = prompt('What is your email? We will send you a link to the second part of this HIT. We will not send any further emails.');
 
-      while (!(email.indexOf('@') > -1)) {
-        email = prompt('Please provide a valid email address.');
+        while (!(email.indexOf('@') > -1)) {
+          email = prompt('Please provide a valid email address.');
+        }
+
+        ageok=1;
       }
 
       for (var i = 0; i < AllImages.length; i++) {
