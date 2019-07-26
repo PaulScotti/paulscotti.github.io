@@ -27,12 +27,14 @@ for (var i = 0; i < Triplets.length; i++) {
     StudyArray.push(Triplets[i]); aa++
   } else if (Triplets[i].includes("nrp") && Triplets2.includes(Triplets[i])) {
     StudyArray.push("d2"+Triplets[i]); bb++
-  } else if (Triplets[i].includes("o") && Triplets[i+1].includes("plus")) {
-    StudyArray.push("pos1minus"+Triplets[i]); cc++
   } else if (i==0){
     StudyArray.push("d1"+Triplets[i]); ee++
   } else if (Triplets[i].includes("o") && Triplets[i-1].includes("plus")) {
     StudyArray.push("pos3minus"+Triplets[i]); dd++
+  } else if (i == Triplets.length) {
+    StudyArray.push("d1"+Triplets[i]); ee++
+  } else if (Triplets[i].includes("o") && Triplets[i+1].includes("plus")) {
+    StudyArray.push("pos1minus"+Triplets[i]); cc++
   } else {
     StudyArray.push("d1"+Triplets[i]); ee++
   }
