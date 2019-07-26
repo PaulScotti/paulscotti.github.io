@@ -734,7 +734,7 @@
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('Yooly_day2/' + WORKERID + '_day2.json');
+      const storageRef = firebase.storage().ref('Yooly_day2/' + WORKERID + '_' + new Date().getTime() + '.json');
       storageRef.put(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
