@@ -290,16 +290,16 @@
             document.getElementById("openModal_text").innerHTML =
               'Block ' + ((curStudy)/60).toString() + ' of 15.';
             window.location.href = '#openModal';
-            checkFlagB();
+            // checkFlagB();
 
-            function checkFlagB() {
-              if (modalClosed == false) {
-                window.setTimeout(checkFlagB, 100); /* this checks the flag every 100 milliseconds*/
-              } else {
+            // function checkFlagB() {
+            //   if (modalClosed == false) {
+            //     window.setTimeout(checkFlagB, 100); /* this checks the flag every 100 milliseconds*/
+            //   } else {
                 NextStudyTrial();
-                return;
-              }
-            }
+            //     return;
+            //   }
+            // }
           } else {
             NextStudyTrial();
           }
