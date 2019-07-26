@@ -678,6 +678,7 @@
         bonus=0;
       }
       let cashpoints = basepay + bonus;
+      let roundbonus = (Math.round(bonus * 2) / 2).toFixed(1);
       cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
@@ -725,7 +726,7 @@
         "TestRT": TestRT,
         "TestAccuracy": TestAccuracy,
         "TestArray": TestArray,
-        "bonus": bonus,
+        "bonus": roundbonus,
         "comments": $('#comments').val()
       };
 
