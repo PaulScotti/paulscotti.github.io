@@ -260,12 +260,14 @@
           StudyArray_check.push(Triplets[curStudy]); aa++
         } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
           StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else if (curStudy==0){
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
           StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
+        } else if (curStudy==899) {
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else {
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         }
@@ -388,12 +390,14 @@
           StudyArray_check.push(Triplets[curStudy]); aa++
         } else if (Triplets[curStudy].includes("nrp") && Triplets2.includes(Triplets[curStudy])) {
           StudyArray_check.push("d2"+Triplets[curStudy]); bb++
-        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
-          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else if (curStudy==0){
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         } else if (Triplets[curStudy].includes("o") && Triplets[curStudy-1].includes("plus")) {
           StudyArray_check.push("pos3minus"+Triplets[curStudy]); dd++
+        } else if (curStudy==899){
+          StudyArray_check.push("d1"+Triplets[curStudy]); ee++
+        } else if (Triplets[curStudy].includes("o") && Triplets[curStudy+1].includes("plus")) {
+          StudyArray_check.push("pos1minus"+Triplets[curStudy]); cc++
         } else {
           StudyArray_check.push("d1"+Triplets[curStudy]); ee++
         }
