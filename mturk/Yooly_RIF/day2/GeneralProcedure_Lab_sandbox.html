@@ -594,7 +594,7 @@
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          PracAccuracy.push(1);
+          TestAccuracy.push(1);
         } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
         } else {
@@ -628,7 +628,7 @@
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          PracAccuracy.push(0);
+          TestAccuracy.push(0);
         } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
         } else {
@@ -661,7 +661,7 @@
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          PracAccuracy.push(0);
+          TestAccuracy.push(0);
         } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
         } else {
