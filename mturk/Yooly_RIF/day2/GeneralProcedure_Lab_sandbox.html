@@ -91,7 +91,6 @@
 
   <!-- Display Object HTML -->
   <div id="showTrial">
-    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" style="display: inline; position:absolute; top:520px; left:-10px"></p>
     <div id="fixation">+</div>
     <div id="allItems">
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
@@ -105,11 +104,12 @@
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden; position:absolute; top:555px; right:150px;">Mountain</a>
       <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden; position:absolute; top:555px; left:20px;">No</a>
       <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden; position:absolute; top:555px; left:160px;">No</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden; position:absolute; top:555px; left:300px;">Yes</a>
-      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden; position:absolute; top:555px; left:440px;">Yes</a>
-      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: inline; position:absolute; top:555px; left:180px;">Same</a>
-      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: inline; position:absolute; top:555px; right:150px;">Different</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden; position:absolute; top:555px; left:300px;">Yes</a>
+            <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden; position:absolute; top:555px; left:440px;">Yes</a>
+      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; position:absolute; top:555px; left:180px;">Same</a>
+      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden; position:absolute; top:555px; right:150px;">Different</a>
     </center>
+    <p><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" style="display: hidden; position:absolute; top:520px; left:20px;"></p>
     <p id="memorizethis" align="center" style="position:absolute; top:-35px; left:150px">Memorize the visual details of these objects.</p>
   </div>
 
@@ -552,6 +552,12 @@
     }
 
     function New() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -579,6 +585,12 @@
       }
     }
     function NewUnsure() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -607,6 +619,12 @@
     }
 
     function OldUnsure() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -634,6 +652,12 @@
       }
     }
     function Old() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -672,14 +696,6 @@
 
     /* Done with the experiment */
     function Done() {
-      tempAr = Complex2(TestAccuracy,TestArray);
-      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
-      if (bonus<0) {
-        bonus=0;
-      }
-      let cashpoints = basepay + bonus;
-      let roundbonus = (Math.round(bonus * 2) / 2).toFixed(1);
-      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
@@ -695,6 +711,16 @@
       $('#done').hide();
       $('#saving').show();
       $('#assignmentId').val(GetAssignmentId());
+
+      tempAr = Complex2(TestAccuracy,TestArray);
+      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
+      if (bonus<0) {
+        bonus=0;
+      }
+      let cashpoints = basepay + bonus;
+      let roundbonus = (Math.round(bonus * 2) / 2).toFixed(1);
+      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
+
       const endDate = new Date().getTime();
       const d = {
         "WORKERID": WORKERID,

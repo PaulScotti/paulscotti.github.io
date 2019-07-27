@@ -96,20 +96,20 @@
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
-      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; bottom:0px;"></p>
+      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; top:0px;"></p>
     </div>
     <br><br>
     <center>
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden; position:absolute; top:555px; left:180px;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden; position:absolute; top:555px; right:150px;">Mountain</a>
-      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">No</a>
-      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">No</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">Yes</a>
-      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">Yes</a>
-      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; position:absolute; top:150px; left:150px;">Same</a>
-      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden; position:absolute; top:150px; left:150px;">Different</a>
+      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden; position:absolute; top:555px; left:20px;">No</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden; position:absolute; top:555px; left:160px;">No</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden; position:absolute; top:555px; left:300px;">Yes</a>
+            <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden; position:absolute; top:555px; left:440px;">Yes</a>
+      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden; position:absolute; top:555px; left:180px;">Same</a>
+      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden; position:absolute; top:555px; right:150px;">Different</a>
     </center>
-    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" width="600px"></p>
+    <p><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" style="display: hidden; position:absolute; top:520px; left:20px;"></p>
     <p id="memorizethis" align="center" style="position:absolute; top:-35px; left:150px">Memorize the visual details of these objects.</p>
   </div>
 
@@ -411,11 +411,11 @@
         modalClosed = false;
         if (curPractice >= numPractice) { // test phase
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (confident), NO (unconfident), YES (unconfident), YES (confident).';
           window.location.href = '#openModal';
         } else {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES.';
           window.location.href = '#openModal';
         }
         checkFlag6();
@@ -552,6 +552,12 @@
     }
 
     function New() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -579,6 +585,12 @@
       }
     }
     function NewUnsure() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -607,6 +619,12 @@
     }
 
     function OldUnsure() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -634,6 +652,12 @@
       }
     }
     function Old() {
+      $('#Old').hide(); // hide Old button
+      $('#OldUnsure').hide(); // hide Old button
+      $('#New').hide(); // hide New button
+      $('#NewUnsure').hide(); // hide New button
+      $('#rating').hide();
+      $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
@@ -672,14 +696,6 @@
 
     /* Done with the experiment */
     function Done() {
-      tempAr = Complex2(TestAccuracy,TestArray);
-      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
-      if (bonus<0) {
-        bonus=0;
-      }
-      let cashpoints = basepay + bonus;
-      let roundbonus = (Math.round(bonus * 2) / 2).toFixed(1);
-      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
       document.getElementById("cashPrize").innerHTML = "Total earnings ($4 + bonus): $" + cashpoints;
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for us to process your bonus. If you have not received your bonus after 2 weeks, please email hong.503@buckeyemail.osu.edu.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
@@ -695,6 +711,16 @@
       $('#done').hide();
       $('#saving').show();
       $('#assignmentId').val(GetAssignmentId());
+
+      tempAr = Complex2(TestAccuracy,TestArray);
+      bonus = (((tempAr.reduce( ( p, c ) => p + c, 0 ) / tempAr.length))-.5)*5;
+      if (bonus<0) {
+        bonus=0;
+      }
+      let cashpoints = basepay + bonus;
+      let roundbonus = (Math.round(bonus * 2) / 2).toFixed(1);
+      cashpoints = (Math.round(cashpoints * 2) / 2).toFixed(1);
+
       const endDate = new Date().getTime();
       const d = {
         "WORKERID": WORKERID,
