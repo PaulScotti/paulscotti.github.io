@@ -91,25 +91,25 @@
 
   <!-- Display Object HTML -->
   <div id="showTrial">
+    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" style="display: inline; position:absolute; top:520px; left:-10px"></p>
     <div id="fixation">+</div>
     <div id="allItems">
       <img id="itemA" src="https://paulscotti.github.io/mturk/Yooly_RIF/RIFFiller/thing6.jpg" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="Scene" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
       <img id="CDitem" src="https://maxceylab.github.io/stimuli/change_detection/CDfix.png" width=600 height=600></img>
-      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; bottom:0px;"></p>
+      <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_question.png" id="rating_q" width="600px" style="position:absolute; top:0px;"></p>
     </div>
     <br><br>
     <center>
       <a href="javascript:void(0);" onclick="Beach();" id="BeachButton" style="display: hidden; position:absolute; top:555px; left:180px;">Beach</a>
       <a href="javascript:void(0);" onclick="Mountain();" id="MountainButton" style="display: hidden; position:absolute; top:555px; right:150px;">Mountain</a>
-      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden;">No</a>
-      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden;">No</a>
-      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden;">Yes</a>
-      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden;">Yes</a>
-      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: hidden;">Same</a>
-      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: hidden;">Different</a>
+      <a href="javascript:void(0);" onclick="Old();" id="Old" style="display: hidden; position:absolute; top:555px; left:20px;">No</a>
+      <a href="javascript:void(0);" onclick="OldUnsure();" id="OldUnsure" style="display: hidden; position:absolute; top:555px; left:160px;">No</a>
+      <a href="javascript:void(0);" onclick="New();" id="New" style="display: hidden; position:absolute; top:555px; left:300px;">Yes</a>
+      <a href="javascript:void(0);" onclick="NewUnsure();" id="NewUnsure" style="display: hidden; position:absolute; top:555px; left:440px;">Yes</a>
+      <a href="javascript:void(0);" onclick="SamePress();" id="SameButton" style="display: inline; position:absolute; top:555px; left:180px;">Same</a>
+      <a href="javascript:void(0);" onclick="DiffPress();" id="DiffButton" style="display: inline; position:absolute; top:555px; right:150px;">Different</a>
     </center>
-    <p align="center"><img src="https://paulscotti.github.io/mturk/Yooly_RIF/instructions/rating_scale.png" id="rating" width="600px"></p>
     <p id="memorizethis" align="center" style="position:absolute; top:-35px; left:150px">Memorize the visual details of these objects.</p>
   </div>
 
@@ -411,11 +411,11 @@
         modalClosed = false;
         if (curPractice >= numPractice) { // test phase
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (unconfident), NO (confident), YES (unconfident), YES (confident).';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (confident), NO (unconfident), YES (unconfident), YES (confident).';
           window.location.href = '#openModal';
         } else {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image in today&#39;s study period. <br><br> That is, if you have seen the object before, but you saw it over 24 hours ago, select NO. If you have never seen the object before, select NO. If you have seen the object before during today&#39;s study period, select YES.';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES.';
           window.location.href = '#openModal';
         }
         checkFlag6();
