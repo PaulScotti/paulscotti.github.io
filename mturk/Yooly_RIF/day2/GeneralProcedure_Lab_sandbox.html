@@ -410,11 +410,11 @@
         modalClosed = false;
         if (curPractice >= numPractice) { // test phase
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (confident), NO (unconfident), YES (unconfident), YES (confident).';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object <b>today</b>, select YES. Otherwise, select NO. <br><br> We now also ask you to select whether you are confident or unconfident about your choice, with the following options: NO (confident), NO (unconfident), YES (unconfident), YES (confident).';
           window.location.href = '#openModal';
         } else {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object before, select NO. If you have seen the object before, but you saw it over 24 hours ago, select NO. If you have seen the object today, select YES.';
+            'Great job! <br><br> We will now test your memory for studied objects, every correct answer earns you one cent. <br><br> You will see images one at a time and be asked if you have seen the exact same image today. <br><br> That is, If you have never seen the object <b>today</b>, select YES. Otherwise, select NO.';
           window.location.href = '#openModal';
         }
         checkFlag6();
@@ -561,11 +561,11 @@
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          TestAccuracy.push(1);
-        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
-        } else {
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
         }
         curTest++;
         NextTestTrial();
@@ -573,11 +573,11 @@
         PracticeResp.push(1);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
-          PracAccuracy.push(1);
-        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
-        } else {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
         }
         curPractice++;
         NextPracTrial();
@@ -594,11 +594,11 @@
         TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          TestAccuracy.push(1);
-        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
-        } else {
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
+        } else {
+          TestAccuracy.push(0);
         }
         curTest++;
         NextTestTrial();
@@ -606,11 +606,11 @@
         PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
-          PracAccuracy.push(1);
-        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
-        } else {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
+        } else {
+          PracAccuracy.push(0);
         }
         curPractice++;
         NextPracTrial();
@@ -628,11 +628,11 @@
         TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          TestAccuracy.push(0);
-        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
-        } else {
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
         }
         curTest++;
         NextTestTrial();
@@ -640,11 +640,11 @@
         PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
-          PracAccuracy.push(0);
-        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
-        } else {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
         }
         curPractice++;
         NextPracTrial();
@@ -661,11 +661,11 @@
         TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          TestAccuracy.push(0);
-        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(1);
-        } else {
+        } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
+        } else {
+          TestAccuracy.push(1);
         }
         curTest++;
         NextTestTrial();
@@ -673,11 +673,11 @@
         PracticeResp.push(4);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
-          PracAccuracy.push(0);
-        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(1);
-        } else {
+        } else if (ComplexIncludes(TestArray,PracImages[curPractice]).includes("d2")) {
           PracAccuracy.push(0);
+        } else {
+          PracAccuracy.push(1);
         }
         curPractice++;
         NextPracTrial();
