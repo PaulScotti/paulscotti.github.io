@@ -558,7 +558,7 @@
       $('#rating').hide();
       $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
-        TestResp.push(1);
+        TestResp.push(4);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
           TestAccuracy.push(0);
@@ -570,7 +570,7 @@
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(1);
+        PracticeResp.push(4);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(0);
@@ -591,7 +591,7 @@
       $('#rating').hide();
       $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
-        TestResp.push(2);
+        TestResp.push(3);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
           TestAccuracy.push(0);
@@ -603,7 +603,7 @@
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(2);
+        PracticeResp.push(3);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(0);
@@ -625,7 +625,7 @@
       $('#rating').hide();
       $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
-        TestResp.push(3);
+        TestResp.push(2);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
           TestAccuracy.push(1);
@@ -637,7 +637,7 @@
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(3);
+        PracticeResp.push(2);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(1);
@@ -658,7 +658,7 @@
       $('#rating').hide();
       $('#rating_q').hide();
       if (curPractice >= numPractice) { // if test phase
-        TestResp.push(4);
+        TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
           TestAccuracy.push(1);
@@ -670,7 +670,7 @@
         curTest++;
         NextTestTrial();
       } else { // if practice phase
-        PracticeResp.push(4);
+        PracticeResp.push(1);
         PracticeRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (PracImages[curPractice].includes("lure")) {
           PracAccuracy.push(1);
