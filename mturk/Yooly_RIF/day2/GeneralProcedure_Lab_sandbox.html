@@ -329,6 +329,7 @@
       startTrial = new Date().getTime();
       $('#allItems').css('margin-top', 0);
       if (curPractice >= numPractice) {  // if test phase
+        console.log(TestAccuracy[TestAccuracy.length-1])
         $('#Old').show();
         $('#New').show();
         $('#OldUnsure').show();
@@ -396,7 +397,6 @@
       $('#memorizethis').hide();
       $('#CDitem').show();
       if (now2 < (now + 180000)) { // 180000 for 3 minutes long filler task
-        CDaccuracy.push(-999);
         ChangeDetectionTrial();
       } else {
         $('#CDitem').attr('src', CDfix.src); // reset last CD trial to CDfix; make sure all components of CD task are hidden before moving on
@@ -561,7 +561,7 @@
         TestResp.push(1);
         TestRT.push((new Date().getTime() - startTrial)); // time to respond (in ms)
         if (AllImages[curTest].includes("lure")) {
-          PracAccuracy.push(1);
+          TestAccuracy.push(1);
         } else if (ComplexIncludes(TestArray,AllImages[curTest]).includes("d2")) {
           TestAccuracy.push(0);
         } else {
