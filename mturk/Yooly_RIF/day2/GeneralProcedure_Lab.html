@@ -152,7 +152,8 @@
     let now = new Date().getTime(); // used for 5 min filler task
     let now2 = now;
     let curCD = 0;
-    let CDaccuracy = [];
+    let CDaccuracy_phase1 = [];
+    let CDaccuracy_phase2 = [];
     let CDType = [];
     let PracticeResp = [];
     let PracticeRT = [];
@@ -461,7 +462,11 @@
     // Responses for Change Detection
     function SamePress() {
       if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
-        CDaccuracy.push(1);
+        if (curPractice >= numPractice) {  // test phase
+          CDaccuracy_phase2.push(1);
+        } else {
+          CDaccuracy_phase1.push(1);
+        }
 
         // open pop-up:
         modalClosed = false;
@@ -472,7 +477,11 @@
         checkFlag5();
 
       } else if ([1].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // diff
-        CDaccuracy.push(0);
+        if (curPractice >= numPractice) {  // test phase
+          CDaccuracy_phase2.push(0);
+        } else {
+          CDaccuracy_phase1.push(0);
+        }
 
         // open pop-up:
         modalClosed = false;
@@ -486,7 +495,11 @@
 
     function DiffPress() {
       if ([1].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // diff
-        CDaccuracy.push(1);
+        if (curPractice >= numPractice) {  // test phase
+          CDaccuracy_phase2.push(1);
+        } else {
+          CDaccuracy_phase1.push(1);
+        }
 
         // open pop-up:
         modalClosed = false;
@@ -496,7 +509,11 @@
 
         checkFlag5();
       } else if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
-        CDaccuracy.push(0);
+        if (curPractice >= numPractice) {  // test phase
+          CDaccuracy_phase2.push(0);
+        } else {
+          CDaccuracy_phase1.push(0);
+        }
 
         // open pop-up:
         modalClosed = false;
@@ -741,7 +758,8 @@
         "Day1StudyArray": StudyArrayFull,
         "Triplets2": Triplets2,
         "seed": chance1.seed,
-        "CDaccuracy": CDaccuracy,
+        "CDaccuracy_phase1": CDaccuracy_phase1,
+        "CDaccuracy_phase2": CDaccuracy_phase2,
         "PracImg": PracImg,
         "TestImg": TestImg,
         "PracticeResp": PracticeResp,
