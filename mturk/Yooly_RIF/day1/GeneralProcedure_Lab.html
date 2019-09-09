@@ -740,7 +740,7 @@
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('Yooly_day1/' + WORKERID + '_' + new Date().getTime() + '_day1.json');
+      const storageRef = firebase.storage().ref('Yooly_day1_new/' + WORKERID + '_' + new Date().getTime() + '_day1.json');
       storageRef.put(blob);
 
       if (SceneAcc.length == 0) {
