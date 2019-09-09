@@ -57,7 +57,7 @@
   <div id="instructions3" style="display:none">
     <center>
       <p>After completion of this HIT, you will be emailed with a link to the second HIT. Please complete this second HIT between 24-48 hours after completion of the current HIT.</p>
-      <p>Please email hong.503@buckeyemail.osu.edu if you have any questions.</p>
+      <p>Please email scottibrain@gmail.com if you have any questions.</p>
     </center>
     <br>
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions3').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
@@ -683,15 +683,15 @@
       // calculate their overall accuracy (Practice + Test)
       if (SceneAcc.length == 0) {
         good = 0;
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
+        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email scottibrain@gmail.com if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
           '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       } else if ((SceneAcc.reduce((a, b) => a + b)/SceneAcc.length) >= .75) {
         good = 1;
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
+        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! We will send you an email in the next 24 hours with a link to part 2!<br><br>Please email scottibrain@gmail.com if you have questions.<br><br>Any comments for us so far? (What strategy did you use? Any technical difficulties?)<br><br>' +
           '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       } else {
         good = 0;
-        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email hong.503@buckeyemail.osu.edu if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
+        document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Unfortunately, you have not been selected to go on to part 2 of our study.<br><br>Please email scottibrain@gmail.com if you have questions.<br><br>Any comments for us? (What strategy did you use? Any technical difficulties?)<br><br>' +
           '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       }
       $('#showTrial').hide();
