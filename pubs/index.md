@@ -5,9 +5,9 @@ excerpt: "Publications"
 comments: false
 ---
 # Publications
-<a href="https://paulscotti.github.io/pubs/scotti_janakiefski_maxcey_2020.pdf">Scotti, P. S., Janakiefski, L., & Maxcey, A. M. (2020). Recognition-induced forgetting of schematically related pictures. Pscyhonomic Bulletin & Review.</a>
+<a href="https://paulscotti.github.io/pubs/scotti_janakiefski_maxcey_2020.pdf">Scotti, P. S., Janakiefski, L., & Maxcey, A. M. (2020). Recognition-induced forgetting of schematically related pictures. Pscyhonomic Bulletin & Review, (), 1-9.</a>
 <br><br>
-<a href="https://paulscotti.github.io/pubs/collegio_nah_scotti_shomstein_2019.pdf">Collegio, A., Nah, J., Scotti, P. S., & Shomstein, S. (2019). Attention scales according to inferred real-world object size. Nature Human Behavior, 3(1), 40.</a>
+<a href="https://paulscotti.github.io/pubs/collegio_nah_scotti_shomstein_2019.pdf">Collegio, A., Nah, J., Scotti, P. S., & Shomstein, S. (2019). Attention scales according to inferred real-world object size. Nature Human Behavior, 3(1), 40-47.</a>
 
 # Preprints
 <a href="https://github.com/openjournals/jose-papers/blob/jose.00072/jose.00072/10.21105.jose.00072.pdf">Scotti, P. S., Kulkarni, A., Mazor, M., Klapwijk, E., Yarkoni, T., Huth, A. G. (submitted). EduCortex: browser-based 3D brain visualization of fMRI meta-analysis maps.</a>
