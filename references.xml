@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<file xmlns="http://bibtexml.sf.net/">
+    <entry id="franconeri2013">
+        <article>
+            <author>Franconeri, Steven L and Alvarez, George A and Cavanagh, Patrick</author>
+            <title>Flexible cognitive resources: competitive content maps for attention and memory</title>
+            <journal>Trends in cognitive sciences</journal>
+            <year>2013</year>
+            <volume>17</volume>
+            <number>3</number>
+            <pages>134--141</pages>
+        </article>
+    </entry>
+    <entry id="oberauer2006">
+        <article>
+            <author>Oberauer, Klaus and Kliegl, Reinhold</author>
+            <title>A formal model of capacity limits in working memory</title>
+            <journal>Journal of memory and language</journal>
+            <year>2006</year>
+            <volume>55</volume>
+            <number>4</number>
+            <pages>601--626</pages>
+        </article>
+    </entry>
+    <entry id="brady2011">
+        <article>
+            <author>Brady, Timothy and Alvarez, George</author>
+            <title>Hierarchical encoding in visual working memory: Ensemble statistics bias memory for individual items</title>
+            <journal>Psychological science</journal>
+            <year>2011</year>
+            <volume>22</volume>
+            <number>3</number>
+            <pages>384--392</pages>
+        </article>
+    </entry>
+    <entry id="huttenlocher2000">
+        <article>
+            <author>Huttenlocher, Janellen and Hedges, Larry V and Vevea, Jack L</author>
+            <title>Why do categories affect stimulus judgment?</title>
+            <journal>Journal of experimental psychology: General</journal>
+            <year>2000</year>
+            <volume>129</volume>
+            <number>2</number>
+            <pages>220</pages>
+        </article>
+    </entry>
+    <entry id="vergauwe2009">
+        <article>
+            <author>Vergauwe, Evie and Barrouillet, Pierre and Camos, Val{\'e}rie</author>
+            <title>Visual and spatial working memory are not that dissociated after all: A time-based resource-sharing account.</title>
+            <journal>Journal of Experimental Psychology: Learning, Memory, and Cognition</journal>
+            <year>2009</year>
+            <volume>35</volume>
+            <number>4</number>
+            <pages>1012</pages>
+        </article>
+    </entry>
+    <entry id="navalpakkam2007">
+        <article>
+            <author>Navalpakkam, Vidhya and Itti, Laurent</author>
+            <title>Search goal tunes visual features optimally</title>
+            <journal>Neuron</journal>
+            <year>2007</year>
+            <volume>53</volume>
+            <number>4</number>
+            <pages>605--617</pages>
+        </article>
+    </entry>
+    <entry id="scolari2009">
+        <article>
+            <author>Scolari, Miranda and Serences, John T</author>
+            <title>Adaptive allocation of attentional gain</title>
+            <journal>Journal of Neuroscience</journal>
+            <year>2009</year>
+            <volume>29</volume>
+            <number>38</number>
+            <pages>11933--11942</pages>
+        </article>
+    </entry>
+    <entry id="scolari2012">
+        <article>
+            <author>Scolari, Miranda and Byers, Anna and Serences, John T</author>
+            <title>Optimal deployment of attentional gain during fine discriminations</title>
+            <journal>Journal of Neuroscience</journal>
+            <year>2012</year>
+            <volume>32</volume>
+            <number>22</number>
+            <pages>7723--7733</pages>
+        </article>
+    </entry>
+    <entry id="barrouillet2012">
+        <article>
+            <author>Barrouillet, Pierre and De Paepe, Annick and Langerock, Naomi</author>
+            <title>Time causes forgetting from working memory</title>
+            <journal>Psychonomic Bulletin \&amp; Review</journal>
+            <year>2012</year>
+            <volume>19</volume>
+            <number>1</number>
+            <pages>87--92</pages>
+        </article>
+    </entry>
+    <entry id="barrouillet2009">
+        <article>
+            <author>Barrouillet, Pierre and Camos, Valerie</author>
+            <title>Interference: unique source of forgetting in working memory?</title>
+            <journal>Trends in Cognitive Sciences</journal>
+            <year>2009</year>
+            <volume>13</volume>
+            <number>4</number>
+            <pages>145--146</pages>
+        </article>
+    </entry>
+    <entry id="pertzov2013">
+        <article>
+            <author>Pertzov, Yoni and Bays, Paul M and Joseph, Sabine and Husain, Masud</author>
+            <title>Rapid forgetting prevented by retrospective attention cues.</title>
+            <journal>Journal of Experimental Psychology: Human Perception and Performance</journal>
+            <year>2013</year>
+            <volume>39</volume>
+            <number>5</number>
+            <pages>1224</pages>
+        </article>
+    </entry>
+    <entry id="craik2014">
+        <article>
+            <author>Craik, Fergus IM</author>
+            <title>Effects of distraction on memory and cognition: a commentary</title>
+            <journal>Frontiers in psychology</journal>
+            <year>2014</year>
+            <volume>5</volume>
+            <pages>841</pages>
+        </article>
+    </entry>
+    <entry id="konkle2012">
+        <article>
+            <author>Konkle, Talia and Oliva, Aude</author>
+            <title>A real-world size organization of object responses in occipitotemporal cortex</title>
+            <journal>Neuron</journal>
+            <year>2012</year>
+            <volume>74</volume>
+            <number>6</number>
+            <pages>1114--1124</pages>
+        </article>
+    </entry>
+    <entry id="wei2012">
+        <article>
+            <author>Wei, Ziqiang and Wang, Xiao-Jing and Wang, Da-Hui</author>
+            <title>From distributed resources to limited slots in multiple-item working memory: a spiking network model with normalization</title>
+            <journal>Journal of Neuroscience</journal>
+            <year>2012</year>
+            <volume>32</volume>
+            <number>33</number>
+            <pages>11228--11240</pages>
+        </article>
+    </entry>
+    <entry id="johnson2009">
+        <article>
+            <author>Johnson, Jeffrey S and Spencer, John P and Luck, Steven J and Sch{\"o}ner, Gregor</author>
+            <title>A dynamic neural field model of visual working memory and change detection</title>
+            <journal>Psychological science</journal>
+            <year>2009</year>
+            <volume>20</volume>
+            <number>5</number>
+            <pages>568--577</pages>
+        </article>
+    </entry>
+    <entry id="oberauer2008">
+        <article>
+            <author>Oberauer, Klaus and Lewandowsky, Stephan</author>
+            <title>Forgetting in immediate serial recall: Decay, temporal distinctiveness, or interference?</title>
+            <journal>Psychological review</journal>
+            <year>2008</year>
+            <volume>115</volume>
+            <number>3</number>
+            <pages>544</pages>
+        </article>
+    </entry>
+    <entry id="lewandowsky2009">
+        <article>
+            <author>Lewandowsky, Stephan and Oberauer, Klaus</author>
+            <title>No evidence for temporal decay in working memory.</title>
+            <journal>Journal of Experimental Psychology: Learning, Memory, and Cognition</journal>
+            <year>2009</year>
+            <volume>35</volume>
+            <number>6</number>
+            <pages>1545</pages>
+        </article>
+    </entry>
+    <entry id="lewis-peacock2014">
+        <article>
+            <author>Lewis-Peacock, Jarrod A and Norman, Kenneth A</author>
+            <title>Competition between items in working memory leads to forgetting</title>
+            <journal>Nature Communications</journal>
+            <year>2014</year>
+            <volume>5</volume>
+            <pages>5768</pages>
+        </article>
+    </entry>
+    <entry id="ahmad2017">
+        <article>
+            <author>Ahmad, Jumana and Swan, Garrett and Bowman, Howard and Wyble, Brad and Nobre, Anna C and Shapiro, Kimron L and McNab, Fiona</author>
+            <title>Competitive interactions affect working memory performance for both simultaneous and sequential stimulus presentation</title>
+            <journal>Scientific reports</journal>
+            <year>2017</year>
+            <volume>7</volume>
+            <number>1</number>
+            <pages>4785</pages>
+        </article>
+    </entry>
+    <entry id="yonelinas2019">
+        <article>
+            <author>Yonelinas, Andrew P and Ranganath, Charan and Ekstrom, Arne D and Wiltgen, Brian J</author>
+            <title>A contextual binding theory of episodic memory: systems consolidation reconsidered</title>
+            <journal>Nature Reviews Neuroscience</journal>
+            <year>2019</year>
+            <pages>1</pages>
+        </article>
+    </entry>
+    <entry id="desimone1995">
+        <article>
+            <author>Desimone, Robert and Duncan, John</author>
+            <title>Neural mechanisms of selective visual attention</title>
+            <journal>Annual review of neuroscience</journal>
+            <year>1995</year>
+            <volume>18</volume>
+            <number>1</number>
+            <pages>193--222</pages>
+        </article>
+    </entry>
+    <entry id="reynolds1999">
+        <article>
+            <author>Reynolds, John H and Chelazzi, Leonardo and Desimone, Robert</author>
+            <title>Competitive mechanisms subserve attention in macaque areas V2 and V4</title>
+            <journal>Journal of Neuroscience</journal>
+            <year>1999</year>
+            <volume>19</volume>
+            <number>5</number>
+            <pages>1736--1753</pages>
+        </article>
+    </entry>
+    <entry id="shapiro2011">
+        <article>
+            <author>Shapiro, Kimron L and Miller, Claire E</author>
+            <title>The role of biased competition in visual short-term memory</title>
+            <journal>Neuropsychologia</journal>
+            <year>2011</year>
+            <volume>49</volume>
+            <number>6</number>
+            <pages>1506--1517</pages>
+        </article>
+    </entry>
+    <entry id="ihssen2010">
+        <article>
+            <author>Ihssen, Niklas and Linden, David EJ and Shapiro, Kimron L</author>
+            <title>Improving visual short-term memory by sequencing the stimulus array</title>
+            <journal>Psychonomic Bulletin \&amp; Review</journal>
+            <year>2010</year>
+            <volume>17</volume>
+            <number>5</number>
+            <pages>680--686</pages>
+        </article>
+    </entry>
+    <entry id="gorgoraptis2011">
+        <article>
+            <author>Gorgoraptis, Nikos and Catalao, Raquel FG and Bays, Paul M and Husain, Masud</author>
+            <title>Dynamic updating of working memory resources for visual objects</title>
+            <journal>Journal of Neuroscience</journal>
+            <year>2011</year>
+            <volume>31</volume>
+            <number>23</number>
+            <pages>8502--8511</pages>
+        </article>
+    </entry>
+    <entry id="van2007">
+        <article>
+            <author>Van der Stigchel, Stefan and Merten, Hanneke and Meeter, Martijn and Theeuwes, Jan</author>
+            <title>The effects of a task-irrelevant visual event on spatial working memory</title>
+            <journal>Psychonomic Bulletin \&amp; Review</journal>
+            <year>2007</year>
+            <volume>14</volume>
+            <number>6</number>
+            <pages>1066--1071</pages>
+        </article>
+    </entry>
+    <entry id="lively2019poster">
+        <article>
+            <author>Lively, Zachary and Ng, Gavin and Buetti, Simona and Lleras, Alejandro</author>
+            <title>Visual working memory representations are shifted toward irrelevant features of distractors in intervening visual search tasks</title>
+            <year>2019</year>
+        </article>
+    </entry>
+    <entry id="suchow2013">
+        <article>
+            <author>Suchow, Jordan W and Brady, Timothy F and Fougnie, Daryl and Alvarez, George A</author>
+            <title>Modeling visual working memory with the MemToolbox</title>
+            <journal>Journal of vision</journal>
+            <year>2013</year>
+            <volume>13</volume>
+            <number>10</number>
+            <pages>9--9</pages>
+        </article>
+    </entry>
+    <entry id="golomb2015">
+        <article>
+            <author>Golomb, Julie D</author>
+            <title>Divided spatial attention and feature-mixing errors</title>
+            <journal>Attention, Perception, \&amp; Psychophysics</journal>
+            <year>2015</year>
+            <volume>77</volume>
+            <number>8</number>
+            <pages>2562--2569</pages>
+        </article>
+    </entry>
+    <entry id="bae2017">
+        <article>
+            <author>Bae, Gi-Yeul and Luck, Steven J</author>
+            <title>Interactions between visual working memory representations</title>
+            <journal>Attention, Perception, \&amp; Psychophysics</journal>
+            <year>2017</year>
+            <volume>79</volume>
+            <number>8</number>
+            <pages>2376--2395</pages>
+        </article>
+    </entry>
+    <entry id="scotti2019stat">
+        <article>
+            <author>Scotti, Paul S and Hong, Yoolim and Leber, Andy B and Golomb, Julie D</author>
+            <title>Statistical Regularities During Object Encoding Systematically Distort Long-Term Memory (under review)</title>
+            <year>2019</year>
+        </article>
+    </entry>
+    <entry id="chunharas2019preprint">
+        <article>
+            <author>Chunharas, Chaipat and Rademaker, Rosanne and Brady, Timothy and Serences, John</author>
+            <title>Adaptive memory distortion in visual working memory. https://doi.org/10.31234/osf.io/e3m5a</title>
+            <year>2019</year>
+        </article>
+    </entry>
+    <entry id="brady2013a">
+        <article>
+            <author>Brady, Timothy and Tenenbaum, Joshua</author>
+            <title>A probabilistic model of visual working memory: Incorporating higher order regularities into working memory capacity estimates.</title>
+            <journal>Psychological review</journal>
+            <year>2013</year>
+            <volume>120</volume>
+            <number>1</number>
+            <pages>85</pages>
+        </article>
+    </entry>
+    <entry id="huang2010">
+        <article>
+            <author>Huang, Jie and Sekuler, Robert</author>
+            <title>Distortions in recall from visual memory: Two classes of attractors at work</title>
+            <journal>Journal of vision</journal>
+            <year>2010</year>
+            <volume>10</volume>
+            <number>2</number>
+            <pages>24--24</pages>
+        </article>
+    </entry>
+    <entry id="chen2019">
+        <article>
+            <author>Chen, Jiageng and Leber, Andrew, and Golomb, Julie</author>
+            <title>Attentional capture alters feature perception</title>
+            <journal>Journal of Experimental Psychology: Human Perception and Performance</journal>
+        </article>
+    </entry>
+    <entry id="dube2014">
+        <article>
+            <author>Dub{\'e}, Chad and Zhou, Feng and Kahana, Michael J and Sekuler, Robert</author>
+            <title>Similarity-based distortion of visual short-term memory is due to perceptual averaging</title>
+            <journal>Vision research</journal>
+            <year>2014</year>
+            <volume>96</volume>
+            <pages>8--16</pages>
+        </article>
+    </entry>
+    <entry id="huttenlocher1991">
+        <article>
+            <author>Huttenlocher, Janellen and Hedges, Larry V and Duncan, Susan</author>
+            <title>Categories and particulars: Prototype effects in estimating spatial location.</title>
+            <journal>Psychological review</journal>
+            <year>1991</year>
+            <volume>98</volume>
+            <number>3</number>
+            <pages>352</pages>
+        </article>
+    </entry>
+    <entry id="bae2015">
+        <article>
+            <author>Bae, Gi-Yeul and Olkkonen, Maria and Allred, Sarah R and Flombaum, Jonathan I</author>
+            <title>Why some colors appear more memorable than others: A model combining categories and particulars in color working memory.</title>
+            <journal>Journal of Experimental Psychology: General</journal>
+            <year>2015</year>
+            <volume>144</volume>
+            <number>4</number>
+            <pages>744</pages>
+        </article>
+    </entry>
+    <entry id="haberman2009">
+        <article>
+            <author>Haberman, Jason and Whitney, David</author>
+            <title>Seeing the mean: ensemble coding for sets of faces.</title>
+            <journal>Journal of Experimental Psychology: Human Perception and Performance</journal>
+            <year>2009</year>
+            <volume>35</volume>
+            <number>3</number>
+            <pages>718</pages>
+        </article>
+    </entry>
+    <entry id="defockert2009">
+        <article>
+            <author>de Fockert, Jan and Wolfenstein, Cecilia</author>
+            <title>Rapid extraction of mean identity from sets of faces</title>
+            <journal>The Quarterly Journal of Experimental Psychology</journal>
+            <year>2009</year>
+            <volume>62</volume>
+            <number>9</number>
+            <pages>1716--1722</pages>
+        </article>
+    </entry>
+    <entry id="brady2018preprint">
+        <article>
+            <author>Brady, Timothy and Schacter, Daniel and Alvarez, George</author>
+            <title>The adaptive nature of false memories is revealed by gist-based distortion of true memories. https://doi.org/10.31234/osf.io/zeg95</title>
+            <year>2018</year>
+        </article>
+    </entry>
+    <entry id="hemmer2009">
+        <article>
+            <author>Hemmer, Pernille and Steyvers, Mark</author>
+            <title>A Bayesian account of reconstructive memory</title>
+            <journal>Topics in Cognitive Science</journal>
+            <year>2009</year>
+            <volume>1</volume>
+            <number>1</number>
+            <pages>189--202</pages>
+        </article>
+    </entry>
+    <entry id="sutterer2019">
+        <article>
+            <author>Sutterer, David W and Foster, Joshua J and Adam, Kirsten CS and Vogel, Edward K and Awh, Edward</author>
+            <title>Item-specific delay activity demonstrates concurrent storage of multiple active neural representations in working memory</title>
+            <journal>PLOS Biology</journal>
+            <year>2019</year>
+            <volume>17</volume>
+            <number>4</number>
+            <pages>e3000239</pages>
+        </article>
+    </entry>
+    <entry id="chun1998">
+        <article>
+            <author>Chun, Marvin M and Jiang, Yuhong</author>
+            <title>Contextual cueing: Implicit learning and memory of visual context guides spatial attention</title>
+            <journal>Cognitive psychology</journal>
+            <year>1998</year>
+            <volume>36</volume>
+            <number>1</number>
+            <pages>28--71</pages>
+        </article>
+    </entry>
+    <entry id="luck1997">
+        <article>
+            <author>Luck, Steven J and Vogel, Edward K</author>
+            <title>The capacity of visual working memory for features and conjunctions</title>
+            <journal>Nature</journal>
+            <year>1997</year>
+            <volume>390</volume>
+            <number>6657</number>
+            <pages>279</pages>
+        </article>
+    </entry>
+    <entry id="chun2003">
+        <article>
+            <author>Chun, Marvin M and Jiang, Yuhong</author>
+            <title>Implicit, long-term spatial contextual memory.</title>
+            <journal>Journal of Experimental Psychology: Learning, Memory, and Cognition</journal>
+            <year>2003</year>
+            <volume>29</volume>
+            <number>2</number>
+            <pages>224</pages>
+        </article>
+    </entry>
+    <entry id="shanks1994">
+        <article>
+            <author>Shanks, David R and John, Mark F St</author>
+            <title>Characteristics of dissociable human learning systems</title>
+            <journal>Behavioral and brain sciences</journal>
+            <year>1994</year>
+            <volume>17</volume>
+            <number>3</number>
+            <pages>367--395</pages>
+        </article>
+    </entry>
+    <entry id="brady2019">
+        <article>
+            <author>Brady, Timothy and St{\"o}rmer, Viola and Shafer-Skelton, Anna and Williams, Jamal and Chapman, Angus and Schill, Hayden</author>
+            <title>Scaling up visual attention and visual working memory to the real world</title>
+            <journal>Knowledge and Vision</journal>
+            <year>2019</year>
+            <volume>70</volume>
+            <pages>29</pages>
+        </article>
+    </entry>
+    <entry id="oberauer2017a">
+        <article>
+            <author>Oberauer, Klaus and Stoneking, Colin and Wabersich, Dominik and Lin, Hsuan-Yu</author>
+            <title>Hierarchical Bayesian measurement models for continuous reproduction of visual features from working memory</title>
+            <journal>Journal of vision</journal>
+            <year>2017</year>
+            <volume>17</volume>
+            <number>5</number>
+            <pages>11--11</pages>
+        </article>
+    </entry>
+    <entry id="brady2008">
+        <article>
+            <author>Brady, Timothy and Konkle, Talia and Alvarez, George and Oliva, Aude</author>
+            <title>Visual long-term memory has a massive storage capacity for object details</title>
+            <journal>Proceedings of the National Academy of Sciences</journal>
+            <year>2008</year>
+            <volume>105</volume>
+            <number>38</number>
+            <pages>14325--14329</pages>
+        </article>
+    </entry>
+    <entry id="golomb2014a">
+        <article>
+            <author>Golomb, Julie D and L{'}Heureux, Zara E and Kanwisher, Nancy</author>
+            <title>Feature-binding errors after eye movements and shifts of attention</title>
+            <journal>Psychological science</journal>
+            <year>2014</year>
+            <volume>25</volume>
+            <number>5</number>
+            <pages>1067--1078</pages>
+        </article>
+    </entry>
+    <entry id="zhang2008">
+        <article>
+            <author>Zhang, Weiwei and Luck, Steven J</author>
+            <title>Discrete fixed-resolution representations in visual working memory</title>
+            <journal>Nature</journal>
+            <year>2008</year>
+            <volume>453</volume>
+            <number>7192</number>
+            <pages>233</pages>
+        </article>
+    </entry>
+    <entry id="bays2009">
+        <article>
+            <author>Bays, Paul M and Catalao, Raquel FG and Husain, Masud</author>
+            <title>The precision of visual working memory is set by allocation of a shared resource</title>
+            <journal>Journal of vision</journal>
+            <year>2009</year>
+            <volume>9</volume>
+            <number>10</number>
+            <pages>7--7</pages>
+        </article>
+    </entry>
+    <entry id="bays2008">
+        <article>
+            <author>Bays, Paul M and Husain, Masud</author>
+            <title>Dynamic shifts of limited working memory resources in human vision</title>
+            <journal>Science</journal>
+            <year>2008</year>
+            <volume>321</volume>
+            <number>5890</number>
+            <pages>851--854</pages>
+        </article>
+    </entry>
+    <entry id="brady2015">
+        <article>
+            <author>Brady, Timothy and Alvarez, George</author>
+            <title>Contextual effects in visual working memory reveal hierarchically structured memory representations</title>
+            <journal>Journal of Vision</journal>
+            <year>2015</year>
+            <volume>15</volume>
+            <number>15</number>
+            <pages>6--6</pages>
+        </article>
+    </entry>
+    <entry id="oberauer2017b">
+        <article>
+            <author>Oberauer, Klaus and Lin, Hsuan-Yu</author>
+            <title>An interference model of visual working memory.</title>
+            <journal>Psychological review</journal>
+            <year>2017</year>
+            <volume>124</volume>
+            <number>1</number>
+            <pages>21</pages>
+        </article>
+    </entry>
+    <entry id="plummer2003">
+        <inproceedings>
+            <author>Plummer, Martyn</author>
+            <title>JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling</title>
+            <booktitle>Proceedings of the 3rd international workshop on distributed statistical computing</booktitle>
+            <year>2003</year>
+            <volume>124</volume>
+            <organization>Vienna, Austria.</organization>
+        </inproceedings>
+    </entry>
+    <entry id="estes1956">
+        <article>
+            <author>Estes, William K</author>
+            <title>The problem of inference from curves based on group data.</title>
+            <journal>Psychological bulletin</journal>
+            <year>1956</year>
+            <volume>53</volume>
+            <number>2</number>
+            <pages>134</pages>
+        </article>
+    </entry>
+    <entry id="lee2014">
+        <book>
+            <author>Lee, Michael D and Wagenmakers, Eric-Jan</author>
+            <title>Bayesian cognitive modeling: A practical course</title>
+            <publisher>Cambridge university press</publisher>
+            <year>2014</year>
+        </book>
+    </entry>
+    <entry id="lindley1965">
+        <book>
+            <author>Lindley, Dennis V</author>
+            <title>Introduction to probability and statistics from a Bayesian point of view, part 2: inference</title>
+            <publisher>Cambridge: Cambridge University Press</publisher>
+            <year>1965</year>
+        </book>
+    </entry>
+    <entry id="heathcote2000">
+        <article>
+            <author>Heathcote, Andrew and Brown, Scott and Mewhort, DJK</author>
+            <title>The power law repealed: The case for an exponential law of practice</title>
+            <journal>Psychonomic bulletin \&amp; review</journal>
+            <year>2000</year>
+            <volume>7</volume>
+            <number>2</number>
+            <pages>185--207</pages>
+        </article>
+    </entry>
+    <entry id="watanabe2010">
+        <article>
+            <author>Watanabe, Sumio</author>
+            <title>Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory</title>
+            <journal>Journal of Machine Learning Research</journal>
+            <year>2010</year>
+            <volume>11</volume>
+            <pages>3571--3594</pages>
+        </article>
+    </entry>
+    <entry id="gelman2014">
+        <article>
+            <author>Gelman, Andrew and Hwang, Jessica and Vehtari, Aki</author>
+            <title>Understanding predictive information criteria for Bayesian models</title>
+            <journal>Statistics and computing</journal>
+            <year>2014</year>
+            <volume>24</volume>
+            <number>6</number>
+            <pages>997--1016</pages>
+        </article>
+    </entry>
+    <entry id="kruschke2011">
+        <article>
+            <author>Kruschke, John K</author>
+            <title>Bayesian assessment of null values via parameter estimation and model comparison</title>
+            <journal>Perspectives on Psychological Science</journal>
+            <year>2011</year>
+            <volume>6</volume>
+            <number>3</number>
+            <pages>299--312</pages>
+        </article>
+    </entry>
+    <entry id="bartlett1932">
+        <article>
+            <author>Bartlett, Frederic C</author>
+            <title>Remembering: An experimental and social study</title>
+            <journal>Cambridge: Cambridge University</journal>
+            <year>1932</year>
+        </article>
+    </entry>
+    <entry id="lindley1969">
+        <book>
+            <author>Lindley, Dennis Victor</author>
+            <title>Introduction to probability and statistics from a Bayesian viewpoint</title>
+            <publisher>CUP Archive</publisher>
+            <year>1969</year>
+            <volume>2</volume>
+        </book>
+    </entry>
+    <entry id="kruschke2014">
+        <book>
+            <author>Kruschke, John K</author>
+            <title>Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan</title>
+            <publisher>Academic Press</publisher>
+            <year>2014</year>
+        </book>
+    </entry>
+    <entry id="gelman1992">
+        <article>
+            <author>Gelman, Andrew and Rubin, Donald B</author>
+            <title>Inference from iterative simulation using multiple sequences</title>
+            <journal>Statistical science</journal>
+            <year>1992</year>
+            <volume>7</volume>
+            <number>4</number>
+            <pages>457--472</pages>
+        </article>
+    </entry>
+    <entry id="loftus2003">
+        <article>
+            <author>Loftus, Elizabeth</author>
+            <title>Our changeable memories: Legal and practical implications</title>
+            <journal>Nature Reviews Neuroscience</journal>
+            <year>2003</year>
+            <volume>4</volume>
+            <number>3</number>
+            <pages>231</pages>
+        </article>
+    </entry>
+    <entry id="gibson1937">
+        <article>
+            <author>Gibson, James J and Radner, Minnie</author>
+            <title>Adaptation, after-effect and contrast in the perception of tilted lines. I. Quantitative studies.</title>
+            <journal>Journal of experimental psychology</journal>
+            <year>1937</year>
+            <volume>20</volume>
+            <number>5</number>
+            <pages>453</pages>
+        </article>
+    </entry>
+    <entry id="girshick2011">
+        <article>
+            <author>Girshick, Ahna R and Landy, Michael S and Simoncelli, Eero P</author>
+            <title>Cardinal rules: visual orientation perception reflects knowledge of environmental statistics</title>
+            <journal>Nature neuroscience</journal>
+            <year>2011</year>
+            <volume>14</volume>
+            <number>7</number>
+            <pages>926</pages>
+        </article>
+    </entry>
+    <entry id="pratte2017">
+        <article>
+            <author>Pratte, Michael S and Park, Young Eun and Rademaker, Rosanne L and Tong, Frank</author>
+            <title>Accounting for stimulus-specific variation in precision reveals a discrete capacity limit in visual working memory.</title>
+            <journal>Journal of Experimental Psychology: Human Perception and Performance</journal>
+            <year>2017</year>
+            <volume>43</volume>
+            <number>1</number>
+            <pages>6</pages>
+        </article>
+    </entry>
+    <entry id="wei2015">
+        <article>
+            <author>Wei, Xue-Xin and Stocker, Alan A</author>
+            <title>A Bayesian observer model constrained by efficient coding can explain'anti-Bayesian'percepts</title>
+            <journal>Nature neuroscience</journal>
+            <year>2015</year>
+            <volume>18</volume>
+            <number>10</number>
+            <pages>1509</pages>
+        </article>
+    </entry>
+    <entry id="OSC">
+        <article>
+            <author>{Ohio Supercomputer Center}</author>
+            <title>{Ohio Supercomputer Center. Columbus OH: Ohio Supercomputer Center. http://osc.edu/ark:/19495/f5s1ph73}</title>
+            <year>1987</year>
+        </article>
+    </entry>
+    <entry id="vehtari2019">
+        <misc>
+            <author>Aki Vehtari and Jonah Gabry and Yuling Yao and Andrew Gelman</author>
+            <title>loo: Efficient leave-one-out cross-validation and WAIC for Bayesian models</title>
+            <year>2019</year>
+            <note>R package version 2.1.0</note>
+            <url>https://CRAN.R-project.org/package=loo</url>
+        </misc>
+    </entry>
+    <entry id="vehtari2017">
+        <article>
+            <author>Vehtari, Aki and Gelman, Andrew and Gabry, Jonah</author>
+            <title>Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</title>
+            <journal>Statistics and Computing</journal>
+            <year>2017</year>
+            <volume>27</volume>
+            <number>5</number>
+            <pages>1413--1432</pages>
+        </article>
+    </entry>
+</file>

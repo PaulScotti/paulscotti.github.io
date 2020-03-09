@@ -1,0 +1,2842 @@
+
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/17</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Trends in cognitive sciences</rdf:li>
+          <rdf:li>bibtex/pages/134--141</rdf:li>
+          <rdf:li>bibtex/bibtexkey/franconeri2013</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2013</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Steven L. Franconeri</rdf:li>
+          <rdf:li>George A. Alvarez</rdf:li>
+          <rdf:li>Patrick Cavanagh</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Flexible cognitive resources: competitive content maps for attention and memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/55</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Journal of memory and language</rdf:li>
+          <rdf:li>bibtex/pages/601--626</rdf:li>
+          <rdf:li>bibtex/bibtexkey/oberauer2006</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2006</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Klaus Oberauer</rdf:li>
+          <rdf:li>Reinhold Kliegl</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A formal model of capacity limits in working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/22</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Psychological science</rdf:li>
+          <rdf:li>bibtex/pages/384--392</rdf:li>
+          <rdf:li>bibtex/bibtexkey/brady2011</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2011</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>George Alvarez</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Sage Publications Sage CA: Los Angeles, CA</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Hierarchical encoding in visual working memory: Ensemble statistics bias memory for individual items</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/129</rdf:li>
+          <rdf:li>bibtex/number/2</rdf:li>
+          <rdf:li>bibtex/journal/Journal of experimental psychology: General</rdf:li>
+          <rdf:li>bibtex/pages/220</rdf:li>
+          <rdf:li>bibtex/bibtexkey/huttenlocher2000</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2000</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Janellen Huttenlocher</rdf:li>
+          <rdf:li>Larry V. Hedges</rdf:li>
+          <rdf:li>Jack L. Vevea</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Why do categories affect stimulus judgment?</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/35</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Learning, Memory, and Cognition</rdf:li>
+          <rdf:li>bibtex/pages/1012</rdf:li>
+          <rdf:li>bibtex/bibtexkey/vergauwe2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Evie Vergauwe</rdf:li>
+          <rdf:li>Pierre Barrouillet</rdf:li>
+          <rdf:li>Val{\'e}rie Camos</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Visual and spatial working memory are not that dissociated after all: A time-based resource-sharing account.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/53</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Neuron</rdf:li>
+          <rdf:li>bibtex/pages/605--617</rdf:li>
+          <rdf:li>bibtex/bibtexkey/navalpakkam2007</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2007</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Vidhya Navalpakkam</rdf:li>
+          <rdf:li>Laurent Itti</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Search goal tunes visual features optimally</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/29</rdf:li>
+          <rdf:li>bibtex/number/38</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/11933--11942</rdf:li>
+          <rdf:li>bibtex/bibtexkey/scolari2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Miranda Scolari</rdf:li>
+          <rdf:li>John T. Serences</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Soc Neuroscience</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Adaptive allocation of attentional gain</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/32</rdf:li>
+          <rdf:li>bibtex/number/22</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/7723--7733</rdf:li>
+          <rdf:li>bibtex/bibtexkey/scolari2012</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2012</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Miranda Scolari</rdf:li>
+          <rdf:li>Anna Byers</rdf:li>
+          <rdf:li>John T. Serences</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Soc Neuroscience</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Optimal deployment of attentional gain during fine discriminations</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/19</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Psychonomic Bulletin \&amp; Review</rdf:li>
+          <rdf:li>bibtex/pages/87--92</rdf:li>
+          <rdf:li>bibtex/bibtexkey/barrouillet2012</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2012</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Pierre Barrouillet</rdf:li>
+          <rdf:li>Annick De Paepe</rdf:li>
+          <rdf:li>Naomi Langerock</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Time causes forgetting from working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/13</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Trends in Cognitive Sciences</rdf:li>
+          <rdf:li>bibtex/pages/145--146</rdf:li>
+          <rdf:li>bibtex/bibtexkey/barrouillet2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Pierre Barrouillet</rdf:li>
+          <rdf:li>Valerie Camos</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Interference: unique source of forgetting in working memory?</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/39</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Human Perception and Performance</rdf:li>
+          <rdf:li>bibtex/pages/1224</rdf:li>
+          <rdf:li>bibtex/bibtexkey/pertzov2013</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2013</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Yoni Pertzov</rdf:li>
+          <rdf:li>Paul M. Bays</rdf:li>
+          <rdf:li>Sabine Joseph</rdf:li>
+          <rdf:li>Masud Husain</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Rapid forgetting prevented by retrospective attention cues.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/5</rdf:li>
+          <rdf:li>bibtex/journal/Frontiers in psychology</rdf:li>
+          <rdf:li>bibtex/pages/841</rdf:li>
+          <rdf:li>bibtex/bibtexkey/craik2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Fergus I. M. Craik</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Frontiers</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Effects of distraction on memory and cognition: a commentary</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/74</rdf:li>
+          <rdf:li>bibtex/number/6</rdf:li>
+          <rdf:li>bibtex/journal/Neuron</rdf:li>
+          <rdf:li>bibtex/pages/1114--1124</rdf:li>
+          <rdf:li>bibtex/bibtexkey/konkle2012</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2012</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Talia Konkle</rdf:li>
+          <rdf:li>Aude Oliva</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A real-world size organization of object responses in occipitotemporal cortex</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/32</rdf:li>
+          <rdf:li>bibtex/number/33</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/11228--11240</rdf:li>
+          <rdf:li>bibtex/bibtexkey/wei2012</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2012</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Ziqiang Wei</rdf:li>
+          <rdf:li>Xiao-Jing Wang</rdf:li>
+          <rdf:li>Da-Hui Wang</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Soc Neuroscience</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">From distributed resources to limited slots in multiple-item working memory: a spiking network model with normalization</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/20</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Psychological science</rdf:li>
+          <rdf:li>bibtex/pages/568--577</rdf:li>
+          <rdf:li>bibtex/bibtexkey/johnson2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jeffrey S. Johnson</rdf:li>
+          <rdf:li>John P. Spencer</rdf:li>
+          <rdf:li>Steven J. Luck</rdf:li>
+          <rdf:li>Gregor Sch{\"o}ner</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>SAGE Publications Sage CA: Los Angeles, CA</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A dynamic neural field model of visual working memory and change detection</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/115</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Psychological review</rdf:li>
+          <rdf:li>bibtex/pages/544</rdf:li>
+          <rdf:li>bibtex/bibtexkey/oberauer2008</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2008</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Klaus Oberauer</rdf:li>
+          <rdf:li>Stephan Lewandowsky</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Forgetting in immediate serial recall: Decay, temporal distinctiveness, or interference?</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/35</rdf:li>
+          <rdf:li>bibtex/number/6</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Learning, Memory, and Cognition</rdf:li>
+          <rdf:li>bibtex/pages/1545</rdf:li>
+          <rdf:li>bibtex/bibtexkey/lewandowsky2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Stephan Lewandowsky</rdf:li>
+          <rdf:li>Klaus Oberauer</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">No evidence for temporal decay in working memory.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/5</rdf:li>
+          <rdf:li>bibtex/journal/Nature Communications</rdf:li>
+          <rdf:li>bibtex/pages/5768</rdf:li>
+          <rdf:li>bibtex/bibtexkey/lewis-peacock2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jarrod A. Lewis-Peacock</rdf:li>
+          <rdf:li>Kenneth A. Norman</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Competition between items in working memory leads to forgetting</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/7</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Scientific reports</rdf:li>
+          <rdf:li>bibtex/pages/4785</rdf:li>
+          <rdf:li>bibtex/bibtexkey/ahmad2017</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jumana Ahmad</rdf:li>
+          <rdf:li>Garrett Swan</rdf:li>
+          <rdf:li>Howard Bowman</rdf:li>
+          <rdf:li>Brad Wyble</rdf:li>
+          <rdf:li>Anna C. Nobre</rdf:li>
+          <rdf:li>Kimron L. Shapiro</rdf:li>
+          <rdf:li>Fiona McNab</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Competitive interactions affect working memory performance for both simultaneous and sequential stimulus presentation</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/journal/Nature Reviews Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/1</rdf:li>
+          <rdf:li>bibtex/bibtexkey/yonelinas2019</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Andrew P. Yonelinas</rdf:li>
+          <rdf:li>Charan Ranganath</rdf:li>
+          <rdf:li>Arne D. Ekstrom</rdf:li>
+          <rdf:li>Brian J. Wiltgen</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A contextual binding theory of episodic memory: systems consolidation reconsidered</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/18</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Annual review of neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/193--222</rdf:li>
+          <rdf:li>bibtex/bibtexkey/desimone1995</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1995</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Robert Desimone</rdf:li>
+          <rdf:li>John Duncan</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Annual Reviews 4139 El Camino Way, PO Box 10139, Palo Alto, CA 94303-0139, USA</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Neural mechanisms of selective visual attention</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/19</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/1736--1753</rdf:li>
+          <rdf:li>bibtex/bibtexkey/reynolds1999</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1999</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>John H. Reynolds</rdf:li>
+          <rdf:li>Leonardo Chelazzi</rdf:li>
+          <rdf:li>Robert Desimone</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Soc Neuroscience</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Competitive mechanisms subserve attention in macaque areas V2 and V4</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/49</rdf:li>
+          <rdf:li>bibtex/number/6</rdf:li>
+          <rdf:li>bibtex/journal/Neuropsychologia</rdf:li>
+          <rdf:li>bibtex/pages/1506--1517</rdf:li>
+          <rdf:li>bibtex/bibtexkey/shapiro2011</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2011</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Kimron L. Shapiro</rdf:li>
+          <rdf:li>Claire E. Miller</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The role of biased competition in visual short-term memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/17</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Psychonomic Bulletin \&amp; Review</rdf:li>
+          <rdf:li>bibtex/pages/680--686</rdf:li>
+          <rdf:li>bibtex/bibtexkey/ihssen2010</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2010</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Niklas Ihssen</rdf:li>
+          <rdf:li>David E. J. Linden</rdf:li>
+          <rdf:li>Kimron L. Shapiro</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Improving visual short-term memory by sequencing the stimulus array</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/31</rdf:li>
+          <rdf:li>bibtex/number/23</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/8502--8511</rdf:li>
+          <rdf:li>bibtex/bibtexkey/gorgoraptis2011</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2011</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Nikos Gorgoraptis</rdf:li>
+          <rdf:li>Raquel F. G. Catalao</rdf:li>
+          <rdf:li>Paul M. Bays</rdf:li>
+          <rdf:li>Masud Husain</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Soc Neuroscience</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Dynamic updating of working memory resources for visual objects</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/14</rdf:li>
+          <rdf:li>bibtex/number/6</rdf:li>
+          <rdf:li>bibtex/journal/Psychonomic Bulletin \&amp; Review</rdf:li>
+          <rdf:li>bibtex/pages/1066--1071</rdf:li>
+          <rdf:li>bibtex/bibtexkey/van2007</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2007</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Stefan Van der Stigchel</rdf:li>
+          <rdf:li>Hanneke Merten</rdf:li>
+          <rdf:li>Martijn Meeter</rdf:li>
+          <rdf:li>Jan Theeuwes</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The effects of a task-irrelevant visual event on spatial working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Zachary Lively</rdf:li>
+          <rdf:li>Gavin Ng</rdf:li>
+          <rdf:li>Simona Buetti</rdf:li>
+          <rdf:li>Alejandro Lleras</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/lively2019poster</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Poster presented at the annual Vision Sciences Society meeting, St. Petersburg, FL.</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Visual working memory representations are shifted toward irrelevant features of distractors in intervening visual search tasks</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/13</rdf:li>
+          <rdf:li>bibtex/number/10</rdf:li>
+          <rdf:li>bibtex/journal/Journal of vision</rdf:li>
+          <rdf:li>bibtex/pages/9--9</rdf:li>
+          <rdf:li>bibtex/bibtexkey/suchow2013</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2013</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jordan W. Suchow</rdf:li>
+          <rdf:li>Timothy F. Brady</rdf:li>
+          <rdf:li>Daryl Fougnie</rdf:li>
+          <rdf:li>George A. Alvarez</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>The Association for Research in Vision and Ophthalmology</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Modeling visual working memory with the MemToolbox</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/77</rdf:li>
+          <rdf:li>bibtex/number/8</rdf:li>
+          <rdf:li>bibtex/journal/Attention, Perception, \&amp; Psychophysics</rdf:li>
+          <rdf:li>bibtex/pages/2562--2569</rdf:li>
+          <rdf:li>bibtex/bibtexkey/golomb2015</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2015</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Julie D. Golomb</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Divided spatial attention and feature-mixing errors</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/79</rdf:li>
+          <rdf:li>bibtex/number/8</rdf:li>
+          <rdf:li>bibtex/journal/Attention, Perception, \&amp; Psychophysics</rdf:li>
+          <rdf:li>bibtex/pages/2376--2395</rdf:li>
+          <rdf:li>bibtex/bibtexkey/bae2017</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Gi-Yeul Bae</rdf:li>
+          <rdf:li>Steven J. Luck</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Interactions between visual working memory representations</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Paul S. Scotti</rdf:li>
+          <rdf:li>Yoolim Hong</rdf:li>
+          <rdf:li>Andy B. Leber</rdf:li>
+          <rdf:li>Julie D. Golomb</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/scotti2019stat</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Statistical Regularities During Object Encoding Systematically Distort Long-Term Memory (under review)</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Chaipat Chunharas</rdf:li>
+          <rdf:li>Rosanne Rademaker</rdf:li>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>John Serences</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/chunharas2019preprint</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Adaptive memory distortion in visual working memory. https://doi.org/10.31234/osf.io/e3m5a</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/120</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Psychological review</rdf:li>
+          <rdf:li>bibtex/pages/85</rdf:li>
+          <rdf:li>bibtex/bibtexkey/brady2013a</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2013</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>Joshua Tenenbaum</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A probabilistic model of visual working memory: Incorporating higher order regularities into working memory capacity estimates.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/10</rdf:li>
+          <rdf:li>bibtex/number/2</rdf:li>
+          <rdf:li>bibtex/journal/Journal of vision</rdf:li>
+          <rdf:li>bibtex/pages/24--24</rdf:li>
+          <rdf:li>bibtex/bibtexkey/huang2010</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2010</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jie Huang</rdf:li>
+          <rdf:li>Robert Sekuler</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>The Association for Research in Vision and Ophthalmology</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Distortions in recall from visual memory: Two classes of attractors at work</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Human Perception and Performance</rdf:li>
+          <rdf:li>bibtex/bibtexkey/chen2019</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jiageng Chen</rdf:li>
+          <rdf:li>Leber, Andrew</rdf:li>
+          <rdf:li>Julie Golomb</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Attentional capture alters feature perception</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/96</rdf:li>
+          <rdf:li>bibtex/journal/Vision research</rdf:li>
+          <rdf:li>bibtex/pages/8--16</rdf:li>
+          <rdf:li>bibtex/bibtexkey/dube2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Chad Dub{\'e}</rdf:li>
+          <rdf:li>Feng Zhou</rdf:li>
+          <rdf:li>Michael J. Kahana</rdf:li>
+          <rdf:li>Robert Sekuler</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Similarity-based distortion of visual short-term memory is due to perceptual averaging</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/98</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Psychological review</rdf:li>
+          <rdf:li>bibtex/pages/352</rdf:li>
+          <rdf:li>bibtex/bibtexkey/huttenlocher1991</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1991</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Janellen Huttenlocher</rdf:li>
+          <rdf:li>Larry V. Hedges</rdf:li>
+          <rdf:li>Susan Duncan</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Categories and particulars: Prototype effects in estimating spatial location.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/144</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: General</rdf:li>
+          <rdf:li>bibtex/pages/744</rdf:li>
+          <rdf:li>bibtex/bibtexkey/bae2015</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2015</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Gi-Yeul Bae</rdf:li>
+          <rdf:li>Maria Olkkonen</rdf:li>
+          <rdf:li>Sarah R. Allred</rdf:li>
+          <rdf:li>Jonathan I. Flombaum</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Why some colors appear more memorable than others: A model combining categories and particulars in color working memory.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/35</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Human Perception and Performance</rdf:li>
+          <rdf:li>bibtex/pages/718</rdf:li>
+          <rdf:li>bibtex/bibtexkey/haberman2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jason Haberman</rdf:li>
+          <rdf:li>David Whitney</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Seeing the mean: ensemble coding for sets of faces.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/62</rdf:li>
+          <rdf:li>bibtex/number/9</rdf:li>
+          <rdf:li>bibtex/journal/The Quarterly Journal of Experimental Psychology</rdf:li>
+          <rdf:li>bibtex/pages/1716--1722</rdf:li>
+          <rdf:li>bibtex/bibtexkey/defockert2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Jan de Fockert</rdf:li>
+          <rdf:li>Cecilia Wolfenstein</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Taylor \&amp; Francis</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Rapid extraction of mean identity from sets of faces</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2018</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>Daniel Schacter</rdf:li>
+          <rdf:li>George Alvarez</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/brady2018preprint</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The adaptive nature of false memories is revealed by gist-based distortion of true memories. https://doi.org/10.31234/osf.io/zeg95</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/1</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Topics in Cognitive Science</rdf:li>
+          <rdf:li>bibtex/pages/189--202</rdf:li>
+          <rdf:li>bibtex/bibtexkey/hemmer2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Pernille Hemmer</rdf:li>
+          <rdf:li>Mark Steyvers</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Wiley Online Library</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A Bayesian account of reconstructive memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/17</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/PLOS Biology</rdf:li>
+          <rdf:li>bibtex/pages/e3000239</rdf:li>
+          <rdf:li>bibtex/bibtexkey/sutterer2019</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>David W. Sutterer</rdf:li>
+          <rdf:li>Joshua J. Foster</rdf:li>
+          <rdf:li>Kirsten C. S. Adam</rdf:li>
+          <rdf:li>Edward K. Vogel</rdf:li>
+          <rdf:li>Edward Awh</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Public Library of Science</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Item-specific delay activity demonstrates concurrent storage of multiple active neural representations in working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/36</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Cognitive psychology</rdf:li>
+          <rdf:li>bibtex/pages/28--71</rdf:li>
+          <rdf:li>bibtex/bibtexkey/chun1998</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1998</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Marvin M. Chun</rdf:li>
+          <rdf:li>Yuhong Jiang</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Elsevier</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Contextual cueing: Implicit learning and memory of visual context guides spatial attention</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/390</rdf:li>
+          <rdf:li>bibtex/number/6657</rdf:li>
+          <rdf:li>bibtex/journal/Nature</rdf:li>
+          <rdf:li>bibtex/pages/279</rdf:li>
+          <rdf:li>bibtex/bibtexkey/luck1997</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1997</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Steven J. Luck</rdf:li>
+          <rdf:li>Edward K. Vogel</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The capacity of visual working memory for features and conjunctions</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/29</rdf:li>
+          <rdf:li>bibtex/number/2</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Learning, Memory, and Cognition</rdf:li>
+          <rdf:li>bibtex/pages/224</rdf:li>
+          <rdf:li>bibtex/bibtexkey/chun2003</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2003</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Marvin M. Chun</rdf:li>
+          <rdf:li>Yuhong Jiang</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Implicit, long-term spatial contextual memory.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/17</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Behavioral and brain sciences</rdf:li>
+          <rdf:li>bibtex/pages/367--395</rdf:li>
+          <rdf:li>bibtex/bibtexkey/shanks1994</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1994</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>David R. Shanks</rdf:li>
+          <rdf:li>Mark F.  St John</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Cambridge University Press</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Characteristics of dissociable human learning systems</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/70</rdf:li>
+          <rdf:li>bibtex/journal/Knowledge and Vision</rdf:li>
+          <rdf:li>bibtex/pages/29</rdf:li>
+          <rdf:li>bibtex/bibtexkey/brady2019</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>Viola St{\"o}rmer</rdf:li>
+          <rdf:li>Anna Shafer-Skelton</rdf:li>
+          <rdf:li>Jamal Williams</rdf:li>
+          <rdf:li>Angus Chapman</rdf:li>
+          <rdf:li>Hayden Schill</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Academic Press</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Scaling up visual attention and visual working memory to the real world</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/17</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Journal of vision</rdf:li>
+          <rdf:li>bibtex/pages/11--11</rdf:li>
+          <rdf:li>bibtex/bibtexkey/oberauer2017a</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Klaus Oberauer</rdf:li>
+          <rdf:li>Colin Stoneking</rdf:li>
+          <rdf:li>Dominik Wabersich</rdf:li>
+          <rdf:li>Hsuan-Yu Lin</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>The Association for Research in Vision and Ophthalmology</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Hierarchical Bayesian measurement models for continuous reproduction of visual features from working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/105</rdf:li>
+          <rdf:li>bibtex/number/38</rdf:li>
+          <rdf:li>bibtex/journal/Proceedings of the National Academy of Sciences</rdf:li>
+          <rdf:li>bibtex/pages/14325--14329</rdf:li>
+          <rdf:li>bibtex/bibtexkey/brady2008</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2008</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>Talia Konkle</rdf:li>
+          <rdf:li>George Alvarez</rdf:li>
+          <rdf:li>Aude Oliva</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>National Acad Sciences</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Visual long-term memory has a massive storage capacity for object details</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/25</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Psychological science</rdf:li>
+          <rdf:li>bibtex/pages/1067--1078</rdf:li>
+          <rdf:li>bibtex/bibtexkey/golomb2014a</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Julie D. Golomb</rdf:li>
+          <rdf:li>Zara E. L{'}Heureux</rdf:li>
+          <rdf:li>Nancy Kanwisher</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Sage Publications Sage CA: Los Angeles, CA</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Feature-binding errors after eye movements and shifts of attention</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/453</rdf:li>
+          <rdf:li>bibtex/number/7192</rdf:li>
+          <rdf:li>bibtex/journal/Nature</rdf:li>
+          <rdf:li>bibtex/pages/233</rdf:li>
+          <rdf:li>bibtex/bibtexkey/zhang2008</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2008</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Weiwei Zhang</rdf:li>
+          <rdf:li>Steven J. Luck</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Discrete fixed-resolution representations in visual working memory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/9</rdf:li>
+          <rdf:li>bibtex/number/10</rdf:li>
+          <rdf:li>bibtex/journal/Journal of vision</rdf:li>
+          <rdf:li>bibtex/pages/7--7</rdf:li>
+          <rdf:li>bibtex/bibtexkey/bays2009</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2009</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Paul M. Bays</rdf:li>
+          <rdf:li>Raquel F. G. Catalao</rdf:li>
+          <rdf:li>Masud Husain</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>The Association for Research in Vision and Ophthalmology</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The precision of visual working memory is set by allocation of a shared resource</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/321</rdf:li>
+          <rdf:li>bibtex/number/5890</rdf:li>
+          <rdf:li>bibtex/journal/Science</rdf:li>
+          <rdf:li>bibtex/pages/851--854</rdf:li>
+          <rdf:li>bibtex/bibtexkey/bays2008</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2008</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Paul M. Bays</rdf:li>
+          <rdf:li>Masud Husain</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Association for the Advancement of Science</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Dynamic shifts of limited working memory resources in human vision</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/15</rdf:li>
+          <rdf:li>bibtex/number/15</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Vision</rdf:li>
+          <rdf:li>bibtex/pages/6--6</rdf:li>
+          <rdf:li>bibtex/bibtexkey/brady2015</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2015</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Timothy Brady</rdf:li>
+          <rdf:li>George Alvarez</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>The Association for Research in Vision and Ophthalmology</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Contextual effects in visual working memory reveal hierarchically structured memory representations</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/124</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Psychological review</rdf:li>
+          <rdf:li>bibtex/pages/21</rdf:li>
+          <rdf:li>bibtex/bibtexkey/oberauer2017b</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Klaus Oberauer</rdf:li>
+          <rdf:li>Hsuan-Yu Lin</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">An interference model of visual working memory.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/124</rdf:li>
+          <rdf:li>bibtex/number/125.10</rdf:li>
+          <rdf:li>bibtex/organization/Vienna, Austria.</rdf:li>
+          <rdf:li>bibtex/bibtexkey/plummer2003</rdf:li>
+          <rdf:li>bibtex/booktitle/Proceedings of the 3rd international workshop on distributed statistical computing</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2003</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Martyn Plummer</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>InProceedings</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/53</rdf:li>
+          <rdf:li>bibtex/number/2</rdf:li>
+          <rdf:li>bibtex/journal/Psychological bulletin</rdf:li>
+          <rdf:li>bibtex/pages/134</rdf:li>
+          <rdf:li>bibtex/bibtexkey/estes1956</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1956</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>William K. Estes</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The problem of inference from curves based on group data.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Michael D. Lee</rdf:li>
+          <rdf:li>Eric-Jan Wagenmakers</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/lee2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Cambridge university press</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Bayesian cognitive modeling: A practical course</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Book</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1965</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Dennis V. Lindley</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/lindley1965</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Cambridge: Cambridge University Press</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Introduction to probability and statistics from a Bayesian point of view, part 2: inference</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Book</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/7</rdf:li>
+          <rdf:li>bibtex/number/2</rdf:li>
+          <rdf:li>bibtex/journal/Psychonomic bulletin \&amp; review</rdf:li>
+          <rdf:li>bibtex/pages/185--207</rdf:li>
+          <rdf:li>bibtex/bibtexkey/heathcote2000</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2000</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Andrew Heathcote</rdf:li>
+          <rdf:li>Scott Brown</rdf:li>
+          <rdf:li>D. J. K. Mewhort</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">The power law repealed: The case for an exponential law of practice</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/11</rdf:li>
+          <rdf:li>bibtex/number/Dec</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Machine Learning Research</rdf:li>
+          <rdf:li>bibtex/pages/3571--3594</rdf:li>
+          <rdf:li>bibtex/bibtexkey/watanabe2010</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2010</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Sumio Watanabe</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/24</rdf:li>
+          <rdf:li>bibtex/number/6</rdf:li>
+          <rdf:li>bibtex/journal/Statistics and computing</rdf:li>
+          <rdf:li>bibtex/pages/997--1016</rdf:li>
+          <rdf:li>bibtex/bibtexkey/gelman2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Andrew Gelman</rdf:li>
+          <rdf:li>Jessica Hwang</rdf:li>
+          <rdf:li>Aki Vehtari</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Understanding predictive information criteria for Bayesian models</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/6</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Perspectives on Psychological Science</rdf:li>
+          <rdf:li>bibtex/pages/299--312</rdf:li>
+          <rdf:li>bibtex/bibtexkey/kruschke2011</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2011</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>John K. Kruschke</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Sage Publications Sage CA: Los Angeles, CA</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Bayesian assessment of null values via parameter estimation and model comparison</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/journal/Cambridge: Cambridge University</rdf:li>
+          <rdf:li>bibtex/bibtexkey/bartlett1932</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1932</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Frederic C. Bartlett</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Remembering: An experimental and social study</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/2</rdf:li>
+          <rdf:li>bibtex/bibtexkey/lindley1969</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1969</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Dennis Victor Lindley</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>CUP Archive</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Introduction to probability and statistics from a Bayesian viewpoint</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Book</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2014</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>John K. Kruschke</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/kruschke2014</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Academic Press</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Book</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/7</rdf:li>
+          <rdf:li>bibtex/number/4</rdf:li>
+          <rdf:li>bibtex/journal/Statistical science</rdf:li>
+          <rdf:li>bibtex/pages/457--472</rdf:li>
+          <rdf:li>bibtex/bibtexkey/gelman1992</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1992</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Andrew Gelman</rdf:li>
+          <rdf:li>Donald B. Rubin</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Institute of Mathematical Statistics</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Inference from iterative simulation using multiple sequences</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/4</rdf:li>
+          <rdf:li>bibtex/number/3</rdf:li>
+          <rdf:li>bibtex/journal/Nature Reviews Neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/231</rdf:li>
+          <rdf:li>bibtex/bibtexkey/loftus2003</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2003</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Elizabeth Loftus</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Our changeable memories: Legal and practical implications</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/20</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Journal of experimental psychology</rdf:li>
+          <rdf:li>bibtex/pages/453</rdf:li>
+          <rdf:li>bibtex/bibtexkey/gibson1937</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1937</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>James J. Gibson</rdf:li>
+          <rdf:li>Minnie Radner</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Psychological Review Company</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Adaptation, after-effect and contrast in the perception of tilted lines. I. Quantitative studies.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/14</rdf:li>
+          <rdf:li>bibtex/number/7</rdf:li>
+          <rdf:li>bibtex/journal/Nature neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/926</rdf:li>
+          <rdf:li>bibtex/bibtexkey/girshick2011</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2011</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Ahna R. Girshick</rdf:li>
+          <rdf:li>Michael S. Landy</rdf:li>
+          <rdf:li>Eero P. Simoncelli</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Cardinal rules: visual orientation perception reflects knowledge of environmental statistics</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/43</rdf:li>
+          <rdf:li>bibtex/number/1</rdf:li>
+          <rdf:li>bibtex/journal/Journal of Experimental Psychology: Human Perception and Performance</rdf:li>
+          <rdf:li>bibtex/pages/6</rdf:li>
+          <rdf:li>bibtex/bibtexkey/pratte2017</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Michael S. Pratte</rdf:li>
+          <rdf:li>Young Eun Park</rdf:li>
+          <rdf:li>Rosanne L. Rademaker</rdf:li>
+          <rdf:li>Frank Tong</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>American Psychological Association</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Accounting for stimulus-specific variation in precision reveals a discrete capacity limit in visual working memory.</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/18</rdf:li>
+          <rdf:li>bibtex/number/10</rdf:li>
+          <rdf:li>bibtex/journal/Nature neuroscience</rdf:li>
+          <rdf:li>bibtex/pages/1509</rdf:li>
+          <rdf:li>bibtex/bibtexkey/wei2015</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2015</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Xue-Xin Wei</rdf:li>
+          <rdf:li>Alan A. Stocker</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Nature Publishing Group</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">A Bayesian observer model constrained by efficient coding can explain'anti-Bayesian'percepts</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>1987</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Ohio Supercomputer Center</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/bibtexkey/OSC</rdf:li>
+          <rdf:li>bibtex/ark/ark:/19495/f5s1ph73</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">{Ohio Supercomputer Center. Columbus OH: Ohio Supercomputer Center. http://osc.edu/ark:/19495/f5s1ph73}</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/note/R package version 2.1.0</rdf:li>
+          <rdf:li>bibtex/bibtexkey/vehtari2019</rdf:li>
+          <rdf:li>bibtex/url/https://CRAN.R-project.org/package=loo</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2019</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Aki Vehtari</rdf:li>
+          <rdf:li>Jonah Gabry</rdf:li>
+          <rdf:li>Yuling Yao</rdf:li>
+          <rdf:li>Andrew Gelman</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">loo: Efficient leave-one-out cross-validation and WAIC for Bayesian models</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Misc</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
+      <dc:relation>
+        <rdf:Bag>
+          <rdf:li>bibtex/volume/27</rdf:li>
+          <rdf:li>bibtex/number/5</rdf:li>
+          <rdf:li>bibtex/journal/Statistics and Computing</rdf:li>
+          <rdf:li>bibtex/pages/1413--1432</rdf:li>
+          <rdf:li>bibtex/bibtexkey/vehtari2017</rdf:li>
+        </rdf:Bag>
+      </dc:relation>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>2017</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>Aki Vehtari</rdf:li>
+          <rdf:li>Andrew Gelman</rdf:li>
+          <rdf:li>Jonah Gabry</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:publisher>
+        <rdf:Bag>
+          <rdf:li>Springer</rdf:li>
+        </rdf:Bag>
+      </dc:publisher>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li lang="x-default">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:format>application/pdf</dc:format>
+      <dc:type>
+        <rdf:Bag>
+          <rdf:li>Article</rdf:li>
+        </rdf:Bag>
+      </dc:type>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
