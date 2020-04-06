@@ -1,6 +1,6 @@
 ---
 layout: page
-title: All Posts
+title: Publications
 excerpt: "Publications"
 comments: false
 ---
