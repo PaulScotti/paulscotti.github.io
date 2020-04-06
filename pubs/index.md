@@ -14,7 +14,6 @@ comments: false
 <a href="https://paulscotti.github.io/pubs/collegio_nah_scotti_shomstein_2019_supp.pdf">Supplemental Material</a>
 
 # Preprints
-<br><br>
 <a href="https://psyarxiv.com/yxqju/">Scotti, P. S., Collegio, A., & Shomstein, S. (submitted). The relative contribution of high-level (Semantic) And low-level (Boundary) Information to object-based attentional guidance.</a>
 <br><br>
 <a href="https://psyarxiv.com/9pxc6/">Scotti, P. S., Hong, Y., Golomb, J. D., & Leber, A., B. (in preparation). Statistical regularities during object encoding induce swaps in long-term memory.</a>
