@@ -76,10 +76,10 @@ body {
 	padding-left: 15px;
 	@include center-block();
 	background-color: rgba(0,0,0,.5);
-	color: $color_shark;
+	color: rgba(0,0,0,.5);
 	z-index: 1;
 	border-radius: 3px;
-	box-shadow: 0 0 10px 0 rgba($color_shark,0.3);
+	box-shadow: 0 0 10px 0 rgba(0,0,0,.5);
 	@include transition(.5s);
 	@media #{$small} {
 		width: 100%;
