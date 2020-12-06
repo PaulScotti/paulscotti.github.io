@@ -75,11 +75,8 @@ body {
 	padding-right: 15px;
 	padding-left: 15px;
 	@include center-block();
-	background-color: rgba(0,0,0,.5);
-	color: rgba(0,0,0,.5);
 	z-index: 1;
 	border-radius: 3px;
-	box-shadow: 0 0 10px 0 rgba(0,0,0,.5);
 	@include transition(.5s);
 	@media #{$small} {
 		width: 100%;
@@ -91,7 +88,7 @@ body {
 }
 .row {
 	margin-top: 15px;
-	background-color: rgba(0,0,0,0);
+	background-color: rgba(216,216,216,0.5);
 	text-align: center;
 	.title {
 	    margin-top: 0;
@@ -106,10 +103,8 @@ body {
 	max-width: 850px;
 	margin: 4rem auto;
 	background: $white;
-	color: $color_tuatara;
 	padding: 2em;
 	border-radius: 3px;
-	box-shadow: 0 0 10px 0 rgba($color_shark,0.3);
 	@include transition(.5s);
 	@media #{$small} {
 		width: 90%;
