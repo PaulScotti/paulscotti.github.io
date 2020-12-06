@@ -1,7 +1,7 @@
 @media print {
   body {
     background-image: none !important;
-    background-color: $white;
+    background-color: rgba(0,0,0,.5);
   }
   .wrapper {
     box-shadow: none;
