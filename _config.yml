@@ -1,5 +1,5 @@
 # Site
-title:              Paul Scotti
+title:              Paul S. Scotti
 bio:                Ph.D. Candidate, Cognitive Psychology
                     <br> The Ohio State University
                     <br> scottibrain@gmail.com
@@ -65,11 +65,11 @@ twitter:            humanscotti
 #hackernews:        username
 
 # Gems
-gems:
-  - jekyll-mentions
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-gist
+# gems:
+#   - jekyll-mentions
+#   - jekyll-feed
+#   - jekyll-sitemap
+#   - jekyll-gist
 
 jekyll-mentions:
     base_url: https://github.com
