@@ -1,0 +1,17 @@
+<!-- Paul Scotti 2018 -->
+
+<!-- Preload javascript and css files -->
+<html>
+<div id="william" style="position: absolute; color: red; font-size: 30pt; font-family: sans-serif;">
+Hi William, press any key please. Right click this page and inspect element to see code.
+</div>
+<script>
+document.body.onkeyup = function(e){
+    if (e.keyCode==32) {
+        document.getElementById("william").innerHTML="You pressed spacebar!"
+    } else {
+        document.getElementById("william").innerHTML="You pressed " + String.fromCharCode(e.keyCode) + "!"
+    }
+}
+</script>
+</html>
