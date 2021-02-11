@@ -1,0 +1,22 @@
+body{
+	margin:2.5%;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 22px;
+	font-weight: 100;
+	line-height: 1.7em;
+}
+b, strong{
+	font-weight: bold;
+}
+a{
+	color: #ff4040;
+	text-decoration: none;
+}
+a:hover{
+	color: #ff8080;
+}
+.section{
+	width:960px;
+	/* overflow: visible; */
+	margin:1em auto;
+}

@@ -1,0 +1,92 @@
+<html>
+<!-- JQuery & Footnotes -->
+<script src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/bigfoot.js"></script>
+<script type="text/javascript">
+    $.bigfoot({activateOnHover: true, deleteOnUnhover: true});
+</script>
+<!-- embed pretty code -->
+<link rel="stylesheet" href="css/atom-one-dark.css">
+<script src="scripts/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<!-- Styles -->
+<link rel="stylesheet" type="text/css" href="css/index.css"/>
+<link rel="stylesheet" href="css/bigfoot-default.css"/>
+<body>
+    <div class="section">
+        <div id="start">
+            <p>Welcome to <b>Navigating fMRI analysis methods: a practical guide</b>!</p>
+            <p>How would you like to begin?</p>
+            <li><a href='#CYOA' onclick="hide('start');show('CYOA')">Choose-your-own-adventure (recommended)</a></li>
+            <li>Non-interactive flowchart (pdf)</li>
+            <li>Interactive list of fMRI analysis techniques</li>
+            <li><a href='#about' onclick="hide('start');show('about')">About this tool</a></li>
+            <li><a href="#univariate" onclick="hide('start');show('univariate')">(debugging)</a></li>
+            <p style='font-size: 14px'>Contact: scottibrain@gmail.com</p>
+            <pre>
+                <code>
+                    import numpy as np
+                    import matplotlib.pyplot as plt
+                    plt.plot(np.arange(10))
+                </code>
+            </pre>
+        </div>
+        <div id="about" style='display: none'>
+            <p>This web tool was developed by Paul S. Scotti, Jiageng Chen, Xiaoli Zhang, and Julie D. Golomb to help researchers understand the current arsenal of available fMRI analysis techniques for exploring fMRI brain data and testing hypotheses about the brain.</p>
+            <p>More specifically, the goal of this tool is to review the most widely used post-processing fMRI methods, including both basic and advanced computational approaches to post-processing data, in an intuitive and hands-on manner.</p>
+            <p>Functional magnetic resonance imaging (fMRI) analysis can appear to be a daunting and complex task. There are many steps involved to transform raw DICOM files (the standard output format for medical scans) to a preprocessed BOLD  time series that is properly corrected for distortion, timing, and motion. This preprocessed time series is then further processed in some way, such as general linear model estimation, to obtain the output necessary (e.g., average activation for each experimental condition for each voxel  in a brain region) to finally conduct what we will refer to as “post-processing analyses” (e.g., multivariate pattern analysis). The results of post-processing analyses are leveraged to make conclusions about how the brain works. Although recent tools have greatly decreased the barrier to entry when it comes to fMRI preprocessing (e.g., fMRIPrep) and processing (e.g., Nipype), the various steps required to go from DICOM to post-processing analysis may be one reason for the belief that computational fMRI analysis is difficult and confusing. When a researcher finally reaches the post-processing stage where their data is in its most interpretable state, the researcher might not have easy access to this information (e.g., interpreting the contents of an SPM.mat file is a cruel fate) and only be able to access it via package- and method-specific toolboxes that further obscure our understanding of the steps performed on our data under the hood. These unfortunate realities surrounding fMRI analysis have made the teaching of computational approaches to fMRI needlessly complex.</p>
+            <p>Acknowledgements: Handbook of fMRI Data Analysis (Poldrack, Mumford, & Nichols, 2009)</p>
+            <a href='' onclick="hide('about');show('start')">Go back</a>
+        </div>
+        <div id="CYOA" style='display: none'>
+            <p><b>What kind of research question are you trying to answer?</b></p>
+            <li><a onclick="hide('start');show('CYOA')">Is </a></li>
+            <li><a onclick="hide('start');show('CYOA')">Choose-your-own-adventure (recommended)</a></li>
+            <li><a onclick="hide('start');show('CYOA')">Choose-your-own-adventure (recommended)</a></li>
+            <li><a onclick="hide('start');show('CYOA')">Choose-your-own-adventure (recommended)</a></li>
+        </div>
+        <div id="univariate" style='display: none'>
+            <p><b>Univariate Analysis</b></p>
+            <pre>
+                testing
+                awef
+                asfd
+            </pre>
+            For a univariate analysis, you need, for each participant, the average brain activation for one condition and the average brain activation for another condition (beta weights are often used as the estimate of brain activity, where beta weights are obtained from general linear model estimation<a href="#fn2"></a>) within a brain region. Then you can simply conduct a t-test across participants on the difference in brain activations between conditions. This allows you to test whether a brain region is consistently more or less active across people in response to certain conditions. Importantly, you cannot determine why there is a difference between conditions based on a univariate analysis (see “how does the brain represent _____?” section).
+        </div>
+    </div>
+    <!-- Footnotes -->
+    <div class="footnotes">
+        <!-- <li id="fn1"><p style="font-size: 16px">Reference 1</p></li> -->
+        <li id="fn2"><p style="font-size: 16px">Regarding general linear models, “general” refers to the different types of analyses that can be used (e.g., correlation, one-sample t-test, ANOVA, etc.) and “linear” refers to how the model assumes a linear relationship between parameters (often preferred because nonlinear models are prone to overfitting, where a model appears to fit the data well but is not generalizable to new data). We consider the general linear model to be a processing step and thus will not discuss it in further detail (see REF for review), but it is essentially one way to obtain an estimate of brain activation (in arbitrary units) for every voxel for each condition after accounting for things like the hemodynamic response function (time-course of blood flow) and body motion in the scanner.</p></li>
+    </div>
+</body>
+<script>
+function show(id) {
+    $('#'+id).css({'display':'block'});
+}
+function hide(id) {
+    $('#'+id).css({'display':'none'});
+}
+// Automatically change page depending on href 
+// (allows direct links to pages and back/forward buttons)
+$(document).ready(function() {
+    if (window.location.hash.substr(1) == ''){
+        console.log('loaded home page')
+    } else {
+        hide('start');
+        show(window.location.hash.substr(1));
+    }
+})
+window.addEventListener('hashchange', function() {
+    if (window.location.hash.substr(1) == ''){
+        location.reload();
+    } else {
+        hide('start');
+        show(window.location.hash.substr(1));
+    }
+}, false);
+</script>
+</html>
+
+
