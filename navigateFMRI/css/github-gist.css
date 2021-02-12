@@ -10,11 +10,11 @@ pre, code {
 
 .hljs {
   display: block;
-  background: white;
+  background: rgb(248, 248, 248);
   padding: 0.05em;
   color: #333333;
   overflow: none;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1em;
 }
 
