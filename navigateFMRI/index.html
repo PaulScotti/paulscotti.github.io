@@ -17,7 +17,7 @@
 </header>
 <body>
     <div class="section">
-        <div id="start">
+        <div id="start" style='display: none'>
             <p>Welcome to <b>Navigating fMRI analysis techniques: a practical guide</b>!</p>
             <p>How would you like to begin?</p>
             <li><a href='#CYOA'>Interactive flowchart</a></li>
@@ -252,21 +252,14 @@ $(document).ready(function() {
     if (window.location.hash.substr(1) == ''){
         console.log('loaded home page')
         hide('page-header')
+        show('start');
     } else {
-        hide('start');
         show('page-header')
         show(window.location.hash.substr(1));
     }
 })
 window.addEventListener('hashchange', function() {
-    if (window.location.hash.substr(1) == ''){
-        location.reload();
-    } else {
-        location.reload();
-        hide('start');
-        show('page-header')
-        show(window.location.hash.substr(1));
-    }
+    location.reload();
 }, false);
 </script>
 </html>
