@@ -28,17 +28,16 @@ input[type='checkbox'] {
 	font-weight: bold;
 	font-family: monospace;
 	font-size: 1rem;
-	text-transform: uppercase;
+	text-decoration: underline;
 	text-align: center;
 	padding: 0px;
-	color: #ffffff;
-	background: rgb(175, 175, 175);
+	background: rgb(255, 255, 255);
 	cursor: pointer;
 	border-radius: 7px;
 	transition: all 0.25s ease-out;
   }
 .lbl-toggle:hover {
-	color: #970f0f;
+	color: #ff4040;
 }
 .lbl-toggle::before {
 	content: ' ';

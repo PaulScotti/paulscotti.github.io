@@ -42,7 +42,7 @@
             <h2>Univariate Analysis</h2>
             For a univariate analysis, you need, for each participant, the average brain activation for one condition and the average brain activation for another condition (beta weights are often used as the estimate of brain activity, where beta weights are obtained from general linear model estimation<a href="#fn2"></a>) within a brain region. Then you can simply conduct a t-test across participants on the difference in brain activations between conditions. This allows you to test whether a brain region is consistently more or less active across people in response to certain conditions.
             <h3>Example</h3>
-            First import the data and a few standard Python packages:
+            First import the data and a few standard Python packages.
             <input id="c1" class="toggle" type="checkbox"><label for="c1" class="lbl-toggle">See code</label><div class="collapsible-content"><pre><code>
             # general packages
             import numpy as np
@@ -82,22 +82,21 @@
             </p>
             Let's average the activations across voxels for each subject, for each condition. Each cell represents a single subject's average activation.
             <input id="c2b" class="toggle" type="checkbox"><label for="c2b" class="lbl-toggle">See code</label><div class="collapsible-content"><pre><code>
-            with plt.rc_context(rc={'figure.figsize': (20,4)}):
-                plt.imshow(np.array([np.mean(np.reshape(activations[cond_id==0],(num_subjects,num_voxels)),axis=1)]).T,cmap='PuBu')
-                plt.title("Avg")
-                plt.yticks([]);plt.xticks([])
-                plt.show()
+            plt.imshow(np.array([np.mean(np.reshape(activations[cond_id==0],(num_subjects,num_voxels)),axis=1)]).T,cmap='PuBu')
+            plt.title("Avg")
+            plt.yticks([]);plt.xticks([])
+            plt.show()
 
-                plt.imshow(np.array([np.mean(np.reshape(activations[cond_id==1],(num_subjects,num_voxels)),axis=1)]).T,cmap='OrRd')
-                plt.title("Avg")
-                plt.yticks([]);plt.xticks([])
-                plt.show()
+            plt.imshow(np.array([np.mean(np.reshape(activations[cond_id==1],(num_subjects,num_voxels)),axis=1)]).T,cmap='OrRd')
+            plt.title("Avg")
+            plt.yticks([]);plt.xticks([])
+            plt.show()
 
-                diffs=np.array([np.mean(np.reshape(activations[cond_id==0],(num_subjects,num_voxels)),axis=1)]).T - np.array([np.mean(np.reshape(activations[cond_id==1],(num_subjects,num_voxels)),axis=1)]).T
-                plt.imshow(diffs,cmap='bwr')
-                plt.title("Diff.")
-                plt.yticks([]);plt.xticks([])
-                plt.show()
+            diffs=np.array([np.mean(np.reshape(activations[cond_id==0],(num_subjects,num_voxels)),axis=1)]).T - np.array([np.mean(np.reshape(activations[cond_id==1],(num_subjects,num_voxels)),axis=1)]).T
+            plt.imshow(diffs,cmap='bwr')
+            plt.title("Diff.")
+            plt.yticks([]);plt.xticks([])
+            plt.show()
             </div></code></pre>    
             <p>
                 <img src="data:image/png;base64,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">
@@ -107,12 +106,13 @@
             <p>
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAEECAYAAABwV4c7AAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjMuMywgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/Il7ecAAAACXBIWXMAAAsTAAALEwEAmpwYAAAE2UlEQVR4nO2dTWhcZRSG3zNJq2nVVE3rYgTbbnSR7kIXASFFMIIWirgQQe1CV7Xb7tyVblxbCu2iYPrvqtQ/pCgolEiyUvwBoSlGW01MQoikNGZOF/OF3oZJ7zc3830NvO8Dl7k/Z+45T86dyZlhMjF3ByO1h13Aw0LibEicDYnnwMyGzMzNbGKN45vN7EMz+8XMbodYXxXzspldNbM5M2uEmIPt1tLdRtGnAby7avf/AOYBzAL4CcAPAM65+/V2Cwl8DOC9sP4fgLlVNbwI4As0G7YMYAqAA1hsO5O7Ry0ATockdwDcCsvfIakXlgaAiwD6WpxjL4BfAVxtcawXwFI4x+tr1HApHL8AoCe29pbnqiD+bYtj2wC8AuB86IQDmATwbBvn3xvuN/2AmJ9DzGvrkXb3zjzG3X3O3b909zcBvArgNoA6gE/bOE1PuF1YZ0wcneh4i9hDuHfp7y/sHwr7Jgr7DuL+h8rqpex4aT3JOt6CkwD+CetvlcQuovlcMRu2G2F7ZVksrDdCzGxh30ylClN0PMSfDfGTD+p4zLFCzESIGdoQj/E1+DHc1s1sU8I8lUgpPltYfyphnkpoZE3Ak4X1ak9ACUkpvifcTrr7UsI8lUgibmabAbwUNr9LkWO9pOr4+wB2hPUziXKsi46Lm9kwgI/C5jV3/6zTOTpBR8TNrNfMhs3sHIDP0Zyp/wDwRifOH5F/5XW+m9lQzH2iX48XGDSzWys5ATyOey8egOZkdRHAIXefrnD+LFQR3wTgmbC+jOYbETfRfCNiFMBZd5/oSHUJsTAD06HJjQ2Js0ErXuXXWSX6zHxnLe7nPN5oTLv79pT1ZBPfWathbMuWqFhbWLiRuBzeS13ibEicDYmzQSuebYBBvQ4cORIXe/hw2lpA3HGJsyFxNiTOhsTZoBXPNrLeXN6Bo3MfREZrZE2GxNmQOBsSZ0PibNCKZxtZu7qA3t5c2cqh7bjE2ZA4GxJnQ+Js0IpnG1lrNSDyg41ZoO24xNmQOBsSZ0PibGT7E8uBgQEfGx2NirXu7nF3H0hZD23HJc6GxNmQOBsSZ4NWPNubjePjgHV35UpXCm3HJc6GxNmQOBsSZ4NWPN9XHvUBBw7ExZ46lbQUAMQdlzgbEmdD4mxInA1a8XwfDDDzschYA/TBgFRInA2JsyFxNiTOBq14vq8n7e8HLl+Oi929O20tIO64xNmQOBsSZ0PibNCKZxtZF5Yewfd/7sqVrhTajkucDYmzIXE2JM4GrXi2kXVmBjizgf73PG3HJc6GxNmQOBsSZ4NWPNvIunUrMDgYF3viRNpaAOKOS5wNibMhcTYkzgateLaRdWoKOH48V7ZyaDsucTYkzobE2ZA4G7Ti2UbWF+w3XHt0X1SsJa4FIO64xNmQOBsSZ0PibGSb3H7veh77H/smMjr97EbbcYmzIXE2JM6GxNmgFc82stbrwLFjcbFXrqStBSDuuMTZkDgbEmdD4mzQimcbWXuW5rHnr69ypSuFtuMSZ0PibEicDYmzQSuebWS9/u8TeHtkOFe6Umg7LnE2JM6GxNmQOBu04tlG1l1Pz+OTd76Oih0ZSVwMiDsucTYkzobE2ZA4G7Ti5u55EplNAbgRGf6cu29PWk8u8Y0G7aUucTYkzobE2ZA4G3cBbS3rjp5dPjIAAAAASUVORK5CYII=">
             </p>
-            We can see that most participants had activations greater for comedy (blue) compared to red (horror). But is this statistically significant? To test this, let us now conduct a paired t-test between this array of differences and an array of zeros. (Note: you could skip a step and simply do a paired t-test between the average activations per condition).
+            We can see that most participants had activations greater for comedy (blue) compared to red (horror). But is this statistically significant? To test this, let us now conduct a paired t-test between this array of differences and an array of zeros (if p-value is less than .05, can conclude significance). (Note: you could skip a step and simply do a paired t-test between the average activations per condition).
             <input id="c3" class="toggle" type="checkbox"><label for="c3" class="lbl-toggle">See code</label><div class="collapsible-content"><pre><code>
                 stat = sp.stats.ttest_rel(diffs.flatten(),np.zeros(num_subjects))
                 print("Horror vs. Comedy (paired t-test):\nt={:.4f}, p={:.4f}".format(stat.statistic,stat.pvalue))
             </div></code></pre>
             Horror vs. Comedy (paired t-test): t=1.7043, p=0.1046
+            <a href='javascript:history.back()'>Go back</a>
         </div>
     </div>
     <!-- Footnotes -->
