@@ -43,7 +43,8 @@
         </div>
         <div id="list" style='display: none'>
             <h2>List of fMRI analysis techniques</h2>
-            <a href='https://paulscotti.github.io/flowchart.png'><img src='https://paulscotti.github.io/flowchart.pdf'></img></a>
+            <a href='https://paulscotti.github.io/flowchart.pdf'><img src='https://paulscotti.github.io/flowchart.png'></img></a>
+            <h3><a href='#univariate' onclick="hide('list');show('univariate')">Univariate analysis</a></h3>
             <p><a href='javascript:history.back()'>Go back</a></p>
         </div>
         <div id="univariate" style='display: none'>
@@ -261,6 +262,7 @@ window.addEventListener('hashchange', function() {
     if (window.location.hash.substr(1) == ''){
         location.reload();
     } else {
+        location.reload();
         hide('start');
         show('page-header')
         show(window.location.hash.substr(1));
