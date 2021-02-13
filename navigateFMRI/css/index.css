@@ -1,3 +1,11 @@
+header {
+	font-size: 14px;
+	font-family: Helvetica, Arial, sans-serif;
+	width:960px;
+	line-height: 1em;
+	margin:1em auto;
+	color:#ff8080;
+}
 body{
 	margin:2.5%;
 	font-family: Helvetica, Arial, sans-serif;
