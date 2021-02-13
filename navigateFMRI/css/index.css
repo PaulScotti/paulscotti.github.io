@@ -38,7 +38,7 @@ input[type='checkbox'] {
 	transition: all 0.25s ease-out;
   }
 .lbl-toggle:hover {
-	color: #491313;
+	color: #970f0f;
 }
 .lbl-toggle::before {
 	content: ' ';
