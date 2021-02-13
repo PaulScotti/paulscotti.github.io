@@ -5,7 +5,8 @@
  */
 
 pre, code {
-  white-space: pre-line;
+  /* white-space: pre-line; */
+  margin-left: -1.5em;
 }
 
 .hljs {
