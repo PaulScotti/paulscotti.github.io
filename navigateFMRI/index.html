@@ -29,7 +29,7 @@
             <p>More specifically, the goal of this tool is to review the most widely used post-processing fMRI methods, including both basic and advanced computational approaches to post-processing data, in an intuitive and hands-on manner.</p>
             <p>Functional magnetic resonance imaging (fMRI) analysis can appear to be a daunting and complex task. There are many steps involved to transform raw DICOM files (the standard output format for medical scans) to a preprocessed BOLD  time series that is properly corrected for distortion, timing, and motion. This preprocessed time series is then further processed in some way, such as general linear model estimation, to obtain the output necessary (e.g., average activation for each experimental condition for each voxel  in a brain region) to finally conduct what we will refer to as “post-processing analyses” (e.g., multivariate pattern analysis). The results of post-processing analyses are leveraged to make conclusions about how the brain works. Although recent tools have greatly decreased the barrier to entry when it comes to fMRI preprocessing (e.g., fMRIPrep) and processing (e.g., Nipype), the various steps required to go from DICOM to post-processing analysis may be one reason for the belief that computational fMRI analysis is difficult and confusing. When a researcher finally reaches the post-processing stage where their data is in its most interpretable state, the researcher might not have easy access to this information (e.g., interpreting the contents of an SPM.mat file is a cruel fate) and only be able to access it via package- and method-specific toolboxes that further obscure our understanding of the steps performed on our data under the hood. These unfortunate realities surrounding fMRI analysis have made the teaching of computational approaches to fMRI needlessly complex.</p>
             <p>Acknowledgements: Handbook of fMRI Data Analysis (Poldrack, Mumford, & Nichols, 2009)</p>
-            <a href='' onclick="hide('about');show('start')">Go back</a>
+            <p><a href='javascript:history.back()'>Go back</a></p>
         </div>
         <div id="CYOA" style='display: none'>
             <p><b>What kind of research question are you trying to answer?</b></p>
@@ -112,7 +112,7 @@
                 print("Horror vs. Comedy (paired t-test):\nt={:.4f}, p={:.4f}".format(stat.statistic,stat.pvalue))
             </div></code></pre>
             Horror vs. Comedy (paired t-test): t=1.7043, p=0.1046
-            <a href='javascript:history.back()'>Go back</a>
+            <p><a href='javascript:history.back()'>Go back</a></p>
         </div>
     </div>
     <!-- Footnotes -->
