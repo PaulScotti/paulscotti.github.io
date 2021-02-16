@@ -12,6 +12,8 @@
 <!-- Styles -->
 <link rel="stylesheet" type="text/css" href="css/index.css"/>
 <link rel="stylesheet" href="css/bigfoot-default.css"/>
+<!-- Adobe embedded pdf -->
+<script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
 <header id="page-header">
     <a href="">Navigating fMRI analysis techniques: a practical guide</a>
 </header>
@@ -40,10 +42,26 @@
         </div>
         <div id="list" style='display: none'>
             <h2>List of fMRI analysis techniques</h2>
-            <a href='https://paulscotti.github.io/flowchart.pdf'><img src='https://paulscotti.github.io/navigateFMRI/flowchart.png' style="width: 700px"></img></a>
-            Click to enlarge
-            <h3><a href='#univariate'>Univariate analysis</a></h3>
-            <h3><a href='#mvpc'>Multivoxel pattern classifier</a></h3>
+            <!-- <iframe src="https://paulscotti.github.io/flowchart.pdf" width="960px" height="300px"></iframe> -->
+            <div id="adobe-dc-view" style="margin:1em auto; height:100%"></div>
+            <script type="text/javascript">
+                document.addEventListener("adobe_dc_view_sdk.ready", function () {
+                    var adobeDCView = new AdobeDC.View({
+                        clientId: "7b3c8317b616437394a4939025686ac5",
+                        divId: "adobe-dc-view"
+                    });
+                    adobeDCView.previewFile({
+                        content: { location: { url: "https://paulscotti.github.io/flowchart.pdf" } },
+                        metaData: { fileName: "Flowchart" }
+                    }, {
+                        embedMode: "IN_LINE",
+                        showDownloadPDF: false,
+                        showPrintPDF: false
+                    });
+                });
+            </script>
+            <li><a href='#univariate'>Univariate analysis</a></li>
+            <li><a href='#mvpc'>Multivoxel pattern classifier</a></li>
             <p><a href='javascript:history.back()'>Go back</a></p>
         </div>
         <div id="univariate" style='display: none'>
@@ -239,21 +257,15 @@
     </div>
 </body>
 <script>
-function show(id) {
-    $('#'+id).css({'display':'block'});
-}
-function hide(id) {
-    $('#'+id).css({'display':'none'});
-}
 // Automatically change page depending on href 
 // (allows direct links to pages and back/forward buttons)
 $(document).ready(function() {
     if (window.location.hash.substr(1) == ''){
         console.log('loaded home page')
-        hide('page-header')
-        show('start');
+        $('#page-header').hide();
+        $('#start').show();
     } else {
-        show(window.location.hash.substr(1));
+        $('#'+window.location.hash.substr(1)).show();
     }
 })
 window.addEventListener('hashchange', function() {
