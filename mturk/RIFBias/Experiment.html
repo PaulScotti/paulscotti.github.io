@@ -6,9 +6,10 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-  <script src="https://maxceylab.github.io/expts/js_code/jquery.min.js"></script>
-  <script src="https://maxceylab.github.io/expts/js_code/seedrandom.js"></script>
-  <script src="https://maxceylab.github.io/expts/js_code/chance.js"></script>
+  <script src="https://paulscotti.github.io/mturk/js_code/jquery.min.js"></script>
+  <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
+  <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
+  <script src="https://paulscotti.github.io/mturk/js_code/lodash.core.js">// Allows _clone</script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/jcanvas.min.js"></script>
   <script>
@@ -18,8 +19,7 @@
   const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
   const seed_index =  Math.floor(Math.random() * Math.floor(500)); // counterbalancing and trial randomization occurs by indexing into S, P, and T arrays
   </script>
-  <script src="https://maxceylab.github.io/expts/js_code/lodash.core.js">// Allows _clone</script>
-
+  
   <!-- Preload images and trial types with counterbalancing -->
   <script src="https://paulscotti.github.io/mturk/RIFBias/loadimg.js"></script>
   <script> 
@@ -72,9 +72,9 @@
   <!-- load Firebase server javascript, we are using it for storage -->
   <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/contReport.css">
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/showTrials.css">
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/experiment.css">
+  <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/contReport.css">
+  <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/showTrials.css">
+  <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/experiment.css">
 
 </head>
 
