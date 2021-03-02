@@ -1,4 +1,0 @@
-blockedIDs=[
-  "zasdf",
-  "zasdf2"
-];
