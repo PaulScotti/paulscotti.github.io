@@ -21,11 +21,52 @@
   <script src="https://maxceylab.github.io/expts/js_code/lodash.core.js">// Allows _clone</script>
 
   <!-- Preload images and trial types with counterbalancing -->
-  <script src="https://maxceylab.github.io/expts/RIFBias/loadimg.js"></script>
+  <script src="https://paulscotti.github.io/mturk/RIFBias/loadimg.js"></script>
   <script> 
+  function repmat(array, count) {
+    let result = [];
+    while (count--) {
+      result = result.concat(array);
+    }
+    return result;
+  }
+  function perm_concat(array1, array2) {
+    let result = [];
+    for (let i = 0; i < array1.length; i++) {
+      for (let j = 0; j < array2.length; j++) {
+        if (array1[i] < 10) {
+          result = result.concat('0' + array1[i].toString() + '_' + array2[j].toString());
+        } else {
+          result = result.concat(array1[i].toString() + '_' + array2[j].toString());
+        }
+      }
+    }
+    return result;
+  }
+  function counter(start, end, interval) {
+    if (interval == undefined) {
+      interval = 1;
+    }
+    let result = [];
+    if (start > end) {
+      start = start - 360;
+    }
+    while (start <= end) {
+      result = result.concat(start);
+      start = start + interval;
+    }
+    return result;
+  }
   let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
-  var T = JSON.parse("https://paulscotti.github.io/mturk/RIFBias/T.txt");
-
+  var S=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/S.json")
+  var P=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/P.json")
+  var T=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/T.json")
+  study_phase = S.responseJSON[0][seed_index]
+  study_phaseC = S.responseJSON[1][seed_index]
+  prac_phase = P.responseJSON[0][seed_index]
+  prac_phaseC = P.responseJSON[1][seed_index]
+  test_phase = T.responseJSON[0][seed_index]
+  test_phaseC = T.responseJSON[1][seed_index]
   </script>
 
   <!-- load Firebase server javascript, we are using it for storage -->
@@ -192,7 +233,7 @@
     const imgWidth = 300;
     const imgHeight = 300;
     </script>
-    <script src="https://maxceylab.github.io/expts/RIFBias/colors_blocked.js"> </script>
+    <script src="https://paulscotti.github.io/mturk/retrieval/colors_blocked.js"> </script>
     <script>
     let curStudy = 0;
     let curPractice = 0;
