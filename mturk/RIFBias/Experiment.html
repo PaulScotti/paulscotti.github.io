@@ -18,16 +18,19 @@
   const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
   <script src="https://maxceylab.github.io/expts/js_code/lodash.core.js">// Allows _clone</script>
 
-  <!-- Preload images -->
-  <script src="https://maxceylab.github.io/expts/retrieval/loadimg.js"></script>
-  <script src="https://maxceylab.github.io/expts/retrieval/initVariablesExpt2.js"> </script>
+  <!-- Preload images and trial types with counterbalancing -->
+  <script src="https://maxceylab.github.io/expts/RIFBias/loadimg.js"></script>
+  <script> 
+  let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
+
+  </script>
 
   <!-- load Firebase server javascript, we are using it for storage -->
   <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/retrieval/contReport.css">
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/retrieval/showTrials.css">
-  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/retrieval/experiment.css">
+  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/contReport.css">
+  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/showTrials.css">
+  <link rel="stylesheet" type="text/css" href="https://maxceylab.github.io/expts/RIFBias/experiment.css">
 
 </head>
 
@@ -186,7 +189,7 @@
     const imgWidth = 300;
     const imgHeight = 300;
     </script>
-    <script src="https://maxceylab.github.io/expts/retrieval/colors_blocked.js"> </script>
+    <script src="https://maxceylab.github.io/expts/RIFBias/colors_blocked.js"> </script>
     <script>
     let curStudy = 0;
     let curPractice = 0;
@@ -297,13 +300,6 @@
           alert("Please accept the HIT before continuing.");
           return false;
       }
-
-      // save a file letting me know that someone made it this far
-      const blobx = new Blob([JSON.stringify(chance1.seed)], {
-        type: "application/json"
-      });
-      const storageRefx = firebase.storage().ref('started_retrieval_mturk/' + WORKERID + '.json');
-      storageRefx.put(blobx);
 
       $('#instructions5').hide();
       $('#pointer').hide();
@@ -1363,7 +1359,7 @@
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('Retrieval_Expt2Turk_3/' + WORKERID + '.json');
+      const storageRef = firebase.storage().ref('RIFBias/' + WORKERID + '.json');
       storageRef.put(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
