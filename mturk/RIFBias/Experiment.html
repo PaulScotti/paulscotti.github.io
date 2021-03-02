@@ -15,13 +15,16 @@
   let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
       "Enter an ID to save your data with (any number/string will do). Note your id is used to seed the experiment rng:", "workID");
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
-  const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials</script>
+  const startDate = new Date(); const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+  const seed_index =  Math.floor(Math.random() * Math.floor(500)); // counterbalancing and trial randomization occurs by indexing into S, P, and T arrays
+  </script>
   <script src="https://maxceylab.github.io/expts/js_code/lodash.core.js">// Allows _clone</script>
 
   <!-- Preload images and trial types with counterbalancing -->
   <script src="https://maxceylab.github.io/expts/RIFBias/loadimg.js"></script>
   <script> 
   let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
+  var T = JSON.parse("https://paulscotti.github.io/mturk/RIFBias/T.txt");
 
   </script>
 
