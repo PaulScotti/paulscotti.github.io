@@ -596,8 +596,10 @@
 
       setTimeout(function() {
         curPractice++;
-        document.getElementById("colortext").innerHTML = "<b>What was the original color of this object?</b>"
         $('#feedbackpointer').hide();
+        $('#conftext').hide();
+        $('#pointer').css('margin-top', -1000);
+        document.getElementById("colortext").innerHTML = "<b>What was the original color of this object?</b>"
         NextPracTrial();
       }, 3000);
     }
@@ -784,7 +786,6 @@
     }
 
     function Unsure() {
-      $('#pointer').css('margin-top', -1000);
       if (locked==1) {
         StudyTrials[curBlock][curStudy-back].conf = 0;
         if (wrapDiff(imgNum,StudyTrials[curBlock][curStudy-back].color) <= 30) {
@@ -812,7 +813,6 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
-      $('#conftext').hide();
     }
     function Unsureish() {
       $('#pointer').css('margin-top', -1000);

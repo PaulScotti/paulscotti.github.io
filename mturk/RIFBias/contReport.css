@@ -24,8 +24,8 @@
 	width: 1px;
 	height: 1px;
 	background: rgba(0,0,0,0);
-	border: 9px solid black;
-	border-radius: 9px;
+	border: 3px solid black;
+	border-radius: 3px;
 	top: 50px;
 	left: 50px;
 }
