@@ -78,7 +78,7 @@
   <!-- Instructions page1 -->
   <div id="instructions" style="display: none">
     <center>
-        <p>This HIT is a memorization experiment involving visual images. It will take approximately 10-15 minutes to complete. If you have previously completed this HIT in the last 30 days, you are ineligible to participate again.</p>
+        <p>This HIT is a memorization experiment involving visual images. It will take approximately 10 minutes to complete. If you have previously completed this HIT in the last 30 days, you are ineligible to participate again.</p>
       </center>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;GetInfo();" id="TextButton">Next (1 of 4)</a></p>
   </div>
@@ -86,7 +86,7 @@
   <!-- Instructions page2 -->
   <div id="instructions2" style="display:none">
     <center>
-        <p>You will be presented with 40 unique objects, one at a time, each presented for 3 seconds.</p>
+        <p>You will be presented with 30 unique objects, one at a time, each presented for 3 seconds.</p>
         <p>Example of an object:</p>
 
         <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/retrieval1.png" width="600px"></p>
@@ -127,7 +127,7 @@
 
         <p>Ready to start? You will begin by memorizing a series of colored objects. You are not allowed to use external devices to aid memorization.</p>
 
-        <p><i>Please set aside approximately 15 minutes to complete this experiment. Please do your best -- the amount of time we will spend analyzing your data far exceeds 15 minutes! </i></p>
+        <p><i>Please set aside approximately 10 minutes to complete this experiment. Please do your best -- the amount of time we will spend analyzing your data far exceeds 10 minutes! </i></p>
       </center>
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
     <center><p id=loading>Images loading... Please wait a minute or refresh the page.</p></center>
@@ -174,6 +174,7 @@
     </div>
     <canvas id="ringItemA" width=600 height=600 style="position: absolute;"></canvas>
     <div id="pointer"></div>
+    <div id="feedbackpointer"></div>
     <br>
     <center>
       <a href="javascript:void(0);" onclick="Unsure();" id="Unsure" style="position:relative; top:600px;">No Idea</a>
@@ -213,9 +214,9 @@
 
     /* Define more variables */
     let modalClosed = false;
-    const numStudy = 40; 
-    const numPractice = 10;
-    const numTest = 80;
+    const numStudy = 30; 
+    const numPractice = 5;
+    const numTest = 60;
     const displayTime = 3000; //3000 ms
     let itiTime = 500; //500 ms
     const imgWidth = 300;
@@ -333,6 +334,7 @@
 
       $('#instructions5').hide();
       $('#pointer').hide();
+      $('#feedbackpointer').hide();
       $('#ringItemA').hide();
 
       $('#Unsure').hide();
@@ -576,6 +578,30 @@
       });
     }
 
+    function Feedback() {
+      start(ctxA, prac_phaseC[curPractice], 0, 0, imgWidth, imgHeight, 0, $('#' + prac_phase[curPractice])[0], itemA); // change image to correct color
+      document.getElementById("colortext").innerHTML = wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away from correct color."
+      var real_idx = prac_phaseC[curPractice]
+      if (flip == 1) {
+        a = origColors[arrayContains(flippedColors[wrap(real_idx)],origColors)];
+        real_idx = origColors.findIndex(k => k==a);
+      }
+      real_idx = real_idx + randrotate;
+      angleDeg = real_idx * Math.PI / 180.0;
+      $('#feedbackpointer').css({
+          'left': centerX + Math.cos(angleDeg) * ringSize - 9,
+          'top': centerY + Math.sin(angleDeg) * ringSize - 9
+      });
+      $('#feedbackpointer').show();
+
+      setTimeout(function() {
+        curPractice++;
+        document.getElementById("colortext").innerHTML = "<b>What was the original color of this object?</b>"
+        $('#feedbackpointer').hide();
+        NextPracTrial();
+      }, 3000);
+    }
+
     /* Display Object & Old/New Judgment */
     function OldNewJudgment() {
       startTrial = new Date().getTime();
@@ -780,8 +806,7 @@
         NextTestTrial();
       } else {
         PracConf.push(0)
-        curPractice++;
-        NextPracTrial();
+        Feedback();
       }
       $('#Unsure').hide();
       $('#Unsureish').hide();

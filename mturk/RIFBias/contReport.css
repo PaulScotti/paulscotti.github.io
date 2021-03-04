@@ -19,22 +19,12 @@
 	top: 50px;
 	left: 50px;
 }
-#pointer2 {
+#feedbackpointer {
 	position: absolute;
 	width: 1px;
 	height: 1px;
-	background: blue;
-	border: 9px solid blue;
-	border-radius: 9px;
-	top: 50px;
-	left: 50px;
-}
-#pointer3 {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	background: red;
-	border: 9px solid red;
+	background: rgba(0,0,0,0);
+	border: 9px solid black;
 	border-radius: 9px;
 	top: 50px;
 	left: 50px;
