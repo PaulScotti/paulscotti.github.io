@@ -400,6 +400,7 @@
       } else {
           // Preload the image of next trial
           start(ctxA, study_phaseC[curStudy], 0, 0, imgWidth, imgHeight, 0, $('#' + study_phase[curStudy])[0], itemA);
+          console.log(study_phase[curStudy], curStudy)
           setTimeout(function() {
             itiTime = 500;
             curStudy++;
@@ -414,7 +415,6 @@
       setTimeout(function() {
         $('#allItems').css('margin-top', -1000);
         setTimeout(function() {
-              curStudy++;
               NextStudyTrial();
               return;
         }, itiTime/2); // fulfill rest of itiTime before showing study image
@@ -430,6 +430,7 @@
       if (curPractice < numPractice) {
         // Preload the image of next trial
         start(ctxA, 'gray', 0, 0, imgWidth, imgHeight, 0, $('#' + prac_phase[curPractice])[0], itemA);
+        console.log(prac_phase[curPractice], curPractice)
       }
 
       setTimeout(function() {
@@ -726,6 +727,7 @@
       if (curTest < numTest) {
         // Preload the image of next trial
         start(ctxA, 'gray', 0, 0, imgWidth, imgHeight, 0, $('#' + test_phase[curTest])[0], itemA);
+        console.log(test_phase[curTest], curTest)
       }
 
       setTimeout(function() { // fixation at beginning of trial for itiTime
