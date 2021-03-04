@@ -150,9 +150,6 @@
 
   <!-- Screen after submitting expt -->
   <div id="done">
-    <center>
-    <div id="cashPrize">text</div>
-    </center>
     <div id="doneText">
     </div>
     <div>
@@ -267,9 +264,11 @@
     let OldNew = [];
     let OldNewRT = [];
     let PracColRT = [];
-    let PracCol = [];
+    let PracColResp = [];
     let TestColRT = [];
-    let TestCol = [];
+    let TestColResp = [];
+    let PracConf = [];
+    let TestConf = [];
 
     /* Setup reused image and color ring variables */
     let ringStandard = new Image();
@@ -726,14 +725,8 @@
       $('#allItems').css('margin-top', -1000);
       if (curTest < numTest) {
         // Preload the image of next trial
-        start(ctxA, 'gray', 0, 0, imgWidth, imgHeight, 0, TestTrials[curTest].img, itemA);
+        start(ctxA, 'gray', 0, 0, imgWidth, imgHeight, 0, $('#' + test_phase[curTest])[0], itemA);
       }
-
-      setTimeout(function() {
-        if (TestTrialType[curTest] > 9) {
-          start(ctxA, 'gray', 0, 0, imgWidth, imgHeight, flip, TestTrials[curTest].img, itemA);
-        }
-      }, itiTime+5); // wait a little bit just to make sure image got switched in time
 
       setTimeout(function() { // fixation at beginning of trial for itiTime
         if (curTest >= numTest) { // if end of test
@@ -756,14 +749,9 @@
             }
           }
           return;
-        } else if (TestTrials[curTest].null==1) {
-          itiTime = 0;
-          curTest++;
-          NextTestTrial();
-          return;
         }
-        itiTime = 500;
-        OldNewJudgment();
+          itiTime = 500;
+          OldNewJudgment();
       }, itiTime);
     }
 
@@ -798,23 +786,6 @@
       $('#Sureish').hide();
       $('#Sure').hide();
       $('#conftext').hide();
-      if ((PracColDiff.length == 0 && TestColDiff.length == 0) || (PracColDiff.length != 0 && PracColDiff.length % 5 == 0) || (TestColDiff.length != 0 && TestColDiff.length % 5 == 0)) {
-        count=0;groundcount=0;
-        for(var i = 0; i < RepeatColDiff.length; ++i){
-            count=count+RepeatColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < PracColDiff.length; ++i){
-            count=count+PracColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < TestColDiff.length; ++i){
-          count=count+TestColDiff[i];
-          groundcount=groundcount+180;
-        }
-        ongoingacc = 100*(1-(count/groundcount));
-        // document.getElementById("acctext").innerHTML = 'Accuracy: ' + ongoingacc.toFixed(2) + '%';
-      }
     }
     function Unsureish() {
       $('#pointer').css('margin-top', -1000);
@@ -847,23 +818,6 @@
       $('#Sureish').hide();
       $('#Sure').hide();
       $('#conftext').hide();
-      if ((PracColDiff.length == 0 && TestColDiff.length == 0) || (PracColDiff.length != 0 && PracColDiff.length % 5 == 0) || (TestColDiff.length != 0 && TestColDiff.length % 5 == 0)) {
-        count=0;groundcount=0;
-        for(var i = 0; i < RepeatColDiff.length; ++i){
-            count=count+RepeatColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < PracColDiff.length; ++i){
-            count=count+PracColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < TestColDiff.length; ++i){
-          count=count+TestColDiff[i];
-          groundcount=groundcount+180;
-        }
-        ongoingacc = 100*(1-(count/groundcount));
-        // document.getElementById("acctext").innerHTML = 'Accuracy: ' + ongoingacc.toFixed(2) + '%';
-      }
     }
     function Sureish() {
       $('#pointer').css('margin-top', -1000);
@@ -896,23 +850,6 @@
       $('#Sureish').hide();
       $('#Sure').hide();
       $('#conftext').hide();
-      if ((PracColDiff.length == 0 && TestColDiff.length == 0) || (PracColDiff.length != 0 && PracColDiff.length % 5 == 0) || (TestColDiff.length != 0 && TestColDiff.length % 5 == 0)) {
-        count=0;groundcount=0;
-        for(var i = 0; i < RepeatColDiff.length; ++i){
-            count=count+RepeatColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < PracColDiff.length; ++i){
-            count=count+PracColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < TestColDiff.length; ++i){
-          count=count+TestColDiff[i];
-          groundcount=groundcount+180;
-        }
-        ongoingacc = 100*(1-(count/groundcount));
-        // document.getElementById("acctext").innerHTML = 'Accuracy: ' + ongoingacc.toFixed(2) + '%';
-      }
     }
     function Sure() {
       $('#pointer').css('margin-top', -1000);
@@ -945,23 +882,6 @@
       $('#Sureish').hide();
       $('#Sure').hide();
       $('#conftext').hide();
-      if ((PracColDiff.length == 0 && TestColDiff.length == 0) || (PracColDiff.length != 0 && PracColDiff.length % 5 == 0) || (TestColDiff.length != 0 && TestColDiff.length % 5 == 0)) {
-        count=0;groundcount=0;
-        for(var i = 0; i < RepeatColDiff.length; ++i){
-            count=count+RepeatColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < PracColDiff.length; ++i){
-            count=count+PracColDiff[i];
-            groundcount=groundcount+180;
-        }
-        for(var i = 0; i < TestColDiff.length; ++i){
-          count=count+TestColDiff[i];
-          groundcount=groundcount+180;
-        }
-        ongoingacc = 100*(1-(count/groundcount));
-        // document.getElementById("acctext").innerHTML = 'Accuracy: ' + ongoingacc.toFixed(2) + '%';
-      }
     }
 
     function OldSure() {
@@ -1199,7 +1119,7 @@
 
     /* Done with the experiment */
     function Done() {
-      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please wait 1-2 weeks for your bonus to process.<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation!<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
@@ -1216,36 +1136,38 @@
       const d = {
         "ID": WORKERID,
         "ASSIGNMENTID": ASSIGNMENTID,
+        "seed_index": seed_index,
         "age": age,
         "sex": sex,
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
         "PracColRT": PracColRT,
         "PracColResp": PracColResp,
-        "PracColDiff": PracColDiff,
+        "PracConf": PracConf,
         "TestColRT": TestColRT,
         "TestColResp": TestColResp,
-        "TestColDiff": TestColDiff,
+        "TestConf": TestConf,
+        "OldNew": OldNew,
+        "OldNewRT": OldNewRT,
         "CDType": CDType,
         "CDaccuracy": CDaccuracy,
-        "AllImages": AllImages,
         "randrotate": randrotateList,
         "flip": flipList,
-        "StudyTrials": StudyTrials,
-        "PracticeTrials": PracticeTrials,
-        "TestTrials": TestTrials,
-        "numRepeats": numRepeats,
-        "RepeatObj": RepeatObj,
-        "RepeatCol": RepeatCol,
-        "RepeatColResp": RepeatColResp,
-        "RepeatColDiff": RepeatColDiff,
+        "study_phase": study_phase,
+        "study_phaseC": study_phaseC,
+        "study_phase_type": S.responseJSON[2][seed_index],
+        "prac_phase": prac_phase,
+        "prac_phaseC": prac_phaseC,
+        "test_phase": test_phase,
+        "test_phaseC": test_phaseC,
+        "test_phase_type": test_phase_type,
+        "test_phase_bias": T.responseJSON[2][seed_index],
         "targfP": targfP,
         "targfR": targfR,
         "lurefR": lurefR,
         "targfB": targfB,
         "lurefB": lurefB,
         "seed": chance1.seed,
-        "bonus": (OverallAcc*bonusmultiplier).toFixed(2),
         "comments": $('#comments').val()
       };
 
