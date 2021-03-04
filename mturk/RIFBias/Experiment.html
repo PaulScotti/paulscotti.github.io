@@ -191,7 +191,7 @@
     <!-- <p id="acctext" align="center" style="position:absolute; top:-10px; right:10px">Accuracy: 100%</p> -->
     <center><p id="idtext" align="center" style="position:relative; font-size: 14px; top:515px; left:0px"><b>Have you seen this object before (old) or is it the first time you've seen this object (new)?</b></p>
       <p id="colortext" align="center" style="position:relative; top:535px; left:0px"><b>What was the original color of this object?</b></p>
-    <p id="conftext" align="center" style="position:relative; top:515px; left:0px"><b>How confident are you that your color report was accurate?</b></p></center>
+    <p id="conftext" align="center" style="position:relative; top:515px; left:0px"><b>How confident are you that your color report is accurate?</b></p></center>
   </div>
 
   <!-- Initializing JS -->
@@ -580,7 +580,7 @@
 
     function Feedback() {
       start(ctxA, prac_phaseC[curPractice], 0, 0, imgWidth, imgHeight, 0, $('#' + prac_phase[curPractice])[0], itemA); // change image to correct color
-      document.getElementById("colortext").innerHTML = wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away from correct color."
+      document.getElementById("conftext").innerHTML = wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away from correct color."
       var real_idx = prac_phaseC[curPractice]
       if (flip == 1) {
         a = origColors[arrayContains(flippedColors[wrap(real_idx)],origColors)];
@@ -599,7 +599,7 @@
         $('#feedbackpointer').hide();
         $('#conftext').hide();
         $('#pointer').css('margin-top', -1000);
-        document.getElementById("colortext").innerHTML = "<b>What was the original color of this object?</b>"
+        document.getElementById("conftext").innerHTML = "<b>How confident are you that your color report is accurate?</b>"
         NextPracTrial();
       }, 3000);
     }
