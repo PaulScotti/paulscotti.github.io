@@ -123,7 +123,7 @@
 
         <hr>
 
-        <p><b><i>Every</i> object you see will eventually be tested using the color wheel.</b></p>
+        <p><b><i>Every</i> object you see will eventually be tested at least once using the color wheel.</b></p>
 
         <p>Ready to start? You will begin by memorizing a series of colored objects. You are not allowed to use external devices to aid memorization.</p>
 
@@ -580,7 +580,7 @@
 
     function Feedback() {
       start(ctxA, prac_phaseC[curPractice], 0, 0, imgWidth, imgHeight, 0, $('#' + prac_phase[curPractice])[0], itemA); // change image to correct color
-      document.getElementById("conftext").innerHTML = wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away from correct color."
+      // document.getElementById("conftext").innerHTML = "<br>" + wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away</br>"
       var real_idx = prac_phaseC[curPractice]
       if (flip == 1) {
         a = origColors[arrayContains(flippedColors[wrap(real_idx)],origColors)];
@@ -597,9 +597,9 @@
       setTimeout(function() {
         curPractice++;
         $('#feedbackpointer').hide();
-        $('#conftext').hide();
+        // $('#conftext').hide();
         $('#pointer').css('margin-top', -1000);
-        document.getElementById("conftext").innerHTML = "<b>How confident are you that your color report is accurate?</b>"
+        // document.getElementById("conftext").innerHTML = "<b>How confident are you that your color report is accurate?</b>"
         NextPracTrial();
       }, 3000);
     }
@@ -652,7 +652,7 @@
             'Great job! <br><br> We will now continue testing your memory. <br><br> You will see a grayscale object and be asked whether you have seen it before. If you have, you will then select the original color on the color wheel. <br><br>  Keep it up, the HIT is almost over!';
         } else {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now test your memory. <br><br> You will see a grayscale object and be asked to select the original color on the color wheel. <br><br> Good luck!';
+            'Great job! <br><br> We will now test your memory. <br><br> You will see a grayscale object and be asked to select the original color on the color wheel. We will then ask how confident you are in your response. We will then show you the correct answer. <br><br> Good luck!';
         }
         window.location.href = '#openModal';
         checkFlag6();
@@ -813,6 +813,7 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
+      $('#conftext').hide();
     }
     function Unsureish() {
       $('#pointer').css('margin-top', -1000);
@@ -837,8 +838,7 @@
         NextTestTrial();
       } else {
         PracConf.push(1)
-        curPractice++;
-        NextPracTrial();
+        Feedback();
       }
       $('#Unsure').hide();
       $('#Unsureish').hide();
@@ -868,9 +868,8 @@
         curTest++;
         NextTestTrial();
       } else {
-        PracConf.push(0)
-        curPractice++;
-        NextPracTrial();
+        PracConf.push(2)
+        Feedback();
       }
       $('#Unsure').hide();
       $('#Unsureish').hide();
@@ -901,8 +900,7 @@
         NextTestTrial();
       } else {
         PracConf.push(3)
-        curPractice++;
-        NextPracTrial();
+        Feedback();
       }
       $('#Unsure').hide();
       $('#Unsureish').hide();
