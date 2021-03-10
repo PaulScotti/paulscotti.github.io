@@ -75,6 +75,37 @@ layout: compress
         100%{background-position:0% 82%}
     }
 }
+.btn-rainbow2 {
+    color: white !important;
+    background: linear-gradient(124deg, #9D9340, #A36234, #963239, #3A2D68, #2C5182, #277A2B);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
+    background-size: 1800% 1800%;
+    -webkit-animation: rainbow 18s ease infinite;
+    -z-animation: rainbow 18s ease infinite;
+    -o-animation: rainbow 18s ease infinite;
+    animation: rainbow 18s ease infinite;}
+
+    @-webkit-keyframes rainbow {
+        0%{background-position:0% 82%}
+        50%{background-position:100% 19%}
+        100%{background-position:0% 82%}
+    }
+    @-moz-keyframes rainbow {
+        0%{background-position:0% 82%}
+        50%{background-position:100% 19%}
+        100%{background-position:0% 82%}
+    }
+    @-o-keyframes rainbow {
+        0%{background-position:0% 82%}
+        50%{background-position:100% 19%}
+        100%{background-position:0% 82%}
+    }
+    @keyframes rainbow { 
+        0%{background-position:0% 82%}
+        50%{background-position:100% 19%}
+        100%{background-position:0% 82%}
+    }
+}
 .btn-red {
 color: white !important;
 background-color: #a70000;
@@ -123,10 +154,10 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
                 <hr class="hr-line">
                 <h3 class="title">
                     <a class="btn btn-rainbow" href="https://paulscotti.github.io/cv.pdf">
-                    CV
+                        <b>CV</b>
                     </a>
-                    <a class="btn btn-rainbow" type="button" onclick="scroller('published')">
-                        Publications
+                    <a class="btn btn-rainbow2" type="button" onclick="scroller('published')">
+                        <b>Publications</b>
                     </a>
                 </h3>
                 <hr class="hr-line">
