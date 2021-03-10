@@ -399,6 +399,30 @@
             return; // need return; otherwise the ShowTrial below executes
           }
         }
+      } else if (curStudy==numStudy/2) {
+        // open pop-up:
+        modalClosed = false;
+        document.getElementById("openModal_text").innerHTML =
+          'We will repeat through the sequence of colored objects one more time before we test your memory. Do your best to memorize the exact colors of every object.';
+        window.location.href = '#openModal';
+        checkFlagS();
+        return;
+
+        function checkFlagS() {
+          if (modalClosed == false) {
+            window.setTimeout(checkFlagS, 100); /* this checks the flag every 100 milliseconds*/
+          } else {
+            // Preload the image of next trial
+            start(ctxA, study_phaseC[curStudy], 0, 0, imgWidth, imgHeight, 0, $('#' + study_phase[curStudy])[0], itemA);
+            console.log(study_phase[curStudy], curStudy)
+            setTimeout(function() {
+              itiTime = 500;
+              curStudy++;
+              ShowStudy();
+            }, itiTime/2); // wait a tad just to ensure image got switch
+            return; // need return; otherwise the ShowTrial below executes
+          }
+        }
       } else {
           // Preload the image of next trial
           start(ctxA, study_phaseC[curStudy], 0, 0, imgWidth, imgHeight, 0, $('#' + study_phase[curStudy])[0], itemA);
