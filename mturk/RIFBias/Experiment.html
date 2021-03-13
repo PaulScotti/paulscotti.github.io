@@ -215,7 +215,7 @@
     /* Define more variables */
     let modalClosed = false;
     const numStudy = 30*2; 
-    const numPractice = 10;
+    const numPractice = 5;
     const numTest = 60;
     const displayTime = 3000; //3000 ms
     let itiTime = 500; //500 ms
@@ -1350,9 +1350,7 @@
       study_phase = S.responseJSON[0][seed_index]
       study_phaseC = S.responseJSON[1][seed_index]
       prac_phase = P.responseJSON[0][seed_index]
-      prac_phase = prac_phase.concat(prac_phase)
       prac_phaseC = P.responseJSON[1][seed_index]
-      prac_phaseC = prac_phase.concat(prac_phaseC)
       test_phase = T.responseJSON[0][seed_index]
       test_phaseC = T.responseJSON[1][seed_index]
       test_phase_type = T.responseJSON[3][seed_index]
