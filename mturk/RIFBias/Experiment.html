@@ -127,7 +127,7 @@
 
         <p>Ready to start? You will begin by memorizing a series of colored objects. You are not allowed to use external devices to aid memorization.</p>
 
-        <p><i>Please set aside approximately 10 minutes to complete this experiment. Please do your best -- the amount of time we will spend analyzing your data far exceeds 10 minutes! </i></p>
+        <p><i>Please set aside approximately 10 minutes to complete this experiment. Please do your best -- the amount of time we will spend analyzing your data far exceeds 15 minutes! </i></p>
       </center>
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
     <center><p id=loading>Images loading... Please wait a minute or refresh the page.</p></center>
@@ -604,7 +604,7 @@
 
     function Feedback() {
       start(ctxA, prac_phaseC[curPractice], 0, 0, imgWidth, imgHeight, 0, $('#' + prac_phase[curPractice])[0], itemA); // change image to correct color
-      // document.getElementById("conftext").innerHTML = "<br>" + wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away</br>"
+      document.getElementById("conftext").innerHTML = "<br>" + wrapDiff(wrap(imgNum),prac_phaseC[curPractice]) + " degrees away</br>"
       var real_idx = prac_phaseC[curPractice]
       if (flip == 1) {
         a = origColors[arrayContains(flippedColors[wrap(real_idx)],origColors)];
@@ -621,9 +621,9 @@
       setTimeout(function() {
         curPractice++;
         $('#feedbackpointer').hide();
-        // $('#conftext').hide();
+        $('#conftext').hide();
         $('#pointer').css('margin-top', -1000);
-        // document.getElementById("conftext").innerHTML = "<b>How confident are you that your color report is accurate?</b>"
+        document.getElementById("conftext").innerHTML = "<b>How confident are you that your color report is accurate?</b>"
         NextPracTrial();
       }, 3000);
     }
@@ -838,7 +838,7 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
-      $('#conftext').hide();
+      $('#conftext').show();
     }
     function Unsureish() {
       if (locked==1) {
@@ -869,7 +869,7 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
-      $('#conftext').hide();
+      $('#conftext').show();
     }
     function Sureish() {
       if (locked==1) {
@@ -900,7 +900,7 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
-      $('#conftext').hide();
+      $('#conftext').show();
     }
     function Sure() {
       if (locked==1) {
@@ -931,7 +931,7 @@
       $('#Unsureish').hide();
       $('#Sureish').hide();
       $('#Sure').hide();
-      $('#conftext').hide();
+      $('#conftext').show();
     }
 
     function OldSure() {
