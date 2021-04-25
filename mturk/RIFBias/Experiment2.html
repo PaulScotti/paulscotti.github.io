@@ -58,9 +58,9 @@
     return result;
   }
   let CDSet = chance1.shuffle(repmat(perm_concat([0,1],counter(1,25)),4)); // randomized 200 CD trials
-  var S=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/S.json")
-  var P=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/P.json")
-  var T=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/T.json")
+  var S=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/S2.json")
+  var P=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/P2.json")
+  var T=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/T2.json")
   </script>
 
   <!-- load Firebase server javascript, we are using it for storage -->
@@ -78,7 +78,7 @@
   <!-- Instructions page1 -->
   <div id="instructions" style="display: none">
     <center>
-        <p>This HIT is a memorization experiment involving visual images. It will take approximately 10-15 minutes to complete. If you have previously completed this HIT in the last 30 days, you are ineligible to participate again.</p>
+        <p>This HIT is a memorization experiment involving visual images. It will take approximately 20 minutes to complete. If you have previously completed this HIT in the last 30 days, you are ineligible to participate again.</p>
       </center>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;GetInfo();" id="TextButton">Next (1 of 4)</a></p>
   </div>
@@ -152,6 +152,8 @@
   <div id="done">
     <div id="doneText">
     </div>
+    <div id="botcheck">
+    </div>
     <div>
       <center>
         <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
@@ -214,9 +216,9 @@
 
     /* Define more variables */
     let modalClosed = false;
-    const numStudy = 30*2; 
+    const numStudy = 40*2; 
     const numPractice = 10;
-    const numTest = 60;
+    const numTest = 80;
     const displayTime = 3000; //3000 ms
     let itiTime = 500; //500 ms
     const imgWidth = 300;
@@ -661,6 +663,7 @@
       $('#allItems').css('margin-top', 0);
       $('#pointer').css('margin-top', -1000);
       $('#CDitem').show();
+      now2 = new Date().getTime();
       if (now2 < (now + 60000)) { // 120000 for 2 minutes long filler task
         ChangeDetectionTrial();
       } else {
@@ -696,8 +699,6 @@
 
     // Present CD trial
     function ChangeDetectionTrial() {
-      now2 = new Date().getTime();
-
       if ([0].includes(parseInt(CDSet[curCD].slice(0, 2)))) { // same
         imgCD.src = $('#same' + (curCD % 25 + 1))[0].src; // memory array
         imgCDtest.src = $('#same' + (curCD % 25 + 1) + 't')[0].src; // test array
@@ -1172,6 +1173,8 @@
     function Done() {
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation!<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
+      document.getElementById("botcheck").innerHTML = 'Please copy the following red text into the below box to prove that you are not a bot.' + '<br><font color="red">39480175619023403452348573495731409535634051</font><br><br>'
+        '<textarea name="box" id="box" style="width: 400px; height: 100px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -1180,61 +1183,65 @@
 
     /* What to save and put it on server */
     function SaveData() {
-      $('#done').children().hide();
-      $('#saving').show();
-      $('#assignmentId').val(GetAssignmentId());
-      const endDate = new Date().getTime();
-      const d = {
-        "ID": WORKERID,
-        "ASSIGNMENTID": ASSIGNMENTID,
-        "seed_index": seed_index,
-        "age": age,
-        "sex": sex,
-        "StartTime": startDate.getTime(),
-        "EndTime": endDate,
-        "PracColRT": PracColRT,
-        "PracColResp": PracColResp,
-        "PracConf": PracConf,
-        "TestColRT": TestColRT,
-        "TestColResp": TestColResp,
-        "TestConf": TestConf,
-        "OldNew": OldNew,
-        "OldNewRT": OldNewRT,
-        "CDType": CDType,
-        "CDaccuracy": CDaccuracy,
-        "randrotate": randrotateList,
-        "flip": flipList,
-        "study_phase": study_phase,
-        "study_phaseC": study_phaseC,
-        "study_phase_type": S.responseJSON[2][seed_index],
-        "prac_phase": prac_phase,
-        "prac_phaseC": prac_phaseC,
-        "test_phase": test_phase,
-        "test_phaseC": test_phaseC,
-        "test_phase_type": test_phase_type,
-        "test_phase_bias": T.responseJSON[2][seed_index],
-        "targfP": targfP,
-        "targfR": targfR,
-        "lurefR": lurefR,
-        "targfB": targfB,
-        "lurefB": lurefB,
-        "seed": chance1.seed,
-        "comments": $('#comments').val()
-      };
+      if ($('#bot').val() == '39480175619023403452348573495731409535634051') {
+        $('#done').children().hide();
+        $('#saving').show();
+        $('#assignmentId').val(GetAssignmentId());
+        const endDate = new Date().getTime();
+        const d = {
+          "ID": WORKERID,
+          "ASSIGNMENTID": ASSIGNMENTID,
+          "seed_index": seed_index,
+          "age": age,
+          "sex": sex,
+          "StartTime": startDate.getTime(),
+          "EndTime": endDate,
+          "PracColRT": PracColRT,
+          "PracColResp": PracColResp,
+          "PracConf": PracConf,
+          "TestColRT": TestColRT,
+          "TestColResp": TestColResp,
+          "TestConf": TestConf,
+          "OldNew": OldNew,
+          "OldNewRT": OldNewRT,
+          "CDType": CDType,
+          "CDaccuracy": CDaccuracy,
+          "randrotate": randrotateList,
+          "flip": flipList,
+          "study_phase": study_phase,
+          "study_phaseC": study_phaseC,
+          "study_phase_type": S.responseJSON[2][seed_index],
+          "prac_phase": prac_phase,
+          "prac_phaseC": prac_phaseC,
+          "test_phase": test_phase,
+          "test_phaseC": test_phaseC,
+          "test_phase_type": test_phase_type,
+          "test_phase_bias": T.responseJSON[2][seed_index],
+          "targfP": targfP,
+          "targfR": targfR,
+          "lurefR": lurefR,
+          "targfB": targfB,
+          "lurefB": lurefB,
+          "seed": chance1.seed,
+          "comments": $('#comments').val()
+        };
 
-      /* save to Firebase server */
-      const blob = new Blob([JSON.stringify(d)], {
-        type: "application/json"
-      });
-      const storageRef = firebase.storage().ref('RIFBias_more2/' + WORKERID + '.json');
-      storageRef.put(blob);
+        /* save to Firebase server */
+        const blob = new Blob([JSON.stringify(d)], {
+          type: "application/json"
+        });
+        const storageRef = firebase.storage().ref('RIFBias2/' + WORKERID + '.json');
+        storageRef.put(blob);
 
-      document.getElementById("saving").innerHTML = "Submitting...";
+        document.getElementById("saving").innerHTML = "Submitting...";
 
-      /* submit after waiting a few seconds to make sure data got sent */
-      setTimeout(function() {
-        document.forms[0].submit();
-      }, 3000);
+        /* submit after waiting a few seconds to make sure data got sent */
+        setTimeout(function() {
+          document.forms[0].submit();
+        }, 3000);
+      } else {
+        alert('Please correctly copy the red numbers into the second text area before submitting (ensure there are no stray spaces surrounding the numbers).')
+      }
     }
 
     /*check all images are loaded before starting*/
