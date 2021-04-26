@@ -153,6 +153,7 @@
     <center>
     <div id="doneText">
     </div>
+    <p></p>
     <div id="botcheck">
     </div>
     <div>
@@ -1172,9 +1173,9 @@
     /* Done with the experiment */
     function Done() {
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
-        '<textarea name="comments" id="comments" style="width: 400px; height: 100px"></textarea><br><br>';
-      document.getElementById("botcheck").innerHTML = 'Please copy the following red text into the below box to prove that you are not a bot: ' + '<font color="red">3948017561902340535634051</font><br><br>'+
-        '<textarea name="bot" id="bot" style="width: 400px; height: 100px"></textarea><br><br>';
+        '<textarea name="comments" id="comments" style="width: 400px; height: 60px"></textarea>';
+      document.getElementById("botcheck").innerHTML = '<br><br><br><div>Please copy the following red text into the below box to prove that you are not a bot: ' + '<font color="red">3948017561902340535634051</font><br><br>'+
+        '<textarea name="bot" id="bot" style="width: 400px; height: 30px"></textarea></div>';
       $('#showTrial').hide();
       $('#done').show();
     }
