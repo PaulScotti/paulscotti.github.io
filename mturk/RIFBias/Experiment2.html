@@ -150,15 +150,15 @@
 
   <!-- Screen after submitting expt -->
   <div id="done">
+    <center>
     <div id="doneText">
     </div>
     <div id="botcheck">
     </div>
     <div>
-      <center>
-        <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
-      </center>
+    <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
     </div>
+    </center>
   </div>
   <div id="saving">Saving . . .</div>
   </div>
@@ -1171,10 +1171,10 @@
 
     /* Done with the experiment */
     function Done() {
-      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation!<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
-        '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
-      document.getElementById("botcheck").innerHTML = 'Please copy the following red text into the below box to prove that you are not a bot.' + '<br><font color="red">39480175619023403452348573495731409535634051</font><br><br>'
-        '<textarea name="box" id="box" style="width: 400px; height: 100px"></textarea><br><br>';
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
+        '<textarea name="comments" id="comments" style="width: 400px; height: 100px"></textarea><br><br>';
+      document.getElementById("botcheck").innerHTML = 'Please copy the following red text into the below box to prove that you are not a bot: ' + '<font color="red">3948017561902340535634051</font><br><br>'+
+        '<textarea name="bot" id="bot" style="width: 400px; height: 100px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -1183,7 +1183,7 @@
 
     /* What to save and put it on server */
     function SaveData() {
-      if ($('#bot').val() == '39480175619023403452348573495731409535634051') {
+      if ($('#bot').val() == '3948017561902340535634051') {
         $('#done').children().hide();
         $('#saving').show();
         $('#assignmentId').val(GetAssignmentId());
