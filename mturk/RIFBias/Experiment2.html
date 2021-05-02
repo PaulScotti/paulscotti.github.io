@@ -63,9 +63,6 @@
   var T=$.getJSON("https://paulscotti.github.io/mturk/RIFBias/T2.json")
   </script>
 
-  <!-- load Firebase server javascript, we are using it for storage -->
-  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
-
   <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/contReport.css">
   <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/showTrials.css">
   <link rel="stylesheet" type="text/css" href="https://paulscotti.github.io/mturk/RIFBias/experiment.css">
@@ -199,17 +196,6 @@
 
   <!-- Initializing JS -->
   <script>
-    /* Initialize Firebase */
-    const config = {
-      apiKey: "AIzaSyB4FT9tacVGSKmDyWf203wy7WeiDYCDEFM",
-      authDomain: "maxceylab-25a85.firebaseapp.com",
-      databaseURL: "https://maxceylab-25a85.firebaseio.com",
-      projectId: "maxceylab-25a85",
-      storageBucket: "maxceylab-25a85.appspot.com",
-      messagingSenderId: "521427523696"
-    };
-    firebase.initializeApp(config);
-
     /* Disable context/right-click menu */
     // document.oncontextmenu = function() {
     //     return false;
@@ -1227,12 +1213,22 @@
           "comments": $('#comments').val()
         };
 
-        /* save to Firebase server */
+        /* save JSON to server */
         const blob = new Blob([JSON.stringify(d)], {
           type: "application/json"
         });
-        const storageRef = firebase.storage().ref('RIFBias2/' + WORKERID + '.json');
-        storageRef.put(blob);
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = () => {
+          if (req.readyState == XMLHttpRequest.DONE) {
+            console.log(req.responseText);
+          }
+        };
+        req.open("POST", "https://api.jsonbin.io/v3/b", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
+        req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
+        req.setRequestHeader("X-Bin-Name", WORKERID + '.json');
+        req.send(blob);
 
         document.getElementById("saving").innerHTML = "Submitting...";
 
