@@ -175,6 +175,7 @@
     <canvas id="ringItemA" width=600 height=600 style="position: absolute;"></canvas>
     <div id="pointer"></div>
     <div id="feedbackpointer"></div>
+    <div id='progress' style='font-size: 12px;'></div>
     <br>
     <center>
       <a href="javascript:void(0);" onclick="Unsure();" id="Unsure" style="position:relative; top:600px;">No Idea</a>
@@ -457,6 +458,7 @@
           itiTime = 500;
           $('#itemA').hide(); // hide object from last trial
           $('#ringItemA').hide();
+          $('#progress').html('');
 
           // open pop-up:
           modalClosed = false;
@@ -477,6 +479,7 @@
         }
         if (curPractice < numPractice) {
           itiTime = 500;
+          $('#progress').html('Trial ' + (curPractice+1) + '/' + numPractice);
           OldNewJudgment();
         }
       }, itiTime);
@@ -664,7 +667,7 @@
         modalClosed = false;
         if (curPractice > numPractice) {
           document.getElementById("openModal_text").innerHTML =
-            'Great job! <br><br> We will now continue testing your memory. This time, we will sometimes show you an object that was not studied. Please respond whether each object was previously seen or not. <br><br> Then, if the object was previously studied, you will be asked to select the original color on the color wheel just like before. <br><br>  Keep it up, the HIT is almost over!';
+            'Great job! <br><br> We will now continue testing your memory. This time, we will sometimes show you an object that was not studied. Please respond whether each object was previously seen or not. <br><br> Then, if the object was previously studied, you will be asked to select the original color on the color wheel just like before. <br><br>  Keep it up, the HIT is over after these trials!';
         } else {
           document.getElementById("openModal_text").innerHTML =
             'Great job! <br><br> We will now test your memory. <br><br> You will see a grayscale object and be asked to select the original color on the color wheel. We will then ask how confident you are in your response. We will then show you the correct answer. <br><br> Good luck!';
@@ -794,6 +797,7 @@
           return;
         }
           itiTime = 500;
+          $('#progress').html('Trial ' + (curTest+1) + '/' + numTest);
           OldNewJudgment();
       }, itiTime);
     }
@@ -1158,6 +1162,7 @@
 
     /* Done with the experiment */
     function Done() {
+      $('#progress').html('');
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 60px"></textarea>';
       document.getElementById("botcheck").innerHTML = '<br><br><br><div>Please copy the following red text into the below box to prove that you are not a bot: ' + '<font color="red">3948017561902340535634051</font><br><br>'+
