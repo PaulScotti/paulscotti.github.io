@@ -93,6 +93,16 @@ async src="//gc.zgo.at/count.js"></script>
 }
 </style>
 <body>
+    <header id="vss">
+        <div class="container animated fadeIn" style="width: 90%; max-width: 3000px; padding-top: 6px; padding-bottom: 0px">
+            <div class="row" style="border: 6px solid rgb(255, 255, 255); background-color: black">
+                <h3 class="title" style="text-align: center; padding-top: 5px; color: white">
+                    Here from VSS? <a href="https://paulscotti.github.io/images/iemeasure_preprint.pdf">Click here for our preprint about inverted encoding models</a> (and <a href="https://pypi.org/project/inverted-encoding"></a>click here</a> for our associated Python package)! Please email me at scottibrain@gmail.com if you have any comments/questions!
+                </h3>
+            </div>  
+        </div>
+    </header>
+
     {% include nav.html %}
     <div class="container animated fadeIn" style="width: 40%; max-width: 1500px; padding-bottom: 20px">
         <div class="row" style="border: 6px solid transparent; border-image: linear-gradient(to bottom right, #431358 0%, #08294d 25%, #28750a 50%, #524b14 75%, #46132e 100%); border-image-slice: 1;">
@@ -150,6 +160,29 @@ async src="//gc.zgo.at/count.js"></script>
         </div>
     </header>
 
+    <!-- IEMeasure -->
+    <header>
+        <div class="container animated fadeIn" style="width: 90%; max-width: 3000px; padding-top: 6px; padding-bottom: 0px">
+            <div class="row" style="border: 6px solid rgb(0, 0, 0); background-color: white">
+                <h3 class="title" style="text-align: center; padding: 20px">
+                    An improved method for evaluating inverted encoding models
+                    <div id="names">Paul S. Scotti, Jiageng Chen, & Julie D. Golomb</div>
+                    <a class="btn zoombtn" href="https://psyarxiv.com/md5h4/">
+                    bioRxiv (awaiting approval, click for pdf)
+                    </a>
+                    <div class="crow">
+                        <div class="cbar">
+                            Here we present a novel modification to inverted encoding models that improves the flexibility and interpretability of stimulus reconstructions, addresses some key issues inherent in the standard inverted encoding model procedure, and provides trial-by-trial stimulus predictions and goodness-of-fit estimates. You can implement our modified IEM procedure in <a href="https://pypi.org/project/inverted-encoding/">one line of Python code.</a>
+                        </div>
+                        <div class="cbar2">
+                            <img src="https://paulscotti.github.io/images/iem_crop.pdf" style="width: 300px">
+                        </div>
+                    </div>
+                </h3>
+            </div>
+        </div>
+    </header>
+
     <!-- InterGroup -->
     <header>
         <div class="container animated fadeIn" style="width: 90%; max-width: 3000px; padding-top: 6px; padding-bottom: 0px">
@@ -185,7 +218,7 @@ async src="//gc.zgo.at/count.js"></script>
                     </a>
                     <div class="crow">
                         <div class="cbar">
-                            We simultaneously measured forgetting via directed forgetting (subj tries to forget item) and recognition-induced forgetting (subj recalls a related item such that target item gets forgotten). Which is a stronger effect?
+                            We simultaneously measured forgetting via directed forgetting (subject tries to forget item) and recognition-induced forgetting (subject recalls a related item such that target item gets forgotten). We found that RIF produced a stronger forgetting effect than DF. Also found DF is susceptible to response confusion (I remember object was associated w/ Forget instruction, should I report "New"?) and that nearly half of subjects may have disregarded the Forget cues. RIF > DF holds after controlling for these. If your goal is to induce the largest forgetting effect and you don’t care how, unintentional forgetting by recalling a related memory seems to be better choice.
                         </div>
                         <div class="cbar2">
                             <img src="https://paulscotti.github.io/images/df_procedure.png" style="width: 600px">
