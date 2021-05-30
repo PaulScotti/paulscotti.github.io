@@ -1054,7 +1054,7 @@
         <h3>Simulation</h3>
         In this simulated dataset we have 1 subject. This subject looked at an oriented grating (aka "gabor") on each of 8 trials. On every trial the gabor was a different orientation. We want to train a model that can predict the orientation of the gabor from the subject's brain activations. Note that since every trial presented a uniquely oriented gabor, a method such as <a href="#mvpc">multivoxel pattern classification (MVPC)</a> would not be ideal, because MVPC can only predict stimuli that were used in the training of the model. Instead, we want to train a flexible model capable of predicting stimuli that were not used in the training of the model. Encoding & decoding models are perfect for such a problem. We will implement an inverted encoding model (a very simple kind of encoding and decoding model) to predict the orientation of the presented gabors.
         <p>
-            <img style="-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;" src="file:///Users/scotti/Downloads/Screen%20Shot%202021-05-30%20at%2010.24.19%20AM.png" width="389" height="100"></img>
+            <img style="-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;" src="http://paulscotti.github.io/FMRIPlayground/methods/encoding_decoding/gabor.png" width="389" height="100"></img>
         </p>
         First import the data and a few standard Python packages.
         <input id="ed1" class="toggle" type="checkbox"><label for="ed1" class="lbl-toggle">See code</label><div class="collapsible-content"><pre><code>
