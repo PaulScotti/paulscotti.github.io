@@ -1336,8 +1336,8 @@
             num_voxels = voxel_by_timeseries.shape[0] #100 voxels
             num_TRs = voxel_by_timeseries.shape[1] #180 TRs
         </code></pre></div>
-        In this simulated dataset we have 1 subject and 100 voxels. These voxels are ordered such that the series of voxels progresses from posterior to anterior visual cortex. This means that theoretically we should expect that more anterior voxels represent farther eccentricities. 
-        <center><img src="https://paulscotti.github.io/FMRIPlayground/methods/retinotopy/dougherty_etal_2013.png" width="500px"></center>
+        In this simulated dataset we have 1 subject and 100 voxels and our aim will be to characterize the receptive field of each voxel in terms of its preferred eccentricity. The series of voxels progresses from posterior to anterior visual cortex, meaning that theoretically we should expect that more anterior voxels represent farther eccentricities (see picture below which shows a representative retinotopic map for eccentricity and polar angle). 
+        <center><img src="https://paulscotti.github.io/FMRIPlayground/methods/retinotopy/dougherty_etal_2003.png" width="500px"><br>Dougherty_</center>
         <input id="ret2" class="toggle" type="checkbox"><label for="ret2" class="lbl-toggle">See code</label><div class="collapsible-content"><pre><code>
             plt.plot(voxel_by_timeseries[0,:])
             plt.xticks(np.arange(0,num_TRs+1,30))
