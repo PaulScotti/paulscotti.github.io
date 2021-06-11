@@ -13,8 +13,7 @@
   const startDate = new Date(); 
   const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
   </script>
-  <!-- Preload images before starting the expt so there are no loading issues mid-experiment -->
-  <script src="https://paulscotti.github.io/mturk/sketch/loadimg.js"></script>
+  <!-- Custom functions -->
   <script> 
     function counter(start, end, interval) {
       if (interval == undefined) {
@@ -29,6 +28,39 @@
         start = start + interval;
       }
       return result;
+    }
+    function derangementNumber(n) {
+      if(n == 0) {
+          return 1;
+      }
+      var factorial = 1;
+      while(n) {
+          factorial *= n--;
+      }
+      return Math.floor(factorial / Math.E);
+    }
+    function derange(array) {
+        array = array.slice();
+        var mark = array.map(function() { return false; });
+        for(var i = array.length - 1, u = array.length - 1; u > 0; i--) {
+            if(!mark[i]) {
+                var unmarked = mark.map(function(_, i) { return i; })
+                    .filter(function(j) { return !mark[j] && j < i; });
+                var j = unmarked[Math.floor(Math.random() * unmarked.length)];
+
+                var tmp = array[j];
+                array[j] = array[i];
+                array[i] = tmp;
+
+                // this introduces the unbiased random characteristic
+                if(Math.random() < u * derangementNumber(u - 1) /  derangementNumber(u + 1)) {
+                    mark[j] = true;
+                    u--;
+                }
+                u--;
+            }
+        }
+        return array;
     }
   </script>
   <!-- Add CSS elements -->
@@ -46,10 +78,6 @@
       position: relative;
       display: none;
     }
-    #allItems {
-      position: relative;
-      cursor: none;
-    }
     #fixation {
       position: absolute;
       width: 600px;
@@ -57,6 +85,64 @@
       text-align: center;
       font-size: 30px;
       font-weight: bold;
+    }
+    #item {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      top:200px;
+      left:50px;
+      display: none;
+    }
+    #item2 {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      top:200px;
+      left:150px;
+      display: none;
+    }
+    #progress {
+      position:absolute;
+      bottom:-5px;
+      left:5px;
+    }
+    .number_buttons{
+      position:absolute;
+      bottom:100px;
+      font-size:32px;
+    }
+    #dissimilar {
+      left:80px;
+      bottom:60px;
+    }
+    #identical {
+      right:80px;
+      bottom:60px;
+    }
+    #one {
+      left:165px;
+      text-decoration: none;
+    }
+    #two {
+      left:215px;
+      text-decoration: none;
+    }
+    #three {
+      left:265px;
+      text-decoration: none;
+    }
+    #four {
+      right:265px;
+      text-decoration: none;
+    }
+    #five {
+      right:215px;
+      text-decoration: none;
+    }
+    #six {
+      right:165px;
+      text-decoration: none;
     }
     #Button {
       display: inline-block;
@@ -116,11 +202,15 @@
       margin-top: 30px;
     }
   </style>
+  <!-- Preload images so they dont need to be loaded mid-experiment -->
+  <script>
+    document.write('<img id="frog1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png" style="position:absolute;display:none"><img id="frog2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/2.png" style="position:absolute;display:none"><img id="frog3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/3.png" style="position:absolute;display:none"><img id="frog4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/4.png" style="position:absolute;display:none"><img id="frog5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/5.png" style="position:absolute;display:none"><img id="frog6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/6.png" style="position:absolute;display:none"><img id="frog7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/7.png" style="position:absolute;display:none"><img id="frog8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/8.png" style="position:absolute;display:none"><img id="frog9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/9.png" style="position:absolute;display:none"><img id="frog10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/10.png" style="position:absolute;display:none"><img id="frog11" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/11.png" style="position:absolute;display:none"><img id="frog12" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/12.png" style="position:absolute;display:none"><img id="frog13" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/13.png" style="position:absolute;display:none"><img id="frog14" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/14.png" style="position:absolute;display:none"><img id="frog15" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/15.png" style="position:absolute;display:none"><img id="frog16" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/16.png" style="position:absolute;display:none"><img id="frog17" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/17.png" style="position:absolute;display:none"><img id="frog18" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/18.png" style="position:absolute;display:none"><img id="frog19" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/19.png" style="position:absolute;display:none"><img id="frog20" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/20.png" style="position:absolute;display:none"><img id="frog21" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/21.png" style="position:absolute;display:none"><img id="frog22" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/22.png" style="position:absolute;display:none"><img id="frog23" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/23.png" style="position:absolute;display:none"><img id="frog24" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/24.png" style="position:absolute;display:none"><img id="frog25" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/25.png" style="position:absolute;display:none"><img id="frog26" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/26.png" style="position:absolute;display:none"><img id="frog27" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/27.png" style="position:absolute;display:none"><img id="frog28" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/28.png" style="position:absolute;display:none"><img id="frog29" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/29.png" style="position:absolute;display:none"><img id="frog30" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/30.png" style="position:absolute;display:none"><img id="frog31" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/31.png" style="position:absolute;display:none"><img id="frog32" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/32.png" style="position:absolute;display:none"><img id="frog33" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/33.png" style="position:absolute;display:none"><img id="frog34" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/34.png" style="position:absolute;display:none"><img id="frog35" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/35.png" style="position:absolute;display:none"><img id="frog36" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/36.png" style="position:absolute;display:none"><img id="frog37" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/37.png" style="position:absolute;display:none"><img id="frog38" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/38.png" style="position:absolute;display:none"><img id="frog39" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/39.png" style="position:absolute;display:none"><img id="frog40" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/40.png" style="position:absolute;display:none"><img id="frog41" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/41.png" style="position:absolute;display:none"><img id="frog42" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/42.png" style="position:absolute;display:none"><img id="frog43" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/43.png" style="position:absolute;display:none"><img id="frog44" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/44.png" style="position:absolute;display:none"><img id="frog45" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/45.png" style="position:absolute;display:none"><img id="frog46" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/46.png" style="position:absolute;display:none"><img id="frog47" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/47.png" style="position:absolute;display:none"><img id="frog48" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/48.png" style="position:absolute;display:none"><img id="frog49" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/49.png" style="position:absolute;display:none"><img id="frog50" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/50.png" style="position:absolute;display:none">')
+  </script>
 </head>
 
 <body>
   <!-- Modal Pop-up Box -->
-  <div id="openModal" class="modalDialog">
+  <div id="openModal" class="modalDialog" style='display:none'>
     <div>
       <a href="#close" onclick="modalContinue();" title="Close" class="close">X</a>
       <p id="openModal_text">Hi!</p>
@@ -147,10 +237,19 @@
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
     <div id="fixation">+</div>
-    <div id="allItems">
-      <img id="itemA" width=300 height=300 style="position:absolute; top:150px; left:150px;"></img>
-    </div>
+    <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <p class="number_buttons" id="dissimilar">Dissimilar</p>
+    <p class="number_buttons" id="one">1</p>
+    <p class="number_buttons" id="two">2</p>
+    <p class="number_buttons" id="three">3</p>
+    <p class="number_buttons" id="four">4</p>
+    <p class="number_buttons" id="five">5</p>
+    <p class="number_buttons" id="six">6</p>
+    <p class="number_buttons" id="identical">Identical</p>
+    <p id='progress'></p>
   </div>
+  <div id="buttonpressed">You pressed</p>
 
   <!-- Initializing JS -->
   <script>
@@ -161,11 +260,20 @@
 
     /* Define variables */
     let modalClosed = false;
-    let curTrial = 0;
-    const numTrials = 100;
+    let curTrial = 1;
     const numImages = 50;
-    const displayTime = 1000; 
-    let itiTime = 500;
+    let displayTime = 3000; //3000
+    let itiTime = 1000; //1000
+    var keyCode = 0;
+    var cur_button = 0;
+    var trialshuffle = counter(1,numImages);
+    trialshuffle.push(999);trialshuffle.push(999); // catch trials
+    trialshuffle.push(-12);trialshuffle.push(-13);trialshuffle.push(-23); // the 3 anchor trials (comparing 1to2, 1to3, and 2to3)
+    trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
+    var numTrials = trialshuffle.length
+    var buttonLog = [];
+    var leftLog = [];
+    var rightLog = [];
 
     // function GetInfo() {
     //   age = prompt('Before we start, can you tell me how old you are (in years)?');
@@ -195,7 +303,15 @@
     // }
 
     /* Start Experiment */
-    StartExperiment()
+    check_key()
+    function check_key() {
+      if (keyCode==32) {
+        StartExperiment()
+      } else {
+        window.setTimeout(check_key, 100);
+      }
+    }
+    // StartExperiment()
     function StartExperiment() {
       if (IsOnTurk() && IsTurkPreview()) {
           alert("Please accept the HIT before continuing.");
@@ -204,6 +320,7 @@
 
       // open pop-up:
       modalClosed = false;
+      $("#openModal").show()
       document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Memorize the colors of the different objects. Good luck!';
       window.location.href = '#openModal';
       checkFlag1();
@@ -212,8 +329,44 @@
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
+          if (trialshuffle[curTrial]==-12){
+            $('#item').attr('src',$('#frog'+1).attr("src"))
+            $('#item').attr('style','display:inline')
+            $('#item2').attr('src',$('#frog'+2).attr("src"))
+            $('#item2').attr('style','display:inline')
+            leftLog.push(1); rightLog.push(2);
+          } else if (trialshuffle[curTrial]==-13){
+            $('#item').attr('src',$('#frog'+1).attr("src"))
+            $('#item').attr('style','display:inline')
+            $('#item2').attr('src',$('#frog'+3).attr("src"))
+            $('#item2').attr('style','display:inline')
+            leftLog.push(1); rightLog.push(3);
+          } else if (trialshuffle[curTrial]==-23){
+            $('#item').attr('src',$('#frog'+2).attr("src"))
+            $('#item').attr('style','display:inline')
+            $('#item2').attr('src',$('#frog'+3).attr("src"))
+            $('#item2').attr('style','display:inline')
+            leftLog.push(2); rightLog.push(3);
+          } else if (trialshuffle[curTrial]==999){
+            random_image = derange(counter(1,numImages))[0]
+            $('#item').attr('src',$('#frog'+random_image).attr("src"))
+            $('#item').attr('style','display:inline')
+            $('#item2').attr('src',$('#frog'+random_image).attr("src"))
+            $('#item2').attr('style','display:inline')
+            leftLog.push(random_image); rightLog.push(random_image);
+          } else {
+            if (curTrial>numImages) {
+              $('#item').attr('src',$('#frog'+curTrial-10).attr("src"))
+              leftLog.push(curTrial-10); rightLog.push(trialshuffle[curTrial]);
+            } else {
+              $('#item').attr('src',$('#frog'+curTrial).attr("src"))
+              leftLog.push(curTrial); rightLog.push(trialshuffle[curTrial]);
+            }
+            $('#item').attr('style','display:inline')
+            $('#item2').attr('src',$('#frog'+trialshuffle[curTrial]).attr("src"))
+            $('#item2').attr('style','display:inline')
+          }
           $('#showTrial').show();
-          
           NextTrial();
         }
       }
@@ -221,32 +374,91 @@
 
     /* Study Phase Start */
     function NextTrial() {
+      console.log(trialshuffle[curTrial])
+      $("#one").attr("style","text-decoration:none")
+      $("#two").attr("style","text-decoration:none")
+      $("#three").attr("style","text-decoration:none")
+      $("#four").attr("style","text-decoration:none")
+      $("#five").attr("style","text-decoration:none")
+      $("#six").attr("style","text-decoration:none")
       if (curTrial >= numTrials) { // if end of study
-        curTrial++;
-        $('#itemA').hide(); // hide object from last trial
-
+        $("#showTrial").hide()
         // open pop-up:
         modalClosed = false;
+        $("#openModal").show()
         document.getElementById("openModal_text").innerHTML =
           'End of Study Phase! <br><br> Before we test your memory for the studied objects, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
         window.location.href = '#openModal';
         checkFlag2();
-        return;
+        return
 
         function checkFlag2() {
           if (modalClosed == false) {
             window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
           } else {
-            ChangeDetection(); // start Practice Phase
-            return; // need return; otherwise the ShowTrial below executes
+            alert('no')
+            return
           }
         }
       } else {
+        setTimeout(function() {
+          buttonLog.push(cur_button);
+          if (cur_button==0) {
+            alert("You did not respond in time! Please select your response using the number keys within the 3 seconds allotted.")
+          }
+          cur_button = 0;
+          console.log("responses:",buttonLog)
+          $('#item').attr('style','display:none')
+          $('#item2').attr('style','display:none')
+          $("#one").attr("style","text-decoration:none")
+          $("#two").attr("style","text-decoration:none")
+          $("#three").attr("style","text-decoration:none")
+          $("#four").attr("style","text-decoration:none")
+          $("#five").attr("style","text-decoration:none")
+          $("#six").attr("style","text-decoration:none")
           setTimeout(function() {
-            itiTime = 500;
             curTrial++;
+            if (trialshuffle[curTrial]==-12){
+              $('#item').attr('src',$('#frog'+1).attr("src"))
+              $('#item').attr('style','display:inline')
+              $('#item2').attr('src',$('#frog'+2).attr("src"))
+              $('#item2').attr('style','display:inline')
+              leftLog.push(1); rightLog.push(2);
+            } else if (trialshuffle[curTrial]==-13){
+              $('#item').attr('src',$('#frog'+1).attr("src"))
+              $('#item').attr('style','display:inline')
+              $('#item2').attr('src',$('#frog'+3).attr("src"))
+              $('#item2').attr('style','display:inline')
+              leftLog.push(1); rightLog.push(3);
+            } else if (trialshuffle[curTrial]==-23){
+              $('#item').attr('src',$('#frog'+2).attr("src"))
+              $('#item').attr('style','display:inline')
+              $('#item2').attr('src',$('#frog'+3).attr("src"))
+              $('#item2').attr('style','display:inline')
+              leftLog.push(2); rightLog.push(3);
+            } else if (trialshuffle[curTrial]==999){
+              random_image = derange(counter(1,numImages))[0]
+              $('#item').attr('src',$('#frog'+random_image).attr("src"))
+              $('#item').attr('style','display:inline')
+              $('#item2').attr('src',$('#frog'+random_image).attr("src"))
+              $('#item2').attr('style','display:inline')
+              leftLog.push(random_image); rightLog.push(random_image);
+            } else {
+              if (curTrial>numImages) {
+                $('#item').attr('src',$('#frog'+curTrial-10).attr("src"))
+                leftLog.push(curTrial-10); rightLog.push(trialshuffle[curTrial]);
+              } else {
+                $('#item').attr('src',$('#frog'+curTrial).attr("src"))
+                leftLog.push(curTrial); rightLog.push(trialshuffle[curTrial]);
+              }
+              $('#item').attr('style','display:inline')
+              $('#item2').attr('src',$('#frog'+trialshuffle[curTrial]).attr("src"))
+              $('#item2').attr('style','display:inline')
+            }
+            $('#progress').text("Trial "+curTrial+" of "+numTrials)
             NextTrial();
           }, itiTime);
+        }, displayTime);
       }
     }
 
@@ -338,6 +550,36 @@
     function modalContinue() {
       modalClosed = true;
       $("#openModal").hide()
+    }
+
+    document.body.onkeyup = function(e){
+      keyCode = e.keyCode;
+      if (keyCode==32) {
+        document.getElementById("buttonpressed").innerHTML="You pressed spacebar! "+keyCode
+      } else if ((keyCode>48) & (keyCode<55)) {
+        cur_button = keyCode-48;
+        $("#one").attr("style","text-decoration:none")
+        $("#two").attr("style","text-decoration:none")
+        $("#three").attr("style","text-decoration:none")
+        $("#four").attr("style","text-decoration:none")
+        $("#five").attr("style","text-decoration:none")
+        $("#six").attr("style","text-decoration:none")
+        if (cur_button==1) {
+          $("#one").attr("style","text-decoration:underline")
+        } else if (cur_button==2) {
+          $("#two").attr("style","text-decoration:underline")
+        } else if (cur_button==3) {
+          $("#three").attr("style","text-decoration:underline")
+        } else if (cur_button==4) {
+          $("#four").attr("style","text-decoration:underline")
+        } else if (cur_button==5) {
+          $("#five").attr("style","text-decoration:underline")
+        } else if (cur_button==6) {
+          $("#six").attr("style","text-decoration:underline")
+        }
+      } else {
+        document.getElementById("buttonpressed").innerHTML="You pressed " + String.fromCharCode(keyCode) + "!"+keyCode
+      }
     }
   </script>
 </body>
