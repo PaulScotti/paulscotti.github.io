@@ -34,7 +34,7 @@ body {
   border: 3px inset gray;
 }
 
-#SameButton {
+#Button {
   display: inline-block;
   color: black;
   border: 3px outset gray;
@@ -45,13 +45,13 @@ body {
   font-family: Arial, Helvetica;
   font-weight: bold;
 }
-#SameButton:hover {
+#Button:hover {
   border: 3px inset gray;
 }
-#SameButton:active {
+#Button:active {
   border: 3px inset gray;
 }
-#SameButton {
+#Button {
   display: none;
 }
 #DiffButton {
@@ -381,10 +381,6 @@ body {
   margin: 0.5em auto;
 }
 
-#openModal {
-  /* display: none; */
-}
-
 .modalDialog {
 	position: fixed;
 	top: 0;
@@ -404,7 +400,6 @@ body {
 	opacity:1;
 	pointer-events: auto;
 }
-
 .modalDialog > div {
 	width: 400px;
 	position: relative;
@@ -415,7 +410,6 @@ body {
   border-color: black;
 	background: #fff;
 }
-
 .close {
 	background: #606061;
 	color: #FFFFFF;
@@ -434,5 +428,3 @@ body {
 	-webkit-box-shadow: 1px 1px 3px #000;
 	box-shadow: 1px 1px 3px #000;
 }
-
-.close:hover { background: #00d9ff; }
