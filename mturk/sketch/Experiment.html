@@ -107,6 +107,7 @@
       -webkit-box-shadow: 1px 1px 3px #000;
       box-shadow: 1px 1px 3px #000;
     }
+    .close:hover { background: #00d9ff; }
     #done {
       display: none;
       width: 600px;
@@ -212,6 +213,7 @@
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
           $('#showTrial').show();
+          
           NextTrial();
         }
       }
@@ -242,7 +244,7 @@
       } else {
           setTimeout(function() {
             itiTime = 500;
-            // curTrial++;
+            curTrial++;
             NextTrial();
           }, itiTime);
       }
@@ -335,6 +337,7 @@
 
     function modalContinue() {
       modalClosed = true;
+      $("#openModal").hide()
     }
   </script>
 </body>
