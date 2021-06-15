@@ -238,7 +238,7 @@
   <div id="showTrial">
     <div id="fixation">+</div>
     <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
-    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
     <p class="number_buttons" id="dissimilar">Dissimilar</p>
     <p class="number_buttons" id="one">1</p>
     <p class="number_buttons" id="two">2</p>
@@ -262,7 +262,7 @@
     let modalClosed = false;
     let curTrial = 1;
     const numImages = 50;
-    let displayTime = 3000; //3000
+    let displayTime = 3000000; //3000
     let itiTime = 1000; //1000
     var keyCode = 0;
     var cur_button = 0;
@@ -302,16 +302,7 @@
     //   }
     // }
 
-    /* Start Experiment */
-    check_key()
-    function check_key() {
-      if (keyCode==32) {
-        StartExperiment()
-      } else {
-        window.setTimeout(check_key, 100);
-      }
-    }
-    // StartExperiment()
+    StartExperiment()
     function StartExperiment() {
       if (IsOnTurk() && IsTurkPreview()) {
           alert("Please accept the HIT before continuing.");
@@ -396,7 +387,7 @@
           if (modalClosed == false) {
             window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
           } else {
-            alert('no')
+            Done()
             return
           }
         }
@@ -405,6 +396,8 @@
           buttonLog.push(cur_button);
           if (cur_button==0) {
             alert("You did not respond in time! Please select your response using the number keys within the 3 seconds allotted.")
+            curTrial--;
+            leftLog.pop();rightLog.pop();buttonLog.pop();
           }
           cur_button = 0;
           console.log("responses:",buttonLog)
@@ -473,7 +466,7 @@
 
     /* Done with the experiment */
     function Done() {
-      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation!<br><br>Please describe any strategy you used to better remember the images. (Also, do you have any general comments? Any technical difficulties?)<br><br>' +
+      document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please leave any comments to the experimenter below (any technical difficulties?).<br><br>' +
         '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
@@ -494,22 +487,36 @@
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
         "seed": chance1.seed,
+        "leftLog": leftLog,
+        "rightLog": rightLog,
+        "buttonLog": buttonLog,
+        "trialshuffle": trialshuffle,
         "comments": $('#comments').val()
       };
 
-      /* save to Firebase server */
+      /* save JSON to server */
       const blob = new Blob([JSON.stringify(d)], {
         type: "application/json"
       });
-      const storageRef = firebase.storage().ref('RIFBias_more2/' + WORKERID + '.json');
-      storageRef.put(blob);
+      let req = new XMLHttpRequest();
+      req.onreadystatechange = () => {
+        if (req.readyState == XMLHttpRequest.DONE) {
+          console.log(req.responseText);
+        }
+      };
+      req.open("POST", "https://api.jsonbin.io/v3/b", true);
+      req.setRequestHeader("Content-Type", "application/json");
+      req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
+      req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
+      req.setRequestHeader("X-Bin-Name", WORKERID + '.json');
+      req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
 
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
         document.forms[0].submit();
-      }, 3000);
+      }, 5000);
     }
 
     /*check all images are loaded before starting*/
