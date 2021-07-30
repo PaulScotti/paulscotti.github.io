@@ -5,6 +5,7 @@
   <script src="https://paulscotti.github.io/mturk/js_code/jquery.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
   let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
@@ -12,6 +13,35 @@
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
   const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+  </script>
+  <!-- Functions to allow dragging images -->
+  <script>
+    function dragMoveListener (event) {
+      var target = event.target
+      // keep the dragged position in the data-x/data-y attributes
+      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+    
+      // translate the element
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+    
+      // update the posiion attributes
+      target.setAttribute('data-x', x)
+      target.setAttribute('data-y', y)
+    }
+    interact('.drag-drop')
+      .draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: 'parent',
+            endOnly: true
+          })
+        ],
+        autoScroll: true,
+        // dragMoveListener from the dragging demo above
+        listeners: { move: dragMoveListener }
+      })
   </script>
   <!-- Custom functions -->
   <script> 
@@ -86,63 +116,85 @@
       font-size: 30px;
       font-weight: bold;
     }
-    #item {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      top:200px;
-      left:50px;
+    #item1 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:0px;
       display: none;
+      top:0px;
     }
     #item2 {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      top:200px;
-      left:150px;
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:100px;
       display: none;
+      top:0px;
+    }
+    #item3 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:200px;
+      top:0px;
+      display: none;
+    }
+    #item4 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      left:300px;
+      top:0px;
+    }
+    #item5 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      left:400px;
+      top:0px;
+    }
+    #item6 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      top:0px;
+      left:500px;
+    }
+    #item7 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      top:100px;
+      left:0px;
+    }
+    #item8 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      top:100px;
+      left:100px;
     }
     #progress {
       position:absolute;
       bottom:-5px;
       left:5px;
     }
+    #object_category {
+      position:absolute;
+      text-decoration: underline;
+      bottom:0px;
+      left:275px;
+    }
     .number_buttons{
       position:absolute;
       bottom:100px;
       font-size:32px;
-    }
-    #dissimilar {
-      left:80px;
-      bottom:60px;
-    }
-    #identical {
-      right:80px;
-      bottom:60px;
-    }
-    #one {
-      left:165px;
-      text-decoration: none;
-    }
-    #two {
-      left:215px;
-      text-decoration: none;
-    }
-    #three {
-      left:265px;
-      text-decoration: none;
-    }
-    #four {
-      right:265px;
-      text-decoration: none;
-    }
-    #five {
-      right:215px;
-      text-decoration: none;
-    }
-    #six {
-      right:165px;
-      text-decoration: none;
     }
     #Button {
       display: inline-block;
@@ -150,10 +202,12 @@
       border: 3px outset gray;
       background-color: #CCCCCC;
       padding: 8px;
-      margin-right: 30px;
+      position: absolute;
       text-decoration: none;
       font-family: Arial, Helvetica;
       font-weight: bold;
+      bottom:5px;
+      right:5px;
     }
     #Button:hover {
       border: 3px inset gray;
@@ -236,21 +290,18 @@
 
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
-    <div id="fixation">+</div>
-    <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
-    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
-    <p class="number_buttons" id="dissimilar">Dissimilar</p>
-    <p class="number_buttons" id="one">1</p>
-    <p class="number_buttons" id="two">2</p>
-    <p class="number_buttons" id="three">3</p>
-    <p class="number_buttons" id="four">4</p>
-    <p class="number_buttons" id="five">5</p>
-    <p class="number_buttons" id="six">6</p>
-    <p class="number_buttons" id="identical">Identical</p>
+    <img class="drag-drop" id="item1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
     <p id='progress'></p>
+    <p id='object_category'>Frogs</p>
+    <button id='Button' onclick="NextTrial()">Confirm</button>
   </div>
-  <div id="buttonpressed">You pressed</p>
-
   <!-- Initializing JS -->
   <script>
     /* Disable context/right-click menu */
@@ -261,19 +312,17 @@
     /* Define variables */
     let modalClosed = false;
     let curTrial = 0;
-    const numImages = 20;
-    // let displayTime = 3000000; //3000
-    let itiTime = 1000;
+    const numTrials = 6;
+    let itiTime = 200;
     var keyCode = 0;
-    var cur_button = 0;
-    var trialshuffle = counter(1,numImages);
-    trialshuffle.push(999);trialshuffle.push(999); // catch trials
-    trialshuffle.push(-12);trialshuffle.push(-13);trialshuffle.push(-23); // the 3 anchor trials (comparing 1to2, 1to3, and 2to3)
-    trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
-    var numTrials = trialshuffle.length
-    var buttonLog = [];
-    var leftLog = [];
-    var rightLog = [];
+    var eightimg = Array();
+    var pos_x = Array();
+    var pos_y = Array();
+    var categories = [];
+    let onsets = [[0,0],[100,0],[200,0],[300,0],[400,0],[500,0],[0,100],[100,100]];
+    var c1=$.getJSON("https://paulscotti.github.io/mturk/sketch/c1.json")
+    var c2=$.getJSON("https://paulscotti.github.io/mturk/sketch/c2.json")
+    var trialshuffle = derange(counter(c1.length))
 
     GetInfo()
     function GetInfo() {
@@ -322,61 +371,49 @@
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
-          if (trialshuffle[curTrial]==-12){
-            $('#item').attr('src',$('#frog'+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#frog'+2).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(1); rightLog.push(2);
-          } else if (trialshuffle[curTrial]==-13){
-            $('#item').attr('src',$('#frog'+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#frog'+3).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(1); rightLog.push(3);
-          } else if (trialshuffle[curTrial]==-23){
-            $('#item').attr('src',$('#frog'+2).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#frog'+3).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(2); rightLog.push(3);
-          } else if (trialshuffle[curTrial]==999){
-            random_image = derange(counter(1,numImages))[0]
-            $('#item').attr('src',$('#frog'+random_image).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#frog'+random_image).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(random_image); rightLog.push(random_image);
-          } else {
-            $('#item').attr('src',$('#frog'+1).attr("src"))
-            leftLog.push(1); rightLog.push(trialshuffle[curTrial]);
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#frog'+trialshuffle[curTrial]).attr("src"))
-            $('#item2').attr('style','display:inline')
+          eightimg[curTrial] = []
+          for (let i = 1; i < 9; i++) {
+            $('#item'+i).attr('src',$('#frog'+i).attr("src"))
+            $('#item'+i).attr('style','display:inline')
+            eightimg[curTrial].push(i)
           }
           $('#showTrial').show();
-          NextTrial();
+          categories.push('frog')
+          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
         }
       }
     }
 
     /* Study Phase Start */
     function NextTrial() {
-      console.log(trialshuffle[curTrial])
-      $("#one").attr("style","text-decoration:none")
-      $("#two").attr("style","text-decoration:none")
-      $("#three").attr("style","text-decoration:none")
-      $("#four").attr("style","text-decoration:none")
-      $("#five").attr("style","text-decoration:none")
-      $("#six").attr("style","text-decoration:none")
-      cur_button = 0;
-      if (curTrial > numTrials) { // if end of study
+      // first record the positions of images
+      let all_moved = true;
+      for (let i = 1; i < 9; i++) { 
+        if (($('#item'+i).attr('data-x') == undefined) || ($('#item'+i).attr('data-x') == 0.0)) {
+          all_moved = false;
+        } else if ((($('#item'+i).attr('data-y')) == undefined) || ($('#item'+i).attr('data-y') == 0.0)) {
+          all_moved = false;
+        }
+      }
+      if (all_moved == false) {
+        alert('Please move all items before proceeding.')
+        return;
+      }
+      pos_x[curTrial]=[]
+      pos_y[curTrial]=[]
+      for (let i = 1; i < 9; i++) { 
+        pos_x[curTrial].push(parseFloat($('#item'+i).attr('data-x')) + onsets[i-1][0])
+        pos_y[curTrial].push(parseFloat($('#item'+i).attr('data-y')) + onsets[i-1][1])
+      }
+      // then proceed to next trial, reset the display and show new images
+      curTrial++;
+      if (curTrial >= numTrials) { // if end of study 
         $("#showTrial").hide()
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
         document.getElementById("openModal_text").innerHTML =
-          'End of Study Phase! <br><br> Before we test your memory for the studied objects, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
+          'End of experiment!';
         window.location.href = '#openModal';
         checkFlag2();
         return
@@ -390,67 +427,25 @@
           }
         }
       } else {
-        proceed_trial()
-        function proceed_trial() {
-          if (cur_button!=0) {
-            buttonLog.push(cur_button);
-            cur_button = 0;
-            console.log("responses:",buttonLog)
-            $('#item').attr('style','display:none')
-            $('#item2').attr('style','display:none')
-            $("#one").attr("style","text-decoration:none")
-            $("#two").attr("style","text-decoration:none")
-            $("#three").attr("style","text-decoration:none")
-            $("#four").attr("style","text-decoration:none")
-            $("#five").attr("style","text-decoration:none")
-            $("#six").attr("style","text-decoration:none")
-            setTimeout(function() {
-              curTrial++;
-              if (trialshuffle[curTrial]==-12){
-                $('#item').attr('src',$('#frog'+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#frog'+2).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(2);
-              } else if (trialshuffle[curTrial]==-13){
-                $('#item').attr('src',$('#frog'+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#frog'+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==-23){
-                $('#item').attr('src',$('#frog'+2).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#frog'+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(2); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==999){
-                random_image = derange(counter(1,numImages))[0]
-                $('#item').attr('src',$('#frog'+random_image).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#frog'+random_image).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(random_image); rightLog.push(random_image);
-              } else {
-                if (curTrial>numImages) {
-                  $('#progress').text("Trial "+curTrial+" of "+numTrials)
-                  NextTrial();
-                } else {
-                  $('#item').attr('src',$('#frog'+(curTrial+1)).attr("src"))
-                  leftLog.push(curTrial+1); rightLog.push(trialshuffle[curTrial]);
-                }
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#frog'+trialshuffle[curTrial]).attr("src"))
-                $('#item2').attr('style','display:inline')
-              }
-              $('#progress').text("Trial "+curTrial+" of "+numTrials)
-              NextTrial();
-            }, itiTime);
-          } else {
-            // console.log("waiting")
-            setTimeout(proceed_trial, 150);
-          }
+        for (let i = 1; i < 9; i++) { 
+          $('#item'+i).attr('style','display:none')
         }
+        setTimeout(function() {
+          if (curTrial<=numTrials) { 
+            eightimg[curTrial] = []
+            for (let i = 1; i < 9; i++) {
+              let j = curTrial*8 + i;
+              console.log(j)
+              $('#item'+i).attr('src',$('#frog'+j).attr("src"))
+              $('#item'+i).attr('style','display:inline')
+              eightimg[curTrial].push(j)
+              $('#item'+i).attr('data-x', 0);
+              $('#item'+i).attr('data-y', 0);
+            }
+          }
+          categories.push('frog')
+          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
+        }, itiTime);
       }
     }
 
@@ -486,10 +481,10 @@
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
         "seed": chance1.seed,
-        "leftLog": leftLog,
-        "rightLog": rightLog,
-        "buttonLog": buttonLog,
-        "trialshuffle": trialshuffle,
+        "eightimg": eightimg,
+        "pos_x": pos_x,
+        "pos_y": pos_y,
+        "categories": categories,
         "comments": $('#comments').val()
       };
 
@@ -520,7 +515,7 @@
 
     /*check all images are loaded before starting*/
     function ImagesReady() {
-      for (var i = 0; i < numImages; i++) {
+      for (var i = 0; i < numTrials; i++) {
           if (!$('#frog' + i)[0].complete) {
               var percentage = i * 100.0 / (test_phase.length);
               percentage = percentage.toFixed(0).toString() + ' %';
@@ -560,32 +555,6 @@
 
     document.body.onkeyup = function(e){
       keyCode = e.keyCode;
-      if (keyCode==32) {
-        document.getElementById("buttonpressed").innerHTML="You pressed spacebar! "+keyCode
-      } else if ((keyCode>48) & (keyCode<55)) {
-        cur_button = keyCode-48;
-        $("#one").attr("style","text-decoration:none")
-        $("#two").attr("style","text-decoration:none")
-        $("#three").attr("style","text-decoration:none")
-        $("#four").attr("style","text-decoration:none")
-        $("#five").attr("style","text-decoration:none")
-        $("#six").attr("style","text-decoration:none")
-        if (cur_button==1) {
-          $("#one").attr("style","text-decoration:underline")
-        } else if (cur_button==2) {
-          $("#two").attr("style","text-decoration:underline")
-        } else if (cur_button==3) {
-          $("#three").attr("style","text-decoration:underline")
-        } else if (cur_button==4) {
-          $("#four").attr("style","text-decoration:underline")
-        } else if (cur_button==5) {
-          $("#five").attr("style","text-decoration:underline")
-        } else if (cur_button==6) {
-          $("#six").attr("style","text-decoration:underline")
-        }
-      } else {
-        document.getElementById("buttonpressed").innerHTML="You pressed " + String.fromCharCode(keyCode) + "!"+keyCode
-      }
     }
   </script>
 </body>
