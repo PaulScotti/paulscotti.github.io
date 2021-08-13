@@ -13,6 +13,8 @@
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
   const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+  var c1=$.getJSON("https://paulscotti.github.io/mturk/sketch/c1.json")
+  var c2=$.getJSON("https://paulscotti.github.io/mturk/sketch/c2.json")
   </script>
   <!-- Functions to allow dragging images -->
   <script>
@@ -180,6 +182,22 @@
       top:100px;
       left:100px;
     }
+    /* #item9 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      top:100px;
+      left:200px;
+    }
+    #item10 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      top:100px;
+      left:300px;
+    } */
     #progress {
       position:absolute;
       bottom:-5px;
@@ -298,6 +316,8 @@
     <img class="drag-drop" id="item6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
     <img class="drag-drop" id="item7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
     <img class="drag-drop" id="item8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <!-- <img class="drag-drop" id="item9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img>
+    <img class="drag-drop" id="item10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs/1.png"></img> -->
     <p id='progress'></p>
     <p id='object_category'>Frogs</p>
     <button id='Button' onclick="NextTrial()">Confirm</button>
@@ -319,10 +339,9 @@
     var pos_x = Array();
     var pos_y = Array();
     var categories = [];
-    let onsets = [[0,0],[100,0],[200,0],[300,0],[400,0],[500,0],[0,100],[100,100]];
-    var c1=$.getJSON("https://paulscotti.github.io/mturk/sketch/c1.json")
-    var c2=$.getJSON("https://paulscotti.github.io/mturk/sketch/c2.json")
-    var trialshuffle = derange(counter(c1.length))
+    let onsets = [[0,0],[100,0],[200,0],[300,0],[400,0],[500,0],[0,100],[100,100], [200,100], [300,100]];
+    c1 = c1.responseJSON; c2 = c2.responseJSON;
+    let trialshuffle = derange(counter(0,c1.length))
 
     GetInfo()
     function GetInfo() {
@@ -434,7 +453,7 @@
           if (curTrial<=numTrials) { 
             eightimg[curTrial] = []
             for (let i = 1; i < 9; i++) {
-              let j = curTrial*8 + i;
+              let j = curTrial*10 + i;
               console.log(j)
               $('#item'+i).attr('src',$('#frog'+j).attr("src"))
               $('#item'+i).attr('style','display:inline')
