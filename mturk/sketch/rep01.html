@@ -5,9 +5,9 @@
   <script src="https://paulscotti.github.io/mturk/js_code/jquery.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
+  <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
   const startDate = new Date(); 
-  const chance1 = Chance(WORKERID); Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
   </script>
   <!-- Custom functions -->
   <script> 
@@ -200,16 +200,35 @@
   </style>
   <!-- Preload images so they dont need to be loaded mid-experiment -->
   <script>
-    document.write('<img id="frog1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/1.png" style="position:absolute;display:none"><img id="frog2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/2.png" style="position:absolute;display:none"><img id="frog3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/3.png" style="position:absolute;display:none"><img id="frog4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/4.png" style="position:absolute;display:none"><img id="frog5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/5.png" style="position:absolute;display:none"><img id="frog6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/6.png" style="position:absolute;display:none"><img id="frog7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/7.png" style="position:absolute;display:none"><img id="frog8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/8.png" style="position:absolute;display:none"><img id="frog9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/9.png" style="position:absolute;display:none"><img id="frog10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/10.png" style="position:absolute;display:none"><img id="frog11" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/11.png" style="position:absolute;display:none"><img id="frog12" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/12.png" style="position:absolute;display:none"><img id="frog13" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/13.png" style="position:absolute;display:none"><img id="frog14" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/14.png" style="position:absolute;display:none"><img id="frog15" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/15.png" style="position:absolute;display:none"><img id="frog16" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/16.png" style="position:absolute;display:none"><img id="frog17" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/17.png" style="position:absolute;display:none"><img id="frog18" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/18.png" style="position:absolute;display:none"><img id="frog19" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/19.png" style="position:absolute;display:none"><img id="frog20" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/20.png" style="position:absolute;display:none"><img id="frog21" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/21.png" style="position:absolute;display:none"><img id="frog22" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/22.png" style="position:absolute;display:none"><img id="frog23" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/23.png" style="position:absolute;display:none"><img id="frog24" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/24.png" style="position:absolute;display:none"><img id="frog25" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/25.png" style="position:absolute;display:none"><img id="frog26" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/26.png" style="position:absolute;display:none"><img id="frog27" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/27.png" style="position:absolute;display:none"><img id="frog28" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/28.png" style="position:absolute;display:none"><img id="frog29" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/29.png" style="position:absolute;display:none"><img id="frog30" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/30.png" style="position:absolute;display:none"><img id="frog31" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/31.png" style="position:absolute;display:none"><img id="frog32" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/32.png" style="position:absolute;display:none"><img id="frog33" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/33.png" style="position:absolute;display:none"><img id="frog34" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/34.png" style="position:absolute;display:none"><img id="frog35" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/35.png" style="position:absolute;display:none"><img id="frog36" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/36.png" style="position:absolute;display:none"><img id="frog37" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/37.png" style="position:absolute;display:none"><img id="frog38" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/38.png" style="position:absolute;display:none"><img id="frog39" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/39.png" style="position:absolute;display:none"><img id="frog40" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/40.png" style="position:absolute;display:none"><img id="frog41" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/41.png" style="position:absolute;display:none"><img id="frog42" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/42.png" style="position:absolute;display:none"><img id="frog43" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/43.png" style="position:absolute;display:none"><img id="frog44" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/44.png" style="position:absolute;display:none"><img id="frog45" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/45.png" style="position:absolute;display:none"><img id="frog46" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/46.png" style="position:absolute;display:none"><img id="frog47" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/47.png" style="position:absolute;display:none"><img id="frog48" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/48.png" style="position:absolute;display:none"><img id="frog49" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/49.png" style="position:absolute;display:none"><img id="frog50" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space12/50.png" style="position:absolute;display:none">')
+    document.write('<img id="frog1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/1.png" style="position:absolute;display:none"><img id="frog2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/2.png" style="position:absolute;display:none"><img id="frog3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/3.png" style="position:absolute;display:none"><img id="frog4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/4.png" style="position:absolute;display:none"><img id="frog5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/5.png" style="position:absolute;display:none"><img id="frog6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/6.png" style="position:absolute;display:none"><img id="frog7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/7.png" style="position:absolute;display:none"><img id="frog8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/8.png" style="position:absolute;display:none"><img id="frog9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/9.png" style="position:absolute;display:none"><img id="frog10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/10.png" style="position:absolute;display:none"><img id="frog11" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/11.png" style="position:absolute;display:none"><img id="frog12" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/12.png" style="position:absolute;display:none"><img id="frog13" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/13.png" style="position:absolute;display:none"><img id="frog14" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/14.png" style="position:absolute;display:none"><img id="frog15" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/15.png" style="position:absolute;display:none"><img id="frog16" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/16.png" style="position:absolute;display:none"><img id="frog17" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/17.png" style="position:absolute;display:none"><img id="frog18" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/18.png" style="position:absolute;display:none"><img id="frog19" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/19.png" style="position:absolute;display:none"><img id="frog20" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/20.png" style="position:absolute;display:none"><img id="frog21" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/21.png" style="position:absolute;display:none"><img id="frog22" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/22.png" style="position:absolute;display:none"><img id="frog23" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/23.png" style="position:absolute;display:none"><img id="frog24" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/24.png" style="position:absolute;display:none"><img id="frog25" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/25.png" style="position:absolute;display:none"><img id="frog26" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/26.png" style="position:absolute;display:none"><img id="frog27" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/27.png" style="position:absolute;display:none"><img id="frog28" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/28.png" style="position:absolute;display:none"><img id="frog29" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/29.png" style="position:absolute;display:none"><img id="frog30" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/30.png" style="position:absolute;display:none"><img id="frog31" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/31.png" style="position:absolute;display:none"><img id="frog32" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/32.png" style="position:absolute;display:none"><img id="frog33" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/33.png" style="position:absolute;display:none"><img id="frog34" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/34.png" style="position:absolute;display:none"><img id="frog35" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/35.png" style="position:absolute;display:none"><img id="frog36" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/36.png" style="position:absolute;display:none"><img id="frog37" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/37.png" style="position:absolute;display:none"><img id="frog38" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/38.png" style="position:absolute;display:none"><img id="frog39" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/39.png" style="position:absolute;display:none"><img id="frog40" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/40.png" style="position:absolute;display:none"><img id="frog41" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/41.png" style="position:absolute;display:none"><img id="frog42" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/42.png" style="position:absolute;display:none"><img id="frog43" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/43.png" style="position:absolute;display:none"><img id="frog44" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/44.png" style="position:absolute;display:none"><img id="frog45" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/45.png" style="position:absolute;display:none"><img id="frog46" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/46.png" style="position:absolute;display:none"><img id="frog47" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/47.png" style="position:absolute;display:none"><img id="frog48" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/48.png" style="position:absolute;display:none"><img id="frog49" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/49.png" style="position:absolute;display:none"><img id="frog50" src="https://paulscotti.github.io/mturk/sketch/stimuli/frogs8/50.png" style="position:absolute;display:none">')
   </script>
 </head>
 
 <body>
   <!-- Consent statement: -->
-  <div id="consentDiv"><center><h1>Ohio State University Consent to Participate in Research</h1><p><b>This is a consent form for research participation.</b> It contains important information about this study and what to expect if you decide to participate. If any questions arise, please contact scottibrain@gmail.com</p>
-    <iframe src="https://maxceylab.github.io/mturk_irb_consent_p1to2.pdf" width="100%" height="500px"></iframe>
-    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p><br></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();GetInfo();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton" style="display: inline;">I consent to participate in this study</a></p>
+  <div id="consentDiv"><center><h1>Ohio State University Consent to Participate in Research</h1><p><b>This is a consent form for research participation.</b> It contains important information about this study and what to expect if you decide to participate.<br>If any questions arise, please contact scottibrain@gmail.com</p>
+    <iframe src="https://paulscotti.github.io/mturk/jglab_consent.pdf" width="60%" height="500px"></iframe>
+    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#info').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="Button" style="display: inline;">I consent to participate in this study</a></p>
   </center></div>
+
+  <!-- Subject info screen -->
+  <div id="info" style='display:none; text-align: left; margin-left: 25%'>
+    <h1>Subject Information</h1>
+    Hello, before we begin please provide us with some information about yourself.
+    <p>
+    Full Name: <textarea id="name" style="width: 200px; height: 1.5rem"></textarea><br><br>
+    Email: <textarea id="email" style="width: 200px; height: 1.5rem"></textarea><br><br>
+    Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
+    Age: <textarea id="age" style="width: 100px; height: 1.5rem"></textarea><br><br>
+    Race (optional): <textarea id="race" style="width: 100px; height: 1.5rem"></textarea><br><br>
+    Ethnicity (optional): Hispanic/Latino <input type="checkbox" id="hispanic"> &nbsp;&nbsp; Not Hispanic/Latino<input type="checkbox" id="nothispanic"><br><br>
+    Contact for later experiment opportunity (optional)? <input type="checkbox" id="opprtunity"><br><br>
+    Normal or corrected-to-normal visual acuity? <input type="checkbox" id="acuity" checked><br><br>
+    Normal color vision? <input type="checkbox" id="colorvision" checked><br><br>
+    Normal binocular depth perception? <input type="checkbox" id="binocular" checked><br><br>
+    </p>
+    <button id="Button" onclick="CheckInfo()">Continue</button>
+  </div>
 
   <!-- Modal Pop-up Box -->
   <div id="openModal" class="modalDialog" style='display:none'>
@@ -219,19 +238,17 @@
     </div>
   </div>
   <!-- Hidden MTurk forms sheet to submit expt upon completion -->
-  <form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
-  <input type="hidden" name="assignmentId" id="assignmentId" value="" >
-  <input type="hidden" name="foo" value="" >
-  <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
+  <!-- <form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST"> -->
+  <!-- <input type="hidden" name="assignmentId" id="assignmentId" value="" > -->
+  <!-- <input type="hidden" name="foo" value="" > -->
+  <!-- <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form> -->
 
   <!-- Screen after submitting expt -->
-  <div id="done">
+  <div id="done" style='display:none; text-align: left; margin-left: 25%'>
     <div id="doneText">
     </div>
     <div>
-      <center>
-        <a href="javascript:void(0);" onclick="SaveData()" id="submitForm">Click to Submit</a>
-      </center>
+        <a href="javascript:void(0);" onclick="SaveData()" id="Button">Click to Submit</a>
     </div>
   </div>
   <div id="saving" style="display:none">Saving . . .</div>
@@ -260,19 +277,27 @@
         return false;
     }
 
+    const chance1 = Chance($('#name').val()); 
+    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+
     /* Define variables */
     let modalClosed = false;
     let curTrial = 0;
-    const numImages = 12;
+    const numImages = 8;
     // let displayTime = 3000000; //3000
     let itiTime = 500;
     var keyCode = 0;
     var cur_button = 0;
     //var trialshuffle = counter(1,numImages);
-    var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [9, 1], [1, 10], [1, 11], [1, 12], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [9, 2], [2, 10], [11, 2], [2, 12], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [9, 3], [3, 10], [3, 11], [3, 12], [5, 4], [6, 4], [4, 7], [4, 8], [9, 4], [10, 4], [11, 4], [4, 12], [6, 5], [5, 7], [5, 8], [9, 5], [5, 10], [5, 11], [12, 5], [7, 6], [6, 8], [9, 6], [6, 10], [11, 6], [6, 12], [7, 8], [9, 7], [7, 10], [7, 11], [12, 7], [9, 8], [8, 10], [8, 11], [8, 12], [10, 9], [9, 11], [9, 12], [10, 11], [10, 12], [12, 11]];
+    // var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [9, 1], [1, 10], [1, 11], [1, 12], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [9, 2], [2, 10], [11, 2], [2, 12], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [9, 3], [3, 10], [3, 11], [3, 12], [5, 4], [6, 4], [4, 7], [4, 8], [9, 4], [10, 4], [11, 4], [4, 12], [6, 5], [5, 7], [5, 8], [9, 5], [5, 10], [5, 11], [12, 5], [7, 6], [6, 8], [9, 6], [6, 10], [11, 6], [6, 12], [7, 8], [9, 7], [7, 10], [7, 11], [12, 7], [9, 8], [8, 10], [8, 11], [8, 12], [10, 9], [9, 11], [9, 12], [10, 11], [10, 12], [12, 11]];
+    var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [5, 4], [6, 4], [4, 7], [4, 8], [6, 5], [5, 7], [5, 8], [7, 6], [6, 8], [7, 8]];
+    trialshuffle = trialshuffle.concat(trialshuffle)
     trialshuffle.push(999);trialshuffle.push(999); // catch trials
     //trialshuffle.push(-12);trialshuffle.push(-13);trialshuffle.push(-23); // the 3 anchor trials (comparing 1to2, 1to3, and 2to3)
     trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
+    var trialid = Array(trialshuffle.length/2).fill(1)
+    trialid = trialid.concat(Array(trialshuffle.length/2).fill(2))
+    trialid = derange(trialid)
     var numTrials = trialshuffle.length
     var buttonLog = [];
     var leftLog = [];
@@ -280,41 +305,16 @@
     let start_time = 0;
     var rts = [];
 
-    function GetInfo() {
-      age = prompt('Before we start, can you tell me how old you are (in years)?');
-
-      while (age > 100 || age < 18 || !(age>=18)) {
-        age = prompt('Can you tell me how old you are (e.g., 18, not the year you were born)?');
+    function CheckInfo() {
+      if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
+        alert('Please fill out all required input fields.')
+      } else {
+        $('#info').hide()
+        StartExperiment()
       }
-
-      if (age > 45) {
-        $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 45 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
-      }
-
-      sex = prompt('And are you male (M), female (F), non-binary (B), or prefer not to answer (NA)?');
-
-      while (!(sex == 'M' || sex == 'F' || sex == 'B' || sex == 'NA' || sex == 'm' || sex == 'f' || sex == 'b' || sex == 'na' || sex == 'female' || sex == 'male' || sex == 'Female' || sex == 'Male')) {
-        sex = prompt('Are you male (M), female (F), non-binary (B), or prefer not to answer (NA)? Type one of the options shown in parentheses.');
-      }
-      if (sex == 'M' || sex == 'm' || sex == 'male' || sex == 'Male') {
-        sex = 'm';
-      } else if (sex == 'F' || sex == 'f' || sex == 'female' || sex == 'Female') {
-        sex = 'f';
-      } else if (sex == 'B' || sex == 'b') {
-        sex = 'b';
-      } else if (sex == 'NA' || sex == 'na') {
-        sex = 'na';
-      }
-
-      StartExperiment()
     }
 
     function StartExperiment() {
-      if (IsOnTurk() && IsTurkPreview()) {
-          alert("Please accept the HIT before continuing.");
-          return false;
-      }
-
       // open pop-up:
       modalClosed = false;
       $("#openModal").show()
@@ -379,23 +379,7 @@
       cur_button = 0;
       if (curTrial >= numTrials) { // if end of study
         $("#showTrial").hide()
-        // open pop-up:
-        modalClosed = false;
-        $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML =
-          'End of Study Phase! <br><br> Before we test your memory for the studied objects, we will do a short task. <br><br> You will see an array of colored squares appear for a brief moment. Then, one colored square will be presented. The task is to select whether the colored square is the same color or a different color than it was before.';
-        window.location.href = '#openModal';
-        checkFlag2();
-        return
-
-        function checkFlag2() {
-          if (modalClosed == false) {
-            window.setTimeout(checkFlag2, 100); /* this checks the flag every 100 milliseconds*/
-          } else {
-            Done()
-            return
-          }
-        }
+        Done()
       } else {
         proceed_trial()
         function proceed_trial() {
@@ -482,10 +466,17 @@
       $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
       const d = {
-        "ID": WORKERID,
-        "ASSIGNMENTID": ASSIGNMENTID,
-        "age": age,
-        "sex": sex,
+        "name": $('#name').val(),
+        "email": $('#email').val(),
+        "age": $('#age').val(),
+        "gender": $('#gender').val(),
+        "race": $('#race').val(),
+        "hispanic": $('#hispanic').prop('checked'),
+        "nothispanic": $('#nothispanic').prop('checked'),
+        "opportunity": $('#opportunity').prop('checked'),
+        "acuity": $('#acuity').prop('checked'),
+        "colorvision": $('#colorvision').prop('checked'),
+        "binocular": $('#binocular').prop('checked'),
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
@@ -512,14 +503,14 @@
       req.setRequestHeader("Content-Type", "application/json");
       req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
       req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
-      req.setRequestHeader("X-Bin-Name", WORKERID + '.json');
+      req.setRequestHeader("X-Bin-Name", name.split(" ").join("") + '.json');
       req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
 
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
-        document.forms[0].submit();
+        document.getElementById("saving").innerHTML = "Experiment complete! Please wait 48 hours for credit to be awarded. You may close this window.";
       }, 5000);
     }
 
