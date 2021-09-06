@@ -6,10 +6,9 @@
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
   <script>
   const startDate = new Date(); 
-  // var cover=[[15,16,18,22,30],[14,17,21,29,30],[13,16,20,28,29],[12,19,27,28,30],[11,18,26,27,29],[10,17,25,26,28],[10,11,15,20,23],[9,16,24,25,27],[9,10,14,19,22],[8,23,24,26,30],[8,9,13,18,21],[7,22,23,25,29],[7,9,15,21,26],[7,8,12,17,20],[6,21,22,24,28],[6,13,15,17,27],[6,8,14,20,25],[6,7,11,16,19],[5,20,21,23,27],[5,12,14,16,26],[5,7,13,19,24],[5,6,10,18,30],[4,19,20,22,26],[4,14,15,24,27],[4,11,13,25,30],[4,6,12,18,23],[4,5,9,17,29],[3,18,19,21,25],[3,13,14,23,26],[3,10,12,24,29],[3,6,9,12,15],[3,5,11,17,22],[3,4,8,16,28],[2,17,18,20,24],[2,12,13,22,25],[2,9,11,23,28],[2,8,15,19,29],[2,5,8,11,14],[2,4,10,16,21],[2,3,7,27,30],[1,16,17,19,23],[1,11,12,21,24],[1,8,10,22,27],[1,7,14,18,28],[1,5,15,25,28],[1,4,7,10,13],[1,3,9,20,30],[1,2,6,26,29]];
-  var cover = [[2,3,7,9],[6,7,8,10],[1,7,15,16],[1,3,12,14],[1,2,6,13],[1,9,10,11],[2,4,10,12],[1,4,5,8],[10,13,14,16],[8,9,12,16],[3,8,11,13],[2,5,11,16],[5,7,12,13],[3,4,6,16],[5,6,9,14],[2,8,14,15],[4,9,13,15],[6,11,12,15],[4,7,11,14],[3,5,10,15]];
   </script>
   <!-- Functions to allow dragging images -->
   <script>
@@ -88,6 +87,21 @@
             }
         }
         return array;
+    }
+    function dualshuffle(obj1, obj2) {
+      var index = obj1.length;
+      var rnd, tmp1, tmp2;
+
+      while (index) {
+        rnd = Math.floor(Math.random() * index);
+        index -= 1;
+        tmp1 = obj1[index];
+        tmp2 = obj2[index];
+        obj1[index] = obj1[rnd];
+        obj2[index] = obj2[rnd];
+        obj1[rnd] = tmp1;
+        obj2[rnd] = tmp2;
+      }
     }
   </script>
   <!-- Add CSS elements -->
@@ -215,12 +229,9 @@
       border: 3px outset gray;
       background-color: #CCCCCC;
       padding: 8px;
-      position: absolute;
       text-decoration: none;
       font-family: Arial, Helvetica;
       font-weight: bold;
-      bottom:5px;
-      right:5px;
     }
     #Button:hover {
       border: 3px inset gray;
@@ -339,7 +350,7 @@
     <img class="drag-drop" id="item10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
     <p id='progress'></p>
     <p id='object_category'>Frogs</p>
-    <button id='Button' onclick="NextTrial()">Confirm</button>
+    <button id='Button' onclick="NextTrial()" style="position: absolute; bottom: 5px; right: 5px;">Confirm</button>
   </div>
   <!-- Initializing JS -->
   <script>
@@ -348,28 +359,39 @@
         return false;
     }
 
+    // set rng seed based on name
+    const chance1 = Chance($('#name').val()); 
+    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+
     /* Define variables */
     let modalClosed = false;
     let curTrial = 0;
-    const numTrials = 20;
-    let itiTime = 200;
+    let itiTime = 500;
     var keyCode = 0;
-    var eightimg = Array();
+    var imgcombo = Array();
     var pos_x = Array();
     var pos_y = Array();
-    var trialcat = [];
     var rts = [];
     let start_time = 0;
     let onsets = [[0,0],[100,0],[200,0],[300,0],[400,0],[500,0],[0,100],[100,100], [200,100], [300,100]];
-    var trialid = Array(trialshuffle.length/2).fill(0)
-    trialid = trialid.concat(Array(trialshuffle.length/2).fill(1))
-    trialid = derange(trialid)
+    var cover = [[1,2,3,4],[1,5,6,7],[2,3,5,8],[4,6,7,8],[2,3,6,7],[1,4,5,8]];
+    var trialid = Array(cover.length).fill(0)
+    trialid = trialid.concat(Array(cover.length).fill(1))
+    cover = cover.concat(cover)
+    cover = cover.concat(cover)
+    trialid = trialid.concat(trialid)
+    dualshuffle(cover,trialid);
+    var numTrials = trialid.length
     var categories = ["frog","box"]
     var cur_cat = "frog";
 
     function CheckInfo() {
       if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
+      } else if (!(parseFloat($('#age').val()) < 70)) {
+        alert('Please input a valid age.')
+      } else if (!(parseFloat($('#age').val()) >= 18)) {
+        alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
         $('#info').hide()
         StartExperiment()
@@ -388,25 +410,25 @@
       document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Drag and drop the images such that more similar doodles are close together and less similar doodles are farther apart. Good luck!';
       window.location.href = '#openModal';
       checkFlag1();
+      cur_cat = categories[trialid[0]];
+      $("#object_category").text(cur_cat);
 
       function checkFlag1() {
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
-          eightimg[curTrial] = cover[curTrial]
+          imgcombo[curTrial] = cover[curTrial]
           for (let i = 1; i < 5; i++) {
-            $('#item'+i).attr('src',$('#frog'+cover[curTrial][i-1]).attr("src"))
+            $('#item'+i).attr('src',$('#'+cur_cat+cover[curTrial][i-1]).attr("src"))
             $('#item'+i).attr('style','display:inline')
           }
           $('#showTrial').show();
-          trialcat.push('frog')
           $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
           start_time = new Date();
         }
       }
     }
 
-    /* Study Phase Start */
     function NextTrial() {
       // first record the positions of images
       let all_moved = true;
@@ -430,6 +452,8 @@
       rts.push(new Date() - start_time);
       // then proceed to next trial, reset the display and show new images
       curTrial++;
+      cur_cat = categories[trialid[curTrial]];
+      $("#object_category").text(cur_cat)
       if (curTrial >= numTrials) { // if end of study 
         $("#showTrial").hide()
         // open pop-up:
@@ -455,15 +479,14 @@
         }
         setTimeout(function() {
           if (curTrial<=numTrials) { 
-            eightimg[curTrial] = cover[curTrial]
+            imgcombo[curTrial] = cover[curTrial]
             for (let i = 1; i < 5; i++) {
-              $('#item'+i).attr('src',$('#frog'+cover[curTrial][i-1]).attr("src"))
+              $('#item'+i).attr('src',$('#'+cur_cat+cover[curTrial][i-1]).attr("src"))
               $('#item'+i).attr('style','display:inline')
               $('#item'+i).attr('data-x', 0);
               $('#item'+i).attr('data-y', 0);
             }
           }
-          trialcat.push('frog')
           $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
           start_time = new Date();
         }, itiTime);
@@ -489,7 +512,7 @@
 
     /* What to save and put it on server */
     function SaveData() {
-      $('#done').children().hide();
+      $('#done').hide();
       $('#saving').show();
       // $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
@@ -510,11 +533,11 @@
         "Date": startDate.getMonth()+1 + '_' + startDate.getDate() + '_hr' + startDate.getHours(),
         "rts": rts,
         "seed": chance1.seed,
-        "eightimg": eightimg,
+        "imgcombo": imgcombo,
         "pos_x": pos_x,
         "pos_y": pos_y,
-        "categories":, categories,
-        "trialcat": trialcat,
+        "categories": categories,
+        "cover": cover,
         "trialid": trialid,
         "comments": $('#comments').val()
       };
@@ -533,7 +556,7 @@
       req.setRequestHeader("Content-Type", "application/json");
       req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
       req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
-      req.setRequestHeader("X-Bin-Name", WORKERID + '.json');
+      req.setRequestHeader("X-Bin-Name", name.split(" ").join("") + '.json');
       req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
@@ -547,7 +570,7 @@
     /*check all images are loaded before starting*/
     function ImagesReady() {
       for (var i = 0; i < numTrials; i++) {
-          if (!$('#frog' + i)[0].complete) {
+          if (!$('#'+cur_cat + i)[0].complete) {
               var percentage = i * 100.0 / (test_phase.length);
               percentage = percentage.toFixed(0).toString() + ' %';
 

@@ -6,8 +6,38 @@
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
   <script>
   const startDate = new Date(); 
+  </script>
+  <!-- Functions to allow dragging images -->
+  <script>
+    function dragMoveListener (event) {
+      var target = event.target
+      // keep the dragged position in the data-x/data-y attributes
+      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+    
+      // translate the element
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+    
+      // update the posiion attributes
+      target.setAttribute('data-x', x)
+      target.setAttribute('data-y', y)
+    }
+    interact('.drag-drop')
+      .draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: 'parent',
+            endOnly: true
+          })
+        ],
+        autoScroll: true,
+        // dragMoveListener from the dragging demo above
+        listeners: { move: dragMoveListener }
+      })
   </script>
   <!-- Custom functions -->
   <script> 
@@ -58,6 +88,21 @@
         }
         return array;
     }
+    function dualshuffle(obj1, obj2) {
+      var index = obj1.length;
+      var rnd, tmp1, tmp2;
+
+      while (index) {
+        rnd = Math.floor(Math.random() * index);
+        index -= 1;
+        tmp1 = obj1[index];
+        tmp2 = obj2[index];
+        obj1[index] = obj1[rnd];
+        obj2[index] = obj2[rnd];
+        obj1[rnd] = tmp1;
+        obj2[rnd] = tmp2;
+      }
+    }
   </script>
   <!-- Add CSS elements -->
   <style>
@@ -74,6 +119,15 @@
       position: relative;
       display: none;
     }
+    #showTrial_drag {
+      width: 600px;
+      height: 600px;
+      border: 1px solid black;
+      background: #FFFFFF;
+      margin: 5px auto;
+      position: relative;
+      display: none;
+    }
     #fixation {
       position: absolute;
       width: 600px;
@@ -82,7 +136,7 @@
       font-size: 30px;
       font-weight: bold;
     }
-    #item {
+    #item01 {
       position: relative;
       width: 200px;
       height: 200px;
@@ -90,7 +144,7 @@
       left:50px;
       display: none;
     }
-    #item2 {
+    #item02 {
       position: relative;
       width: 200px;
       height: 200px;
@@ -98,10 +152,53 @@
       left:150px;
       display: none;
     }
+    #item1 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:0px;
+      display: none;
+      top:0px;
+    }
+    #item2 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:100px;
+      display: none;
+      top:0px;
+    }
+    #item3 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left:200px;
+      top:0px;
+      display: none;
+    }
+    #item4 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      display: none;
+      left:300px;
+      top:0px;
+    }
     #progress {
       position:absolute;
-      bottom:-5px;
+      bottom:0px;
       left:5px;
+    }
+    #progress_drag {
+      position:absolute;
+      bottom:0px;
+      left:5px;
+    }
+    #object_category {
+      position:absolute;
+      font-weight: bold;
+      bottom:0px;
+      left:275px;
     }
     .number_buttons{
       position:absolute;
@@ -256,8 +353,8 @@
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
     <div id="fixation">+</div>
-    <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
-    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
+    <img id="item01" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <img id="item02" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
     <p class="number_buttons" id="dissimilar">Dissimilar</p>
     <p class="number_buttons" id="one">1</p>
     <p class="number_buttons" id="two">2</p>
@@ -266,9 +363,25 @@
     <p class="number_buttons" id="five">5</p>
     <p class="number_buttons" id="six">6</p>
     <p class="number_buttons" id="identical">Identical</p>
-    <p id='progress'></p>
+    <p id='object_category'>frog</p>
+    <p id='progress'>test</p>
   </div>
-  <!-- <div id="buttonpressed">You pressed</p> -->
+  
+  <div id="showTrial_drag">
+    <img class="drag-drop" id="item1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <img class="drag-drop" id="item2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <img class="drag-drop" id="item3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <img class="drag-drop" id="item4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <!-- <img class="drag-drop" id="item5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
+    <!-- <img class="drag-drop" id="item6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
+    <!-- <img class="drag-drop" id="item7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <img class="drag-drop" id="item8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
+    <!-- <img class="drag-drop" id="item9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
+    <img class="drag-drop" id="item10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
+    <p id='progress_drag'>test</p>
+    <p id='object_category'>frog</p>
+    <button id='Button' onclick="NextTrial_drag()" style="position: absolute; bottom: 5px; right: 5px;">Confirm</button>
+  </div>
 
   <!-- Initializing JS -->
   <script>
@@ -289,24 +402,35 @@
     let itiTime = 500;
     var keyCode = 0;
     var cur_button = 0;
-    //var trialshuffle = counter(1,numImages);
-    // var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [9, 1], [1, 10], [1, 11], [1, 12], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [9, 2], [2, 10], [11, 2], [2, 12], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [9, 3], [3, 10], [3, 11], [3, 12], [5, 4], [6, 4], [4, 7], [4, 8], [9, 4], [10, 4], [11, 4], [4, 12], [6, 5], [5, 7], [5, 8], [9, 5], [5, 10], [5, 11], [12, 5], [7, 6], [6, 8], [9, 6], [6, 10], [11, 6], [6, 12], [7, 8], [9, 7], [7, 10], [7, 11], [12, 7], [9, 8], [8, 10], [8, 11], [8, 12], [10, 9], [9, 11], [9, 12], [10, 11], [10, 12], [12, 11]];
     var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [5, 4], [6, 4], [4, 7], [4, 8], [6, 5], [5, 7], [5, 8], [7, 6], [6, 8], [7, 8]];
     trialshuffle = trialshuffle.concat(trialshuffle)
     trialshuffle.push(999);trialshuffle.push(999); // catch trials
-    //trialshuffle.push(-12);trialshuffle.push(-13);trialshuffle.push(-23); // the 3 anchor trials (comparing 1to2, 1to3, and 2to3)
     trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
     var trialid = Array(trialshuffle.length/2).fill(0)
     trialid = trialid.concat(Array(trialshuffle.length/2).fill(1))
     trialid = derange(trialid)
     var categories = ["frog","box"]
     var cur_cat = "frog";
-    var numTrials = trialshuffle.length
+    var numTrials_afc = trialshuffle.length
     var buttonLog = [];
     var leftLog = [];
     var rightLog = [];
     let start_time = 0;
     var rts = [];
+    // drag-and-drop specific:
+    var imgcombo = Array();
+    var pos_x = Array();
+    var pos_y = Array();
+    let curTrial_drag = 0;
+    let onsets = [[0,0],[100,0],[200,0],[300,0],[400,0],[500,0],[0,100],[100,100], [200,100], [300,100]];
+    var cover = [[1,2,3,4],[1,5,6,7],[2,3,5,8],[4,6,7,8],[2,3,6,7],[1,4,5,8]];
+    var trialid_drag = Array(cover.length).fill(0)
+    trialid_drag = trialid_drag.concat(Array(cover.length).fill(1))
+    cover = cover.concat(cover)
+    cover = cover.concat(cover)
+    trialid_drag = trialid_drag.concat(trialid_drag)
+    dualshuffle(cover,trialid_drag);
+    var numTrials = trialid_drag.length + numTrials_afc;
 
     function CheckInfo() {
       if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
@@ -334,42 +458,43 @@
       window.location.href = '#openModal';
       checkFlag1();
       cur_cat = categories[trialid[0]];
+      $("#object_category").text(cur_cat);
 
       function checkFlag1() {
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
           if (trialshuffle[curTrial]==-12){
-            $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+2).attr("src"))
-            $('#item2').attr('style','display:inline')
+            $('#item01').attr('src',$('#'+cur_cat+1).attr("src"))
+            $('#item01').attr('style','display:inline')
+            $('#item02').attr('src',$('#'+cur_cat+2).attr("src"))
+            $('#item02').attr('style','display:inline')
             leftLog.push(1); rightLog.push(2);
           } else if (trialshuffle[curTrial]==-13){
-            $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-            $('#item2').attr('style','display:inline')
+            $('#item01').attr('src',$('#'+cur_cat+1).attr("src"))
+            $('#item01').attr('style','display:inline')
+            $('#item02').attr('src',$('#'+cur_cat+3).attr("src"))
+            $('#item02').attr('style','display:inline')
             leftLog.push(1); rightLog.push(3);
           } else if (trialshuffle[curTrial]==-23){
-            $('#item').attr('src',$('#'+cur_cat+2).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-            $('#item2').attr('style','display:inline')
+            $('#item01').attr('src',$('#'+cur_cat+2).attr("src"))
+            $('#item01').attr('style','display:inline')
+            $('#item02').attr('src',$('#'+cur_cat+3).attr("src"))
+            $('#item02').attr('style','display:inline')
             leftLog.push(2); rightLog.push(3);
           } else if (trialshuffle[curTrial]==999){
             random_image = derange(counter(1,numImages))[0]
-            $('#item').attr('src',$('#'+cur_cat+random_image).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+random_image).attr("src"))
-            $('#item2').attr('style','display:inline')
+            $('#item01').attr('src',$('#'+cur_cat+random_image).attr("src"))
+            $('#item01').attr('style','display:inline')
+            $('#item02').attr('src',$('#'+cur_cat+random_image).attr("src"))
+            $('#item02').attr('style','display:inline')
             leftLog.push(random_image); rightLog.push(random_image);
           } else {
-            $('#item').attr('src',$('#'+cur_cat+trialshuffle[curTrial][0]).attr("src"))
+            $('#item01').attr('src',$('#'+cur_cat+trialshuffle[curTrial][0]).attr("src"))
             leftLog.push(trialshuffle[curTrial][0]); rightLog.push(trialshuffle[curTrial][1]);
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
-            $('#item2').attr('style','display:inline')
+            $('#item01').attr('style','display:inline')
+            $('#item02').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
+            $('#item02').attr('style','display:inline')
           }
           start_time = new Date();
           $('#showTrial').show();
@@ -380,7 +505,6 @@
       }
     }
 
-    /* Study Phase Start */
     function NextTrial() {
       console.log(curTrial,trialshuffle[curTrial])
       $("#one").attr("style","text-decoration:none")
@@ -390,9 +514,10 @@
       $("#five").attr("style","text-decoration:none")
       $("#six").attr("style","text-decoration:none")
       cur_button = 0;
-      if (curTrial >= numTrials) { // if end of study
+      if (curTrial >= numTrials_afc) { // if end of study
         $("#showTrial").hide()
-        Done()
+        StartExperiment_drag();
+        // Done()
       } else {
         proceed_trial()
         function proceed_trial() {
@@ -401,48 +526,49 @@
             cur_button = 0;
             rts.push(new Date() - start_time);
             //console.log("responses:",buttonLog)
-            $('#item').attr('style','display:none')
-            $('#item2').attr('style','display:none')
+            $('#item01').attr('style','display:none')
+            $('#item02').attr('style','display:none')
             setTimeout(function() {
               curTrial++;
               cur_cat = categories[trialid[curTrial]];
+              $("#object_category").text(cur_cat);
               if (trialshuffle[curTrial]==-12){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item2').attr('style','display:inline')
+                $('#item01').attr('src',$('#'+cur_cat+1).attr("src"))
+                $('#item01').attr('style','display:inline')
+                $('#item02').attr('src',$('#'+cur_cat+2).attr("src"))
+                $('#item02').attr('style','display:inline')
                 leftLog.push(1); rightLog.push(2);
               } else if (trialshuffle[curTrial]==-13){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
+                $('#item01').attr('src',$('#'+cur_cat+1).attr("src"))
+                $('#item01').attr('style','display:inline')
+                $('#item02').attr('src',$('#'+cur_cat+3).attr("src"))
+                $('#item02').attr('style','display:inline')
                 leftLog.push(1); rightLog.push(3);
               } else if (trialshuffle[curTrial]==-23){
-                $('#item').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
+                $('#item01').attr('src',$('#'+cur_cat+2).attr("src"))
+                $('#item01').attr('style','display:inline')
+                $('#item02').attr('src',$('#'+cur_cat+3).attr("src"))
+                $('#item02').attr('style','display:inline')
                 leftLog.push(2); rightLog.push(3);
               } else if (trialshuffle[curTrial]==999){
                 random_image = derange(counter(1,numImages))[0]
-                $('#item').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item2').attr('style','display:inline')
+                $('#item01').attr('src',$('#'+cur_cat+random_image).attr("src"))
+                $('#item01').attr('style','display:inline')
+                $('#item02').attr('src',$('#'+cur_cat+random_image).attr("src"))
+                $('#item02').attr('style','display:inline')
                 leftLog.push(random_image); rightLog.push(random_image);
               } else {
-                if (curTrial>=numTrials) {
+                if (curTrial>=numTrials_afc) {
                   $('#progress').text("Trial "+curTrial+" of "+numTrials)
                   NextTrial();
                   return
                 } else {
-                  $('#item').attr('src',$('#'+cur_cat+(trialshuffle[curTrial][0])).attr("src"))
+                  $('#item01').attr('src',$('#'+cur_cat+(trialshuffle[curTrial][0])).attr("src"))
                   leftLog.push(trialshuffle[curTrial][0]); rightLog.push(trialshuffle[curTrial][1]);
                 }
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
-                $('#item2').attr('style','display:inline')
+                $('#item01').attr('style','display:inline')
+                $('#item02').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
+                $('#item02').attr('style','display:inline')
               }
               $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
               start_time = new Date();
@@ -453,6 +579,96 @@
             setTimeout(proceed_trial, 150);
           }
         }
+      }
+    }
+
+    function StartExperiment_drag() {
+      // open pop-up:
+      modalClosed = false;
+      $("#openModal").show()
+      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Drag and drop the images such that more similar doodles are close together and less similar doodles are farther apart. Good luck!';
+      window.location.href = '#openModal';
+      checkFlag1_drag();
+      cur_cat = categories[trialid[0]];
+      $("#object_category").text(cur_cat);
+
+      function checkFlag1_drag() {
+        if (modalClosed == false) {
+          window.setTimeout(checkFlag1_drag, 100); /* this checks the flag every 100 milliseconds*/
+        } else {
+          imgcombo[curTrial_drag] = cover[curTrial_drag]
+          for (let i = 1; i < 5; i++) {
+            $('#item'+i).attr('src',$('#'+cur_cat+cover[curTrial_drag][i-1]).attr("src"))
+            $('#item'+i).attr('style','display:inline')
+          }
+          $('#showTrial_drag').show();
+          $('#progress_drag').text("Trial "+(curTrial+1)+" of "+numTrials)
+          start_time = new Date();
+        }
+      }
+    }
+
+    function NextTrial_drag() {
+      // first record the positions of images
+      let all_moved = true;
+      for (let i = 1; i < 5; i++) { 
+        if (($('#item'+i).attr('data-x') == undefined) || ($('#item'+i).attr('data-x') == 0.0)) {
+          all_moved = false;
+        } else if ((($('#item'+i).attr('data-y')) == undefined) || ($('#item'+i).attr('data-y') == 0.0)) {
+          all_moved = false;
+        }
+      }
+      if (all_moved == false) {
+        alert('Please move all items before proceeding.')
+        return;
+      }
+      pos_x[curTrial_drag]=[]
+      pos_y[curTrial_drag]=[]
+      for (let i = 1; i < 5; i++) { 
+        pos_x[curTrial_drag].push(parseFloat($('#item'+i).attr('data-x')) + onsets[i-1][0])
+        pos_y[curTrial_drag].push(parseFloat($('#item'+i).attr('data-y')) + onsets[i-1][1])
+      }
+      rts.push(new Date() - start_time);
+      // then proceed to next trial, reset the display and show new images
+      curTrial++;curTrial_drag++;
+      cur_cat = categories[trialid[curTrial_drag]];
+      $("#object_category").text(cur_cat)
+      if (curTrial >= numTrials) { // if end of study 
+        $("#showTrial_drag").hide()
+        // open pop-up:
+        modalClosed = false;
+        $("#openModal").show()
+        document.getElementById("openModal_text").innerHTML =
+          'End of experiment!';
+        window.location.href = '#openModal';
+        checkFlag2_drag();
+        return
+
+        function checkFlag2_drag() {
+          if (modalClosed == false) {
+            window.setTimeout(checkFlag2_drag, 100); /* this checks the flag every 100 milliseconds*/
+          } else {
+            Done()
+            return
+          }
+        }
+      } else {
+        for (let i = 1; i < 5; i++) { 
+          $('#item'+i).attr('style','display:none')
+        }
+        setTimeout(function() {
+          if (curTrial<=numTrials) { 
+            imgcombo[curTrial_drag] = cover[curTrial_drag]
+            for (let i = 1; i < 5; i++) {
+              $('#item'+i).attr('src',$('#'+cur_cat+cover[curTrial_drag][i-1]).attr("src"))
+              $('#item'+i).attr('style','display:inline')
+              $('#item'+i).attr('data-x', 0);
+              $('#item'+i).attr('data-y', 0);
+            }
+          }
+          $('#progress_drag').text("Trial "+(curTrial+1)+" of "+numTrials)
+          start_time = new Date();
+        }, itiTime);
       }
     }
 
