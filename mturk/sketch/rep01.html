@@ -331,13 +331,15 @@
   <div id="instructions" style='display:none; text-align: left; margin-left: 25%; margin-right: 25%'>
     <h1>Instructions</h1>
     <p>This experiment will take less than 30 minutes to complete. You will be looking at various drawings and indicating how similar drawings are to each other.</p>
-    <p>The full experiment is 82 trials long. <b>The first 58 trials will involve pairwise judgments of drawings.</b></p>
-    <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct1.png" style="width=400px">
+    <p>The full experiment is 82 trials long.</p>
+    <p><b>The first 58 trials will involve pairwise judgments of drawings:</b></p>
+    <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct1.png" style="width:400px">
     <p>Two drawings will be shown and you will be asked to rate the similarity of the two drawings on a scale of 1 (dissimilar) to 6 (identical).</p>
     <p>You must use the <u>number keys</u> to indicate the similarity of the pair of drawings on each trial.</p>
     <p><b>Please try to use the full range of response options</b> throughout the trials (do not only respond 4/5/6). Keep in mind that the two drawings will always be somewhat similar because they will belong to the same category (e.g., two drawings of a frog). For example, you will never be shown a drawing of a frog next to a drawing of a box.</p>
-    <p><b>The last 24 trials will consist of a drag-and-drop similarity task.</b></p>
-    <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct2.png" style="width=400px">
+    <p><b>The last 24 trials will consist of a drag-and-drop similarity task:</b></p>
+    <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct2a.png" style="width:400px">
+    <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct2b.png" style="width:400px">
     <p>Four drawings (from the same category) will be presented and you will need to rearrange the images such that drawings farther apart in space represent drawings that are more dissimilar. In the same way, positioning drawings close to each other represents that the images are more similar to each other.</p>
     <p>You will use the <u>mouse</u> to click and drag each of the images until you think that the distances between all the images appropriately reflect how dissimilar the drawings are from each other.</p>  
     <button id="Button" onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;$('#instructions').hide();CheckInfo()">I understand the instructions</button>
@@ -471,7 +473,7 @@
       // open pop-up:
       modalClosed = false;
       $("#openModal").show()
-      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Good luck!';
+      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Use the number keys to report the similarity of the pairs of drawings. Good luck!';
       window.location.href = '#openModal';
       checkFlag1();
       cur_cat = categories[trialid[0]];
