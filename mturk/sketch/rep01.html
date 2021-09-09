@@ -200,6 +200,12 @@
       bottom:0px;
       left:275px;
     }
+    #object_category_drag {
+      position:absolute;
+      font-weight: bold;
+      bottom:0px;
+      left:275px;
+    }
     .number_buttons{
       position:absolute;
       bottom:100px;
@@ -324,7 +330,7 @@
     Normal color vision? <input type="checkbox" id="colorvision" checked><br><br>
     Normal binocular depth perception? <input type="checkbox" id="binocular" checked><br><br>
     </p>
-    <button id="Button" onclick="$('#info').hide();$('#instructions').show();">Continue</button>
+    <button id="Button" onclick="CheckInfo();">Continue</button>
   </div>
 
   <!-- Instructions -->
@@ -342,7 +348,7 @@
     <img src="https://paulscotti.github.io/mturk/sketch/instruction/instruct2b.png" style="width:400px">
     <p>Four drawings (from the same category) will be presented and you will need to rearrange the images such that drawings farther apart in space represent drawings that are more dissimilar. In the same way, positioning drawings close to each other represents that the images are more similar to each other.</p>
     <p>You will use the <u>mouse</u> to click and drag each of the images until you think that the distances between all the images appropriately reflect how dissimilar the drawings are from each other.</p>  
-    <button id="Button" onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;$('#instructions').hide();CheckInfo()">I understand the instructions</button>
+    <button id="Button" onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;$('#instructions').hide();StartExperiment()">I understand the instructions</button>
   </div>
 
   <!-- Modal Pop-up Box -->
@@ -359,15 +365,19 @@
   <!-- <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form> -->
 
   <!-- Screen after submitting expt -->
-  <div id="done" style='display:none; text-align: left; margin-left: 25%'>
+  <div id="done" style='display:none; text-align: left; margin-left: 25%; margin-right: 25%'>
     <div id="doneText">
     </div>
     <div>
-        <a href="javascript:void(0);" onclick="SaveData()" id="Button">Click to Submit</a>
+        <a href="javascript:void(0);" onclick="SaveData()" id="Button">Click to Complete Experiment</a>
     </div>
-    <iframe src="https://paulscotti.github.io/mturk/jglab_debrief.pdf" width="60%" height="500px"></iframe>
+    <div>
+      <br><br>
+      <h2 onclick="window.open('https://paulscotti.github.io/mturk/jglab_debrief.pdf', '_blank').focus()">Debriefing Form (click to open in new tab)</h2>
+      <iframe src="https://paulscotti.github.io/mturk/jglab_debrief.pdf" width="600px" height="600px"></iframe>
+    </div>
   </div>
-  <div id="saving" style="display:none">Saving . . .</div>
+  <div id="saving" style="display:none; text-align: left; margin-left: 25%; margin-right: 25%">Saving . . .</div>
 
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
@@ -398,7 +408,7 @@
     <!-- <img class="drag-drop" id="item9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img>
     <img class="drag-drop" id="item10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog_space16/1.png"></img> -->
     <p id='progress_drag'>test</p>
-    <p id='object_category'>frog</p>
+    <p id='object_category_drag'>frog</p>
     <button id='Button' onclick="NextTrial_drag()" style="position: absolute; bottom: 5px; right: 5px;">Confirm</button>
   </div>
 
@@ -409,15 +419,11 @@
         return false;
     }
 
-    // set rng seed based on name
-    const chance1 = Chance($('#name').val()); 
-    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
-
     /* Define variables */
     let modalClosed = false;
+    let seed = 0;
     let curTrial = 0;
     const numImages = 8;
-    // let displayTime = 3000000; //3000
     let itiTime = 500;
     var keyCode = 0;
     var cur_button = 0;
@@ -427,7 +433,6 @@
     trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
     var trialid = Array(trialshuffle.length/2).fill(0)
     trialid = trialid.concat(Array(trialshuffle.length/2).fill(1))
-    trialid = derange(trialid)
     var categories = ["frog","box"]
     var cur_cat = "frog";
     var numTrials_afc = trialshuffle.length
@@ -448,11 +453,10 @@
     cover = cover.concat(cover)
     cover = cover.concat(cover)
     trialid_drag = trialid_drag.concat(trialid_drag)
-    dualshuffle(cover,trialid_drag);
     var numTrials = trialid_drag.length + numTrials_afc;
 
     function CheckInfo() {
-      if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
+      if (((($('#name').val().split(" ").join(""))) == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
       } else if (!(parseFloat($('#age').val()) < 70)) {
         alert('Please input a valid age.')
@@ -460,7 +464,15 @@
         alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
         $('#info').hide()
-        StartExperiment()
+        $('#instructions').show()
+
+        // set rng seed based on name
+        seed = Chance($('#name').val()).seed
+        Math.seedrandom(seed);
+
+        // shuffle trials based on the seed
+        trialid = derange(trialid);
+        dualshuffle(cover,trialid_drag);
       }
     }
 
@@ -608,8 +620,8 @@
       document.getElementById("openModal_text").innerHTML = 'Great job, now we will move to the drag-and-drop task. Click and drag the images such that more similar doodles are closer together and less similar doodles are farther apart. Good luck!';
       window.location.href = '#openModal';
       checkFlag1_drag();
-      cur_cat = categories[trialid[0]];
-      $("#object_category").text(cur_cat);
+      cur_cat = categories[trialid_drag[0]];
+      $("#object_category_drag").text(cur_cat);
 
       function checkFlag1_drag() {
         if (modalClosed == false) {
@@ -650,8 +662,8 @@
       rts.push(new Date() - start_time);
       // then proceed to next trial, reset the display and show new images
       curTrial++;curTrial_drag++;
-      cur_cat = categories[trialid[curTrial_drag]];
-      $("#object_category").text(cur_cat)
+      cur_cat = categories[trialid_drag[curTrial_drag]];
+      $("#object_category_drag").text(cur_cat)
       if (curTrial >= numTrials) { // if end of study 
         $("#showTrial_drag").hide()
         // open pop-up:
@@ -703,7 +715,7 @@
     /* Done with the experiment */
     function Done() {
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please leave any comments to the experimenter below (any technical difficulties?).<br><br>' +
-        '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
+        '<textarea name="comments" id="comments" style="width: 600px; height: 300px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -729,14 +741,16 @@
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
-        "seed": chance1.seed,
+        "seed": seed,
         "rts": rts,
         "leftLog": leftLog,
         "rightLog": rightLog,
         "buttonLog": buttonLog,
         "categories": categories,
-        "trialshuffle": trialshuffle,
-        "trialid": trialid,
+        "trialshuffle_afc": trialshuffle,
+        "trialid_afc": trialid,
+        "cover": cover,
+        "trialid_drag": trialid_drag,
         "comments": $('#comments').val()
       };
 
