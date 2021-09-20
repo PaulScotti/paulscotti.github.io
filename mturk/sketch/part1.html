@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-  <script src="https://paulscotti.github.io/mturk/js_code/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
@@ -74,19 +74,17 @@
       position: relative;
       display: none;
     }
-    #fixation {
-      position: absolute;
-      width: 600px;
-      top: 285px;
-      text-align: center;
-      font-size: 30px;
-      font-weight: bold;
+    #boxtext {
+      position:absolute;
+      text-align:center;
+      top:30px;
+      left:40px;
     }
     #item {
       position: relative;
       width: 200px;
       height: 200px;
-      top:200px;
+      top:100px;
       left:50px;
       display: none;
     }
@@ -94,8 +92,16 @@
       position: relative;
       width: 200px;
       height: 200px;
-      top:200px;
+      top:100px;
       left:150px;
+      display: none;
+    }
+    #item3 {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      top:100px;
+      left:200px;
       display: none;
     }
     #progress {
@@ -103,42 +109,17 @@
       bottom:-5px;
       left:5px;
     }
-    .number_buttons{
-      position:absolute;
-      bottom:100px;
-      font-size:32px;
-    }
-    #dissimilar {
-      left:80px;
-      bottom:60px;
-    }
-    #identical {
-      right:80px;
-      bottom:60px;
-    }
-    #one {
-      left:165px;
-      text-decoration: none;
-    }
-    #two {
-      left:215px;
-      text-decoration: none;
-    }
-    #three {
-      left:265px;
-      text-decoration: none;
-    }
-    #four {
-      right:265px;
-      text-decoration: none;
-    }
-    #five {
-      right:215px;
-      text-decoration: none;
-    }
-    #six {
-      right:165px;
-      text-decoration: none;
+    #slide {
+      position: absolute;
+      bottom:80px;
+      left:25%;
+      width:50%; 
+      height: 25px; 
+      background: #d3d3d3; 
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
     }
     #Button {
       display: inline-block;
@@ -199,7 +180,8 @@
   </style>
   <!-- Preload images so they dont need to be loaded mid-experiment -->
   <script>
-    document.write('<img id="0" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/0.png" style="position:absolute;display:none"><img id="1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/1.png" style="position:absolute;display:none"><img id="10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/10.png" style="position:absolute;display:none"><img id="11" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/11.png" style="position:absolute;display:none"><img id="12" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/12.png" style="position:absolute;display:none"><img id="13" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/13.png" style="position:absolute;display:none"><img id="14" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/14.png" style="position:absolute;display:none"><img id="15" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/15.png" style="position:absolute;display:none"><img id="16" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/16.png" style="position:absolute;display:none"><img id="17" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/17.png" style="position:absolute;display:none"><img id="18" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/18.png" style="position:absolute;display:none"><img id="19" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/19.png" style="position:absolute;display:none"><img id="2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/2.png" style="position:absolute;display:none"><img id="20" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/20.png" style="position:absolute;display:none"><img id="21" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/21.png" style="position:absolute;display:none"><img id="22" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/22.png" style="position:absolute;display:none"><img id="23" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/23.png" style="position:absolute;display:none"><img id="24" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/24.png" style="position:absolute;display:none"><img id="25" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/25.png" style="position:absolute;display:none"><img id="26" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/26.png" style="position:absolute;display:none"><img id="27" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/27.png" style="position:absolute;display:none"><img id="28" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/28.png" style="position:absolute;display:none"><img id="29" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/29.png" style="position:absolute;display:none"><img id="3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/3.png" style="position:absolute;display:none"><img id="30" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/30.png" style="position:absolute;display:none"><img id="31" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/31.png" style="position:absolute;display:none"><img id="32" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/32.png" style="position:absolute;display:none"><img id="33" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/33.png" style="position:absolute;display:none"><img id="34" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/34.png" style="position:absolute;display:none"><img id="35" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/35.png" style="position:absolute;display:none"><img id="36" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/36.png" style="position:absolute;display:none"><img id="37" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/37.png" style="position:absolute;display:none"><img id="38" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/38.png" style="position:absolute;display:none"><img id="39" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/39.png" style="position:absolute;display:none"><img id="4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/4.png" style="position:absolute;display:none"><img id="40" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/40.png" style="position:absolute;display:none"><img id="41" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/41.png" style="position:absolute;display:none"><img id="42" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/42.png" style="position:absolute;display:none"><img id="43" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/43.png" style="position:absolute;display:none"><img id="44" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/44.png" style="position:absolute;display:none"><img id="45" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/45.png" style="position:absolute;display:none"><img id="46" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/46.png" style="position:absolute;display:none"><img id="47" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/47.png" style="position:absolute;display:none"><img id="48" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/48.png" style="position:absolute;display:none"><img id="49" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/49.png" style="position:absolute;display:none"><img id="5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/5.png" style="position:absolute;display:none"><img id="50" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/50.png" style="position:absolute;display:none"><img id="51" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/51.png" style="position:absolute;display:none"><img id="52" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/52.png" style="position:absolute;display:none"><img id="53" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/53.png" style="position:absolute;display:none"><img id="54" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/54.png" style="position:absolute;display:none"><img id="55" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/55.png" style="position:absolute;display:none"><img id="56" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/56.png" style="position:absolute;display:none"><img id="57" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/57.png" style="position:absolute;display:none"><img id="58" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/58.png" style="position:absolute;display:none"><img id="59" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/59.png" style="position:absolute;display:none"><img id="6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/6.png" style="position:absolute;display:none"><img id="60" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/60.png" style="position:absolute;display:none"><img id="61" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/61.png" style="position:absolute;display:none"><img id="62" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/62.png" style="position:absolute;display:none"><img id="63" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/63.png" style="position:absolute;display:none"><img id="64" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/64.png" style="position:absolute;display:none"><img id="65" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/65.png" style="position:absolute;display:none"><img id="66" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/66.png" style="position:absolute;display:none"><img id="67" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/67.png" style="position:absolute;display:none"><img id="68" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/68.png" style="position:absolute;display:none"><img id="69" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/69.png" style="position:absolute;display:none"><img id="7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/7.png" style="position:absolute;display:none"><img id="70" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/70.png" style="position:absolute;display:none"><img id="71" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/71.png" style="position:absolute;display:none"><img id="72" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/72.png" style="position:absolute;display:none"><img id="73" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/73.png" style="position:absolute;display:none"><img id="74" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/74.png" style="position:absolute;display:none"><img id="75" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/75.png" style="position:absolute;display:none"><img id="76" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/76.png" style="position:absolute;display:none"><img id="77" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/77.png" style="position:absolute;display:none"><img id="78" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/78.png" style="position:absolute;display:none"><img id="79" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/79.png" style="position:absolute;display:none"><img id="8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/8.png" style="position:absolute;display:none"><img id="80" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/80.png" style="position:absolute;display:none"><img id="81" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/81.png" style="position:absolute;display:none"><img id="82" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/82.png" style="position:absolute;display:none"><img id="83" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/83.png" style="position:absolute;display:none"><img id="84" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/84.png" style="position:absolute;display:none"><img id="85" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/85.png" style="position:absolute;display:none"><img id="86" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/86.png" style="position:absolute;display:none"><img id="87" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/87.png" style="position:absolute;display:none"><img id="88" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/88.png" style="position:absolute;display:none"><img id="89" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/89.png" style="position:absolute;display:none"><img id="9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/9.png" style="position:absolute;display:none"><img id="90" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/90.png" style="position:absolute;display:none"><img id="91" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/91.png" style="position:absolute;display:none"><img id="92" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/92.png" style="position:absolute;display:none"><img id="93" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/93.png" style="position:absolute;display:none"><img id="94" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/94.png" style="position:absolute;display:none"><img id="95" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/95.png" style="position:absolute;display:none"><img id="96" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/96.png" style="position:absolute;display:none"><img id="97" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/97.png" style="position:absolute;display:none"><img id="98" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/98.png" style="position:absolute;display:none"><img id="99" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/99.png" style="position:absolute;display:none">');
+      document.write('<img id="frog0" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/0.png" style="position:absolute;display:none"><img id="frog1" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/1.png" style="position:absolute;display:none"><img id="frog10" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/10.png" style="position:absolute;display:none"><img id="frog11" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/11.png" style="position:absolute;display:none"><img id="frog12" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/12.png" style="position:absolute;display:none"><img id="frog13" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/13.png" style="position:absolute;display:none"><img id="frog14" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/14.png" style="position:absolute;display:none"><img id="frog15" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/15.png" style="position:absolute;display:none"><img id="frog16" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/16.png" style="position:absolute;display:none"><img id="frog17" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/17.png" style="position:absolute;display:none"><img id="frog18" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/18.png" style="position:absolute;display:none"><img id="frog19" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/19.png" style="position:absolute;display:none"><img id="frog2" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/2.png" style="position:absolute;display:none"><img id="frog20" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/20.png" style="position:absolute;display:none"><img id="frog21" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/21.png" style="position:absolute;display:none"><img id="frog22" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/22.png" style="position:absolute;display:none"><img id="frog23" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/23.png" style="position:absolute;display:none"><img id="frog24" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/24.png" style="position:absolute;display:none"><img id="frog25" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/25.png" style="position:absolute;display:none"><img id="frog26" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/26.png" style="position:absolute;display:none"><img id="frog27" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/27.png" style="position:absolute;display:none"><img id="frog28" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/28.png" style="position:absolute;display:none"><img id="frog29" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/29.png" style="position:absolute;display:none"><img id="frog3" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/3.png" style="position:absolute;display:none"><img id="frog30" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/30.png" style="position:absolute;display:none"><img id="frog31" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/31.png" style="position:absolute;display:none"><img id="frog32" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/32.png" style="position:absolute;display:none"><img id="frog33" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/33.png" style="position:absolute;display:none"><img id="frog34" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/34.png" style="position:absolute;display:none"><img id="frog35" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/35.png" style="position:absolute;display:none"><img id="frog36" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/36.png" style="position:absolute;display:none"><img id="frog37" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/37.png" style="position:absolute;display:none"><img id="frog38" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/38.png" style="position:absolute;display:none"><img id="frog39" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/39.png" style="position:absolute;display:none"><img id="frog4" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/4.png" style="position:absolute;display:none"><img id="frog40" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/40.png" style="position:absolute;display:none"><img id="frog41" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/41.png" style="position:absolute;display:none"><img id="frog42" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/42.png" style="position:absolute;display:none"><img id="frog43" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/43.png" style="position:absolute;display:none"><img id="frog44" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/44.png" style="position:absolute;display:none"><img id="frog45" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/45.png" style="position:absolute;display:none"><img id="frog46" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/46.png" style="position:absolute;display:none"><img id="frog47" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/47.png" style="position:absolute;display:none"><img id="frog48" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/48.png" style="position:absolute;display:none"><img id="frog49" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/49.png" style="position:absolute;display:none"><img id="frog5" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/5.png" style="position:absolute;display:none"><img id="frog50" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/50.png" style="position:absolute;display:none"><img id="frog51" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/51.png" style="position:absolute;display:none"><img id="frog52" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/52.png" style="position:absolute;display:none"><img id="frog53" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/53.png" style="position:absolute;display:none"><img id="frog54" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/54.png" style="position:absolute;display:none"><img id="frog55" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/55.png" style="position:absolute;display:none"><img id="frog56" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/56.png" style="position:absolute;display:none"><img id="frog57" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/57.png" style="position:absolute;display:none"><img id="frog58" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/58.png" style="position:absolute;display:none"><img id="frog59" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/59.png" style="position:absolute;display:none"><img id="frog6" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/6.png" style="position:absolute;display:none"><img id="frog60" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/60.png" style="position:absolute;display:none"><img id="frog61" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/61.png" style="position:absolute;display:none"><img id="frog62" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/62.png" style="position:absolute;display:none"><img id="frog63" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/63.png" style="position:absolute;display:none"><img id="frog64" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/64.png" style="position:absolute;display:none"><img id="frog65" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/65.png" style="position:absolute;display:none"><img id="frog66" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/66.png" style="position:absolute;display:none"><img id="frog67" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/67.png" style="position:absolute;display:none"><img id="frog68" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/68.png" style="position:absolute;display:none"><img id="frog69" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/69.png" style="position:absolute;display:none"><img id="frog7" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/7.png" style="position:absolute;display:none"><img id="frog70" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/70.png" style="position:absolute;display:none"><img id="frog71" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/71.png" style="position:absolute;display:none"><img id="frog72" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/72.png" style="position:absolute;display:none"><img id="frog73" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/73.png" style="position:absolute;display:none"><img id="frog74" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/74.png" style="position:absolute;display:none"><img id="frog75" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/75.png" style="position:absolute;display:none"><img id="frog76" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/76.png" style="position:absolute;display:none"><img id="frog77" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/77.png" style="position:absolute;display:none"><img id="frog78" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/78.png" style="position:absolute;display:none"><img id="frog79" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/79.png" style="position:absolute;display:none"><img id="frog8" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/8.png" style="position:absolute;display:none"><img id="frog80" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/80.png" style="position:absolute;display:none"><img id="frog81" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/81.png" style="position:absolute;display:none"><img id="frog82" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/82.png" style="position:absolute;display:none"><img id="frog83" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/83.png" style="position:absolute;display:none"><img id="frog84" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/84.png" style="position:absolute;display:none"><img id="frog85" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/85.png" style="position:absolute;display:none"><img id="frog86" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/86.png" style="position:absolute;display:none"><img id="frog87" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/87.png" style="position:absolute;display:none"><img id="frog88" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/88.png" style="position:absolute;display:none"><img id="frog89" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/89.png" style="position:absolute;display:none"><img id="frog9" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/9.png" style="position:absolute;display:none"><img id="frog90" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/90.png" style="position:absolute;display:none"><img id="frog91" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/91.png" style="position:absolute;display:none"><img id="frog92" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/92.png" style="position:absolute;display:none"><img id="frog93" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/93.png" style="position:absolute;display:none"><img id="frog94" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/94.png" style="position:absolute;display:none"><img id="frog95" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/95.png" style="position:absolute;display:none"><img id="frog96" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/96.png" style="position:absolute;display:none"><img id="frog97" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/97.png" style="position:absolute;display:none"><img id="frog98" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/98.png" style="position:absolute;display:none"><img id="frog99" src="https://paulscotti.github.io/mturk/sketch/stimuli/frog/99.png" style="position:absolute;display:none">');
+      document.write('<img id="box0" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/0.png" style="position:absolute;display:none"><img id="box1" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/1.png" style="position:absolute;display:none"><img id="box10" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/10.png" style="position:absolute;display:none"><img id="box11" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/11.png" style="position:absolute;display:none"><img id="box12" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/12.png" style="position:absolute;display:none"><img id="box13" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/13.png" style="position:absolute;display:none"><img id="box14" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/14.png" style="position:absolute;display:none"><img id="box15" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/15.png" style="position:absolute;display:none"><img id="box16" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/16.png" style="position:absolute;display:none"><img id="box17" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/17.png" style="position:absolute;display:none"><img id="box18" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/18.png" style="position:absolute;display:none"><img id="box19" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/19.png" style="position:absolute;display:none"><img id="box2" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/2.png" style="position:absolute;display:none"><img id="box20" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/20.png" style="position:absolute;display:none"><img id="box21" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/21.png" style="position:absolute;display:none"><img id="box22" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/22.png" style="position:absolute;display:none"><img id="box23" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/23.png" style="position:absolute;display:none"><img id="box24" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/24.png" style="position:absolute;display:none"><img id="box25" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/25.png" style="position:absolute;display:none"><img id="box26" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/26.png" style="position:absolute;display:none"><img id="box27" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/27.png" style="position:absolute;display:none"><img id="box28" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/28.png" style="position:absolute;display:none"><img id="box29" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/29.png" style="position:absolute;display:none"><img id="box3" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/3.png" style="position:absolute;display:none"><img id="box30" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/30.png" style="position:absolute;display:none"><img id="box31" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/31.png" style="position:absolute;display:none"><img id="box32" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/32.png" style="position:absolute;display:none"><img id="box33" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/33.png" style="position:absolute;display:none"><img id="box34" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/34.png" style="position:absolute;display:none"><img id="box35" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/35.png" style="position:absolute;display:none"><img id="box36" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/36.png" style="position:absolute;display:none"><img id="box37" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/37.png" style="position:absolute;display:none"><img id="box38" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/38.png" style="position:absolute;display:none"><img id="box39" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/39.png" style="position:absolute;display:none"><img id="box4" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/4.png" style="position:absolute;display:none"><img id="box40" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/40.png" style="position:absolute;display:none"><img id="box41" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/41.png" style="position:absolute;display:none"><img id="box42" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/42.png" style="position:absolute;display:none"><img id="box43" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/43.png" style="position:absolute;display:none"><img id="box44" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/44.png" style="position:absolute;display:none"><img id="box45" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/45.png" style="position:absolute;display:none"><img id="box46" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/46.png" style="position:absolute;display:none"><img id="box47" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/47.png" style="position:absolute;display:none"><img id="box48" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/48.png" style="position:absolute;display:none"><img id="box49" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/49.png" style="position:absolute;display:none"><img id="box5" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/5.png" style="position:absolute;display:none"><img id="box50" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/50.png" style="position:absolute;display:none"><img id="box51" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/51.png" style="position:absolute;display:none"><img id="box52" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/52.png" style="position:absolute;display:none"><img id="box53" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/53.png" style="position:absolute;display:none"><img id="box54" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/54.png" style="position:absolute;display:none"><img id="box55" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/55.png" style="position:absolute;display:none"><img id="box56" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/56.png" style="position:absolute;display:none"><img id="box57" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/57.png" style="position:absolute;display:none"><img id="box58" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/58.png" style="position:absolute;display:none"><img id="box59" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/59.png" style="position:absolute;display:none"><img id="box6" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/6.png" style="position:absolute;display:none"><img id="box60" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/60.png" style="position:absolute;display:none"><img id="box61" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/61.png" style="position:absolute;display:none"><img id="box62" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/62.png" style="position:absolute;display:none"><img id="box63" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/63.png" style="position:absolute;display:none"><img id="box64" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/64.png" style="position:absolute;display:none"><img id="box65" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/65.png" style="position:absolute;display:none"><img id="box66" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/66.png" style="position:absolute;display:none"><img id="box67" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/67.png" style="position:absolute;display:none"><img id="box68" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/68.png" style="position:absolute;display:none"><img id="box69" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/69.png" style="position:absolute;display:none"><img id="box7" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/7.png" style="position:absolute;display:none"><img id="box70" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/70.png" style="position:absolute;display:none"><img id="box71" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/71.png" style="position:absolute;display:none"><img id="box72" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/72.png" style="position:absolute;display:none"><img id="box73" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/73.png" style="position:absolute;display:none"><img id="box74" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/74.png" style="position:absolute;display:none"><img id="box75" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/75.png" style="position:absolute;display:none"><img id="box76" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/76.png" style="position:absolute;display:none"><img id="box77" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/77.png" style="position:absolute;display:none"><img id="box78" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/78.png" style="position:absolute;display:none"><img id="box79" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/79.png" style="position:absolute;display:none"><img id="box8" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/8.png" style="position:absolute;display:none"><img id="box80" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/80.png" style="position:absolute;display:none"><img id="box81" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/81.png" style="position:absolute;display:none"><img id="box82" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/82.png" style="position:absolute;display:none"><img id="box83" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/83.png" style="position:absolute;display:none"><img id="box84" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/84.png" style="position:absolute;display:none"><img id="box85" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/85.png" style="position:absolute;display:none"><img id="box86" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/86.png" style="position:absolute;display:none"><img id="box87" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/87.png" style="position:absolute;display:none"><img id="box88" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/88.png" style="position:absolute;display:none"><img id="box89" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/89.png" style="position:absolute;display:none"><img id="box9" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/9.png" style="position:absolute;display:none"><img id="box90" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/90.png" style="position:absolute;display:none"><img id="box91" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/91.png" style="position:absolute;display:none"><img id="box92" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/92.png" style="position:absolute;display:none"><img id="box93" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/93.png" style="position:absolute;display:none"><img id="box94" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/94.png" style="position:absolute;display:none"><img id="box95" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/95.png" style="position:absolute;display:none"><img id="box96" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/96.png" style="position:absolute;display:none"><img id="box97" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/97.png" style="position:absolute;display:none"><img id="box98" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/98.png" style="position:absolute;display:none"><img id="box99" src="https://paulscotti.github.io/mturk/sketch/stimuli/box/99.png" style="position:absolute;display:none">');
   </script>
 </head>
 
@@ -249,26 +231,24 @@
     <div>
         <a href="javascript:void(0);" onclick="SaveData()" id="Button">Click to Submit</a>
     </div>
-    <iframe src="https://paulscotti.github.io/mturk/jglab_debrief.pdf" width="60%" height="500px"></iframe>
+    <div>
+      <br><br>
+      <h2 onclick="window.open('https://paulscotti.github.io/mturk/jglab_debrief.pdf', '_blank').focus()">Debriefing Form (click to open in new tab)</h2>
+      <iframe src="https://paulscotti.github.io/mturk/jglab_debrief.pdf" width="600px" height="600px"></iframe>
+    </div>
   </div>
   <div id="saving" style="display:none">Saving . . .</div>
 
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
-    <div id="fixation">+</div>
+    <p id="boxtext">Make an image halfway between the top two images in terms of similarity.</p>
     <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
-    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
-    <p class="number_buttons" id="dissimilar">Dissimilar</p>
-    <p class="number_buttons" id="one">1</p>
-    <p class="number_buttons" id="two">2</p>
-    <p class="number_buttons" id="three">3</p>
-    <p class="number_buttons" id="four">4</p>
-    <p class="number_buttons" id="five">5</p>
-    <p class="number_buttons" id="six">6</p>
-    <p class="number_buttons" id="identical">Identical</p>
+    <img id="item2" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <img id="item3" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
+    <input type="range" oninput=setImage(this) min="0" max="99" value="0" id="slide">
     <p id='progress'></p>
+    <button id='Button' onclick="confirm()" style="position: absolute; bottom: 5px; right: 44%;">Confirm</button>
   </div>
-  <!-- <div id="buttonpressed">You pressed</p> -->
 
   <!-- Initializing JS -->
   <script>
@@ -277,36 +257,28 @@
         return false;
     }
 
-    // set rng seed based on name
-    const chance1 = Chance($('#name').val()); 
-    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
-
     /* Define variables */
     let modalClosed = false;
     let curTrial = 0;
-    const numImages = 8;
-    // let displayTime = 3000000; //3000
     let itiTime = 500;
     var keyCode = 0;
-    var cur_button = 0;
-    //var trialshuffle = counter(1,numImages);
-    // var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [9, 1], [1, 10], [1, 11], [1, 12], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [9, 2], [2, 10], [11, 2], [2, 12], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [9, 3], [3, 10], [3, 11], [3, 12], [5, 4], [6, 4], [4, 7], [4, 8], [9, 4], [10, 4], [11, 4], [4, 12], [6, 5], [5, 7], [5, 8], [9, 5], [5, 10], [5, 11], [12, 5], [7, 6], [6, 8], [9, 6], [6, 10], [11, 6], [6, 12], [7, 8], [9, 7], [7, 10], [7, 11], [12, 7], [9, 8], [8, 10], [8, 11], [8, 12], [10, 9], [9, 11], [9, 12], [10, 11], [10, 12], [12, 11]];
-    var trialshuffle = [[2, 1], [1, 3], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1], [3, 2], [2, 4], [2, 5], [2, 6], [7, 2], [8, 2], [4, 3], [5, 3], [6, 3], [3, 7], [3, 8], [5, 4], [6, 4], [4, 7], [4, 8], [6, 5], [5, 7], [5, 8], [7, 6], [6, 8], [7, 8]];
-    trialshuffle = trialshuffle.concat(trialshuffle)
-    trialshuffle.push(999);trialshuffle.push(999); // catch trials
-    //trialshuffle.push(-12);trialshuffle.push(-13);trialshuffle.push(-23); // the 3 anchor trials (comparing 1to2, 1to3, and 2to3)
-    trialshuffle = derange(trialshuffle); //derangement shuffles array while ensuring no cell stays the same
-    var trialid = Array(trialshuffle.length/2).fill(0)
-    trialid = trialid.concat(Array(trialshuffle.length/2).fill(1))
-    trialid = derange(trialid)
+    var stimuli = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99];
+    var stimuli2 = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99];
+    var trialshuffle = [[ 0, 32],[ 0, 16],[ 0,  8],[ 0,  4],[ 0,  2],[ 2,  4],[ 4,  8],[ 4,  6],[ 6,  8],[16, 32],[24, 32],[28, 32],[30, 32],[28, 30],[24, 28],[26, 28],[24, 26],[ 8, 16],[ 8, 12],[ 8, 10],[12, 16],[14, 16],[12, 14],[10, 12],[16, 24],[20, 24],[22, 24],[16, 20],[18, 20],[16, 18],[20, 22]];
+    var numTrials = trialshuffle.length;
+    trialshuffle = trialshuffle.concat(trialshuffle);
+    var numTrialsFull = trialshuffle.length;
+    var validation = false;
+    var trialid = Array(trialshuffle.length).fill(0)
+    trialid = trialid.concat(Array(trialshuffle.length).fill(1))
     var categories = ["frog","box"]
-    var cur_cat = "frog";
-    var numTrials = trialshuffle.length
-    var buttonLog = [];
+    var cur_cat = "frog";    
     var leftLog = [];
     var rightLog = [];
     let start_time = 0;
     var rts = [];
+    var slider_val = 0;
+    const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
     function CheckInfo() {
       if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
@@ -317,6 +289,14 @@
         alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
         $('#info').hide()
+
+        // set rng seed based on name
+        seed = Chance($('#name').val()).seed
+        Math.seedrandom(seed);
+
+        // shuffle trials based on the seed
+        // trialid = derange(trialid);
+
         StartExperiment()
       }
     }
@@ -330,7 +310,7 @@
       // open pop-up:
       modalClosed = false;
       $("#openModal").show()
-      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Memorize the colors of the different objects. Good luck!';
+      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Good luck!';
       window.location.href = '#openModal';
       checkFlag1();
       cur_cat = categories[trialid[0]];
@@ -339,121 +319,78 @@
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
-          if (trialshuffle[curTrial]==-12){
-            $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+2).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(1); rightLog.push(2);
-          } else if (trialshuffle[curTrial]==-13){
-            $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(1); rightLog.push(3);
-          } else if (trialshuffle[curTrial]==-23){
-            $('#item').attr('src',$('#'+cur_cat+2).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(2); rightLog.push(3);
-          } else if (trialshuffle[curTrial]==999){
-            random_image = derange(counter(1,numImages))[0]
-            $('#item').attr('src',$('#'+cur_cat+random_image).attr("src"))
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+random_image).attr("src"))
-            $('#item2').attr('style','display:inline')
-            leftLog.push(random_image); rightLog.push(random_image);
-          } else {
-            $('#item').attr('src',$('#'+cur_cat+trialshuffle[curTrial][0]).attr("src"))
-            leftLog.push(trialshuffle[curTrial][0]); rightLog.push(trialshuffle[curTrial][1]);
-            $('#item').attr('style','display:inline')
-            $('#item2').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
-            $('#item2').attr('style','display:inline')
-          }
+          $('#item').attr('src',$('#'+cur_cat+0).attr("src"))
+          $('#item').attr('style','display:inline')
+          $('#item2').attr('src',$('#'+cur_cat+99).attr("src"))
+          $('#item2').attr('style','display:inline')
+          leftLog.push(0); rightLog.push(99);
+          $('#item3').attr('src',$('#'+cur_cat+slider_val).attr("src"))
+          $('#item3').attr('style','display:inline')
           start_time = new Date();
           $('#showTrial').show();
-          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
+          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrialsFull)
           console.log("start!")
-          NextTrial();
         }
       }
     }
 
-    /* Study Phase Start */
-    function NextTrial() {
-      console.log(curTrial,trialshuffle[curTrial])
-      $("#one").attr("style","text-decoration:none")
-      $("#two").attr("style","text-decoration:none")
-      $("#three").attr("style","text-decoration:none")
-      $("#four").attr("style","text-decoration:none")
-      $("#five").attr("style","text-decoration:none")
-      $("#six").attr("style","text-decoration:none")
-      cur_button = 0;
-      if (curTrial >= numTrials) { // if end of study
-        $("#showTrial").hide()
-        Done()
-      } else {
-        proceed_trial()
-        function proceed_trial() {
-          if (cur_button!=0) {
-            buttonLog.push(cur_button);
-            cur_button = 0;
-            rts.push(new Date() - start_time);
-            //console.log("responses:",buttonLog)
-            $('#item').attr('style','display:none')
-            $('#item2').attr('style','display:none')
-            setTimeout(function() {
-              curTrial++;
-              cur_cat = categories[trialid[curTrial]];
-              if (trialshuffle[curTrial]==-12){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(2);
-              } else if (trialshuffle[curTrial]==-13){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==-23){
-                $('#item').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(2); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==999){
-                random_image = derange(counter(1,numImages))[0]
-                $('#item').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(random_image); rightLog.push(random_image);
-              } else {
-                if (curTrial>=numTrials) {
-                  $('#progress').text("Trial "+curTrial+" of "+numTrials)
-                  NextTrial();
-                  return
-                } else {
-                  $('#item').attr('src',$('#'+cur_cat+(trialshuffle[curTrial][0])).attr("src"))
-                  leftLog.push(trialshuffle[curTrial][0]); rightLog.push(trialshuffle[curTrial][1]);
-                }
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
-                $('#item2').attr('style','display:inline')
-              }
-              $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
-              start_time = new Date();
-              NextTrial();
-            }, itiTime);
-          } else {
-            // check for response every 150ms
-            setTimeout(proceed_trial, 150);
-          }
+    function confirm() {
+      if (curTrial==0) {
+        if (slider_val<10){
+          alert('Please adjust the slider such that the bottom middle image looks roughly as similar to the top left and the top right images. Then click confirm.')
+          return
         }
       }
+      console.log(curTrial,trialshuffle[curTrial])
+      if (validation==true){
+        stimuli2[average(trialshuffle[curTrial])] = parseFloat(slider_val);
+        console.log(stimuli2)
+      } else {
+        stimuli[average(trialshuffle[curTrial])] = parseFloat(slider_val);
+        console.log(stimuli)
+      }
+      rts.push(new Date() - start_time);
+      $('#item').attr('style','display:none')
+      $('#item2').attr('style','display:none')
+      $('#item3').attr('style','display:none')
+      $('#boxtext').attr('style','display:none')
+      $('#slide').attr('style','display:none')
+      $('button#Button').hide()
+      curTrial++;
+      setTimeout(function() {
+        cur_cat = categories[trialid[curTrial]];
+        if (curTrial>=numTrialsFull) {
+          validation = true;
+          $('#progress').text("Trial "+curTrial+" of "+numTrialsFull)
+          $("#showTrial").hide()
+          Done()
+          return
+        } else if ((curTrial>=numTrials) & (validation==false)) {
+          validation = true;
+        } 
+        if (validation==true) {
+          $('#item').attr('src',$('#'+cur_cat+(stimuli2[trialshuffle[curTrial][0]])).attr("src"))
+          $('#item2').attr('src',$('#'+cur_cat+(stimuli2[trialshuffle[curTrial][1]])).attr("src"))
+          leftLog.push(stimuli2[trialshuffle[curTrial][0]]);
+          rightLog.push(stimuli2[trialshuffle[curTrial][1]]);
+        } else {
+          $('#item').attr('src',$('#'+cur_cat+(stimuli[trialshuffle[curTrial][0]])).attr("src"))
+          $('#item2').attr('src',$('#'+cur_cat+(stimuli[trialshuffle[curTrial][1]])).attr("src"))
+          leftLog.push(stimuli[trialshuffle[curTrial][0]]);
+          rightLog.push(stimuli[trialshuffle[curTrial][1]]);
+        }
+        $('#item').attr('style','display:inline')
+        $('#item2').attr('style','display:inline')
+        slider_val = 50;
+        $('#slide').val(slider_val)
+        $('#item3').attr('src',$('#'+cur_cat+slider_val).attr("src"))
+        $('#item3').attr('style','display:inline')
+        $('#boxtext').attr('style','display:inline')
+        $('#slide').attr('style','display:inline')
+        $('button#Button').show()
+        $('#progress').text("Trial "+(curTrial+1)+" of "+numTrialsFull)
+        start_time = new Date();
+      }, itiTime);
     }
 
     /* Always track mouse */
@@ -468,7 +405,7 @@
     /* Done with the experiment */
     function Done() {
       document.getElementById("doneText").innerHTML = 'Thanks very much for your participation! Please leave any comments to the experimenter below (any technical difficulties?).<br><br>' +
-        '<textarea name="comments" id="comments" style="width: 400px; height: 300px"></textarea><br><br>';
+        '<textarea name="comments" id="comments" style="width: 400px; height: 200px"></textarea><br><br>';
       $('#showTrial').hide();
       $('#done').show();
     }
@@ -494,14 +431,15 @@
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
-        "seed": chance1.seed,
+        "seed": seed,
         "rts": rts,
         "leftLog": leftLog,
         "rightLog": rightLog,
-        "buttonLog": buttonLog,
         "categories": categories,
         "trialshuffle": trialshuffle,
         "trialid": trialid,
+        "stimuli": stimuli,
+        "stimuli2": stimuli2,
         "comments": $('#comments').val()
       };
 
@@ -528,6 +466,11 @@
       setTimeout(function() {
         document.getElementById("saving").innerHTML = "Experiment complete! Please wait 48 hours for credit to be awarded. You may close this window.";
       }, 5000);
+    }
+
+    function setImage(obj) {
+      slider_val = obj.value;
+      $('#item3').attr('src',$('#'+cur_cat+slider_val).attr("src"))
     }
 
     /*check all images are loaded before starting*/
@@ -568,36 +511,6 @@
     function modalContinue() {
       modalClosed = true;
       $("#openModal").hide()
-    }
-
-    document.body.onkeyup = function(e){
-      keyCode = e.keyCode;
-      if (keyCode==32) {
-        // document.getElementById("buttonpressed").innerHTML="You pressed spacebar! "+keyCode
-      } else if ((keyCode>48) & (keyCode<55)) {
-        cur_button = keyCode-48;
-        $("#one").attr("style","text-decoration:none")
-        $("#two").attr("style","text-decoration:none")
-        $("#three").attr("style","text-decoration:none")
-        $("#four").attr("style","text-decoration:none")
-        $("#five").attr("style","text-decoration:none")
-        $("#six").attr("style","text-decoration:none")
-        if (cur_button==1) {
-          $("#one").attr("style","text-decoration:underline")
-        } else if (cur_button==2) {
-          $("#two").attr("style","text-decoration:underline")
-        } else if (cur_button==3) {
-          $("#three").attr("style","text-decoration:underline")
-        } else if (cur_button==4) {
-          $("#four").attr("style","text-decoration:underline")
-        } else if (cur_button==5) {
-          $("#five").attr("style","text-decoration:underline")
-        } else if (cur_button==6) {
-          $("#six").attr("style","text-decoration:underline")
-        }
-      } else {
-        // document.getElementById("buttonpressed").innerHTML="You pressed " + String.fromCharCode(keyCode) + "!"+keyCode
-      }
     }
   </script>
 </body>
