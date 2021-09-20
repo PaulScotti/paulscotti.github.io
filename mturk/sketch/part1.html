@@ -262,16 +262,20 @@
     let curTrial = 0;
     let itiTime = 500;
     var keyCode = 0;
-    var stimuli = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99];
-    var stimuli2 = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99];
-    var trialshuffle = [[ 0, 32],[ 0, 16],[ 0,  8],[ 0,  4],[ 0,  2],[ 2,  4],[ 4,  8],[ 4,  6],[ 6,  8],[16, 32],[24, 32],[28, 32],[30, 32],[28, 30],[24, 28],[26, 28],[24, 26],[ 8, 16],[ 8, 12],[ 8, 10],[12, 16],[14, 16],[12, 14],[10, 12],[16, 24],[20, 24],[22, 24],[16, 20],[18, 20],[16, 18],[20, 22]];
-    var numTrials = trialshuffle.length;
-    trialshuffle = trialshuffle.concat(trialshuffle);
-    var numTrialsFull = trialshuffle.length;
-    var validation = false;
-    var trialid = Array(trialshuffle.length).fill(0)
-    trialid = trialid.concat(Array(trialshuffle.length).fill(1))
     var categories = ["frog","box"]
+    var stimuli = [[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99],[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99]];
+    var stimuli2 = [[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99],[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99]];
+    var trialshuffle = [[ 0, 32],[ 0, 16],[ 0,  8],[ 0,  4],[ 0,  2],[ 2,  4],[ 4,  8],[ 4,  6],[ 6,  8],[16, 32],[24, 32],[28, 32],[30, 32],[28, 30],[24, 28],[26, 28],[24, 26],[ 8, 16],[ 8, 12],[ 8, 10],[12, 16],[14, 16],[12, 14],[10, 12],[16, 24],[20, 24],[22, 24],[16, 20],[18, 20],[16, 18],[20, 22]];
+    var trialid = Array(trialshuffle.length).fill(0)
+    //for (let i = 0; i < 1; i++) {
+    trialid = trialid.concat(Array(trialshuffle.length).fill(1))
+    trialshuffle = trialshuffle.concat(trialshuffle);
+    //}
+    var numTrials = trialshuffle.length;
+    var numTrialsFull = trialshuffle.length * 2;
+    trialid = trialid.concat(trialid);
+    trialshuffle = trialshuffle.concat(trialshuffle);
+    var validation = false;
     var cur_cat = "frog";    
     var leftLog = [];
     var rightLog = [];
@@ -343,10 +347,10 @@
       }
       console.log(curTrial,trialshuffle[curTrial])
       if (validation==true){
-        stimuli2[average(trialshuffle[curTrial])] = parseFloat(slider_val);
+        stimuli2[trialid[curTrial]][average(trialshuffle[curTrial])] = parseFloat(slider_val);
         console.log(stimuli2)
       } else {
-        stimuli[average(trialshuffle[curTrial])] = parseFloat(slider_val);
+        stimuli[trialid[curTrial]][average(trialshuffle[curTrial])] = parseFloat(slider_val);
         console.log(stimuli)
       }
       rts.push(new Date() - start_time);
@@ -369,15 +373,15 @@
           validation = true;
         } 
         if (validation==true) {
-          $('#item').attr('src',$('#'+cur_cat+(stimuli2[trialshuffle[curTrial][0]])).attr("src"))
-          $('#item2').attr('src',$('#'+cur_cat+(stimuli2[trialshuffle[curTrial][1]])).attr("src"))
-          leftLog.push(stimuli2[trialshuffle[curTrial][0]]);
-          rightLog.push(stimuli2[trialshuffle[curTrial][1]]);
+          $('#item').attr('src',$('#'+cur_cat+(stimuli2[trialid[curTrial]][trialshuffle[curTrial][0]])).attr("src"))
+          $('#item2').attr('src',$('#'+cur_cat+(stimuli2[trialid[curTrial]][trialshuffle[curTrial][1]])).attr("src"))
+          leftLog.push(stimuli2[trialid[curTrial]][trialshuffle[curTrial][0]]);
+          rightLog.push(stimuli2[trialid[curTrial]][trialshuffle[curTrial][1]]);
         } else {
-          $('#item').attr('src',$('#'+cur_cat+(stimuli[trialshuffle[curTrial][0]])).attr("src"))
-          $('#item2').attr('src',$('#'+cur_cat+(stimuli[trialshuffle[curTrial][1]])).attr("src"))
-          leftLog.push(stimuli[trialshuffle[curTrial][0]]);
-          rightLog.push(stimuli[trialshuffle[curTrial][1]]);
+          $('#item').attr('src',$('#'+cur_cat+(stimuli[trialid[curTrial]][trialshuffle[curTrial][0]])).attr("src"))
+          $('#item2').attr('src',$('#'+cur_cat+(stimuli[trialid[curTrial]][trialshuffle[curTrial][1]])).attr("src"))
+          leftLog.push(stimuli[trialid[curTrial]][trialshuffle[curTrial][0]]);
+          rightLog.push(stimuli[trialid[curTrial]][trialshuffle[curTrial][1]]);
         }
         $('#item').attr('style','display:inline')
         $('#item2').attr('style','display:inline')
