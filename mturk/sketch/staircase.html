@@ -5,7 +5,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/seedrandom.js"></script>
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
-  <script src="https://paulscotti.github.io/mturk/js_code/staircase.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
   const startDate = new Date(); 
@@ -264,25 +263,15 @@
     let itiTime = 500;
     var keyCode = 0;
     var categories = ["frog","box"]
-    var stimuli = [[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99],[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99]];
-    var stimuli2 = [[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99],[0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 99]];
-    var trialshuffle = [[ 0, 32],[ 0, 16],[ 0,  8],[ 0,  4],[ 0,  2],[ 2,  4],[ 4,  8],[ 4,  6],[ 6,  8],[16, 32],[24, 32],[28, 32],[30, 32],[28, 30],[24, 28],[26, 28],[24, 26],[ 8, 16],[ 8, 12],[ 8, 10],[12, 16],[14, 16],[12, 14],[10, 12],[16, 24],[20, 24],[22, 24],[16, 20],[18, 20],[16, 18],[20, 22]];
-    var trialid = Array(trialshuffle.length).fill(0)
-    //for (let i = 0; i < 1; i++) {
-    trialid = trialid.concat(Array(trialshuffle.length).fill(1))
-    trialshuffle = trialshuffle.concat(trialshuffle);
-    //}
     var numTrials = trialshuffle.length;
-    var numTrialsFull = trialshuffle.length * 2;
-    trialid = trialid.concat(trialid);
-    trialshuffle = trialshuffle.concat(trialshuffle);
     var validation = false;
     var cur_cat = "frog";    
     var leftLog = [];
     var rightLog = [];
     let start_time = 0;
     var rts = [];
-    var slider_val = 0;
+    var stair;
+    var score;
     const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
     function CheckInfo() {
