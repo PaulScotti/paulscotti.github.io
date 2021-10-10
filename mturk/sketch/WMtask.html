@@ -98,7 +98,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:150px;
       display: none;
       z-index: 3;
     }
@@ -107,7 +107,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:150px;
       display: none;
       z-index: 2;
     }
@@ -116,7 +116,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:150px;
       display: none;
       z-index: 1;
     }
@@ -125,7 +125,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:0px;
       display: none;
     }
     #item2B {
@@ -133,7 +133,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:0px;
       display: none;
     }
     #item2C {
@@ -141,7 +141,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      left:0px;
       display: none;
     }
     #item3A {
@@ -149,7 +149,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      right:0px;
       display: none;
     }
     #item3B {
@@ -157,7 +157,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      right:0px;
       display: none;
     }
     #item3C {
@@ -165,7 +165,7 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:50px;
+      right:0px;
       display: none;
     }
     #progress {
@@ -179,7 +179,7 @@
       left:25%;
       width:50%; 
       height: 25px; 
-      background: #d3d3d3; 
+      background:white; 
       outline: none;
       opacity: 0.7;
       -webkit-transition: .2s;
@@ -384,6 +384,7 @@
           A = RandomInt(90);
           B = RandomInt(90);
           C = RandomInt(90);
+          $('#slideA').val(A);$('#slideB').val(B);$('#slideC').val(C);
           $('#item1A').attr('src',$('#'+cur_cat+"A"+endstr(A)).attr("src"))
           $('#item1A').attr('style','display:inline')
           $('#item1B').attr('src',$('#'+cur_cat+"B"+endstr(B)).attr("src"))
