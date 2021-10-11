@@ -89,9 +89,18 @@
     }
     #boxtext {
       position:absolute;
+      display: none;
       text-align:center;
       top:30px;
       left:40px;
+    }
+    #fixation {
+      position: absolute;
+      width: 600px;
+      top: 250px;
+      text-align: center;
+      font-size: 30px;
+      font-weight: bold;
     }
     #item1A {
       position: absolute;
@@ -125,65 +134,77 @@
       width: 300px;
       height: 300px;
       top:100px;
-      left:0px;
+      left:10px;
       display: none;
+      z-index: 3;
     }
     #item2B {
       position: absolute;
       width: 300px;
       height: 300px;
       top:100px;
-      left:0px;
+      left:10px;
       display: none;
+      z-index: 2;
     }
     #item2C {
       position: absolute;
       width: 300px;
       height: 300px;
       top:100px;
-      left:0px;
+      left:10px;
       display: none;
+      z-index: 1;
     }
     #item3A {
       position: absolute;
       width: 300px;
       height: 300px;
       top:100px;
-      right:0px;
+      right:10px;
       display: none;
+      z-index: 3;
     }
     #item3B {
       position: absolute;
       width: 300px;
       height: 300px;
       top:100px;
-      right:0px;
+      right:10px;
       display: none;
+      z-index: 2;
     }
     #item3C {
       position: absolute;
       width: 300px;
       height: 300px;
       top:100px;
-      right:0px;
+      right:10px;
       display: none;
+      z-index: 1;
     }
     #progress {
       position:absolute;
       bottom:-5px;
       left:5px;
     }
-    #slide {
+    .slide {
       position: absolute;
-      bottom:80px;
-      left:25%;
-      width:50%; 
-      height: 25px; 
-      background:white; 
+      display: none;
+      right:15px;
+      width:45%; 
       outline: none;
-      opacity: 0.7;
       -webkit-transition: .2s;
       transition: opacity .2s;
+    }
+    #slideA {
+      top:200px;
+    }
+    #slideB {
+      top:250px;
+    }
+    #slideC {
+      top:300px;
     }
     #Button {
       display: inline-block;
@@ -304,7 +325,7 @@
 
   <!-- HTML Experiment Elements -->
   <div id="showTrial">
-    <p id="boxtext">Make an image halfway between the top two images in terms of similarity.</p>
+    <p id="boxtext">Recreate the image by adjusting the three sliders</p>
     <img id="item1A" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="item1B" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="item1C" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
@@ -314,9 +335,10 @@
     <img id="item3A" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="item3B" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="item3C" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
-    <input type="range" oninput=setImageA(this) min="1" max="90" value="1" id="slideA">
-    <input type="range" oninput=setImageB(this) min="1" max="90" value="1" id="slideB">
-    <input type="range" oninput=setImageC(this) min="1" max="90" value="1" id="slideC">
+    <input type="range" oninput=setImageA(this) min="1" max="90" value="1" class="slide" id="slideA">
+    <input type="range" oninput=setImageB(this) min="1" max="90" value="1" class="slide" id="slideB">
+    <input type="range" oninput=setImageC(this) min="1" max="90" value="1" class="slide" id="slideC">
+    <div id="fixation">+</div>
     <p id='progress'></p>
     <button id='Button' onclick="confirm()" style="position: absolute; bottom: 5px; right: 44%;">Confirm</button>
   </div>
@@ -332,17 +354,22 @@
     let modalClosed = false;
     let curTrial = 0;
     let displayTime = 2000;
-    let itiTime = 1000;
+    let compareTime = 2000;
+    let itiTime = 500;
     var keyCode = 0;
     var categories = ["frog"];
-    var cur_cat = "frog"; 
-    var numTrials = 200;
+    var cur_cat = "frog";
+    var cat_tracker = []; 
+    var numTrials = 100;
     var reports = [];
-    var actual = [];
+    var actuals = [];
     let start_time = 0;
     var slider_valA = 0;
     var slider_valB = 0;
     var slider_valC = 0;
+    var presentA = derange(counter(1,90))
+    var presentB = derange(counter(1,90))
+    var presentC = derange(counter(1,90))
     var rts = [];
     const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
@@ -381,81 +408,78 @@
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
-          A = RandomInt(90);
-          B = RandomInt(90);
-          C = RandomInt(90);
-          $('#slideA').val(A);$('#slideB').val(B);$('#slideC').val(C);
-          $('#item1A').attr('src',$('#'+cur_cat+"A"+endstr(A)).attr("src"))
-          $('#item1A').attr('style','display:inline')
-          $('#item1B').attr('src',$('#'+cur_cat+"B"+endstr(B)).attr("src"))
-          $('#item1B').attr('style','display:inline')
-          $('#item1C').attr('src',$('#'+cur_cat+"C"+endstr(C)).attr("src"))
-          $('#item1C').attr('style','display:inline')
-          start_time = new Date();
-          $('#showTrial').show();
-          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
           console.log("start!")
+          $('button#Button').hide()
+          $('#showTrial').show();
+          nextTrial();
         }
       }
     }
 
+    function nextTrial() {
+      $('#fixation').show()
+      $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
+      cat_tracker.push(cur_cat);
+      setTimeout(function() {
+        start_time = new Date();
+        A = presentA[curTrial];B = presentB[curTrial];C = presentC[curTrial];
+        $('#item1A').attr('src',$('#'+cur_cat+"A"+endstr(A)).attr("src"))
+        $('#item1A').attr('style','display:inline')
+        $('#item1B').attr('src',$('#'+cur_cat+"B"+endstr(B)).attr("src"))
+        $('#item1B').attr('style','display:inline')
+        $('#item1C').attr('src',$('#'+cur_cat+"C"+endstr(C)).attr("src"))
+        $('#item1C').attr('style','display:inline')
+        setTimeout(function() {
+          $('#fixation').hide()
+          $('#boxtext').attr('style','display:inline')
+          $('#item1A').attr('style','display:none')
+          $('#item1B').attr('style','display:none')
+          $('#item1C').attr('style','display:none')
+          Anew = RandomInt(90);Bnew = RandomInt(90);Cnew = RandomInt(90);
+          $('#slideA').val(Anew);$('#slideB').val(Bnew);$('#slideC').val(Cnew);
+          $('.slide').attr('style','display:inline')
+          $('#item2A').attr('src',$('#'+cur_cat+"A"+endstr(Anew)).attr("src"))
+          $('#item2A').attr('style','display:inline')
+          $('#item2B').attr('src',$('#'+cur_cat+"B"+endstr(Bnew)).attr("src"))
+          $('#item2B').attr('style','display:inline')
+          $('#item2C').attr('src',$('#'+cur_cat+"C"+endstr(Cnew)).attr("src"))
+          $('#item2C').attr('style','display:inline')
+          $('button#Button').show()
+        }, displayTime);
+      }, itiTime);
+    }
+
     function confirm() {
-      if (curTrial==0) {
-        if (slider_val<10){
-          alert('Please adjust the slider such that the bottom middle image looks roughly as similar to the top left and the top right images. Then click confirm.')
-          return
-        }
-      }
-      console.log(curTrial,trialshuffle[curTrial])
-      if (validation==true){
-        stimuli2[trialid[curTrial]][average(trialshuffle[curTrial])] = parseFloat(slider_val);
-        console.log(stimuli2)
-      } else {
-        stimuli[trialid[curTrial]][average(trialshuffle[curTrial])] = parseFloat(slider_val);
-        console.log(stimuli)
-      }
+      console.log(curTrial)
       rts.push(new Date() - start_time);
-      $('#item').attr('style','display:none')
-      $('#item2').attr('style','display:none')
-      $('#item3').attr('style','display:none')
+      actuals.push([A,B,C])
+      reports.push([parseFloat(slider_valA),parseFloat(slider_valB),parseFloat(slider_valC)])
+      $('#item3A').attr('src',$('#'+cur_cat+"A"+endstr(A)).attr("src"))
+      $('#item3A').attr('style','display:inline')
+      $('#item3B').attr('src',$('#'+cur_cat+"B"+endstr(B)).attr("src"))
+      $('#item3B').attr('style','display:inline')
+      $('#item3C').attr('src',$('#'+cur_cat+"C"+endstr(C)).attr("src"))
+      $('#item3C').attr('style','display:inline')
       $('#boxtext').attr('style','display:none')
-      $('#slide').attr('style','display:none')
+      $('.slide').attr('style','display:none')
       $('button#Button').hide()
       curTrial++;
       setTimeout(function() {
-        cur_cat = categories[trialid[curTrial]];
-        if (curTrial>=numTrialsFull) {
-          validation = true;
-          $('#progress').text("Trial "+curTrial+" of "+numTrialsFull)
+        if (curTrial>=numTrials) {
+          $('#progress').text("Trial "+curTrial+" of "+numTrials)
           $("#showTrial").hide()
           Done()
           return
-        } else if ((curTrial>=numTrials) & (validation==false)) {
-          validation = true;
-        } 
-        if (validation==true) {
-          $('#item').attr('src',$('#'+cur_cat+(stimuli2[trialid[curTrial]][trialshuffle[curTrial][0]])).attr("src"))
-          $('#item2').attr('src',$('#'+cur_cat+(stimuli2[trialid[curTrial]][trialshuffle[curTrial][1]])).attr("src"))
-          leftLog.push(stimuli2[trialid[curTrial]][trialshuffle[curTrial][0]]);
-          rightLog.push(stimuli2[trialid[curTrial]][trialshuffle[curTrial][1]]);
         } else {
-          $('#item').attr('src',$('#'+cur_cat+(stimuli[trialid[curTrial]][trialshuffle[curTrial][0]])).attr("src"))
-          $('#item2').attr('src',$('#'+cur_cat+(stimuli[trialid[curTrial]][trialshuffle[curTrial][1]])).attr("src"))
-          leftLog.push(stimuli[trialid[curTrial]][trialshuffle[curTrial][0]]);
-          rightLog.push(stimuli[trialid[curTrial]][trialshuffle[curTrial][1]]);
+          $('#item2A').attr('style','display:none')
+          $('#item2B').attr('style','display:none')
+          $('#item2C').attr('style','display:none')
+          $('#item3A').attr('style','display:none')
+          $('#item3B').attr('style','display:none')
+          $('#item3C').attr('style','display:none')
+          nextTrial();
         }
-        $('#item').attr('style','display:inline')
-        $('#item2').attr('style','display:inline')
-        slider_val = 50;
-        $('#slide').val(slider_val)
-        $('#item3').attr('src',$('#'+cur_cat+slider_val).attr("src"))
-        $('#item3').attr('style','display:inline')
-        $('#boxtext').attr('style','display:inline')
-        $('#slide').attr('style','display:inline')
-        $('button#Button').show()
-        $('#progress').text("Trial "+(curTrial+1)+" of "+numTrialsFull)
-        start_time = new Date();
-      }, itiTime);
+      }, compareTime);
     }
 
     /* Always track mouse */
@@ -498,13 +522,13 @@
         "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
         "seed": seed,
         "rts": rts,
-        "leftLog": leftLog,
-        "rightLog": rightLog,
+        "actuals": actuals,
+        "reports": reports,
+        "cat_tracker": cat_tracker,
         "categories": categories,
-        "trialshuffle": trialshuffle,
-        "trialid": trialid,
-        "stimuli": stimuli,
-        "stimuli2": stimuli2,
+        "presentA": presentA,
+        "presentB": presentB,
+        "presentC": presentC,
         "comments": $('#comments').val()
       };
 
@@ -522,7 +546,7 @@
       req.setRequestHeader("Content-Type", "application/json");
       req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
       req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
-      req.setRequestHeader("X-Bin-Name", name.split(" ").join("") + '.json');
+      req.setRequestHeader("X-Bin-Name", $('#name').val().split(" ").join("") + '.json');
       req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
@@ -535,15 +559,15 @@
 
     function setImageA(obj) {
       slider_valA = obj.value;
-      $('#item1A').attr('src',$('#'+cur_cat+"A"+endstr(slider_valA)).attr("src"))
+      $('#item2A').attr('src',$('#'+cur_cat+"A"+endstr(slider_valA)).attr("src"))
     }
     function setImageB(obj) {
       slider_valB = obj.value;
-      $('#item1B').attr('src',$('#'+cur_cat+"B"+endstr(slider_valB)).attr("src"))
+      $('#item2B').attr('src',$('#'+cur_cat+"B"+endstr(slider_valB)).attr("src"))
     }
     function setImageC(obj) {
       slider_valC = obj.value;
-      $('#item1C').attr('src',$('#'+cur_cat+"C"+endstr(slider_valC)).attr("src"))
+      $('#item2C').attr('src',$('#'+cur_cat+"C"+endstr(slider_valC)).attr("src"))
     }
 
     /*check all images are loaded before starting*/
