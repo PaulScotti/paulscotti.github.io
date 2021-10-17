@@ -384,9 +384,9 @@
     var slider_valA = 0;
     var slider_valB = 0;
     var slider_valC = 0;
-    var presentA = derange(counter(1,90))
-    var presentB = derange(counter(1,90))
-    var presentC = derange(counter(1,90))
+    var presentA = derange(Array(2).fill(counter(1,90)).flat())
+    var presentB = derange(Array(2).fill(counter(1,90)).flat())
+    var presentC = derange(Array(2).fill(counter(1,90)).flat())
     var anchor = derange(Array(34).fill([1,2,3]).flat())
     var rts = [];
     const average = (array) => array.reduce((a, b) => a + b) / array.length;
