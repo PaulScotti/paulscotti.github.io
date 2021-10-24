@@ -314,6 +314,7 @@
       <source src="https://paulscotti.github.io/mturk/sketch/instruct_clip.mov">
     </video>
     <p>Do your best to recreate the initially presented drawing on each trial by adjusting the available sliders.</p>
+    <p>Your progress will not be saved until experiment completion -- do not refresh the browser or you will lose your progress.</p>
     <button id="Button" onclick="document.body.scrollTop = document.documentElement.scrollTop = 0;$('#instructions').hide();StartExperiment()">I understand the instructions</button>
   </div>
 
@@ -381,7 +382,8 @@
     var keyCode = 0;
     var categories = ["frog","clock","skull","cannon","paintcan"];
     var cur_cat = "NaN";
-    var cat_order = derange(Array(30).fill(counter(0,4)).flat())
+    var trialshuffle = ['0A', '0A', '0A', '0A', '0A', '0A', '0A', '0A', '0A', '0A', '0B', '0B', '0B', '0B', '0B', '0B', '0B', '0B', '0B', '0B', '0C', '0C', '0C', '0C', '0C', '0C', '0C', '0C', '0C', '0C', '1A', '1A', '1A', '1A', '1A', '1A', '1A', '1A', '1A', '1A', '1B', '1B', '1B', '1B', '1B', '1B', '1B', '1B', '1B', '1B', '1C', '1C', '1C', '1C', '1C', '1C', '1C', '1C', '1C', '1C', '2A', '2A', '2A', '2A', '2A', '2A', '2A', '2A', '2A', '2A', '2B', '2B', '2B', '2B', '2B', '2B', '2B', '2B', '2B', '2B', '2C', '2C', '2C', '2C', '2C', '2C', '2C', '2C', '2C', '2C', '3A', '3A', '3A', '3A', '3A', '3A', '3A', '3A', '3A', '3A', '3B', '3B', '3B', '3B', '3B', '3B', '3B', '3B', '3B', '3B', '3C', '3C', '3C', '3C', '3C', '3C', '3C', '3C', '3C', '3C', '4A', '4A', '4A', '4A', '4A', '4A', '4A', '4A', '4A', '4A', '4B', '4B', '4B', '4B', '4B', '4B', '4B', '4B', '4B', '4B', '4C', '4C', '4C', '4C', '4C', '4C', '4C', '4C', '4C', '4C'];
+    trialshuffle = derange(trialshuffle);
     var cat_tracker = []; 
     var numTrials = 150;
     var reports = [];
@@ -393,7 +395,6 @@
     var presentA = derange(Array(2).fill(counter(1,90)).flat())
     var presentB = derange(Array(2).fill(counter(1,90)).flat())
     var presentC = derange(Array(2).fill(counter(1,90)).flat())
-    var anchor = derange(Array(50).fill([1,2,3]).flat())
     var rts = [];
     const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
@@ -445,7 +446,7 @@
       document.getElementById("slideB").disabled = false;
       document.getElementById("slideC").disabled = false;
       $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
-      cur_cat = categories[cat_order[curTrial]]
+      cur_cat = categories[parseInt(trialshuffle[curTrial][0])]
       cat_tracker.push(cur_cat);
       setTimeout(function() {
         start_time = new Date();
@@ -469,11 +470,11 @@
           $('#item2B').css('opacity',.3)
           $('#item2C').css('opacity',.3)
           Anew = RandomInt(90); Bnew = RandomInt(90); Cnew = RandomInt(90);
-          if (anchor[curTrial]==1) {
+          if (trialshuffle[curTrial][1]=='A') {
             document.getElementById("slideA").disabled = true;
             $('#item2A').css('opacity',1)
             Anew = A; 
-          } else if (anchor[curTrial]==2) {
+          } else if (trialshuffle[curTrial][1]=='B') {
             document.getElementById("slideB").disabled = true;
             $('#item2B').css('opacity',1)
             Bnew = B;
@@ -500,9 +501,9 @@
       console.log(curTrial)
       rts.push(new Date() - start_time);
       actuals.push([A,B,C])
-      if (anchor[curTrial]==1) {
+      if (trialshuffle[curTrial][1]=='A') {
         reports.push([parseFloat(NaN),parseFloat(slider_valB),parseFloat(slider_valC)])
-      } else if (anchor[curTrial]==2) {
+      } else if (trialshuffle[curTrial][1]=='B') {
         reports.push([parseFloat(slider_valA),parseFloat(NaN),parseFloat(slider_valC)])
       } else {
         reports.push([parseFloat(slider_valA),parseFloat(slider_valB),parseFloat(NaN)])
@@ -579,11 +580,10 @@
         "reports": reports,
         "cat_tracker": cat_tracker,
         "categories": categories,
-        "cat_order": cat_order,
+        "trialshuffle": trialshuffle,
         "presentA": presentA,
         "presentB": presentB,
         "presentC": presentC,
-        "anchor": anchor,
         "comments": $('#comments').val()
       };
 
