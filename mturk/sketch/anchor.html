@@ -637,22 +637,6 @@
       $('#item2C').attr('src',$('#'+cur_cat+"C"+endstr(slider_valC)).attr("src"))
     }
 
-    /*check all images are loaded before starting*/
-    function ImagesReady() {
-      for (var i = 0; i < numImages; i++) {
-          if (!$('#'+cur_cat + i)[0].complete) {
-              var percentage = i * 100.0 / (test_phase.length);
-              percentage = percentage.toFixed(0).toString() + ' %';
-
-              document.getElementById("loading").innerHTML =
-                'Loading images ... ' + percentage + '<br>If more than a minute elapses, try refreshing page.';
-              setTimeout('ImagesReady()', 20);
-              return;
-          }
-      }
-      $('#loading').hide();
-    };
-
     /* running on IE? */
     function isIE() {
       ua = navigator.userAgent;
