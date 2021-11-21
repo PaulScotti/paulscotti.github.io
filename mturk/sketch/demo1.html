@@ -359,7 +359,7 @@
     categories.push(["mouth","drum","couch","hammer","camel"])
     categories.push(["bathtub","toothbrush","monkey","mountain","ceilingfan"])
     categories.push(["rhino","church","pizza","giraffe","whale"])
-    categories = categories.flat();
+    categories = categories.flat().sort();
     $.each(categories, function(i, p) {
       $('#ddobject').append($('<option></option>').val(p).html(p));
     });
