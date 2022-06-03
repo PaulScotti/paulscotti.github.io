@@ -294,15 +294,15 @@
 
     // load variables
     sceneI = Math.floor(Math.random() * 100)
-    const scenes= require('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/scenes'+sceneI+'.json'); 
+    const scenes= $.getJSON('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/scenes'+sceneI+'.json',function(data){});
     objectI = Math.floor(Math.random() * 100)
-    const objects= require('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/objects'+objectI+'.json'); 
+    const objects= $.getJSON('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/objects'+objectI+'.json',function(data){});
     faceI = Math.floor(Math.random() * 100)
-    const faces= require('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faces'+faceI+'.json'); 
+    const faces= $.getJSON('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faces'+faceI+'.json',function(data){});
     faceAI = Math.floor(Math.random() * 100)
-    const faceAs= require('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceAs'+faceAI+'.json'); 
+    const faceAs= $.getJSON('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceAs'+faceAI+'.json',function(data){});
     faceBI = Math.floor(Math.random() * 100)
-    const faceBs= require('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceBs'+faceBI+'.json'); 
+    const faceBs= $.getJSON('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceBs'+faceBI+'.json',function(data){});
 
     /* Define variables */
     let modalClosed = false;
