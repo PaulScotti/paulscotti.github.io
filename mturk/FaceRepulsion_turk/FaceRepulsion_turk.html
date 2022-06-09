@@ -11,6 +11,18 @@
   </script>
   <!-- Custom functions -->
   <script> 
+    function CheckInfo() {
+      if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
+        alert('Please fill out all required input fields.')
+      } else if (!(parseFloat($('#age').val()) < 100)) {
+        alert('Please input a valid age.')
+      } else if (!(parseFloat($('#age').val()) >= 18)) {
+        alert('Please input a valid age. You must be at least 18 years old to participate.')
+      } else {
+        $('#info').hide()
+        ImagesReady()
+      }
+    }
     function counter(start, end, interval) {
       if (interval == undefined) {
         interval = 1;
@@ -58,6 +70,55 @@
         }
         return array;
     }
+    var isArray = Array.isArray || function(value) {
+      return {}.toString.call(value) !== "[object Array]"
+    };
+    function sharedShuffleInPlace() {
+      var arrLength = 0;
+      var argsLength = arguments.length;
+      var rnd, tmp;
+
+      for (var index = 0; index < argsLength; index += 1) {
+        if (!isArray(arguments[index])) {
+          throw new TypeError("Argument is not an array.");
+        }
+
+        if (index === 0) {
+          arrLength = arguments[0].length;
+        }
+
+        if (arrLength !== arguments[index].length) {
+          throw new RangeError("Array lengths do not match.");
+        }
+      }
+
+      while (arrLength) {
+        rnd = Math.floor(Math.random() * arrLength);
+        arrLength -= 1;
+        for (argsIndex = 0; argsIndex < argsLength; argsIndex += 1) {
+          tmp = arguments[argsIndex][arrLength];
+          arguments[argsIndex][arrLength] = arguments[argsIndex][rnd];
+          arguments[argsIndex][rnd] = tmp;
+        }
+      }
+    }
+    function shuffle(o) {
+        for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+        return o;
+    }
+    function permutation( length ) {
+      var p = [], i;
+      for (i = 0; i < length; ++i) p[i] = i;
+      return shuffle(p);
+    }
+    function permute( a, p ) {
+      var r = [];
+      for (var i = 0; i < a.length; ++i)
+        r.push(a[p[i]]);
+      for (i = 0; i < a.length; ++i)
+        a[i] = r[i];
+      return r
+    }
     function readTextFile(file, callback) {
         var rawFile = new XMLHttpRequest();
         rawFile.overrideMimeType("application/json");
@@ -68,6 +129,9 @@
             }
         }
         rawFile.send(null);
+    }
+    function randomInts(min, max) { // min and max included 
+      return Math.floor(Math.random() * (max - min + 1) + min)
     }
  </script>
   <!-- Add CSS elements -->
@@ -124,18 +188,51 @@
     }
     .number_buttons{
       position:absolute;
-      bottom:100px;
       font-size:32px;
     }
-    #dissimilar {
-      left:80px;
-      bottom:60px;
+    #numbers {
+      display:none;
     }
-    #identical {
-      right:80px;
-      bottom:60px;
+    #button_instruct {
+      position:absolute;
+      text-align:center;
+      top:50px;
+      left:60px;
+      font-size:18px;
     }
-    #Button {
+    #button1 {
+      bottom:70px;
+      left:100px;
+    }
+    #button2 {
+      bottom:30px;
+      left:100px;
+    }
+    #button3 {
+      bottom:70px;
+      left:375px;
+    }
+    #button4 {
+      bottom:30px;
+      left:375px;
+    }
+    #slide {
+      position: absolute;
+      display: none;
+      right:150px;
+      bottom:100px;
+      width:50%; 
+      outline: none;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    #FaceConfirm {
+      position: absolute;
+      bottom:50px;
+      left:260px;
+      display:none;
+    }
+    .Button {
       display: inline-block;
       color: black;
       border: 3px outset gray;
@@ -145,10 +242,10 @@
       font-family: Arial, Helvetica;
       font-weight: bold;
     }
-    #Button:hover {
+    .Button:hover {
       border: 3px inset gray;
     }
-    #Button:active {
+    .Button:active {
       border: 3px inset gray;
     }
     .modalDialog:target {
@@ -206,7 +303,7 @@
   <!-- Consent statement: -->
   <div id="consentDiv"><center><h1>Princeton University Consent to Participate in Research</h1><p><b>This is a consent form for research participation.</b> It contains important information about this study and what to expect if you decide to participate.<br>If any questions arise, please contact scottibrain@gmail.com.</p>
     <iframe src="https://paulscotti.github.io/mturk/jglab_consent.pdf" width="60%" height="500px"></iframe>
-    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#info').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="Button" style="display: inline;">I consent to participate in this study</a></p>
+    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#info').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" class="Button" style="display: inline;">I consent to participate in this study</a></p>
   </center></div>
 
   <!-- Subject info screen -->
@@ -223,7 +320,7 @@
     Normal or corrected-to-normal visual acuity? <input type="checkbox" id="acuity" checked><br><br>
     Normal color vision? <input type="checkbox" id="colorvision" checked><br><br>
     </p>
-    <button id="Button" onclick="CheckInfo()">Continue</button>
+    <button class="Button" onclick="CheckInfo()">Continue</button>
   </div>
 
   <!-- Modal Pop-up Box -->
@@ -244,7 +341,7 @@
     <div id="doneText">
     </div>
     <div>
-        <a href="javascript:void(0);" onclick="SaveData()" id="Button">Click to Submit</a>
+        <a href="javascript:void(0);" onclick="SaveData()" class="Button">Click to Submit</a>
     </div>
     <iframe src="https://paulscotti.github.io/mturk/jglab_debrief.pdf" width="60%" height="500px"></iframe>
   </div>
@@ -256,10 +353,18 @@
     <img id="item" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="itemL" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png"></img>
     <img id="itemR" src="https://maxceylab.github.io/stimuli/objects/Obj11_11.png" draggable="true"></img>
-    <p class="number_buttons" id="dissimilar">Dissimilar</p>
-    <p class="number_buttons" id="identical">Identical</p>
+    <input type="range" oninput=setImage(this) min="0" max="119" value="0" id="slide">
+    <div id="numbers">
+      <p id="button_instruct">Which image was paired?<br>(Press the corresponding number button on your keyboard.)</p>
+      <p class="number_buttons" id="button1">(1)Guess</p>
+      <p class="number_buttons" id="button2">(2)Sure</p>
+      <p class="number_buttons" id="button3">(3)Guess</p>
+      <p class="number_buttons" id="button4">(4)Sure</p>
+    </div>
+    <button class="Button" id="FaceConfirm" onclick="FaceConfirm()">Confirm</button>
     <p id='progress'></p>
   </div>
+  <center><p id='loading'></p></center>
   <!-- <div id="buttonpressed">You pressed</p> -->
 
   <!-- Initializing JS -->
@@ -273,53 +378,47 @@
     const chance1 = Chance($('#name').val()); 
     Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
 
-    // load variables
-    sceneI = Math.floor(Math.random() * 100)
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/scenes'+sceneI+'.json',function(text){scenes=JSON.parse(text)});
-    objectI = Math.floor(Math.random() * 100)
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/objects'+objectI+'.json',function(text){objects=JSON.parse(text)});
-    faceI = Math.floor(Math.random() * 99)
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/facesA'+faceI+'.json',function(text){faceA=JSON.parse(text)});
-    faceI = faceI+1
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/facesB'+faceI+'.json',function(text){faceB=JSON.parse(text)});
-    faceAI = Math.floor(Math.random() * 100)
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceAs'+faceAI+'.json',function(text){faceAs=JSON.parse(text)});
-    faceBI = Math.floor(Math.random() * 100)
-    readTextFile('https://paulscotti.github.io/mturk/FaceRepulsion_turk/design/faceBs'+faceBI+'.json',function(text){faceBs=JSON.parse(text)});
-
     /* Define variables */
     let modalClosed = false;
     let curTrial = 0;
-    let numTrials = 60;
-    let displayTime = 3000;
-    let isiTime = 1200;
+    let numTrialsPerBlock = 6;
+    let numTrials = 120;
+    let curBlock = 0;
+    let numBlocks = 10;
+    let numStudyReps = 2;
+    let displayTime = 3000; //3000
+    let isi1Time = 200;
+    let isi2Time = 1200; //1200
     var keyCode = 0;
     var cur_button = 0;
-    var phase1_buttons = [];
-    var phase1_presentations = [];
-    var phase1_rts = [];
-    var phase2_buttons = [];
+    var phase1_faces = [];
+    var phase1_associates = [];
     var phase2_presentations = [];
+    var phase2_Ls = [];
+    var phase2_Rs = [];
+    var phase2_resp = [];
     var phase2_rts = [];
-    var phase3_buttons = [];
     var phase3_presentations = [];
+    var phase3_resp = [];
     var phase3_rts = [];
     let start_time = 0;
-    var rts = [];
 
-    function CheckInfo() {
-      if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
-        alert('Please fill out all required input fields.')
-      } else if (!(parseFloat($('#age').val()) < 100)) {
-        alert('Please input a valid age.')
-      } else if (!(parseFloat($('#age').val()) >= 18)) {
-        alert('Please input a valid age. You must be at least 18 years old to participate.')
-      } else {
-        $('#info').hide()
-        StartExperiment()
-      }
+    // var random = derange(counter(0,59))
+    // var cur_random = random.slice(curBlock*numTrialsPerBlock,curBlock*numTrialsPerBlock+numTrialsPerBlock)
+    // var cur_randomB = derange(cur_random)
+    var random = counter(0,59)
+    var faceAs = Array.from({length:numTrials/2}, () => randomInts(14,44))
+    var faceBs = Array.from({length:numTrials/2}, () => randomInts(74,104))
+
+    var AorB1 = Array(numTrialsPerBlock/2).fill(0).concat(Array(numTrialsPerBlock/2).fill(1))
+    var cur_random1 = random.slice(curBlock*numTrialsPerBlock/2,curBlock*numTrialsPerBlock/2+numTrialsPerBlock/2)
+    cur_random1 = cur_random1.concat(cur_random1)
+    sharedShuffleInPlace(AorB1,cur_random1)
+    for (var index = 1; index < numStudyReps; index += 1) {
+      p = permutation(numTrialsPerBlock)
+      cur_random = cur_random1.concat(permute(cur_random1,p))
+      AorB = AorB1.concat(permute(AorB1,p))
     }
-
     function StartExperiment() {
       if (IsOnTurk() && IsTurkPreview()) {
           alert("Please accept the HIT before continuing.");
@@ -337,84 +436,184 @@
         if (modalClosed == false) {
           window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
         } else {
-          $('#item').attr('src',$(window['pair'+facesA[0]+'_'+facesAw[0]])[0].src).attr("src")
-          $('#item').attr('style','display:inline')
-          
           start_time = new Date();
-          $('#showTrial').show();
-          $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
+          $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock*numStudyReps)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
           console.log("start!")
-          NextTrial();
+          StudyTrial();
         }
       }
     }
 
     /* Study Phase Start */
-    function NextTrial() {
-      console.log(curTrial,faces[curTrial])
-      cur_button = 0;
-      if (curTrial >= numTrials) { // if end of study
+    function StudyTrial() {
+      console.log(curTrial,faceAs[cur_random[curTrial]],faceBs[cur_random[curTrial]])
+      if (curTrial >= (numTrialsPerBlock*numStudyReps)) { // if end of block
+        console.log("End of Block.")
         $("#showTrial").hide()
-        Done()
+        curTrial = 0;
+        $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+        p = permutation(numTrialsPerBlock)
+        cur_random = permute(cur_random1,p)
+        AorB = permute(AorB1,p)
+        AFC()
       } else {
-        proceed_trial()
-        function proceed_trial() {
-          if (cur_button!=0) {
-            buttonLog.push(cur_button);
-            cur_button = 0;
-            rts.push(new Date() - start_time);
-            $('#item').attr('style','display:none')
-            $('#item2').attr('style','display:none')
-            setTimeout(function() {
-              curTrial++;
-              if (trialshuffle[curTrial]==-12){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(2);
-              } else if (trialshuffle[curTrial]==-13){
-                $('#item').attr('src',$('#'+cur_cat+1).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(1); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==-23){
-                $('#item').attr('src',$('#'+cur_cat+2).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+3).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(2); rightLog.push(3);
-              } else if (trialshuffle[curTrial]==999){
-                random_image = derange(counter(1,numImages))[0]
-                $('#item').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+random_image).attr("src"))
-                $('#item2').attr('style','display:inline')
-                leftLog.push(random_image); rightLog.push(random_image);
-              } else {
-                if (curTrial>=numTrials) {
-                  $('#progress').text("Trial "+curTrial+" of "+numTrials)
-                  NextTrial();
-                  return
-                } else {
-                  $('#item').attr('src',$('#'+cur_cat+(trialshuffle[curTrial][0])).attr("src"))
-                  leftLog.push(trialshuffle[curTrial][0]); rightLog.push(trialshuffle[curTrial][1]);
-                }
-                $('#item').attr('style','display:inline')
-                $('#item2').attr('src',$('#'+cur_cat+trialshuffle[curTrial][1]).attr("src"))
-                $('#item2').attr('style','display:inline')
-              }
-              $('#progress').text("Trial "+(curTrial+1)+" of "+numTrials)
-              start_time = new Date();
-              NextTrial();
-            }, itiTime);
-          } else {
-            // check for response every 150ms
-            setTimeout(proceed_trial, 150);
-          }
+        if (AorB[curTrial]==0) {
+          $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]])[0].src).attr("src")
+          phase1_faces.push('pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]);
+        } else {
+          $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceBs[cur_random[curTrial]]])[0].src).attr("src")
+          phase1_faces.push('pair'+cur_random[curTrial]+'_'+faceBs[cur_random[curTrial]]);
         }
+        $('#item').attr('style','display:inline')
+        $('#showTrial').show();
+        setTimeout(function() { // FACE displayTime
+          $('#item').attr('style','display:none')
+          if (AorB[curTrial]==0) {
+            $('#item').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
+            phase1_associates.push('scene'+cur_random[curTrial]);
+          } else {
+            $('#item').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
+            phase1_associates.push('obj'+cur_random[curTrial]);
+          }
+          setTimeout(function() { // BLANK isi1Time
+            $('#item').attr('style','display:inline')
+            setTimeout(function() { // SCENE/OBJ displayTime
+              $('#item').attr('style','display:none')
+              setTimeout(function() { // BLANK isi2Time
+                curTrial = curTrial + 1;
+                $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock*numStudyReps)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+                StudyTrial();
+              }, isi2Time);
+            }, displayTime);
+          }, isi1Time);
+        }, displayTime);
       }
+    }
+
+    function AFC() {
+      console.log(curTrial,faceAs[cur_random[curTrial]],faceBs[cur_random[curTrial]])
+      cur_button = 0;
+      $("#button1").attr("style","text-decoration:none")
+      $("#button2").attr("style","text-decoration:none")
+      $("#button3").attr("style","text-decoration:none")
+      $("#button4").attr("style","text-decoration:none")
+      if (curTrial >= numTrialsPerBlock) { // if end of block
+        console.log("End of Block.")
+        $("#showTrial").hide()
+        curTrial = 0;
+        $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+        p = permutation(numTrialsPerBlock)
+        cur_random = permute(cur_random1,p)
+        AorB = permute(AorB1,p)
+        FaceReport()
+      } else {
+        if (AorB[curTrial]==0) {
+          $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]])[0].src).attr("src")
+          phase2_presentations.push('pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]);
+        } else {
+          $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceBs[cur_random[curTrial]]])[0].src).attr("src")
+          phase2_presentations.push('pair'+cur_random[curTrial]+'_'+faceBs[cur_random[curTrial]]);
+        }
+        $('#item').attr('style','display:inline')
+        $('#showTrial').show();
+        setTimeout(function() {
+          $('#item').attr('style','display:none')
+          setTimeout(function() { // AFC wait till button press
+            if (Math.random()<.5) {
+              $('#itemL').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
+              phase2_Ls.push('scene'+cur_random[curTrial]);
+              $('#itemR').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
+              phase2_Rs.push('obj'+cur_random[curTrial]);
+            } else {
+              $('#itemR').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
+              phase2_Ls.push('obj'+cur_random[curTrial]);
+              $('#itemL').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
+              phase2_Rs.push('scene'+cur_random[curTrial]);
+            }
+            $('#itemL').attr('style','display:inline')
+            $('#itemR').attr('style','display:inline')
+            start_time = new Date();
+            $('#numbers').show();
+            wait_button()
+            function wait_button() {
+              if (cur_button==1 || cur_button==2 || cur_button==3 || cur_button==4) {
+                phase2_resp.push(cur_button);
+                phase2_rts.push(new Date() - start_time);
+                cur_button = 0;
+                console.log("responses:",phase2_resp)
+                setTimeout(function() {
+                  $('#itemL').attr('style','display:none')
+                  $('#itemR').attr('style','display:none')
+                  $('#numbers').hide();
+                  curTrial = curTrial + 1;
+                  $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+                  AFC();
+                }, isi2Time);
+              } else {
+                setTimeout(wait_button, 150);
+              }
+            }
+          }, isi1Time);
+        }, displayTime);
+      }
+    }
+
+    function FaceReport() {
+      if (curTrial >= numTrialsPerBlock) { // if end of block
+        $("#showTrial").hide()
+        curBlock=curBlock+1;
+        if (curBlock==numBlocks) {
+          Done()
+        } else {
+          curTrial = 0;
+          $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock*numStudyReps)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+          AorB1 = Array(numTrialsPerBlock/2).fill(0).concat(Array(numTrialsPerBlock/2).fill(1))
+          cur_random1 = random.slice(curBlock*numTrialsPerBlock/2,curBlock*numTrialsPerBlock/2+numTrialsPerBlock/2)
+          cur_random1 = cur_random1.concat(cur_random1)
+          sharedShuffleInPlace(AorB1,cur_random1)
+          for (var index = 1; index < numStudyReps; index += 1) {
+            p = permutation(numTrialsPerBlock)
+            cur_random = cur_random1.concat(permute(cur_random1,p))
+            AorB = AorB1.concat(permute(AorB1,p))
+          }
+          StudyTrial()
+        }
+      } else {
+        if (AorB[curTrial]==0) {
+          $('#item').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
+          phase3_presentations.push('scene'+cur_random[curTrial]);
+        } else {
+          $('#item').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
+          phase3_presentations.push('obj'+cur_random[curTrial]);
+        }
+        $('#item').attr('style','display:inline')
+        $('#showTrial').show();
+        setTimeout(function() {
+          $('#item').attr('style','display:none')
+          setTimeout(function() { // show face and wait for input
+            $('#slide').val(59); // randomInts(0,119)
+            $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+$('#slide').val()])[0].src).attr("src")
+            $('#item').attr('style','display:inline')
+            start_time = new Date();
+            $('#slide').show();
+            $('#FaceConfirm').show();
+          }, isi1Time);
+        }, displayTime);
+      }
+    }
+
+    function FaceConfirm() {
+      console.log("Confirmed.")
+      phase3_resp.push($('#slide').val())
+      phase3_rts.push(new Date() - start_time);
+      $('#item').attr('style','display:none')
+      $('#slide').hide();
+      $('#FaceConfirm').hide();
+      setTimeout(function() { 
+        curTrial = curTrial + 1;
+        $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
+        FaceReport()  
+      }, isi1Time);
     }
 
     /* Always track mouse */
@@ -488,10 +687,15 @@
       }, 5000);
     }
 
+    function setImage(obj) {
+      // console.log(obj.value)
+      $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+obj.value])[0].src).attr("src")
+    }
+
     /*check all images are loaded before starting*/
     function ImagesReady() {
       for (var i = 0; i < img_ids.length; i++) {
-          console.log(i)
+          //console.log(i)
           if (!$(img_ids[i])[0].complete) {
               var percentage = i * 100.0 / (img_ids.length);
               percentage = percentage.toFixed(0).toString() + ' %';
@@ -504,6 +708,7 @@
       }
       $('#loading').hide();
       console.log("Images fully loaded.")
+      StartExperiment()
     };
 
     /* running on IE? */
@@ -536,24 +741,18 @@
         // document.getElementById("buttonpressed").innerHTML="You pressed spacebar! "+keyCode
       } else if ((keyCode>48) & (keyCode<55)) {
         cur_button = keyCode-48;
-        $("#one").attr("style","text-decoration:none")
-        $("#two").attr("style","text-decoration:none")
-        $("#three").attr("style","text-decoration:none")
-        $("#four").attr("style","text-decoration:none")
-        $("#five").attr("style","text-decoration:none")
-        $("#six").attr("style","text-decoration:none")
+        $("#button1").attr("style","text-decoration:none")
+        $("#button2").attr("style","text-decoration:none")
+        $("#button3").attr("style","text-decoration:none")
+        $("#button4").attr("style","text-decoration:none")
         if (cur_button==1) {
-          $("#one").attr("style","text-decoration:underline")
+          $("#button1").attr("style","font-weight:bold")
         } else if (cur_button==2) {
-          $("#two").attr("style","text-decoration:underline")
+          $("#button2").attr("style","font-weight:bold")
         } else if (cur_button==3) {
-          $("#three").attr("style","text-decoration:underline")
+          $("#button3").attr("style","font-weight:bold")
         } else if (cur_button==4) {
-          $("#four").attr("style","text-decoration:underline")
-        } else if (cur_button==5) {
-          $("#five").attr("style","text-decoration:underline")
-        } else if (cur_button==6) {
-          $("#six").attr("style","text-decoration:underline")
+          $("#button4").attr("style","font-weight:bold")
         }
       } else {
         // document.getElementById("buttonpressed").innerHTML="You pressed " + String.fromCharCode(keyCode) + "!"+keyCode
