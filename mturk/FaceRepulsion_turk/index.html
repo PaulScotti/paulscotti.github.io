@@ -200,6 +200,14 @@
       left:60px;
       font-size:18px;
     }
+    #report_instruct {
+      display:none;
+      position:absolute;
+      text-align:center;
+      top:50px;
+      left:60px;
+      font-size:18px;
+    }
     #button1 {
       bottom:70px;
       left:100px;
@@ -359,6 +367,9 @@
       <p class="number_buttons" id="button2">(2)Sure</p>
       <p class="number_buttons" id="button3">(3)Guess</p>
       <p class="number_buttons" id="button4">(4)Sure</p>
+    </div>
+    <div id="report_instruct">
+      <p>What face was paired?<br>(Drag the slider until you find the paired face, then click confirm.)</p>
     </div>
     <button class="Button" id="FaceConfirm" onclick="FaceConfirm()">Confirm</button>
     <p id='progress'></p>
@@ -560,6 +571,7 @@
     }
 
     function FaceReport() {
+      $('#report_instruct').hide();
       if (curTrial >= numTrialsPerBlock) { // if end of block
         $("#showTrial").hide()
         curBlock=curBlock+1;
@@ -598,6 +610,7 @@
             $('#item').attr('style','display:inline')
             start_time = new Date();
             $('#slide').show();
+            $('#report_instruct').show();
             $('#FaceConfirm').show();
           }, isi1Time);
         }, displayTime);
