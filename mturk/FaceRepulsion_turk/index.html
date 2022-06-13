@@ -12,7 +12,7 @@
   <!-- Custom functions -->
   <script> 
     function CheckInfo() {
-      if (($('#name').val() == "") || ($('#email').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
+      if (($('#name').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
       } else if (!(parseFloat($('#age').val()) < 100)) {
         alert('Please input a valid age.')
@@ -319,7 +319,7 @@
     Hello, before we begin please provide us with some information about yourself.
     <p>
     Full Name: <textarea id="name" style="width: 200px; height: 1.5rem"></textarea><br><br>
-    Email: <textarea id="email" style="width: 200px; height: 1.5rem"></textarea><br><br>
+    Email (optional): <textarea id="email" style="width: 200px; height: 1.5rem"></textarea><br><br>
     Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Age: <textarea id="age" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Race (optional): <textarea id="race" style="width: 100px; height: 1.5rem"></textarea><br><br>
