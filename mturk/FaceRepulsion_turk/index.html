@@ -571,7 +571,6 @@
     }
 
     function FaceReport() {
-      $('#report_instruct').hide();
       if (curTrial >= numTrialsPerBlock) { // if end of block
         $("#showTrial").hide()
         curBlock=curBlock+1;
@@ -623,6 +622,7 @@
       phase3_rts.push(new Date() - start_time);
       $('#item').attr('style','display:none')
       $('#slide').hide();
+      $('#report_instruct').hide();
       $('#FaceConfirm').hide();
       setTimeout(function() { 
         curTrial = curTrial + 1;
