@@ -7,12 +7,15 @@
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
+  let WORKERID = (IsOnTurk()) ? GetWorkerId() : prompt("You don't look like an mTurker! " +
+    "Enter an ID to save your data with (any number/string will do). Your id is used to seed the experiment rng:", "workID");
+  let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
   </script>
   <!-- Custom functions -->
   <script> 
     function CheckInfo() {
-      if (($('#name').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
+      if (($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
       } else if (!(parseFloat($('#age').val()) < 100)) {
         alert('Please input a valid age.')
@@ -318,7 +321,7 @@
     <h1>Subject Information</h1>
     Hello, before we begin please provide us with some information about yourself.
     <p>
-    Full Name: <textarea id="name" style="width: 200px; height: 1.5rem"></textarea><br><br>
+    <!-- Full Name: <textarea id="name" style="width: 200px; height: 1.5rem"></textarea><br><br> -->
     Email (optional): <textarea id="email" style="width: 200px; height: 1.5rem"></textarea><br><br>
     Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Age: <textarea id="age" style="width: 100px; height: 1.5rem"></textarea><br><br>
@@ -385,7 +388,7 @@
     }
 
     // set rng seed based on name
-    const chance1 = Chance($('#name').val()); 
+    const chance1 = Chance(WORKERID); 
     Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
 
     /* Define variables */
@@ -655,7 +658,8 @@
       // $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
       const d = {
-        "name": $('#name').val(),
+        "workid": WORKERID,
+        "assignmentid": ASSIGNMENTID,
         "email": $('#email').val(),
         "age": $('#age').val(),
         "gender": $('#gender').val(),
