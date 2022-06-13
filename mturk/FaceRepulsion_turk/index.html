@@ -449,6 +449,7 @@
       if (curTrial >= (numTrialsPerBlock*numStudyReps)) { // if end of block
         console.log("End of Block.")
         $("#showTrial").hide()
+        alert("End of Study Phase. Starting 2AFC task.")
         curTrial = 0;
         $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
         p = permutation(numTrialsPerBlock)
@@ -500,6 +501,7 @@
         console.log("End of Block.")
         $("#showTrial").hide()
         curTrial = 0;
+        alert("End of 2AFC. Starting Face Report task.")
         $('#progress').text("Trial "+(curTrial+1)+" of "+(numTrialsPerBlock)+" (Block "+(curBlock+1)+" of "+numBlocks+")")
         p = permutation(numTrialsPerBlock)
         cur_random = permute(cur_random1,p)
@@ -575,6 +577,7 @@
             cur_random = cur_random1.concat(permute(cur_random1,p))
             AorB = AorB1.concat(permute(AorB1,p))
           }
+          alert("End of Test Phase. Starting Study Phase for new faces.")
           StudyTrial()
         }
       } else {
