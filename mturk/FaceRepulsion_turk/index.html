@@ -17,13 +17,15 @@
     function CheckInfo() {
       if (($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
-      } else if (!(parseFloat($('#age').val()) < 100)) {
-        alert('Please input a valid age.')
       } else if (!(parseFloat($('#age').val()) >= 18)) {
         alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
-        $('#info').hide()
-        ImagesReady()
+        if ($('#age').val() > 35) {
+          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
+        } else {
+          $('#info').hide()
+          ImagesReady()
+        }
       }
     }
     function counter(start, end, interval) {
@@ -404,16 +406,24 @@
     let isi2Time = 1200; //1200
     var keyCode = 0;
     var cur_button = 0;
+    var phase1_numrepeats = [];
     var phase1_faces = [];
     var phase1_associates = [];
+    var phase1_AorB = [];
+    var phase2_numrepeats = [];
     var phase2_presentations = [];
     var phase2_Ls = [];
     var phase2_Rs = [];
+    var phase2_align = [];
     var phase2_resp = [];
     var phase2_rts = [];
+    var phase2_AorB = [];
+    var phase3_numrepeats = [];
     var phase3_presentations = [];
+    var phase3_actual = [];
     var phase3_resp = [];
     var phase3_rts = [];
+    var phase3_AorB = [];
     let start_time = 0;
 
     var random = derange(counter(0,59))
@@ -468,6 +478,7 @@
         AorB = permute(AorB1,p)
         AFC()
       } else {
+        phase1_AorB.push(AorB[curTrial])
         if (AorB[curTrial]==0) {
           $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]])[0].src).attr("src")
           phase1_faces.push('pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]);
@@ -519,6 +530,7 @@
         AorB = permute(AorB1,p)
         FaceReport()
       } else {
+        phase2_AorB.push(AorB[curTrial])
         if (AorB[curTrial]==0) {
           $('#item').attr('src',$(window['pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]])[0].src).attr("src")
           phase2_presentations.push('pair'+cur_random[curTrial]+'_'+faceAs[cur_random[curTrial]]);
@@ -532,14 +544,19 @@
           $('#item').attr('style','display:none')
           setTimeout(function() { // AFC wait till button press
             if (Math.random()<.5) {
+              leftSideScene = true
+            } else {
+              leftSideScene = false
+            }
+            if (leftSideScene) {
               $('#itemL').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
               phase2_Ls.push('scene'+cur_random[curTrial]);
               $('#itemR').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
               phase2_Rs.push('obj'+cur_random[curTrial]);
             } else {
-              $('#itemR').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
+              $('#itemL').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
               phase2_Ls.push('obj'+cur_random[curTrial]);
-              $('#itemL').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
+              $('#itemR').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
               phase2_Rs.push('scene'+cur_random[curTrial]);
             }
             $('#itemL').attr('style','display:inline')
@@ -551,6 +568,30 @@
               if (cur_button==1 || cur_button==2 || cur_button==3 || cur_button==4) {
                 phase2_resp.push(cur_button);
                 phase2_rts.push(new Date() - start_time);
+                if (cur_button < 3 && leftSideScene==true && AorB[curTrial]==0) {
+                  correct_choice = true
+                } else if (cur_button > 2 && leftSideScene==false && AorB[curTrial]==1) {
+                  correct_choice = true
+                } else {
+                  correct_choice = false
+                }
+                if (correct_choice) {
+                  if (cur_button==3) {
+                    phase2_align.push(1)
+                  } else if (cur_button==4) {
+                    phase2_align.push(2)
+                  } else {
+                    phase2_align.push(cur_button)
+                  }
+                } else {
+                  if (cur_button==1) {
+                    phase2_align.push(3)
+                  } else if (cur_button==2) {
+                    phase2_align.push(4)
+                  } else {
+                    phase2_align.push(cur_button)
+                  }
+                }
                 cur_button = 0;
                 console.log("responses:",phase2_resp)
                 setTimeout(function() {
@@ -592,12 +633,15 @@
           StudyTrial()
         }
       } else {
+        phase3_AorB.push(AorB[curTrial])
         if (AorB[curTrial]==0) {
           $('#item').attr('src',$(window['scene'+cur_random[curTrial]])[0].src).attr("src")
           phase3_presentations.push('scene'+cur_random[curTrial]);
+          phase3_actual.push(faceAs[cur_random[curTrial]])
         } else {
           $('#item').attr('src',$(window['obj'+cur_random[curTrial]])[0].src).attr("src")
           phase3_presentations.push('obj'+cur_random[curTrial]);
+          phase3_actual.push(faceBs[cur_random[curTrial]])
         }
         $('#item').attr('style','display:inline')
         $('#showTrial').show();
@@ -652,7 +696,6 @@
     function SaveData() {
       $('#done').hide();
       $('#saving').show();
-      // $('#assignmentId').val(GetAssignmentId());
       const endDate = new Date().getTime();
       const d = {
         "workid": WORKERID,
@@ -666,18 +709,26 @@
         "colorvision": $('#colorvision').prop('checked'),
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
-        "Date": startDate.getMonth() + '_' + startDate.getDate() + '_' + startDate.getHours(),
+        "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
         "seed": chance1.seed,
+        "phase1_numrepeats": phase1_numrepeats,
         "phase1_faces": phase1_faces,
         "phase1_associates": phase1_associates,
+        "phase1_AorB": phase1_AorB,
+        "phase2_numrepeats": phase2_numrepeats,
         "phase2_presentations": phase2_presentations,
         "phase2_Ls": phase2_Ls,
         "phase2_Rs": phase2_Rs,
         "phase2_resp": phase2_resp,
         "phase2_rts": phase2_rts,
+        "phase2_align": phase2_align,
+        "phase2_AorB": phase2_AorB,
+        "phase3_numrepeats": phase3_numrepeats,
         "phase3_presentations": phase3_presentations,
+        "phase3_actual": phase3_actual,
         "phase3_resp": phase3_resp,
         "phase3_rts": phase3_rts,
+        "phase3_AorB": phase3_AorB,
         "comments": $('#comments').val()
       };
 
@@ -695,14 +746,14 @@
       req.setRequestHeader("Content-Type", "application/json");
       req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
       req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
-      req.setRequestHeader("X-Bin-Name", name.split(" ").join("") + '.json');
+      req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
       req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
 
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
-        document.getElementById("saving").innerHTML = "Experiment complete! Please wait 48 hours for credit to be awarded. You may close this window.";
+        document.getElementById("saving").innerHTML = "Experiment complete! You may close this window.";
       }, 5000);
     }
 
