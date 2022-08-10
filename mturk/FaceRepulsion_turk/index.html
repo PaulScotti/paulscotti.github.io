@@ -258,7 +258,7 @@
     }
     #slider { 
       position:relative; 
-      height:25px; 
+      height:0px; 
       width:25px; 
       background:grey; 
       left:.5px; 
@@ -408,7 +408,7 @@
       <p class="number_buttons" id="button4">(4)Sure</p>
     </div>
     <div id="report_instruct">
-      <p>What face was paired?<br>(Rotate the slider until you find the paired face, then click confirm.)</p>
+      <p>What face was paired?<br>(Click the circle & rotate until you find the paired face, then click confirm.)</p>
     </div>
     <button class="Button" id="FaceConfirm" onclick="FaceConfirm()">Confirm</button>
     <p id='progress'></p>
@@ -541,6 +541,7 @@
       }
     }
 
+    /* Phase 2: Scene-Face Continuous Report */
     function Phase2() {
       if (curTrial >= numTrials) { // if end of block
         $("#showTrial").hide()
@@ -564,6 +565,7 @@
         $('#showTrial').show();
         setTimeout(function() {
           $('#item').attr('style','display:none')
+          $('#item').attr('src',$(window[face_order[curTrial]+'_'+randomInts(0,119)])[0].src).attr("src")
           setTimeout(function() { // show face and wait for input
             circle_slider();
             $('#item').attr('style','display:inline')
@@ -710,9 +712,8 @@
         $('#showTrial').show();
         setTimeout(function() {
           $('#item').attr('style','display:none')
+          $('#item').attr('src',$(window[face_order[curTrial]+'_'+randomInts(0,119)])[0].src).attr("src")
           setTimeout(function() { // show face and wait for input
-            $('#slide').val(44); // randomInts(0,89)
-            $('#item').attr('src',$(window[face_order[curTrial]+'_'+$('#slide').val()])[0].src).attr("src")
             $('#item').attr('style','display:inline')
             start_time = new Date();
             $('#slide').show();
@@ -872,7 +873,7 @@
     function circle_slider() {
         $('.circle_container').attr('style','display:inline')
         var sliderW2 = $('#slider').width()/2;
-        var sliderH2 = $('#slider').height()/2;    
+        var sliderH2 = 25/2; // $('#slider').height()/2
         var radius = $('#circle').width()/2;   
         var elP = $('#circle').offset();
         var elPos = { x: elP.left, y: elP.top};
@@ -883,20 +884,21 @@
         .mouseup(function (e) { mdown = false; })
         .mousemove(function (e) {
             if (mdown) {
-               var mPos = {x: e.clientX-elPos.x, y: e.clientY-elPos.y};
-               var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
-               deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
-               // Present updated Face
-               deg_corr = Math.floor(deg / 3)             
-               console.log(deg_corr)
-               $('#item').attr('src',$(window[face_order[curTrial]+'_'+deg_corr])[0].src).attr("src")
+              $('#slider').attr('style','height:25px')
+              var mPos = {x: e.clientX-elPos.x, y: e.clientY-elPos.y};
+              var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
+              deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
+              // Present updated Face
+              deg_corr = Math.floor(deg / 3)             
+              console.log(deg_corr)
+              $('#item').attr('src',$(window[face_order[curTrial]+'_'+deg_corr])[0].src).attr("src")
 
-               X = Math.round(radius* Math.sin(deg*Math.PI/180));    
-               Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
-               $('#slider').css({ left: X+radius-sliderW2, top: Y+radius-sliderH2 });              
-               // AND FINALLY apply exact degrees to ball rotation
-               $('#slider').css({ WebkitTransform: 'rotate(' + deg + 'deg)'});
-               $('#slider').css({ '-moz-transform': 'rotate(' + deg + 'deg)'});
+              X = Math.round(radius* Math.sin(deg*Math.PI/180));    
+              Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
+              $('#slider').css({ left: X+radius-sliderW2, top: Y+radius-sliderH2 });              
+              // AND FINALLY apply exact degrees to ball rotation
+              $('#slider').css({ WebkitTransform: 'rotate(' + deg + 'deg)'});
+              $('#slider').css({ '-moz-transform': 'rotate(' + deg + 'deg)'});
             }
         });
     };
