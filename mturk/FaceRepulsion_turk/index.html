@@ -24,10 +24,7 @@
           $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
         } else {
           $('#info').hide()
-          // ImagesReady() // remove 3 lines below!!
-          $('#loading').hide();
-          console.log("Images fully loaded.")
-          StartExperiment()
+          ImagesReady()
         }
       }
     }
@@ -40,7 +37,19 @@
       }
       return degree
     }
-    function otherScene(order,len,cur) {
+    function wrap120(input,comparison) {
+      degree = comparison - input
+      if (degree < -60) {
+        degree = (comparison+120) - input
+      } else if (degree > 60) {
+        degree = (comparison-120) - input
+      }
+      if (degree < 0) {
+        degree += 120
+      }
+      return degree
+    }
+    function otherAssociate(order,len,cur) {
       curNew = cur
       while (curNew==cur) {
         curNew = randomInts(0,len-1)
@@ -60,7 +69,7 @@
         cur_phase = 1
       }
       block_accuracy = average(block_binary)
-      $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/3 "+"Block "+(curBlock+1)+"/"+numBlocks+" ("+block_accuracy+"% acc.)")
+      $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Block "+(curBlock+1)+"/"+numBlocks+" ("+block_accuracy+"% acc.)")
     }
     function counter(start, end, interval) {
       if (interval == undefined) {
@@ -188,6 +197,22 @@
       position: relative;
       display: none;
     }
+    #TextButton {
+      display: inline-block;
+      color: black;
+      border: 3px outset gray;
+      background-color: #CCCCCC;
+      padding: 8px;
+      text-decoration: none;
+      font-family: Arial, Helvetica;
+      font-weight: bold;
+    }
+    #TextButton:hover {
+      border: 3px inset gray;
+    }
+    #TextButton:active {
+      border: 3px inset gray;
+    }
     #fixation {
       position: absolute;
       width: 600px;
@@ -272,20 +297,20 @@
       left:187px;
     }
     #button1 {
-      bottom:70px;
-      left:100px;
+      bottom:80px;
+      left:12px;
     }
     #button2 {
-      bottom:30px;
-      left:100px;
+      bottom:80px;
+      left:170px;
     }
     #button3 {
-      bottom:70px;
-      left:375px;
+      bottom:80px;
+      left:318px;
     }
     #button4 {
-      bottom:30px;
-      left:375px;
+      bottom:80px;
+      left:480px;
     }
     /* #slide {
       position: absolute;
@@ -399,8 +424,62 @@
   <!-- Consent statement: -->
   <div id="consentDiv"><center><h1>Princeton University Consent to Participate in Research</h1><p><b>This is a consent form for research participation.</b> It contains important information about this study and what to expect if you decide to participate.<br>If any questions arise, please contact scottibrain@gmail.com.</p>
     <iframe src="https://paulscotti.github.io/mturk/7137_consent.pdf" width="60%" height="500px"></iframe>
-    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#info').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" class="Button" style="display: inline;">I consent to participate in this study</a></p>
+    <p><b>Electronic consent:</b> You may print a copy of this consent form for your records. If you wish to continue with the experiment, please click the button below.<br><br><b>Clicking the button below indicates that:</b><br>You have read the above information<br>You are 18 years of age or older<br>You voluntarily agree to participate<br></p></center><p style="text-align: center"><a href="javascript:void(0);" onclick="$('#consentDiv').hide();$('#instructions').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" class="Button" style="display: inline;">I consent to participate in this study</a></p>
   </center></div>
+
+  <!-- Instructions page1 -->
+  <div id="instructions" style="display:none">
+    <center><b>
+        <p>This experiment is a memorization task involving visual images. It will take approximately 25 - 35 minutes to complete.</p>
+      </b></center>
+    <br>
+    <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
+        (1 of 4)</a></p>
+  </div>
+
+  <!-- Instructions page2 -->
+  <div id="instructions2" style="display:none">
+    <center><b>
+    <p>You will be presented with 100 images, one at a time, each presented for 2 seconds.</p>
+    <p>After every image, you will see the word "remember" or the word "forget".</p>
+    <p>Do your best to memorize the visual details of each image <u>and each image's associated word</u>.</p>
+    <p>We do not want you to actually follow the instruction to remember or forget.<br>We want you to remember which images are accompanied by "remember" and which images are accompanied by "forget".</p>
+    <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/example.png" width="350px">
+    <img src="https://maxceylab.github.io/stimuli/instruction_images/remember.png" width="350px"></p>
+    <p>After you have studied all 100 images, we will test your recognition and association memory for these images.</p>
+    </b>
+    <p>Please copy the following red text into the below box to prove that you are not a bot: <font color="red">3948017561902340535634051</font><br><br>
+    <textarea name="bot" id="bot" style="width: 300px; height: 60px"></textarea></p></center>
+    
+    <p style="text-align: center"><a href="javascript:void(0)" onclick="botcheck()" id="TextButton">Next
+        (2 of 4)</a></p>
+  </div>
+
+  <!-- Instructions page3 -->
+  <div id="instructions3" style="display:none">
+    <center><b>
+      <p>We will test your memory by presenting images one at a time and asking whether you have seen each image before (Old) or if you have not seen the image before (New).</p>
+      <p>If you think the image was Old, then you should report whether you think the image was followed by the word "remember" or "forget".</p>
+      <p>We also ask that you indicate whether you are confident (sure) or unconfident (unsure) in your responses.</p>
+      <img src="https://maxceylab.github.io/stimuli/instruction_images/oldnewexample.png" width="500px"></p>
+    </b></center>
+    <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions3').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
+        (3 of 4)</a></p>
+  </div>
+
+  <!-- Instructions page4 -->
+  <div id="instructions4" style="display:none">
+    <center><b>
+        <p>Importantly, we want you to try to similarly exert effort to memorize all images, regardless of whether "remember" or "forget" appears after the image is presented.</p>
+        <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/fake_bars2.png" width="350px"></p>
+        <p>Try your best to have similar memory performance across "remember" and "forget" images, similar to the figure above.</p>
+        <p>You will receive a bonus of $1 if your accuracy for recognizing "remember" images is within 2% of your accuracy for "forget" images.<br>Note: You must also perform better than random chance in identifying images and their associated words in order to earn this bonus.</p>
+        <p>If your behavior is deemed obviously bot-like or noncompliant with instructions, such as always clicking the same button throughout memory testing, then your payment for the HIT may be denied.</p>
+      </b></center>
+    <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;quicktest();" id="TextButton">Start Experiment</a></p>
+    <center>
+      <p id=loading>Images loading... Please wait a minute or refresh the page.</p>
+  </div>
 
   <!-- Subject info screen -->
   <div id="info" style='display:none; text-align: left; margin-left: 25%'>
@@ -426,11 +505,18 @@
       <p id="openModal_text">Hi!</p>
     </div>
   </div>
+
   <!-- Hidden MTurk forms sheet to submit expt upon completion -->
-  <!-- <form name="turkSubmit" id="turkSubmit" action="https://www.mturk.com/mturk/externalSubmit" method="POST"> -->
-  <!-- <input type="hidden" name="assignmentId" id="assignmentId" value="" > -->
-  <!-- <input type="hidden" name="foo" value="" > -->
-  <!-- <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form> -->
+  <form name="turkSubmit" id="turkSubmit" action="" method="POST">
+  <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
+  <script>
+    let formtxt = "https://www.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
+    document.getElementById('turkSubmit').action = formtxt
+  </script>
+      <!-- submit to turk
+      https://workersandbox.mturk.com/mturk/externalSubmit
+      https://www.mturk.com/mturk/externalSubmit
+      -->
 
   <!-- Screen after submitting expt -->
   <div id="done" style='display:none; text-align: left; margin-left: 25%'>
@@ -491,6 +577,7 @@
     let modalClosed = false;
     var deg = 999;
     var deg_corr = 999;
+    var deg_rotation = 0;
     let curTrial = 0;
     let numTrials = 4;
     let curBlock = 0;
@@ -513,7 +600,6 @@
     var phase3_lure = [];
     var phase3_accuracy = [];
     var phase3_rts = [];
-    var scene_loops = 0;
     var phase4_faces = [];
     var phase4_associates = [];
     var phase4_rts = [];
@@ -524,27 +610,31 @@
     var phase5_rts = [];
     var block_accuracy = 100;
     var block_binary = [];
+    var scene_loops = 0;
     var obj_loops = 0;
     let start_time = 0;
 
-    var face_order_full = derange(counter(0,39)) // 40 face triangles
+    var face_order_full = derange(counter(0,25)) // 40 face triangles
     var scene_order_full = derange(counter(0,119))
     var obj_order_full = derange(counter(0,119))
 
-    face_order = [0,0,1,0] // TEMPORARY WHILE MAKING FACES
-    scene_order = scene_order_full.slice(0,4)
-    obj_order = obj_order_full.slice(0,4)
-    // var faceAs = Array.from({length:numTrials/2}, () => randomInts(9,34))
-    // var faceBs = Array.from({length:numTrials/2}, () => randomInts(54,79))
-    // var AorB1 = Array(numTrialsPerBlock/2).fill(0).concat(Array(numTrialsPerBlock/2).fill(1))
-    // var face_order1 = random.slice(curBlock*numTrialsPerBlock/2,curBlock*numTrialsPerBlock/2+numTrialsPerBlock/2)
-    // face_order1 = face_order1.concat(face_order1)
-    // sharedShuffleInPlace(AorB1,face_order1)
-    // for (var index = 1; index < numStudyReps; index += 1) {
-    //   p = permutation(numTrialsPerBlock)
-    //   face_order = face_order1.concat(permute(face_order1,p))
-    //   AorB = AorB1.concat(permute(AorB1,p))
-    // }
+    function botcheck() {
+      if (document.querySelector("#bot").value==3948017561902340535634051){
+        $('#instructions2').hide()
+        $('#instructions3').show()
+        ImagesReady()
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+      } else {
+        alert("you did not copy the red text correctly, please try again and ensure there are no spaces surrounding the text")
+      }
+    }
+
+    function NextBlock() {
+      face_order = face_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
+      scene_order = scene_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
+      obj_order = obj_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
+    }
+    NextBlock()
 
     function StartExperiment() {
       if (IsOnTurk() && IsTurkPreview()) {
@@ -581,7 +671,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Study Phase. Starting FaceReport task.")
+        alert("End of Study Phase. Beginning Face Report Phase. You will be shown a scene, and be asked to find the associated face using your mouse.")
 
         $('#fixation').attr('style','display:none')
 
@@ -623,7 +713,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of FaceReport. Starting Scene Association task.")
+        alert("End of Face Report Phase. Starting Scene Association Phase. Select the correct associate of the two options using your keyboard.")
 
         p = permutation(face_order.length)
         face_order = permute(face_order,p)
@@ -637,7 +727,7 @@
         $('#showTrial').show();
         setTimeout(function() {
           $('#item').attr('style','display:none')
-          $('#item').attr('src',"https://paulscotti.github.io/mturk/face_triangles/placeholder.jpg").attr("src")
+          $('#item').attr('src',$(window['placeholder'])[0].src).attr("src")
           setTimeout(function() { // show face and wait for input
             circle_slider();
             $('#item').attr('style','display:inline')
@@ -656,7 +746,7 @@
       if (cur_phase==2) {
         phase2_faces.push(face_order[curTrial])
         phase2_orig.push(20)
-        phase2_resp.push(deg_corr)
+        phase2_resp.push(wrap120(deg_corr,deg_rotation))
         phase2_rts.push(new Date() - start_time);
       }
 
@@ -667,10 +757,10 @@
       $('#FaceConfirm').hide();
       setTimeout(function() { 
         $('#itemL').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
-        $('#itemR').attr('src',$(window[face_order[curTrial]+'_'+deg_corr])[0].src).attr("src")
+        $('#itemR').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
         $('#itemL').attr('style','display:inline')
         $('#itemR').attr('style','display:inline')
-        deg_error = Math.round(Math.abs(wrap360(20*3,deg_corr*3)),1)
+        deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
         if (deg_error <= 45) {
           block_binary.push(1)
         } else {
@@ -705,7 +795,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase3. Checking performance before moving on to Phase 4.")
+        alert("End of Phase3. Checking performance before moving on to Phase 4...")
 
         p = permutation(face_order.length)
         face_order = permute(face_order,p)
@@ -715,13 +805,20 @@
         if (block_accuracy<100) {
           alert("Going back to Phase1. Aim for 100% accuracy!")
           block_binary = []
-          updateProgress()
           cur_phase = 1
+          updateProgress()
           Phase1()
         } else {
-          alert("Great job! Proceeding to Phase4.")
+          alert("Great job! Proceeding to Phase4. You will now memorize objects associated with the previously shown faces.")
           block_binary = []
+          cur_phase = 4
           updateProgress()
+
+          p = permutation(face_order.length)
+          face_order = permute(face_order,p)
+          scene_order = permute(scene_order,p)
+          obj_order = permute(obj_order,p)
+
           Phase4()
         }
       } else {
@@ -734,10 +831,10 @@
           setTimeout(function() { // AFC wait till button press
             if (orig_on_right==0) {
               $('#itemL').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
-              $('#itemR').attr('src',$(window['scene'+otherScene(scene_order,scene_order.length,curTrial)])[0].src).attr("src")
+              $('#itemR').attr('src',$(window['scene'+otherAssociate(scene_order,scene_order.length,curTrial)])[0].src).attr("src")
             } else {
               $('#itemR').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
-              $('#itemL').attr('src',$(window['scene'+otherScene(scene_order,scene_order.length,curTrial)])[0].src).attr("src")
+              $('#itemL').attr('src',$(window['scene'+otherAssociate(scene_order,scene_order.length,curTrial)])[0].src).attr("src")
             }
             $('#itemL').attr('style','display:inline')
             $('#itemR').attr('style','display:inline')
@@ -746,18 +843,18 @@
             wait_button()
             function wait_button() {
               if (cur_button==1 || cur_button==2 || cur_button==3 || cur_button==4) {
-                cur_button = 0;
+                button_pressed = cur_button;
                 setTimeout(function() {
                   if (orig_on_right==0) {
                     $('#itemL').attr('style','display:inline; border:5px solid lime')
-                    if (cur_button < 3) {
+                    if (button_pressed < 3) {
                       block_binary.push(1)
                     } else {
                       block_binary.push(0)
                     }
                   } else {
                     $('#itemR').attr('style','display:inline; border:5px solid lime')
-                    if (cur_button < 3) {
+                    if (button_pressed < 3) {
                       block_binary.push(0)
                     } else {
                       block_binary.push(1)
@@ -772,6 +869,149 @@
                     curTrial = curTrial + 1;
                     updateProgress()
                     Phase3();
+                  }, isi2Time-200);
+                }, 200);
+              } else {
+                setTimeout(wait_button, 150);
+              }
+            }
+          }, isi1Time);
+        }, displayTime);
+      }
+    }
+
+    /* Phase 4: Face-Obj Study */
+    function Phase4() {
+      cur_phase = 4
+      $('#fixation').attr('style','display:inline')
+      if (curTrial >= (numTrials)) { // if end of block
+        console.log("End of Phase1.")
+        $("#showTrial").hide()
+        
+        curTrial = 0;
+        updateProgress()
+        alert("End of Study Phase. Starting Object Association Phase. Select the correct associate of the two options using your keyboard.")
+
+        $('#fixation').attr('style','display:none')
+
+        p = permutation(face_order.length)
+        face_order = permute(face_order,p)
+        scene_order = permute(scene_order,p)
+        obj_order = permute(obj_order,p)
+
+        Phase5() // Continuous Face Report with obj
+      } else {
+        $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
+        $('#item').attr('style','display:inline')
+        $('#showTrial').show();
+        setTimeout(function() { // FACE displayTime
+          $('#item').attr('style','display:none')
+          $('#item').attr('src',$(window['obj'+obj_order[curTrial]])[0].src).attr("src")
+
+          setTimeout(function() { // BLANK isi1Time
+            $('#item').attr('style','display:inline')
+            setTimeout(function() { // SCENE/OBJ displayTime
+              $('#item').attr('style','display:none')
+              setTimeout(function() { // BLANK isi2Time
+                curTrial = curTrial + 1;
+                updateProgress()
+                Phase4();
+              }, isi2Time);
+            }, displayTime);
+          }, isi1Time);
+        }, displayTime);
+      }
+    }
+
+    /* Phase 5: Obj-Face AFC */
+    function Phase5() {
+      cur_button = 0;
+      cur_phase = 5;
+      $("#button1").attr("style","text-decoration:none")
+      $("#button2").attr("style","text-decoration:none")
+      $("#button3").attr("style","text-decoration:none")
+      $("#button4").attr("style","text-decoration:none")
+      if (curTrial >= numTrials) { // if end of block
+        $("#showTrial").hide()
+        
+        curTrial = 0;
+        updateProgress()
+        alert("End of Phase5. Checking performance before moving on to next block...")
+
+        p = permutation(face_order.length)
+        face_order = permute(face_order,p)
+        scene_order = permute(scene_order,p)
+        obj_order = permute(obj_order,p)
+
+        if (block_accuracy<100) {
+          alert("Going back to Phase4. Aim for 100% accuracy!")
+          block_binary = []
+          cur_phase = 4
+          updateProgress()
+          Phase4()
+        } else {
+          alert("Great job! Proceeding to next block! You will now learn a new set of faces with associated scenes. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
+          block_binary = []
+          cur_phase = 1
+          curBlock += 1
+          updateProgress()
+
+          p = permutation(face_order.length)
+          face_order = permute(face_order,p)
+          scene_order = permute(scene_order,p)
+          obj_order = permute(obj_order,p)
+
+          NextBlock()
+          Phase1()
+        }
+      } else {
+        orig_on_right = randomInts(0,1) // 1 = correct on right
+        $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
+        $('#item').attr('style','display:inline')
+        $('#showTrial').show();
+        setTimeout(function() {
+          $('#item').attr('style','display:none')
+          setTimeout(function() { // AFC wait till button press
+            if (orig_on_right==0) {
+              $('#itemL').attr('src',$(window['obj'+obj_order[curTrial]])[0].src).attr("src")
+              $('#itemR').attr('src',$(window['obj'+otherAssociate(obj_order,obj_order.length,curTrial)])[0].src).attr("src")
+            } else {
+              $('#itemR').attr('src',$(window['obj'+obj_order[curTrial]])[0].src).attr("src")
+              $('#itemL').attr('src',$(window['obj'+otherAssociate(obj_order,obj_order.length,curTrial)])[0].src).attr("src")
+            }
+            $('#itemL').attr('style','display:inline')
+            $('#itemR').attr('style','display:inline')
+            start_time = new Date();
+            $('#numbers').show();
+            wait_button()
+            function wait_button() {
+              if (cur_button==1 || cur_button==2 || cur_button==3 || cur_button==4) {
+                button_pressed = cur_button;
+                setTimeout(function() {
+                  if (orig_on_right==0) {
+                    $('#itemL').attr('style','display:inline; border:5px solid lime')
+                    if (button_pressed < 3) {
+                      block_binary.push(1)
+                    } else {
+                      block_binary.push(0)
+                    }
+                  } else {
+                    $('#itemR').attr('style','display:inline; border:5px solid lime')
+                    if (button_pressed < 3) {
+                      block_binary.push(0)
+                    } else {
+                      block_binary.push(1)
+                    }
+                  }
+                  setTimeout(function() {
+                    $('#itemL').attr('style','display:none')
+                    $('#itemR').attr('style','display:none')
+                    $('#itemL').attr('style','border:0px')
+                    $('#itemR').attr('style','border:0px')
+                    $('#numbers').hide();
+                    curTrial = curTrial + 1;
+                    updateProgress()
+                    Phase5();
                   }, isi2Time-200);
                 }, 200);
               } else {
@@ -884,9 +1124,9 @@
               return;
           }
       }
-      $('#loading').hide();
       console.log("Images fully loaded.")
-      StartExperiment()
+      $('#loading').hide();
+      $('a#TextButton').show();
     };
 
     /* running on IE? */
@@ -923,6 +1163,7 @@
         var elPos = { x: elP.left, y: elP.top};
         var X = $('.circle_container').left, Y = $('.circle_container').top;
         var mdown = false;
+        deg_rotation = randomInts(0,119)
         $('#circle')
         .mousedown(function (e) { mdown = true; })
         .mouseup(function (e) { mdown = false; })
@@ -933,9 +1174,9 @@
               var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
               deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
               // Present updated Face
-              deg_corr = Math.floor(deg / 3)             
+              deg_corr = Math.floor(deg / 3)           
               // console.log(deg_corr)
-              $('#item').attr('src',$(window[face_order[curTrial]+'_'+deg_corr])[0].src).attr("src")
+              $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
 
               X = Math.round(radius* Math.sin(deg*Math.PI/180));    
               Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
