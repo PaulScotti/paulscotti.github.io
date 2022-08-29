@@ -431,45 +431,30 @@
   <!-- Instructions page1 -->
   <div id="instructions" style="display:none">
     <center><b>
-        <p>This experiment is a memorization task involving visual images. It will take approximately 25 - 35 minutes to complete.</p>
+        <p>This experiment is a memorization task involving visual images. It will take approximately 1 hour to complete.</p>
       </b></center>
     <br>
     <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions').hide();$('#instructions2').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
-        (1 of 4)</a></p>
+        (1 of 3)</a></p>
   </div>
 
   <!-- Instructions page2 -->
   <div id="instructions2" style="display:none">
     <center><b>
-    <p>You will be presented with 100 images, one at a time, each presented for 2 seconds.</p>
-    <p>After every image, you will see the word "remember" or the word "forget".</p>
-    <p>Do your best to memorize the visual details of each image <u>and each image's associated word</u>.</p>
-    <p>We do not want you to actually follow the instruction to remember or forget.<br>We want you to remember which images are accompanied by "remember" and which images are accompanied by "forget".</p>
-    <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/example.png" width="350px">
-    <img src="https://maxceylab.github.io/stimuli/instruction_images/remember.png" width="350px"></p>
-    <p>After you have studied all 100 images, we will test your recognition and association memory for these images.</p>
-    </b>
-    <p>Please copy the following red text into the below box to prove that you are not a bot: <font color="red">3948017561902340535634051</font><br><br>
-    <textarea name="bot" id="bot" style="width: 300px; height: 60px"></textarea></p></center>
+    <p>This is a memory experiment where you will memorize various images of human faces. You will also need to memorize which scenes and objects are paired with which faces.</p>
+    <p>To complete the HIT you must complete 7 "blocks" with high accuracy. Each block consists of different faces/scenes/objects that you will need to memorize.</p>
+    <p align="center"><img src="https://paulscotti.github.io/mturk/FaceRepulsion_turk/Instructions.png" width="1080px"></p>
+    <p>This is a psychology experiment intended to study how human memory works. Therefore, please do not use any external devices or computer aids to benefit your ability to perform the tasks. The 1-hour estimated completion time assumes that you will make mistakes and need to repeat phases multiple times.</p>
+    <p>To proceed and start the experiment, please copy the following red text into the below box to prove that you are not a bot: <font color="red">3948017561902340535634051</font><br><br>
+    <textarea name="bot" id="bot" style="width: 300px; height: 60px"></textarea></p>
     
-    <p style="text-align: center"><a href="javascript:void(0)" onclick="botcheck()" id="TextButton">Next
-        (2 of 4)</a></p>
-  </div>
-
-  <!-- Instructions page3 -->
-  <div id="instructions3" style="display:none">
-    <center><b>
-      <p>We will test your memory by presenting images one at a time and asking whether you have seen each image before (Old) or if you have not seen the image before (New).</p>
-      <p>If you think the image was Old, then you should report whether you think the image was followed by the word "remember" or "forget".</p>
-      <p>We also ask that you indicate whether you are confident (sure) or unconfident (unsure) in your responses.</p>
-      <img src="https://maxceylab.github.io/stimuli/instruction_images/oldnewexample.png" width="500px"></p>
+    <p style="text-align: center"><a href="javascript:void(0)" onclick="botcheck()" id="TextButton">Start Experiment</a></p>
+    <p id=loading>Images loading... Please wait a minute or refresh the page.</p>
     </b></center>
-    <p style="text-align: center"><a href="javascript:void(0)" onclick="$('#instructions3').hide();$('#instructions4').show();document.body.scrollTop = document.documentElement.scrollTop = 0;" id="TextButton">Next
-        (3 of 4)</a></p>
   </div>
 
   <!-- Instructions page4 -->
-  <div id="instructions4" style="display:none">
+  <!-- <div id="instructions4" style="display:none">
     <center><b>
         <p>Importantly, we want you to try to similarly exert effort to memorize all images, regardless of whether "remember" or "forget" appears after the image is presented.</p>
         <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/fake_bars2.png" width="350px"></p>
@@ -480,7 +465,7 @@
     <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
     <center>
       <p id=loading>Images loading... Please wait a minute or refresh the page.</p>
-  </div>
+  </div> -->
 
   <!-- Subject info screen -->
   <div id="info" style='display:none; text-align: left; margin-left: 25%'>
@@ -762,7 +747,7 @@
         $('#itemL').attr('style','display:inline')
         $('#itemR').attr('style','display:inline')
         deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
-        if (deg_error <= 45) {
+        if (deg_error <= 60) {
           block_binary.push(1)
         } else {
           block_binary.push(0)
