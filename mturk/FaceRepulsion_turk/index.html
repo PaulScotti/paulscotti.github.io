@@ -17,7 +17,7 @@
     /*check all images are loaded before starting*/
     function ImagesReady() {
       for (var i = 0; i < img_ids.length; i++) {
-          console.log(i,img_ids[i])
+          // console.log(i,img_ids[i])
           if (!$(img_ids[i])[0].complete) {
               var percentage = i * 100.0 / (img_ids.length);
               percentage = percentage.toFixed(0).toString() + ' %';
@@ -949,7 +949,7 @@
       $("#button2").attr("style","text-decoration:none")
       $("#button3").attr("style","text-decoration:none")
       $("#button4").attr("style","text-decoration:none")
-      if (curTrial >= numTrials*2) { // if end of block
+      if (curTrial >= numTrials*2 && curBlock==numBlocks) { // if end of experiment
         $("#showTrial").hide()
         
         curTrial = 0;
@@ -959,8 +959,27 @@
         p2 = permutation(face_order2.length)
         face_order2 = permute(face_order2,p2)
         obj_order = permute(obj_order,p2)
-        console.log(face_order2)
-        console.log(obj_order)
+
+        if (block_accuracy<100) {
+          alert("Going back to Phase4. Aim for 100% accuracy!")
+          block_binary = []
+          cur_phase = 4
+          updateProgress()
+          Phase4()
+        } else {
+          alert("Great job! Let's wrap things up!")
+          Done()
+        }
+      } else if (curTrial >= numTrials*2) { // if end of block
+        $("#showTrial").hide()
+        
+        curTrial = 0;
+        updateProgress()
+        alert("End of Phase5. Checking performance before moving on to next block...")
+
+        p2 = permutation(face_order2.length)
+        face_order2 = permute(face_order2,p2)
+        obj_order = permute(obj_order,p2)
 
         if (block_accuracy<100) {
           alert("Going back to Phase4. Aim for 100% accuracy!")
