@@ -658,23 +658,22 @@
           return false;
       }
 
-      // open pop-up:
-      modalClosed = false;
       $("#openModal").show()
       document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Memorize the faces and their associated image. Good luck!';
-      window.location.href = '#openModal';
-      checkFlag1();
-
-      function checkFlag1() {
+      // window.location.href = '#openModal';
+      
+      function checkFlag() {
         if (modalClosed == false) {
-          window.setTimeout(checkFlag1, 100); /* this checks the flag every 100 milliseconds*/
+          window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
         } else {
+          modalClosed = false
           start_time = new Date();
           updateProgress()
           console.log("start!")
           Phase1();
         }
-      }
+      }   
+      checkFlag();
     }
 
     /* Phase 1: Face-Scene Study */
