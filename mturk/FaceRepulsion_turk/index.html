@@ -14,7 +14,7 @@
   </script>
   <!-- Custom functions -->
   <script> 
-    /*check all images are loaded before starting*/
+    /* check all images are loaded before starting */
     function ImagesReady() {
       for (var i = 0; i < img_ids.length; i++) {
           // console.log(i,img_ids[i])
@@ -800,6 +800,12 @@
         p2 = permutation(face_order2.length)
         face_order2 = permute(face_order2,p2)
         obj_order = permute(obj_order,p2)
+
+        while (back_to_back_faces(face_order2)) {
+          p2 = permutation(face_order2.length)
+          face_order2 = permute(face_order2,p2)
+          obj_order = permute(obj_order,p2)
+        }
 
         if (block_accuracy<100) {
           alert("Going back to Phase1. Aim for 100% accuracy!")
