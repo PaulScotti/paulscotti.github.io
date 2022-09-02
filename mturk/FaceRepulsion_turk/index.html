@@ -39,8 +39,8 @@
       } else if (!(parseFloat($('#age').val()) >= 18)) {
         alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
-        if ($('#age').val() > 35) {
-          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations).<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your age.</b></center>');
+        if (($('#age').val() > 35) || (document.getElementById('acuity').checked==false) || (document.getElementById('colorvision').checked==false)) {
+          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations) or participants lacking color vision or normal visual acuity.<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your responses.</b></center>');
         } else {
           $('#info').hide()
           document.body.scrollTop = document.documentElement.scrollTop = 0;
@@ -483,20 +483,6 @@
     </b></center>
   </div>
 
-  <!-- Instructions page4 -->
-  <!-- <div id="instructions4" style="display:none">
-    <center><b>
-        <p>Importantly, we want you to try to similarly exert effort to memorize all images, regardless of whether "remember" or "forget" appears after the image is presented.</p>
-        <p align="center"><img src="https://maxceylab.github.io/stimuli/instruction_images/fake_bars2.png" width="350px"></p>
-        <p>Try your best to have similar memory performance across "remember" and "forget" images, similar to the figure above.</p>
-        <p>You will receive a bonus of $1 if your accuracy for recognizing "remember" images is within 2% of your accuracy for "forget" images.<br>Note: You must also perform better than random chance in identifying images and their associated words in order to earn this bonus.</p>
-        <p>If your behavior is deemed obviously bot-like or noncompliant with instructions, such as always clicking the same button throughout memory testing, then your payment for the HIT may be denied.</p>
-      </b></center>
-    <p style="text-align: center"><a href="javascript:void(0);" onclick="$('#instructions4').hide();document.body.scrollTop = document.documentElement.scrollTop = 0;StartExperiment();" id="TextButton">Start Experiment</a></p>
-    <center>
-      <p id=loading>Images loading... Please wait a minute or refresh the page.</p>
-  </div> -->
-
   <!-- Subject info screen -->
   <div id="info" style='display:none; text-align: left; margin-left: 25%'>
     <h1>Subject Information</h1>
@@ -529,11 +515,10 @@
     let formtxt = "https://www.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
     document.getElementById('turkSubmit').action = formtxt
   </script>
-      <!-- submit to turk
-      https://workersandbox.mturk.com/mturk/externalSubmit
-      https://www.mturk.com/mturk/externalSubmit
-      -->
-
+  <!-- submit to turk
+  https://workersandbox.mturk.com/mturk/externalSubmit
+  https://www.mturk.com/mturk/externalSubmit
+  -->
   <!-- Screen after submitting expt -->
   <div id="done" style='display:none; text-align: left; margin-left: 25%'>
     <div id="doneText">
@@ -595,9 +580,9 @@
     var deg_corr = 999;
     var deg_rotation = 0;
     let curTrial = 0;
-    let numTrials = 4;
+    let numTrials = 6;
     let curBlock = 0;
-    let numBlocks = 7;
+    let numBlocks = 5;
     let displayTime = 1000; //1000
     let feedbackTime = 2000;
     let isi1Time = 200;
@@ -605,6 +590,7 @@
     var keyCode = 0;
     var cur_button = 0;
     var cur_phase = 0;
+    var block_tracker = [];
     var phase1_faces = [];
     var phase1_associates = [];
     var phase2_faces = [];
@@ -626,11 +612,9 @@
     var phase5_rts = [];
     var block_accuracy = 100;
     var block_binary = [];
-    var scene_loops = 0;
-    var obj_loops = 0;
     let start_time = 0;
 
-    var face_order_full = derange(counter(0,25)) // number of face triangles
+    var face_order_full = derange(counter(0,27)) // number of face triangles
     var scene_order_full = derange(counter(0,119))
     var obj_order_full = derange(counter(0,119))
 
@@ -667,13 +651,13 @@
       function checkFlag() {
         if (modalClosed == false) {
           window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+        } else {
+          start_time = new Date();
+          updateProgress()
+          console.log("start!")
+          Phase1();
         }
       }
-
-      start_time = new Date();
-      updateProgress()
-      console.log("start!")
-      Phase1();
     }
 
     /* Phase 1: Face-Scene Study */
