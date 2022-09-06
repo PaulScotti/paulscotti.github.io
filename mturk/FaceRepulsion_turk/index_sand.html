@@ -645,8 +645,7 @@
       if (document.querySelector("#bot").value==3948017561902340535634051){
         $('#instructions').hide()
         document.body.scrollTop = document.documentElement.scrollTop = 0;
-        // StartExperiment()
-        Done()
+        StartExperiment()
       } else {
         alert("you did not copy the red text correctly, please try again and ensure there are no spaces surrounding the text")
       }
@@ -786,7 +785,7 @@
         $('#itemL').attr('style','display:inline')
         $('#itemR').attr('style','display:inline')
         deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
-        if (deg_error <= 50) {
+        if (deg_error <= 45) {
           block_binary.push(1)
         } else {
           block_binary.push(0)

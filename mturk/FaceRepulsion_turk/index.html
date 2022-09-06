@@ -11,7 +11,6 @@
     "Enter an ID to save your data with (any number/string will do). Your id is used to seed the experiment rng:", "workID");
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
-  console.log("SANDBOX")
   </script>
   <!-- Custom functions -->
   <script> 
@@ -529,7 +528,7 @@
   <form name="turkSubmit" id="turkSubmit" action="" method="POST">
   <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
   <script>
-    let formtxt = "https://workersandbox.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
+    let formtxt = "https://www.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
     document.getElementById('turkSubmit').action = formtxt
   </script>
   <!-- submit to turk
@@ -785,7 +784,7 @@
         $('#itemL').attr('style','display:inline')
         $('#itemR').attr('style','display:inline')
         deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
-        if (deg_error <= 50) {
+        if (deg_error <= 45) {
           block_binary.push(1)
         } else {
           block_binary.push(0)
