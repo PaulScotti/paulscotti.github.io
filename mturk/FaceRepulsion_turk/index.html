@@ -765,7 +765,7 @@
         $('#itemL').attr('style','display:inline')
         $('#itemR').attr('style','display:inline')
         deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
-        if (deg_error <= 45) {
+        if (deg_error <= 50) {
           block_binary.push(1)
         } else {
           block_binary.push(0)
@@ -794,12 +794,12 @@
       $("#button3").attr("style","text-decoration:none")
       $("#button4").attr("style","text-decoration:none")
       if (curTrial >= numTrials) { // if end of block
-        console.log("End of Phase3.")
+        console.log("End of Phase 3.")
         $("#showTrial").hide()
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase3. Checking performance before moving on to Phase 4...")
+        alert("End of Phase 3. Checking performance before moving on to Phase 4...")
 
         p = permutation(face_order.length)
         face_order = permute(face_order,p)
@@ -815,13 +815,13 @@
         }
 
         if (block_accuracy<100) {
-          alert("Going back to Phase1. Aim for 100% accuracy!")
+          alert("Going back to Phase 1. Aim for 100% accuracy!")
           block_binary = []
           cur_phase = 1
           updateProgress()
           Phase1()
         } else {
-          alert("Great job! Proceeding to Phase4. You will now memorize objects associated with the previously shown faces.")
+          alert("Great job! Proceeding to Phase 4. You will now memorize objects associated with the previously shown faces.")
           block_binary = []
           cur_phase = 4
           updateProgress()
@@ -839,7 +839,8 @@
         $('#showTrial').show();
         setTimeout(function() {
           $('#item').attr('style','display:none')
-          setTimeout(function() { // AFC wait till button press
+          setTimeout(function() { // 200 ms ISI
+            cur_button = 0
             if (orig_on_right==0) {
               $('#itemL').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
               $('#itemR').attr('src',$(window['scene'+otherAssociate(scene_order,scene_order.length,curTrial)])[0].src).attr("src")
@@ -851,43 +852,35 @@
             $('#itemR').attr('style','display:inline')
             start_time = new Date();
             $('#numbers').show();
-            wait_button()
-            function wait_button() {
-              if (cur_button==1 || cur_button==2 || cur_button==3 || cur_button==4) {
-                button_pressed = cur_button;
-                setTimeout(function() {
-                  if (orig_on_right==0) {
-                    $('#itemL').attr('style','display:inline; border:5px solid lime')
-                    if (button_pressed < 3) {
-                      block_binary.push(1)
-                    } else {
-                      block_binary.push(0)
-                    }
-                  } else {
-                    $('#itemR').attr('style','display:inline; border:5px solid lime')
-                    if (button_pressed < 3) {
-                      block_binary.push(0)
-                    } else {
-                      block_binary.push(1)
-                    }
-                  }
-                  setTimeout(function() {
-                    $('#itemL').attr('style','display:none')
-                    $('#itemR').attr('style','display:none')
-                    $('#itemL').attr('style','border:0px')
-                    $('#itemR').attr('style','border:0px')
-                    $('#numbers').hide();
-                    curTrial = curTrial + 1;
-                    updateProgress()
-                    Phase3();
-                  }, isi2Time-200);
-                }, 200);
+            setTimeout(function() { // after 200 ms, start 3-sec time limit AFC
+              if (orig_on_right==0) {
+                $('#itemL').attr('style','display:inline; border:5px solid lime')
+                if (cur_button == 1 || cur_button == 2) {
+                  block_binary.push(1)
+                } else {
+                  block_binary.push(0)
+                }
               } else {
-                setTimeout(wait_button, 150);
+                $('#itemR').attr('style','display:inline; border:5px solid lime')
+                if (cur_button == 1 || cur_button == 2) {
+                  block_binary.push(0)
+                } else {
+                  block_binary.push(1)
+                }
               }
-            }
+              setTimeout(function() {
+                $('#itemL').attr('style','display:none')
+                $('#itemR').attr('style','display:none')
+                $('#itemL').attr('style','border:0px')
+                $('#itemR').attr('style','border:0px')
+                $('#numbers').hide();
+                curTrial = curTrial + 1;
+                updateProgress()
+                Phase3();
+              }, isi2Time-200);
+            }, 3000);  // 2 sec time limit for AFC
           }, isi1Time);
-        }, displayTime);
+        }, 4000); // 4 seconds to think of scene
       }
     }
 
@@ -955,7 +948,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase5. Checking performance before moving on to next block...")
+        alert("End of Phase 5. Checking performance before moving on to next block...")
 
         p2 = permutation(face_order2.length)
         face_order2 = permute(face_order2,p2)
@@ -967,7 +960,7 @@
         }
 
         if (block_accuracy<100) {
-          alert("Going back to Phase4. Aim for 100% accuracy!")
+          alert("Going back to Phase 4. Aim for 100% accuracy!")
           block_binary = []
           cur_phase = 4
           updateProgress()
@@ -981,7 +974,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase5. Checking performance before moving on to next block...")
+        alert("End of Phase 5. Checking performance before moving on to next block...")
 
         p2 = permutation(face_order2.length)
         face_order2 = permute(face_order2,p2)
@@ -993,7 +986,7 @@
         }
 
         if (block_accuracy<100) {
-          alert("Going back to Phase4. Aim for 100% accuracy!")
+          alert("Going back to Phase 4. Aim for 100% accuracy!")
           block_binary = []
           cur_phase = 4
           updateProgress()
