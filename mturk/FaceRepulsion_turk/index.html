@@ -631,6 +631,7 @@
     var block_accuracy = 100;
     var block_binary = [];
     let start_time = 0;
+    var initial_afc_instruct = true
 
     var face_order_full = derange(counter(0,29)) // number of face triangles
     var scene_order_full = derange(counter(0,119))
@@ -859,7 +860,8 @@
           $('#think_instruct').hide();
           $('#item').attr('style','display:none')
           setTimeout(function() { // 200 ms ISI
-            if (curTrial==0 & curBlock==0) {
+            if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
+              initial_afc_instruct = false
               alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 3 seconds to respond.")
             }
             cur_button = 0
@@ -977,7 +979,7 @@
       $("#button2").attr("style","text-decoration:none")
       $("#button3").attr("style","text-decoration:none")
       $("#button4").attr("style","text-decoration:none")
-      if (curTrial >= numTrials*2 && curBlock==numBlocks) { // if end of experiment
+      if (curTrial >= numTrials*2 && (curBlock+1)==numBlocks) { // if end of experiment
         $("#showTrial").hide()
         
         curTrial = 0;
