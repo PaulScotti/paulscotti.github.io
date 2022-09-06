@@ -862,7 +862,7 @@
           setTimeout(function() { // 200 ms ISI
             if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
               initial_afc_instruct = false
-              alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 3 seconds to respond.")
+              alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
             }
             cur_button = 0
             $('#numbers').show();
@@ -879,7 +879,7 @@
             $('#itemL').attr('style','display:inline')
             $('#itemR').attr('style','display:inline')
             start_time = new Date();
-            setTimeout(function() { // after 200 ms, start 3-sec time limit AFC
+            setTimeout(function() { // after 200 ms, start 2-sec time limit AFC
               if (orig_on_right==0) {
                 $('#itemL').attr('style','display:inline; border:5px solid lime')
                 if (cur_button == 1 || cur_button == 2) {
@@ -909,7 +909,7 @@
                 updateProgress()
                 Phase3();
               }, isi2Time-200);
-            }, 3000);  // 2 sec time limit for AFC
+            }, 2000);  // 2 sec time limit for AFC
           }, isi1Time);
         }, 4000); // 4 seconds to think of scene
       }
