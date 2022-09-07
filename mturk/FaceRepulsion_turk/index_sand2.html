@@ -11,6 +11,7 @@
     "Enter an ID to save your data with (any number/string will do). Your id is used to seed the experiment rng:", "workID");
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
+  console.log("SANDBOX")
   </script>
   <!-- Custom functions -->
   <script> 
@@ -528,7 +529,7 @@
   <form name="turkSubmit" id="turkSubmit" action="" method="POST">
   <input type="submit" value="Submit" name="submitButton" id="submitButton" style="display: none"></form>
   <script>
-    let formtxt = "https://www.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
+    let formtxt = "https://workersandbox.mturk.com/mturk/externalSubmit?assignmentId="+ASSIGNMENTID+"&foo=bar"
     document.getElementById('turkSubmit').action = formtxt
   </script>
   <!-- submit to turk
@@ -912,7 +913,7 @@
                 updateProgress()
                 Phase3();
               }, isi2Time-200);
-            }, 2500);  // 2.5 sec time limit for AFC
+            }, 2500);  // 2 sec time limit for AFC
           }, isi1Time);
         }, 4000); // 4 seconds to think of scene
       }
@@ -945,7 +946,7 @@
         Phase5() // Continuous Face Report with obj
       } else {
         if (face_order2[curTrial]<0) {
-          $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+35])[0].src).attr("src")
+          $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
         } else {
           $('#item').attr('src',$(window[face_order2[curTrial]+'_'+20])[0].src).attr("src")
         }
@@ -1057,7 +1058,7 @@
       } else {
         orig_on_right = randomInts(0,1) // 1 = correct on right
         if (face_order2[curTrial]<0) {
-          $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+35])[0].src).attr("src")
+          $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
         } else {
           $('#item').attr('src',$(window[face_order2[curTrial]+'_'+20])[0].src).attr("src")
         }
