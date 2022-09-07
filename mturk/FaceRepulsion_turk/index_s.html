@@ -911,7 +911,9 @@
                 $('#numbers').hide();
                 curTrial = curTrial + 1;
                 updateProgress()
-                Phase3();
+                setTimeout(function() {
+                  Phase3();
+                }, isi1Time);
               }, isi2Time-200);
             }, 2500);  // time limit for AFC
           }, isi1Time);
