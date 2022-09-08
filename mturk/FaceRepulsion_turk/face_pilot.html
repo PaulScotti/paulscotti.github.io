@@ -624,6 +624,7 @@
     var phase3_orig = [];
     var phase3_lure = [];
     var phase3_accuracy = [];
+    var phase3_conf = [];
     var phase4_faces = [];
     var phase4_associates = [];
     var phase5_faces = [];
@@ -631,6 +632,7 @@
     var phase5_lure = [];
     var phase5_accuracy = [];
     var phase5_rts = [];
+    var phase5_conf = [];
     var block_accuracy = 100;
     var block_binary = [];
     let start_time = 0;
@@ -885,6 +887,7 @@
             setTimeout(function() { // after 200 ms, start 2-sec time limit AFC
               if (orig_on_right==0) {
                 $('#itemL').attr('style','display:inline; border:5px solid lime')
+                phase3_conf.push(cur_button)
                 if (cur_button == 1 || cur_button == 2) {
                   block_binary.push(1)
                   phase3_accuracy.push(1)
@@ -1091,6 +1094,7 @@
                 setTimeout(function() {
                   if (orig_on_right==0) {
                     $('#itemL').attr('style','display:inline; border:5px solid lime')
+                    phase5_conf.push(button_pressed)
                     if (button_pressed < 3) {
                       block_binary.push(1)
                       phase5_accuracy.push(1)
@@ -1176,6 +1180,7 @@
         "phase3_orig": phase3_orig,
         "phase3_lure": phase3_lure,
         "phase3_accuracy": phase3_accuracy,
+        "phase3_conf": phase3_conf,
         "phase4_faces": phase4_faces,
         "phase4_associates": phase4_associates,
         "phase5_faces": phase5_faces,
@@ -1183,6 +1188,7 @@
         "phase5_lure": phase5_lure,
         "phase5_accuracy": phase5_accuracy,
         "phase5_rts": phase5_rts,
+        "phase5_conf": phase5_conf,
         "comments": $('#comments').val()
       };
 
