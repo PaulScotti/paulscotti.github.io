@@ -914,12 +914,12 @@
                 }
               } else {
                 $('#itemR').attr('style','display:inline; border:5px solid lime')
-                if (cur_button == 1 || cur_button == 2) {
-                  block_binary.push(0)
-                  phase3_accuracy.push(0)
-                } else {
+                if (cur_button == 3 || cur_button == 4) {
                   block_binary.push(1)
                   phase3_accuracy.push(1)
+                } else {
+                  block_binary.push(0)
+                  phase3_accuracy.push(0)
                 }
               }
               setTimeout(function() {
