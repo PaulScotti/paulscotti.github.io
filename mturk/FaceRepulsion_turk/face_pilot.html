@@ -11,6 +11,9 @@
     "Enter an ID to save your data with (any number/string will do). Your id is used to seed the experiment rng:", "workID");
   let ASSIGNMENTID = (IsOnTurk()) ? GetAssignmentId() : prompt("Set assignment number (doesnt matter for testing):", "assignmentId");
   const startDate = new Date(); 
+  const day = startDate.getDate()
+  const month = startDate.getMonth()+1
+  const year = startDate.getFullYear()
   </script>
   <!-- Custom functions -->
   <script> 
@@ -854,7 +857,7 @@
 
           if (curBlock==0) {
             // save data so Paul can see someone reached this point (first Phase4 of experiment)
-            const blob_test = new Blob([[JSON.stringify({'filename':WORKERID + '_' + ASSIGNMENTID + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+            const blob_test = new Blob([[JSON.stringify({'filename':WORKERID + '_' + ASSIGNMENTID + '_' + month + '_' + day + '_' + year})]], {type: "application/json"});
             let req = new XMLHttpRequest();
             req.onreadystatechange = () => {
               if (req.readyState == XMLHttpRequest.DONE) {
@@ -865,7 +868,7 @@
             req.setRequestHeader("Content-Type", "application/json");
             req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
             req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
-            req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
+            req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + month + '_' + day + '_' + year + '.json');
             req.send(blob_test);
           }
 
@@ -1183,7 +1186,7 @@
         "colorvision": $('#colorvision').prop('checked'),
         "StartTime": startDate.getTime(),
         "EndTime": endDate,
-        "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
+        "Date": month + '_' + day + '_' + year,
         "seed": chance1.seed,
         "block_tracker": block_tracker,
         "phase_tracker": phase_tracker,
@@ -1223,7 +1226,7 @@
       req.setRequestHeader("Content-Type", "application/json");
       req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
       req.setRequestHeader("X-Collection-Id", "608eb17792cb9267d0c9c3e0");
-      req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
+      req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + month + '_' + day + '_' + year + '.json');
       req.send(blob);
 
       document.getElementById("saving").innerHTML = "Submitting...";
