@@ -112,10 +112,19 @@
         cur_phase = 1
       }
       block_accuracy = average(block_binary)
+      overall_accuracy = average(overall_binary)
       if (cur_phase<4) {
-        $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Block "+(curBlock+1)+"/"+numBlocks+" ("+block_accuracy+"% acc.)")
+        if (isPractice) {
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
+        } else {
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"% acc.)")
+        }
       } else {
-        $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"Block "+(curBlock+1)+"/"+numBlocks+" ("+block_accuracy+"% acc.)")
+        if (isPractice) {
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
+        } else {
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"% acc.)")
+        }
       }
     }
     function counter(start, end, interval) {
@@ -612,7 +621,6 @@
     var keyCode = 0;
     var cur_button = 0;
     var cur_phase = 0;
-    var block_tracker = [];
     var phase_tracker = [];
     var phase1_faces = [];
     var phase1_associates = [];
@@ -635,7 +643,6 @@
     var phase5_rts = [];
     var phase5_conf = [];
 
-    var Pblock_tracker = [];
     var Pphase_tracker = [];
     var Pphase1_faces = [];
     var Pphase1_associates = [];
@@ -658,8 +665,10 @@
     var Pphase5_rts = [];
     var Pphase5_conf = [];
 
+    var overall_accuracy = 100;
     var block_accuracy = 100;
     var block_binary = [];
+    var overall_binary = [];
     let start_time = 0;
     var initial_afc_instruct = true
 
@@ -703,7 +712,7 @@
       // open pop-up:
       modalClosed = false;
       $("#openModal").show()
-      document.getElementById("openModal_text").innerHTML = 'Experiment will now begin. Memorize the faces and their associated image. Good luck!';
+      document.getElementById("openModal_text").innerHTML = 'We will start with a practice experiment consisting of only a few faces for you to become familiar with the task. Memorize the faces and their associated images perfectly to complete the practice and move on to the main experiment. To help you memorize, try imagining the people interacting with the visual environments associated with them. Good luck!';
       window.location.href = '#openModal';
       checkFlag();
       function checkFlag() {
@@ -729,7 +738,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Study Phase. Beginning Face Report Phase. You will be shown a scene, and be asked to find the associated face using your mouse.")
+        alert("Beginning Phase 2/5. You will be shown a scene, and be asked to find the associated face using your mouse.")
 
         $('#fixation').attr('style','display:none')
 
@@ -749,7 +758,6 @@
           $('#item').attr('src',$(window[Pface_order[curTrial]+'_'+20])[0].src).attr("src")
           Pphase1_faces.push(Pface_order[curTrial])
           Pphase_tracker.push(cur_phase)
-          Pblock_tracker.push(curBlock)
           $('#item').attr('style','display:inline')
           $('#showTrial').show();
           setTimeout(function() { // FACE displayTime
@@ -771,7 +779,6 @@
           $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
           phase1_faces.push(face_order[curTrial])
           phase_tracker.push(cur_phase)
-          block_tracker.push(curBlock)
           $('#item').attr('style','display:inline')
           $('#showTrial').show();
           setTimeout(function() { // FACE displayTime
@@ -803,7 +810,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Face Report Phase. Starting Scene Association Phase. Select the correct associate of the two options using your keyboard.")
+        alert("Beginning Phase 3/5. Select the correct associate of the two options using your keyboard. You will have 2 seconds to respond.")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -882,9 +889,11 @@
           $('#itemR').attr('style','display:inline')
           deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
           if (deg_error <= 45) {
-            block_binary.push(1)
+            block_binary.push(1);
+            $('#error').css('color','green')
           } else {
-            block_binary.push(0)
+            block_binary.push(0);
+            $('#error').css('color','red')
           }
           document.getElementById("error").innerHTML = deg_error + ' degrees away';
           $('#feedback').show();
@@ -907,9 +916,11 @@
           $('#itemR').attr('style','display:inline')
           deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
           if (deg_error <= 45) {
-            block_binary.push(1)
+            block_binary.push(1); overall_binary.push(1)
+            $('#error').css('color','green')
           } else {
-            block_binary.push(0)
+            block_binary.push(0); overall_binary.push(0)
+            $('#error').css('color','red')
           }
           document.getElementById("error").innerHTML = deg_error + ' degrees away';
           $('#feedback').show();
@@ -942,7 +953,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase 3. Checking performance before moving on to Phase 4...")
+        alert("Checking performance before moving on to Phase 4...")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -973,13 +984,13 @@
         }
 
         if (block_accuracy<100) {
-          alert("Going back to Phase 1. Aim for 100% accuracy!")
+          alert("Perfect performance is required to continue. Going back to Phase 1.")
           block_binary = []
           cur_phase = 1
           updateProgress()
           Phase1()
         } else {
-          alert("Great job! Proceeding to Phase 4. You will now memorize objects associated with the previously shown faces.")
+          alert("Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. To help you memorize, try imagining these people interacting with the objects presented!")
           block_binary = []
           cur_phase = 4
           updateProgress()
@@ -1027,7 +1038,7 @@
             setTimeout(function() { // 200 ms ISI
               if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
                 initial_afc_instruct = false
-                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2.5 seconds to respond.")
+                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
               }
               cur_button = 0
               $('#numbers').show();
@@ -1049,19 +1060,19 @@
                   $('#itemL').attr('style','display:inline; border:5px solid lime')
                   Pphase3_conf.push(cur_button)
                   if (cur_button == 1 || cur_button == 2) {
-                    block_binary.push(1)
+                    block_binary.push(1);
                     Pphase3_accuracy.push(1)
                   } else {
-                    block_binary.push(0)
+                    block_binary.push(0);
                     Pphase3_accuracy.push(0)
                   }
                 } else {
                   $('#itemR').attr('style','display:inline; border:5px solid lime')
                   if (cur_button == 3 || cur_button == 4) {
-                    block_binary.push(1)
+                    block_binary.push(1);
                     Pphase3_accuracy.push(1)
                   } else {
-                    block_binary.push(0)
+                    block_binary.push(0);
                     Pphase3_accuracy.push(0)
                   }
                 }
@@ -1077,9 +1088,9 @@
                     Phase3();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2500);  // time limit for AFC
+              }, 2000);  // time limit for AFC
             }, isi1Time);
-          }, 2500); // 2.5 seconds to think of scene
+          }, 2000); // 2 seconds to think of scene
         } else {
           orig_on_right = randomInts(0,1) // 1 = correct on right
           $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
@@ -1093,7 +1104,7 @@
             setTimeout(function() { // 200 ms ISI
               if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
                 initial_afc_instruct = false
-                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2.5 seconds to respond.")
+                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
               }
               cur_button = 0
               $('#numbers').show();
@@ -1115,19 +1126,19 @@
                   $('#itemL').attr('style','display:inline; border:5px solid lime')
                   phase3_conf.push(cur_button)
                   if (cur_button == 1 || cur_button == 2) {
-                    block_binary.push(1)
+                    block_binary.push(1); overall_binary.push(1)
                     phase3_accuracy.push(1)
                   } else {
-                    block_binary.push(0)
+                    block_binary.push(0); overall_binary.push(0)
                     phase3_accuracy.push(0)
                   }
                 } else {
                   $('#itemR').attr('style','display:inline; border:5px solid lime')
                   if (cur_button == 3 || cur_button == 4) {
-                    block_binary.push(1)
+                    block_binary.push(1); overall_binary.push(1)
                     phase3_accuracy.push(1)
                   } else {
-                    block_binary.push(0)
+                    block_binary.push(0); overall_binary.push(0)
                     phase3_accuracy.push(0)
                   }
                 }
@@ -1143,9 +1154,9 @@
                     Phase3();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2500);  // time limit for AFC
+              }, 2000);  // time limit for AFC
             }, isi1Time);
-          }, 2500); // 2.5 seconds to think of scene
+          }, 2000); // 2 seconds to think of scene
         }
       }
     }
@@ -1161,7 +1172,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Study Phase. Starting Object Association Phase. Select the correct associate of the two options using your keyboard.")
+        alert("Beginning Phase 5/5. Select the correct object using your keyboard. There is no time limit to respond.")
 
         $('#fixation').attr('style','display:none')
 
@@ -1197,13 +1208,12 @@
       } else {
         if (isPractice) {
           if (Pface_order2[curTrial]<0) {
-            $('#item').attr('src',$(window[Pface_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
+            $('#item').attr('src',$(window[Pface_order2[curTrial]*-1+'_'+80])[0].src).attr("src")
           } else {
             $('#item').attr('src',$(window[Pface_order2[curTrial]+'_'+20])[0].src).attr("src")
           }
           Pphase4_faces.push(Pface_order2[curTrial])
           Pphase_tracker.push(cur_phase)
-          Pblock_tracker.push(curBlock)
           $('#item').attr('style','display:inline')
           $('#showTrial').show();
           setTimeout(function() { // FACE displayTime
@@ -1230,7 +1240,6 @@
           }
           phase4_faces.push(face_order2[curTrial])
           phase_tracker.push(cur_phase)
-          block_tracker.push(curBlock)
           $('#item').attr('style','display:inline')
           $('#showTrial').show();
           setTimeout(function() { // FACE displayTime
@@ -1267,7 +1276,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase 5. Checking performance before moving on to next block...")
+        alert("Checking performance before moving on...")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -1298,13 +1307,13 @@
         }
 
         if (block_accuracy<100) {
-          alert("Going back to Phase 4. Aim for 100% accuracy!")
+          alert("Perfect performance is required to continue. Going back to Phase 4.")
           block_binary = []
           cur_phase = 4
           updateProgress()
           Phase4()
         } else {
-          alert("Great job! Let's wrap things up!")
+          alert("Amazing job! You memorized everything perfectly! Let's wrap things up!")
           Done()
         }
       } else if (curTrial >= numTrials*2 && isPractice==true) { // if end of block
@@ -1312,7 +1321,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("End of Phase 5. Checking performance before moving on...")
+        alert("Checking performance before moving on...")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -1349,7 +1358,7 @@
           updateProgress()
           Phase4()
         } else {
-          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces with associated scenes. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
+          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces with associated scenes. After you memorize these new faces perfectly, the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
           block_binary = []
           isPractice = false
           numTrials = 20
@@ -1393,7 +1402,7 @@
         if (isPractice) {
           right = randomInts(0,1) // 1 = correct on right
           if (Pface_order2[curTrial]<0) {
-            $('#item').attr('src',$(window[Pface_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
+            $('#item').attr('src',$(window[Pface_order2[curTrial]*-1+'_'+80])[0].src).attr("src")
           } else {
             $('#item').attr('src',$(window[Pface_order2[curTrial]+'_'+20])[0].src).attr("src")
           }
@@ -1427,19 +1436,19 @@
                       $('#itemL').attr('style','display:inline; border:5px solid lime')
                       Pphase5_conf.push(button_pressed)
                       if (button_pressed < 3) {
-                        block_binary.push(1)
+                        block_binary.push(1);
                         Pphase5_accuracy.push(1)
                       } else {
-                        block_binary.push(0)
+                        block_binary.push(0);
                         Pphase5_accuracy.push(0)
                       }
                     } else {
                       $('#itemR').attr('style','display:inline; border:5px solid lime')
                       if (button_pressed < 3) {
-                        block_binary.push(0)
+                        block_binary.push(0);
                         Pphase5_accuracy.push(0)
                       } else {
-                        block_binary.push(1)
+                        block_binary.push(1);
                         Pphase5_accuracy.push(1)
                       }
                     }
@@ -1497,19 +1506,19 @@
                       $('#itemL').attr('style','display:inline; border:5px solid lime')
                       phase5_conf.push(button_pressed)
                       if (button_pressed < 3) {
-                        block_binary.push(1)
+                        block_binary.push(1); overall_binary.push(1)
                         phase5_accuracy.push(1)
                       } else {
-                        block_binary.push(0)
+                        block_binary.push(0); overall_binary.push(0)
                         phase5_accuracy.push(0)
                       }
                     } else {
                       $('#itemR').attr('style','display:inline; border:5px solid lime')
                       if (button_pressed < 3) {
-                        block_binary.push(0)
+                        block_binary.push(0); overall_binary.push(0)
                         phase5_accuracy.push(0)
                       } else {
-                        block_binary.push(1)
+                        block_binary.push(1); overall_binary.push(1)
                         phase5_accuracy.push(1)
                       }
                     }
@@ -1570,7 +1579,7 @@
         "EndTime": endDate,
         "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
         "seed": chance1.seed,
-        "block_tracker": block_tracker,
+        "overall_accuracy": overall_accuracy,
         "phase_tracker": phase_tracker,
         "phase1_faces": phase1_faces,
         "phase1_associates": phase1_associates,
@@ -1591,7 +1600,6 @@
         "phase5_accuracy": phase5_accuracy,
         "phase5_rts": phase5_rts,
         "phase5_conf": phase5_conf,
-        "Pblock_tracker": Pblock_tracker,
         "Pphase_tracker": Pphase_tracker,
         "Pphase1_faces": Pphase1_faces,
         "Pphase1_associates": Pphase1_associates,
