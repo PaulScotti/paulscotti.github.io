@@ -117,13 +117,13 @@
         if (isPractice) {
           $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
         } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"% acc.)")
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+overall_accuracy+"% Overall."+" ("+block_accuracy+"%)")
         }
       } else {
         if (isPractice) {
           $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
         } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"% acc.)")
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+overall_accuracy+"% Overall."+" ("+block_accuracy+"%)")
         }
       }
     }
@@ -738,6 +738,7 @@
         
         curTrial = 0;
         updateProgress()
+        
         alert("Beginning Phase 2/5. You will be shown a scene, and be asked to find the associated face using your mouse.")
 
         $('#fixation').attr('style','display:none')
@@ -952,6 +953,7 @@
         $("#showTrial").hide()
         
         curTrial = 0;
+        initial_afc_instruct = false
         updateProgress()
         alert("Checking performance before moving on to Phase 4...")
 
@@ -982,9 +984,9 @@
             obj_order = permute(obj_order,p2)
           }
         }
-
+        
         if (block_accuracy<100) {
-          alert("Perfect performance is required to continue. Going back to Phase 1.")
+          alert("Perfect performance is required to continue (the percentage in parentheses at the bottom left needs to be 100%). Going back to Phase 1.")
           block_binary = []
           cur_phase = 1
           updateProgress()
@@ -1037,7 +1039,6 @@
             $('#item').attr('style','display:none')
             setTimeout(function() { // 200 ms ISI
               if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
-                initial_afc_instruct = false
                 alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
               }
               cur_button = 0
@@ -1102,10 +1103,6 @@
             $('#think_instruct').hide();
             $('#item').attr('style','display:none')
             setTimeout(function() { // 200 ms ISI
-              if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
-                initial_afc_instruct = false
-                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
-              }
               cur_button = 0
               $('#numbers').show();
               other_ass = otherAssociate(scene_order,scene_order.length,curTrial)
@@ -1307,7 +1304,7 @@
         }
 
         if (block_accuracy<100) {
-          alert("Perfect performance is required to continue. Going back to Phase 4.")
+          alert("Perfect performance is required to continue (the percentage in parentheses at the bottom left needs to be 100%). Going back to Phase 4.")
           block_binary = []
           cur_phase = 4
           updateProgress()
@@ -1358,7 +1355,7 @@
           updateProgress()
           Phase4()
         } else {
-          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces with associated scenes. After you memorize these new faces perfectly, the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
+          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces perfectly, the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
           block_binary = []
           isPractice = false
           numTrials = 20
