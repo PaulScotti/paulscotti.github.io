@@ -117,13 +117,13 @@
         if (isPractice) {
           $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
         } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+overall_accuracy+"% Overall."+" ("+block_accuracy+"%)")
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"%)")
         }
       } else {
         if (isPractice) {
           $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"Practice."+" ("+block_accuracy+"% acc.)")
         } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+overall_accuracy+"% Overall."+" ("+block_accuracy+"%)")
+          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+overall_accuracy+"% overall."+" ("+block_accuracy+"%)")
         }
       }
     }
@@ -986,7 +986,7 @@
         }
         
         if (block_accuracy<100) {
-          alert("Perfect performance is required to continue (the percentage in parentheses at the bottom left needs to be 100%). Going back to Phase 1.")
+          alert("Better performance is required to continue (the percentage in parentheses at the bottom left). Going back to Phase 1. (Note that this experiment is intentionally supposed to be difficult and take several attempts before you proceed!)")
           block_binary = []
           cur_phase = 1
           updateProgress()
@@ -1304,7 +1304,7 @@
         }
 
         if (block_accuracy<100) {
-          alert("Perfect performance is required to continue (the percentage in parentheses at the bottom left needs to be 100%). Going back to Phase 4.")
+          alert("Better performance is required to continue (the percentage in parentheses at the bottom left). Going back to Phase 4. (Note that this experiment is intentionally supposed to be difficult and take several attempts before you proceed!)")
           block_binary = []
           cur_phase = 4
           updateProgress()
