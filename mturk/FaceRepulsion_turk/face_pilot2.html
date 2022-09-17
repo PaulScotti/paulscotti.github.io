@@ -1007,22 +1007,20 @@
             scene_order = permute(scene_order,p)
           }
 
-          if (curBlock==0) {
-            // save data so Paul can see someone reached this point (first Phase4 of experiment)
-            const blob_test = new Blob([[JSON.stringify({'filename':WORKERID + '_' + ASSIGNMENTID + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
-            let req = new XMLHttpRequest();
-            req.onreadystatechange = () => {
-              if (req.readyState == XMLHttpRequest.DONE) {
-                console.log(req.responseText);
-              }
-            };
-            req.open("POST", "https://api.jsonbin.io/v3/b", true);
-            req.setRequestHeader("Content-Type", "application/json");
-            req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
-            req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
-            req.setRequestHeader("X-Bin-Name", chance1.seed + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
-            req.send(blob_test);
-          }
+          // save data so Paul can see someone reached this point (first Phase4 of experiment)
+          const blob_test = new Blob([[JSON.stringify({'filename':WORKERID + '_' + ASSIGNMENTID + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+          let req = new XMLHttpRequest();
+          req.onreadystatechange = () => {
+            if (req.readyState == XMLHttpRequest.DONE) {
+              console.log(req.responseText);
+            }
+          };
+          req.open("POST", "https://api.jsonbin.io/v3/b", true);
+          req.setRequestHeader("Content-Type", "application/json");
+          req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
+          req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
+          req.setRequestHeader("X-Bin-Name", phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
+          req.send(blob_test);
 
           Phase4()
         }
