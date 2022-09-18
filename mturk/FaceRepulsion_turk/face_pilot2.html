@@ -1007,8 +1007,8 @@
             scene_order = permute(scene_order,p)
           }
 
-          // save data so Paul can see someone reached this point (first Phase4 of experiment)
-          const blob_test = new Blob([[JSON.stringify({'filename':WORKERID + '_' + ASSIGNMENTID + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+          // save data so Paul can see someone reached this point (first half of experiment)
+          const blob_test = new Blob([[JSON.stringify({'filename':'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
           let req = new XMLHttpRequest();
           req.onreadystatechange = () => {
             if (req.readyState == XMLHttpRequest.DONE) {
@@ -1019,7 +1019,7 @@
           req.setRequestHeader("Content-Type", "application/json");
           req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
           req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
-          req.setRequestHeader("X-Bin-Name", phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
+          req.setRequestHeader("X-Bin-Name", 'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
           req.send(blob_test);
 
           Phase4()
@@ -1346,6 +1346,21 @@
           }
         }
 
+        // save data so Paul can see someone reached this point (2nd half of experiment)
+        const blob_test = new Blob([[JSON.stringify({'filename':'second_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = () => {
+          if (req.readyState == XMLHttpRequest.DONE) {
+            console.log(req.responseText);
+          }
+        };
+        req.open("POST", "https://api.jsonbin.io/v3/b", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
+        req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
+        req.setRequestHeader("X-Bin-Name", 'second_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json');
+        req.send(blob_test);
+
         if (block_accuracy<100) {
           alert("Going back to Phase 4. Aim for 100% accuracy!")
           block_binary = []
@@ -1353,7 +1368,7 @@
           updateProgress()
           Phase4()
         } else {
-          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces perfectly, the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
+          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces (100% accuracy), the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
           block_binary = []
           isPractice = false
           numTrials = 20
