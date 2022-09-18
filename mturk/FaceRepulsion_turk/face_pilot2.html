@@ -1008,7 +1008,7 @@
           }
 
           // save data so Paul can see someone reached this point (first half of experiment)
-          const blob_test = new Blob([[JSON.stringify({'filename':'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+          const blob_test = new Blob([[JSON.stringify({'filename':'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json'})]], {type: "application/json"});
           let req = new XMLHttpRequest();
           req.onreadystatechange = () => {
             if (req.readyState == XMLHttpRequest.DONE) {
@@ -1347,7 +1347,7 @@
         }
 
         // save data so Paul can see someone reached this point (2nd half of experiment)
-        const blob_test = new Blob([[JSON.stringify({'filename':'second_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear() + '.json'})]], {type: "application/json"});
+        const blob_test = new Blob([[JSON.stringify({'filename':'second_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json'})]], {type: "application/json"});
         let req = new XMLHttpRequest();
         req.onreadystatechange = () => {
           if (req.readyState == XMLHttpRequest.DONE) {
