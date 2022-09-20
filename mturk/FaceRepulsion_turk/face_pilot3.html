@@ -843,7 +843,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("Beginning Phase 3/5. Select the correct associate of the two options using your keyboard. You will have 2 seconds to respond.")
+        alert("Beginning Phase 3/5. Select the correct associate of the two options using your keyboard. You will have 2.5 seconds to respond.")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -1166,7 +1166,7 @@
             $('#item').attr('style','display:none')
             setTimeout(function() { // 200 ms ISI
               if (curTrial==0 & curBlock==0 & initial_afc_instruct==true) {
-                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2 seconds to respond.")
+                alert("You will now see two scenes, one of which was associated with the previous face. Using your keyboard, press the number 1 (guess) or 2 (sure) if you think the associated scene is the left scene, or press 3 (guess) or 4 (sure) if you think the associated scene is the right scene. You will have 2.5 seconds to respond.")
               }
               cur_button = 0
               $('#numbers').show();
@@ -1205,7 +1205,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  Pphase3_rts.push(2000);
+                  Pphase3_rts.push(2500);
                 } else {
                   Pphase3_rts.push(latest_button_time - start_time);
                 }
@@ -1221,7 +1221,7 @@
                     Phase3();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2000);  // time limit for AFC
+              }, 2500);  // time limit for AFC
             }, isi1Time);
           }, 2000); // 2 seconds to think of scene
         } else {
@@ -1272,7 +1272,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  phase3_rts.push(2000);
+                  phase3_rts.push(2500);
                 } else {
                   phase3_rts.push(latest_button_time - start_time);
                 }
@@ -1288,7 +1288,7 @@
                     Phase3();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2000);  // time limit for AFC
+              }, 2500);  // time limit for AFC
             }, isi1Time);
           }, 2000); // 2 seconds to think of scene
         }
@@ -1306,7 +1306,7 @@
         
         curTrial = 0;
         updateProgress()
-        alert("Beginning Phase 5/5. Select the correct object using your keyboard. You will have 2 seconds to respond.")
+        alert("Beginning Phase 5/5. Select the correct object using your keyboard. You will have 2.5 seconds to respond.")
 
         $('#fixation').attr('style','display:none')
 
@@ -1826,7 +1826,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  Pphase5_rts.push(2000);
+                  Pphase5_rts.push(2500);
                 } else {
                   Pphase5_rts.push(latest_button_time - start_time);
                 }
@@ -1894,7 +1894,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  phase5_rts.push(2000);
+                  phase5_rts.push(2500);
                 } else {
                   phase5_rts.push(latest_button_time - start_time);
                 }
