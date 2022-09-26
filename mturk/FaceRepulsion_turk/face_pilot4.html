@@ -500,7 +500,7 @@
     <p align="center"><img src="https://paulscotti.github.io/mturk/FaceRepulsion_turk/Instructions.png" width="1080px"></p>
     <p>We will use your results to better understand how human memory works. Therefore, please do not use any external devices or computer aids to benefit your performance.</p>
     <p>The 90-minute estimated completion time assumes that you will make mistakes and need to repeat phases many times.</p>
-    <p>To proceed and start the experiment, please copy the following red text into the below box to prove that you are not a bot: <font color="red">3948017561902340535634051</font><br><br>
+    <p>To proceed and start the experiment, please copy the following red text into the below box to prove that you are not a bot: <font color="red">39480175619</font><br><br>
     <textarea name="bot" id="bot" style="width: 300px; height: 60px"></textarea></p>
     
     <p style="text-align: center"><a href="javascript:void(0)" onclick="botcheck();document.body.scrollTop = document.documentElement.scrollTop = 0" id="TextButton">Start Experiment</a></p>
@@ -672,6 +672,10 @@
     var Pphase5_rts = [];
     var Pphase5_conf = [];
 
+    var miniblock_acc = [0,0,0,0,0]
+    var miniblock_faces = []
+    var miniblock_binary = [0,0,0,0,0,0,0,0,0,0]
+    var passed_faces = []
     var overall_accuracy = 100;
     var block_accuracy = 100;
     var block_binary = [];
@@ -688,7 +692,7 @@
     var obj_order_full = derange(counter(10,119))
 
     function botcheck() {
-      if (document.querySelector("#bot").value==3948017561902340535634051){
+      if (document.querySelector("#bot").value==39480175619){
         $('#instructions').hide()
         document.body.scrollTop = document.documentElement.scrollTop = 0;
         StartExperiment()
@@ -704,11 +708,48 @@
       Pobj_order = Pobj_order_full.slice(curBlock*(numTrials*2),(curBlock+1)*(numTrials*2)) 
 
       face_order = face_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
-      face_order2 = face_order.concat(makeListNegative(face_order))
+      face_order2 = face_order_full.concat(makeListNegative(face_order_full))
       scene_order = scene_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
-      obj_order = obj_order_full.slice(curBlock*(numTrials*2),(curBlock+1)*(numTrials*2)) 
+      obj_order = obj_order_full
     }
     NextBlock()
+
+    function miniblockacc1(){
+      console.log('miniblockacc1',miniblock_acc,miniblock_binary,miniblock_faces)
+      for (let j = 0; j < face_order.length; j++) {
+        for (let i = 0; i < face_order.length; i++) {
+          if (face_order[i]==miniblock_faces[j]){
+            if (miniblock_binary[i]==1){
+              miniblock_acc[j]+=1
+            } else {
+              miniblock_acc[j]=0
+            }
+            console.log(miniblock_acc,miniblock_binary)
+          }
+        }
+      }
+    }
+    function miniblockacc2(){
+      console.log('miniblockacc2',miniblock_acc,miniblock_binary,miniblock_faces)
+      for (let j = 0; j < face_order.length; j++) {
+        for (let i = 0; i < face_order.length; i++) {
+          if (face_order[i]==miniblock_faces[j]){
+            console.log('face '+face_order[i])
+            console.log('miniblock_binary',miniblock_binary)
+            if (miniblock_binary[i+numTrials]==1){
+              miniblock_acc[j]+=1
+            } else {
+              miniblock_acc[j]=0
+            }
+            if (miniblock_acc[j]>=4) {
+              passed_faces.push(miniblock_faces[j])
+            }
+            console.log("passed: "+passed_faces)
+          }
+        }
+      }
+      console.log('miniblockacc2',miniblock_acc,miniblock_binary)
+    }
 
     function StartExperiment() {
       if (IsOnTurk() && IsTurkPreview()) {
@@ -827,6 +868,10 @@
       if (curTrial >= numTrials) { // if end of block
         console.log("End of Phase2.")
         $("#showTrial").hide()
+
+        if (!isPractice) {
+          miniblockacc1() // keep track of accuracy across miniblocks
+        }
         
         curTrial = 0;
         updateProgress()
@@ -880,29 +925,35 @@
             }, isi1Time);
           }, displayTime);
         } else {
-          $('#item').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
-          phase2_scenes.push(scene_order[curTrial])
-          $('#item').attr('style','display:inline')
-          $('#showTrial').show();
-          setTimeout(function() {
-            $('#item').attr('style','display:none')
-            $('#item').attr('src',$(window['placeholder'])[0].src).attr("src")
-            setTimeout(function() { // show face and wait for input
-              circle_slider();
-              $('#item').attr('style','display:inline')
-              start_time = new Date();
-              $('#report_instruct').show();
-              setTimeout(function() {
-                if ($('#item').attr('src')=='https://paulscotti.github.io/mturk/face_triangles/placeholder.jpg') { // if no click
-                  deg = 120; // final (0-360 positive) degrees from mouse position 
-                  deg_rotation = 0;
-                  deg_corr = Math.floor(deg / 3)
-                  $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
-                }
-                FaceConfirm()
-              }, 6000)
-            }, isi1Time);
-          }, displayTime);
+          if (passed_faces.includes(face_order[curTrial])) {
+            curTrial = curTrial + 1;
+            updateProgress()
+            Phase2()  
+          } else {
+            $('#item').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
+            phase2_scenes.push(scene_order[curTrial])
+            $('#item').attr('style','display:inline')
+            $('#showTrial').show();
+            setTimeout(function() {
+              $('#item').attr('style','display:none')
+              $('#item').attr('src',$(window['placeholder'])[0].src).attr("src")
+              setTimeout(function() { // show face and wait for input
+                circle_slider();
+                $('#item').attr('style','display:inline')
+                start_time = new Date();
+                $('#report_instruct').show();
+                setTimeout(function() {
+                  if ($('#item').attr('src')=='https://paulscotti.github.io/mturk/face_triangles/placeholder.jpg') { // if no click
+                    deg = 120; // final (0-360 positive) degrees from mouse position 
+                    deg_rotation = 0;
+                    deg_corr = Math.floor(deg / 3)
+                    $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
+                  }
+                  FaceConfirm()
+                }, 6000)
+              }, isi1Time);
+            }, displayTime);
+          }
         }
       }
     }
@@ -968,6 +1019,7 @@
           deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
           if (deg_error <= 45) {
             block_binary.push(1); overall_binary.push(1)
+            miniblock_binary[curTrial]=1
             $('#error').css('color','green')
           } else {
             block_binary.push(0); overall_binary.push(0)
@@ -1001,6 +1053,11 @@
       if (curTrial >= numTrials) { // if end of block
         console.log("End of Phase 3.")
         $("#showTrial").hide()
+
+        if (Ploops1>=10 || Ploops2>=10) {
+          $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
+          return
+        }
         
         curTrial = 0;
         initial_afc_instruct = false
@@ -1116,18 +1173,26 @@
         req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
         req.setRequestHeader("X-Bin-Name", 'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json');
         req.send(blob_test);
-
-        if (!isPractice && loops>=9) {
+        
+        if (!isPractice && loops>=40) {
           endFlag = false
         } else {
           endFlag = true
         }
         if ((block_accuracy<100) && (endFlag)) {
+          if (!isPractice) {
+            miniblockacc2() // keep track of face accuracy across miniblocks
+            miniblock_binary=[0,0,0,0,0,0,0,0,0,0]
+          }
 
           // open pop-up:
           modalClosed = false;
           $("#openModal").show()
-          document.getElementById("openModal_text").innerHTML = "Better performance is required to continue (the percentage in parentheses at the bottom left). Going back to Phase 2. (Note that this experiment is intentionally supposed to be difficult and take several attempts before you proceed!)";
+          if (isPractice) {
+            document.getElementById("openModal_text").innerHTML = "Repeating Phases 2-3. For this practice experiment we require you to get 100% accuracy to continue to the main task.";
+          } else {
+            document.getElementById("openModal_text").innerHTML = "Repeating phase 2-3 loop and removing faces that you have already fully memorized...";
+          }
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1135,7 +1200,7 @@
               window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
             } else {
               block_binary = []
-              loops+=1
+              loops=0
               if (isPractice){
                 Ploops1+=1
               } else {
@@ -1155,32 +1220,73 @@
               Phase2()
             }
           }
-        } else {
-          if (loops>=9) {
-            alert("Great job! You didn't reach 100% but you got close enough! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!")
-          } else {
-            alert("Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!")
-          }
-          block_binary = []
+        } else if (!isPractice && curBlock<numBlocks) {
           if (!isPractice) {
-            numTrials = 20
-            numBlocks = 1
+            miniblockacc2() // keep track of face accuracy across miniblocks
           }
-          loops = 0
-          cur_phase = 4
-          updateProgress()
 
-          if (isPractice) {
-            p = permutation(Pface_order.length)
-            Pface_order = permute(Pface_order,p)
-            Pscene_order = permute(Pscene_order,p)
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          document.getElementById("openModal_text").innerHTML = "Great job! Starting next block of 5 faces to memorize. (Block " + (curBlock+2) + " of " + numBlocks +")";
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              curBlock+=1
+              NextBlock()
+              block_binary = []
+              loops+=1
+              loops1+=1
+              cur_phase = 1
+              p = permutation(face_order.length)
+              face_order = permute(face_order,p)
+              scene_order = permute(scene_order,p)
+              miniblock_faces = face_order
+              passed_faces = []
+              updateProgress()
+              Phase1()
+            }
+          }
+        } else {
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          if (loops>=40) {
+            document.getElementById("openModal_text").innerHTML = "Great job! You didn't reach 100% but you got close enough! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
           } else {
-            p = permutation(face_order.length)
-            face_order = permute(face_order,p)
-            scene_order = permute(scene_order,p)
+            document.getElementById("openModal_text").innerHTML = "Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
           }
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              block_binary = []
+              if (!isPractice) {
+                numTrials = 20
+                numBlocks = 1
+              }
+              loops = 0
+              cur_phase = 4
+              updateProgress()
 
-          Phase4()
+              if (isPractice) {
+                p = permutation(Pface_order.length)
+                Pface_order = permute(Pface_order,p)
+                Pscene_order = permute(Pscene_order,p)
+              } else {
+                p = permutation(face_order.length)
+                face_order = permute(face_order,p)
+                scene_order = permute(scene_order,p)
+              }
+
+              Phase4()  
+            }
+          }
         }
       } else {
         if (isPractice) {
@@ -1254,72 +1360,80 @@
             }, isi1Time);
           }, 2000); // 2 seconds to think of scene
         } else {
-          orig_on_right = randomInts(0,1) // 1 = correct on right
-          $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
-          phase3_faces.push(face_order[curTrial])
-          $('#item').attr('style','display:inline')
-          $('#showTrial').show();
-          $('#think_instruct').show();
-          setTimeout(function() {
-            $('#think_instruct').hide();
-            $('#item').attr('style','display:none')
-            setTimeout(function() { // 200 ms ISI
-              cur_button = 0
-              $('#numbers').show();
-              other_ass = otherAssociate(scene_order,scene_order.length,curTrial)
-              if (orig_on_right==0) {
-                $('#itemL').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
-                $('#itemR').attr('src',$(window['scene'+other_ass])[0].src).attr("src")
-              } else {
-                $('#itemR').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
-                $('#itemL').attr('src',$(window['scene'+other_ass])[0].src).attr("src")
-              }
-              phase3_orig.push(scene_order[curTrial])
-              phase3_lure.push(other_ass)
-              $('#itemL').attr('style','display:inline')
-              $('#itemR').attr('style','display:inline')
-              start_time = new Date();
-              setTimeout(function() { // after 200 ms, start 2-sec time limit AFC
+          if (passed_faces.includes(face_order[curTrial])) {
+            curTrial = curTrial + 1;
+            updateProgress()
+            Phase3()
+          } else {
+            orig_on_right = randomInts(0,1) // 1 = correct on right
+            $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
+            phase3_faces.push(face_order[curTrial])
+            $('#item').attr('style','display:inline')
+            $('#showTrial').show();
+            $('#think_instruct').show();
+            setTimeout(function() {
+              $('#think_instruct').hide();
+              $('#item').attr('style','display:none')
+              setTimeout(function() { // 200 ms ISI
+                cur_button = 0
+                $('#numbers').show();
+                other_ass = otherAssociate(scene_order,scene_order.length,curTrial)
                 if (orig_on_right==0) {
-                  $('#itemL').attr('style','display:inline; border:5px solid lime')
-                  phase3_conf.push(cur_button)
-                  if (cur_button == 1 || cur_button == 2) {
-                    block_binary.push(1); overall_binary.push(1)
-                    phase3_accuracy.push(1)
-                  } else {
-                    block_binary.push(0); overall_binary.push(0)
-                    phase3_accuracy.push(0)
-                  }
+                  $('#itemL').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
+                  $('#itemR').attr('src',$(window['scene'+other_ass])[0].src).attr("src")
                 } else {
-                  $('#itemR').attr('style','display:inline; border:5px solid lime')
-                  if (cur_button == 3 || cur_button == 4) {
-                    block_binary.push(1); overall_binary.push(1)
-                    phase3_accuracy.push(1)
+                  $('#itemR').attr('src',$(window['scene'+scene_order[curTrial]])[0].src).attr("src")
+                  $('#itemL').attr('src',$(window['scene'+other_ass])[0].src).attr("src")
+                }
+                phase3_orig.push(scene_order[curTrial])
+                phase3_lure.push(other_ass)
+                $('#itemL').attr('style','display:inline')
+                $('#itemR').attr('style','display:inline')
+                start_time = new Date();
+                setTimeout(function() { // after 200 ms, start 2-sec time limit AFC
+                  if (orig_on_right==0) {
+                    $('#itemL').attr('style','display:inline; border:5px solid lime')
+                    phase3_conf.push(cur_button)
+                    if (cur_button == 1 || cur_button == 2) {
+                      block_binary.push(1); overall_binary.push(1)
+                      miniblock_binary[curTrial+numTrials]=1
+                      phase3_accuracy.push(1)
+                    } else {
+                      block_binary.push(0); overall_binary.push(0)
+                      phase3_accuracy.push(0)
+                    }
                   } else {
-                    block_binary.push(0); overall_binary.push(0)
-                    phase3_accuracy.push(0)
+                    $('#itemR').attr('style','display:inline; border:5px solid lime')
+                    if (cur_button == 3 || cur_button == 4) {
+                      block_binary.push(1); overall_binary.push(1)
+                      phase3_accuracy.push(1)
+                      miniblock_binary[curTrial+numTrials]=1
+                    } else {
+                      block_binary.push(0); overall_binary.push(0)
+                      phase3_accuracy.push(0)
+                    }
                   }
-                }
-                if (cur_button==0) {
-                  phase3_rts.push(2500);
-                } else {
-                  phase3_rts.push(latest_button_time - start_time);
-                }
-                setTimeout(function() {
-                  $('#itemL').attr('style','display:none')
-                  $('#itemR').attr('style','display:none')
-                  $('#itemL').attr('style','border:0px')
-                  $('#itemR').attr('style','border:0px')
-                  $('#numbers').hide();
-                  curTrial = curTrial + 1;
-                  updateProgress()
+                  if (cur_button==0) {
+                    phase3_rts.push(2500);
+                  } else {
+                    phase3_rts.push(latest_button_time - start_time);
+                  }
                   setTimeout(function() {
-                    Phase3();
-                  }, isi1Time);
-                }, isi2Time-200);
-              }, 2500);  // time limit for AFC
-            }, isi1Time);
-          }, 2000); // 2 seconds to think of scene
+                    $('#itemL').attr('style','display:none')
+                    $('#itemR').attr('style','display:none')
+                    $('#itemL').attr('style','border:0px')
+                    $('#itemR').attr('style','border:0px')
+                    $('#numbers').hide();
+                    curTrial = curTrial + 1;
+                    updateProgress()
+                    setTimeout(function() {
+                      Phase3();
+                    }, isi1Time);
+                  }, isi2Time-200);
+                }, 2500);  // time limit for AFC
+              }, isi1Time);
+            }, 2000); // 2 seconds to think of scene
+          }
         }
       }
     }
@@ -1335,39 +1449,50 @@
         
         curTrial = 0;
         updateProgress()
-        alert("Beginning Phase 5/5. Select the correct object using your keyboard. You will have 2.5 seconds to respond.")
 
-        $('#fixation').attr('style','display:none')
+        // open pop-up:
+        modalClosed = false;
+        $("#openModal").show()
+        document.getElementById("openModal_text").innerHTML = "Beginning Phase 5/5. Select the correct object using your keyboard. You will have 2.5 seconds to respond.";
+        window.location.href = '#openModal';
+        checkFlag();
+        function checkFlag() {
+          if (modalClosed == false) {
+            window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+          } else {
+            $('#fixation').attr('style','display:none')
 
-        if (isPractice) {
-          p = permutation(Pface_order.length)
-          Pface_order = permute(Pface_order,p)
-          Pscene_order = permute(Pscene_order,p)
+            if (isPractice) {
+              p = permutation(Pface_order.length)
+              Pface_order = permute(Pface_order,p)
+              Pscene_order = permute(Pscene_order,p)
 
-          p2 = permutation(Pface_order2.length)
-          Pface_order2 = permute(Pface_order2,p2)
-          Pobj_order = permute(Pobj_order,p2)
-          while (back_to_back_faces(Pface_order2)) {
-            p2 = permutation(Pface_order2.length)
-            Pface_order2 = permute(Pface_order2,p2)
-            Pobj_order = permute(Pobj_order,p2)
-          }
-        } else {
-          p = permutation(face_order.length)
-          face_order = permute(face_order,p)
-          scene_order = permute(scene_order,p)
+              p2 = permutation(Pface_order2.length)
+              Pface_order2 = permute(Pface_order2,p2)
+              Pobj_order = permute(Pobj_order,p2)
+              while (back_to_back_faces(Pface_order2)) {
+                p2 = permutation(Pface_order2.length)
+                Pface_order2 = permute(Pface_order2,p2)
+                Pobj_order = permute(Pobj_order,p2)
+              }
+            } else {
+              p = permutation(face_order.length)
+              face_order = permute(face_order,p)
+              scene_order = permute(scene_order,p)
 
-          p2 = permutation(face_order2.length)
-          face_order2 = permute(face_order2,p2)
-          obj_order = permute(obj_order,p2)
-          while (back_to_back_faces(face_order2)) {
-            p2 = permutation(face_order2.length)
-            face_order2 = permute(face_order2,p2)
-            obj_order = permute(obj_order,p2)
+              p2 = permutation(face_order2.length)
+              face_order2 = permute(face_order2,p2)
+              obj_order = permute(obj_order,p2)
+              while (back_to_back_faces(face_order2)) {
+                p2 = permutation(face_order2.length)
+                face_order2 = permute(face_order2,p2)
+                obj_order = permute(obj_order,p2)
+              }
+            }
+
+            Phase5() // Continuous Face Report with obj
           }
         }
-
-        Phase5() // Continuous Face Report with obj
       } else {
         if (isPractice) {
           if (Pface_order2[curTrial]<0) {
@@ -1439,7 +1564,6 @@
         
         curTrial = 0;
         updateProgress()
-        alert("Checking performance before moving on...")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -1475,143 +1599,164 @@
           endFlag = true
         }
         if ((block_accuracy<100) && (endFlag)) {
-          alert("Better performance is required to continue (the percentage in parentheses at the bottom left). Going back to start of Phase 5. (Note that this experiment is intentionally supposed to be difficult and take several attempts before you proceed!)")
-          block_binary = []
-          loops+=1
-          if (isPractice){
-            Ploops2+=1
-          } else {
-            loops2+=1
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          document.getElementById("openModal_text").innerHTML = "Better performance is required to continue (the percentage in parentheses at the bottom left). Going back to start of Phase 5. (Note that this experiment is intentionally supposed to be difficult and take several attempts before you proceed!)";
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              block_binary = []
+              loops+=1
+              if (isPractice){
+                Ploops2+=1
+              } else {
+                loops2+=1
+              }
+              cur_phase = 5
+              if (isPractice) {
+                p = permutation(Pface_order.length)
+                Pface_order = permute(Pface_order,p)
+                Pscene_order = permute(Pscene_order,p)
+
+                p2 = permutation(Pface_order2.length)
+                Pface_order2 = permute(Pface_order2,p2)
+                Pobj_order = permute(Pobj_order,p2)
+                while (back_to_back_faces(Pface_order2)) {
+                  p2 = permutation(Pface_order2.length)
+                  Pface_order2 = permute(Pface_order2,p2)
+                  Pobj_order = permute(Pobj_order,p2)
+                }
+              } else {
+                p = permutation(face_order.length)
+                face_order = permute(face_order,p)
+                scene_order = permute(scene_order,p)
+
+                p2 = permutation(face_order2.length)
+                face_order2 = permute(face_order2,p2)
+                obj_order = permute(obj_order,p2)
+                while (back_to_back_faces(face_order2)) {
+                  p2 = permutation(face_order2.length)
+                  face_order2 = permute(face_order2,p2)
+                  obj_order = permute(obj_order,p2)
+                }
+              }
+              updateProgress()
+              Phase5()
+
+              // save data so Paul can see someone reached this point (2nd half of experiment)
+              var endDate2 = new Date().getTime();
+              var d2 = {
+                  "workid": WORKERID,
+                  "assignmentid": ASSIGNMENTID,
+                  "age": $('#age').val(),
+                  "gender": $('#gender').val(),
+                  "race": $('#race').val(),
+                  "hispanic": $('#hispanic').prop('checked'),
+                  "nothispanic": $('#nothispanic').prop('checked'),
+                  "acuity": $('#acuity').prop('checked'),
+                  "colorvision": $('#colorvision').prop('checked'),
+                  "StartTime": startDate.getTime(),
+                  "EndTime": endDate2,
+                  "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
+                  "seed": chance1.seed,
+                  "overall_accuracy": overall_accuracy,
+                  "phase_tracker": phase_tracker,
+                  "phase1_faces": phase1_faces,
+                  "phase1_associates": phase1_associates,
+                  "phase2_faces": phase2_faces,
+                  "phase2_orig": phase2_orig,
+                  "phase2_resp": phase2_resp,
+                  "phase2_rts": phase2_rts,
+                  "phase3_faces": phase3_faces,
+                  "phase3_orig": phase3_orig,
+                  "phase3_lure": phase3_lure,
+                  "phase3_accuracy": phase3_accuracy,
+                  "phase3_conf": phase3_conf,
+                  "phase3_rts": phase3_rts,
+                  "phase4_faces": phase4_faces,
+                  "phase4_associates": phase4_associates,
+                  "phase5_faces": phase5_faces,
+                  "phase5_orig": phase5_orig,
+                  "phase5_lure": phase5_lure,
+                  "phase5_accuracy": phase5_accuracy,
+                  "phase5_rts": phase5_rts,
+                  "phase5_conf": phase5_conf,
+                  "Pphase_tracker": Pphase_tracker,
+                  "Pphase1_faces": Pphase1_faces,
+                  "Pphase1_associates": Pphase1_associates,
+                  "Pphase2_faces": Pphase2_faces,
+                  "Pphase2_orig": Pphase2_orig,
+                  "Pphase2_resp": Pphase2_resp,
+                  "Pphase2_rts": Pphase2_rts,
+                  "Pphase3_faces": Pphase3_faces,
+                  "Pphase3_orig": Pphase3_orig,
+                  "Pphase3_lure": Pphase3_lure,
+                  "Pphase3_accuracy": Pphase3_accuracy,
+                  "Pphase3_conf": Pphase3_conf,
+                  "Pphase3_rts": Pphase3_rts,
+                  "Pphase4_faces": Pphase4_faces,
+                  "Pphase4_associates": Pphase4_associates,
+                  "Pphase5_faces": Pphase5_faces,
+                  "Pphase5_orig": Pphase5_orig,
+                  "Pphase5_lure": Pphase5_lure,
+                  "Pphase5_accuracy": Pphase5_accuracy,
+                  "Pphase5_rts": Pphase5_rts,
+                  "Pphase5_conf": Pphase5_conf,
+                  "loops": loops,
+                  "loops1": loops1,
+                  "loops2": loops2,
+                  "Ploops1": Ploops1,
+                  "Ploops2": Ploops2,
+                  "comments": $('#comments').val()
+                };
+
+              var blob_test = new Blob([JSON.stringify(d2)], {
+                type: "application/json"
+              });
+              let req = new XMLHttpRequest();
+              req.onreadystatechange = () => {
+                if (req.readyState == XMLHttpRequest.DONE) {
+                  console.log(req.responseText);
+                }
+              };
+              req.open("POST", "https://api.jsonbin.io/v3/b", true);
+              req.setRequestHeader("Content-Type", "application/json");
+              req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
+              req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
+              req.setRequestHeader("X-Bin-Name", 'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json');
+              req.send(blob_test);
+            }
           }
-          cur_phase = 5
-          if (isPractice) {
-            p = permutation(Pface_order.length)
-            Pface_order = permute(Pface_order,p)
-            Pscene_order = permute(Pscene_order,p)
-
-            p2 = permutation(Pface_order2.length)
-            Pface_order2 = permute(Pface_order2,p2)
-            Pobj_order = permute(Pobj_order,p2)
-            while (back_to_back_faces(Pface_order2)) {
-              p2 = permutation(Pface_order2.length)
-              Pface_order2 = permute(Pface_order2,p2)
-              Pobj_order = permute(Pobj_order,p2)
-            }
-          } else {
-            p = permutation(face_order.length)
-            face_order = permute(face_order,p)
-            scene_order = permute(scene_order,p)
-
-            p2 = permutation(face_order2.length)
-            face_order2 = permute(face_order2,p2)
-            obj_order = permute(obj_order,p2)
-            while (back_to_back_faces(face_order2)) {
-              p2 = permutation(face_order2.length)
-              face_order2 = permute(face_order2,p2)
-              obj_order = permute(obj_order,p2)
-            }
-          }
-          updateProgress()
-          Phase5()
-
-          // save data so Paul can see someone reached this point (2nd half of experiment)
-          var endDate2 = new Date().getTime();
-          var d2 = {
-              "workid": WORKERID,
-              "assignmentid": ASSIGNMENTID,
-              "age": $('#age').val(),
-              "gender": $('#gender').val(),
-              "race": $('#race').val(),
-              "hispanic": $('#hispanic').prop('checked'),
-              "nothispanic": $('#nothispanic').prop('checked'),
-              "acuity": $('#acuity').prop('checked'),
-              "colorvision": $('#colorvision').prop('checked'),
-              "StartTime": startDate.getTime(),
-              "EndTime": endDate2,
-              "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
-              "seed": chance1.seed,
-              "overall_accuracy": overall_accuracy,
-              "phase_tracker": phase_tracker,
-              "phase1_faces": phase1_faces,
-              "phase1_associates": phase1_associates,
-              "phase2_faces": phase2_faces,
-              "phase2_orig": phase2_orig,
-              "phase2_resp": phase2_resp,
-              "phase2_rts": phase2_rts,
-              "phase3_faces": phase3_faces,
-              "phase3_orig": phase3_orig,
-              "phase3_lure": phase3_lure,
-              "phase3_accuracy": phase3_accuracy,
-              "phase3_conf": phase3_conf,
-              "phase3_rts": phase3_rts,
-              "phase4_faces": phase4_faces,
-              "phase4_associates": phase4_associates,
-              "phase5_faces": phase5_faces,
-              "phase5_orig": phase5_orig,
-              "phase5_lure": phase5_lure,
-              "phase5_accuracy": phase5_accuracy,
-              "phase5_rts": phase5_rts,
-              "phase5_conf": phase5_conf,
-              "Pphase_tracker": Pphase_tracker,
-              "Pphase1_faces": Pphase1_faces,
-              "Pphase1_associates": Pphase1_associates,
-              "Pphase2_faces": Pphase2_faces,
-              "Pphase2_orig": Pphase2_orig,
-              "Pphase2_resp": Pphase2_resp,
-              "Pphase2_rts": Pphase2_rts,
-              "Pphase3_faces": Pphase3_faces,
-              "Pphase3_orig": Pphase3_orig,
-              "Pphase3_lure": Pphase3_lure,
-              "Pphase3_accuracy": Pphase3_accuracy,
-              "Pphase3_conf": Pphase3_conf,
-              "Pphase3_rts": Pphase3_rts,
-              "Pphase4_faces": Pphase4_faces,
-              "Pphase4_associates": Pphase4_associates,
-              "Pphase5_faces": Pphase5_faces,
-              "Pphase5_orig": Pphase5_orig,
-              "Pphase5_lure": Pphase5_lure,
-              "Pphase5_accuracy": Pphase5_accuracy,
-              "Pphase5_rts": Pphase5_rts,
-              "Pphase5_conf": Pphase5_conf,
-              "loops": loops,
-              "loops1": loops1,
-              "loops2": loops2,
-              "Ploops1": Ploops1,
-              "Ploops2": Ploops2,
-              "comments": $('#comments').val()
-            };
-
-          var blob_test = new Blob([JSON.stringify(d2)], {
-            type: "application/json"
-          });
-          let req = new XMLHttpRequest();
-          req.onreadystatechange = () => {
-            if (req.readyState == XMLHttpRequest.DONE) {
-              console.log(req.responseText);
-            }
-          };
-          req.open("POST", "https://api.jsonbin.io/v3/b", true);
-          req.setRequestHeader("Content-Type", "application/json");
-          req.setRequestHeader("X-Master-Key", "$2b$10$bx/1giySNtugOA5tf/LBEevdQ2skXRTqsNSxhhtv0VXDUjKm75FhC");
-          req.setRequestHeader("X-Collection-Id", "61856572c4eaa14d58468274");
-          req.setRequestHeader("X-Bin-Name", 'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json');
-          req.send(blob_test);
-
         } else {
-          if (loops>=5) {
-            alert("Amazing job! You didn't reach 100% memory performance but you got very close! Let's wrap things up!")
-          } else {
-            alert("Amazing job! You memorized everything perfectly! Let's wrap things up!")
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          document.getElementById("openModal_text").innerHTML = "Amazing job! Let's wrap things up!";
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              loops=0
+              Done()
+            }
           }
-          loops=0
-          Done()
         }
       } else if (curTrial >= numTrials*2 && isPractice==true) { // if end of block
         $("#showTrial").hide()
+
+        if (Ploops1>=10 || Ploops2>=10) {
+          $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
+          return
+        }
         
         curTrial = 0;
         updateProgress()
-        alert("Checking performance before moving on...")
 
         if (isPractice) {
           p = permutation(Pface_order.length)
@@ -1725,85 +1870,107 @@
         req.send(blob_test);
 
         if (block_accuracy<100) {
-          alert("Going back to start of Phase 5. Aim for 100% accuracy!")
-          loops+=1
-          if (isPractice){
-            Ploops2+=1
-          } else {
-            loops2+=1
-          }
-          block_binary = []
-          cur_phase = 5
-          if (isPractice) {
-            p = permutation(Pface_order.length)
-            Pface_order = permute(Pface_order,p)
-            Pscene_order = permute(Pscene_order,p)
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          document.getElementById("openModal_text").innerHTML = "Repeating Phase 5 loop. Do your best to improve your memory performance!";
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              loops+=1
+              if (isPractice){
+                Ploops2+=1
+              } else {
+                loops2+=1
+              }
+              block_binary = []
+              cur_phase = 5
+              if (isPractice) {
+                p = permutation(Pface_order.length)
+                Pface_order = permute(Pface_order,p)
+                Pscene_order = permute(Pscene_order,p)
 
-            p2 = permutation(Pface_order2.length)
-            Pface_order2 = permute(Pface_order2,p2)
-            Pobj_order = permute(Pobj_order,p2)
-            while (back_to_back_faces(Pface_order2)) {
-              p2 = permutation(Pface_order2.length)
-              Pface_order2 = permute(Pface_order2,p2)
-              Pobj_order = permute(Pobj_order,p2)
-            }
-          } else {
-            p = permutation(face_order.length)
-            face_order = permute(face_order,p)
-            scene_order = permute(scene_order,p)
+                p2 = permutation(Pface_order2.length)
+                Pface_order2 = permute(Pface_order2,p2)
+                Pobj_order = permute(Pobj_order,p2)
+                while (back_to_back_faces(Pface_order2)) {
+                  p2 = permutation(Pface_order2.length)
+                  Pface_order2 = permute(Pface_order2,p2)
+                  Pobj_order = permute(Pobj_order,p2)
+                }
+              } else {
+                p = permutation(face_order.length)
+                face_order = permute(face_order,p)
+                scene_order = permute(scene_order,p)
 
-            p2 = permutation(face_order2.length)
-            face_order2 = permute(face_order2,p2)
-            obj_order = permute(obj_order,p2)
-            while (back_to_back_faces(face_order2)) {
-              p2 = permutation(face_order2.length)
-              face_order2 = permute(face_order2,p2)
-              obj_order = permute(obj_order,p2)
+                p2 = permutation(face_order2.length)
+                face_order2 = permute(face_order2,p2)
+                obj_order = permute(obj_order,p2)
+                while (back_to_back_faces(face_order2)) {
+                  p2 = permutation(face_order2.length)
+                  face_order2 = permute(face_order2,p2)
+                  obj_order = permute(obj_order,p2)
+                }
+              }
+              updateProgress()
+              Phase5()
             }
           }
-          updateProgress()
-          Phase5()
         } else {
-          alert("Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces (reaching 100% accuracy or completing a certain number of trials), the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.")
-          block_binary = []
-          isPractice = false
-          numTrials = 5 //20
-          cur_phase = 1
-          loops = 0
-          // curBlock += 1
-          updateProgress()
+          // open pop-up:
+          modalClosed = false;
+          $("#openModal").show()
+          document.getElementById("openModal_text").innerHTML = "Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces (reaching 100% accuracy or completing a certain number of trials), the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.";
+          window.location.href = '#openModal';
+          checkFlag();
+          function checkFlag() {
+            if (modalClosed == false) {
+              window.setTimeout(checkFlag, 100); /* this checks the flag every 100 milliseconds*/
+            } else {
+              block_binary = []
+              isPractice = false
+              numTrials = 5 //20
+              cur_phase = 1
+              loops = 0
+              // curBlock += 1
+              updateProgress()
 
-          NextBlock()
+              NextBlock()
 
-          if (isPractice) {
-            p = permutation(Pface_order.length)
-            Pface_order = permute(Pface_order,p)
-            Pscene_order = permute(Pscene_order,p)
+              if (isPractice) {
+                p = permutation(Pface_order.length)
+                Pface_order = permute(Pface_order,p)
+                Pscene_order = permute(Pscene_order,p)
 
-            p2 = permutation(Pface_order2.length)
-            Pface_order2 = permute(Pface_order2,p2)
-            Pobj_order = permute(Pobj_order,p2)
-            while (back_to_back_faces(Pface_order2)) {
-              p2 = permutation(Pface_order2.length)
-              Pface_order2 = permute(Pface_order2,p2)
-              Pobj_order = permute(Pobj_order,p2)
-            }
-          } else {
-            p = permutation(face_order.length)
-            face_order = permute(face_order,p)
-            scene_order = permute(scene_order,p)
+                p2 = permutation(Pface_order2.length)
+                Pface_order2 = permute(Pface_order2,p2)
+                Pobj_order = permute(Pobj_order,p2)
+                while (back_to_back_faces(Pface_order2)) {
+                  p2 = permutation(Pface_order2.length)
+                  Pface_order2 = permute(Pface_order2,p2)
+                  Pobj_order = permute(Pobj_order,p2)
+                }
+              } else {
+                p = permutation(face_order.length)
+                face_order = permute(face_order,p)
+                scene_order = permute(scene_order,p)
 
-            p2 = permutation(face_order2.length)
-            face_order2 = permute(face_order2,p2)
-            obj_order = permute(obj_order,p2)
-            while (back_to_back_faces(face_order2)) {
-              p2 = permutation(face_order2.length)
-              face_order2 = permute(face_order2,p2)
-              obj_order = permute(obj_order,p2)
+                p2 = permutation(face_order2.length)
+                face_order2 = permute(face_order2,p2)
+                obj_order = permute(obj_order,p2)
+                while (back_to_back_faces(face_order2)) {
+                  p2 = permutation(face_order2.length)
+                  face_order2 = permute(face_order2,p2)
+                  obj_order = permute(obj_order,p2)
+                }
+              }
+              miniblock_faces = face_order
+              Phase1()
             }
           }
-          
-          Phase1()
         }
       } else {
         if (isPractice) {
