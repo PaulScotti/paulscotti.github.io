@@ -113,18 +113,10 @@
       }
       block_accuracy = average(block_binary)
       overall_accuracy = average(overall_binary)
-      if (cur_phase<4) {
-        if (isPractice) {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"PracticeExpt."+" ("+block_accuracy+"%) Loop " + loops)
-        } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials+", Phase "+cur_phase+"/5 "+"Overall "+overall_accuracy+"%"+" ("+block_accuracy+"%) Loop " + loops)
-        }
+      if (isPractice) {
+        $('#progress').text("Practice. "+"Phase "+cur_phase+"/5 "+" (currently "+block_accuracy+"% acc.) Loop " + loops+".")
       } else {
-        if (isPractice) {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"PracticeExpt."+" ("+block_accuracy+"%) Loop " + loops)
-        } else {
-          $('#progress').text("Trial "+(curTrial+1)+"/"+numTrials*2+", Phase "+cur_phase+"/5 "+"Overall "+overall_accuracy+"%"+" ("+block_accuracy+"%) Loop " + loops + "/5")
-        }
+        $('#progress').text("Phase "+cur_phase+"/5. "+"Overall "+overall_accuracy+"%"+" (currently "+block_accuracy+"% acc.) Loop " + loops+".")
       }
     }
     function counter(start, end, interval) {
@@ -307,9 +299,10 @@
     }
     #progress {
       position:absolute;
-      width: 167px;
-      bottom:-13px;
+      width: 300px;
+      bottom:-8px;
       left:5px;
+      font-size: 11px;
     }
     .number_buttons{
       position:absolute;
@@ -674,7 +667,6 @@
 
     var miniblock_acc = [0,0,0,0,0]
     var miniblock_faces = []
-    var miniblock_binary = [0,0,0,0,0,0,0,0,0,0]
     var passed_faces = []
     var overall_accuracy = 100;
     var block_accuracy = 100;
@@ -714,41 +706,27 @@
     }
     NextBlock()
 
-    function miniblockacc1(){
-      console.log('miniblockacc1',miniblock_acc,miniblock_binary,miniblock_faces)
-      for (let j = 0; j < face_order.length; j++) {
-        for (let i = 0; i < face_order.length; i++) {
-          if (face_order[i]==miniblock_faces[j]){
-            if (miniblock_binary[i]==1){
-              miniblock_acc[j]+=1
-            } else {
-              miniblock_acc[j]=0
+    function miniblock_corr(which){
+      if (!isPractice) {
+        for (let j = 0; j < face_order.length; j++) {
+          if (face_order[which]==miniblock_faces[j]){
+            miniblock_acc[j]+=1
+            if (miniblock_acc[j]>=4 && cur_phase==3){
+              passed_faces.push(miniblock_faces[j])
+              console.log('passed',passed_faces)
             }
-            console.log(miniblock_acc,miniblock_binary)
           }
         }
       }
     }
-    function miniblockacc2(){
-      console.log('miniblockacc2',miniblock_acc,miniblock_binary,miniblock_faces)
-      for (let j = 0; j < face_order.length; j++) {
-        for (let i = 0; i < face_order.length; i++) {
-          if (face_order[i]==miniblock_faces[j]){
-            console.log('face '+face_order[i])
-            console.log('miniblock_binary',miniblock_binary)
-            if (miniblock_binary[i+numTrials]==1){
-              miniblock_acc[j]+=1
-            } else {
-              miniblock_acc[j]=0
-            }
-            if (miniblock_acc[j]>=4) {
-              passed_faces.push(miniblock_faces[j])
-            }
-            console.log("passed: "+passed_faces)
+    function miniblock_incorr(which){
+      if (!isPractice) {
+        for (let j = 0; j < face_order.length; j++) {
+          if (face_order[which]==miniblock_faces[j]){
+            miniblock_acc[j]=0
           }
         }
       }
-      console.log('miniblockacc2',miniblock_acc,miniblock_binary)
     }
 
     function StartExperiment() {
@@ -869,10 +847,6 @@
         console.log("End of Phase2.")
         $("#showTrial").hide()
 
-        if (!isPractice) {
-          miniblockacc1() // keep track of accuracy across miniblocks
-        }
-        
         curTrial = 0;
         updateProgress()
 
@@ -959,7 +933,6 @@
     }
 
     function FaceConfirm() {
-      console.log("Confirmed.")
       $('#slider').attr('style','height:0px')
 
       if (cur_phase==2) {
@@ -1019,10 +992,11 @@
           deg_error = Math.round(Math.abs(wrap360(20*3,wrap120(deg_corr,deg_rotation)*3)),1)
           if (deg_error <= 45) {
             block_binary.push(1); overall_binary.push(1)
-            miniblock_binary[curTrial]=1
+            miniblock_corr(curTrial)
             $('#error').css('color','green')
           } else {
             block_binary.push(0); overall_binary.push(0)
+            miniblock_incorr(curTrial)
             $('#error').css('color','red')
           }
           document.getElementById("error").innerHTML = deg_error + ' degrees away';
@@ -1174,16 +1148,12 @@
         req.setRequestHeader("X-Bin-Name", 'first_'+ phase_tracker.length/20 + '_' + startDate.getMonth() + '_' + startDate.getDay() + '_' + WORKERID + '.json');
         req.send(blob_test);
         
-        if (!isPractice && loops>=40) {
+        if (!isPractice && loops>=50) {
           endFlag = false
         } else {
           endFlag = true
         }
         if ((block_accuracy<100) && (endFlag)) {
-          if (!isPractice) {
-            miniblockacc2() // keep track of face accuracy across miniblocks
-            miniblock_binary=[0,0,0,0,0,0,0,0,0,0]
-          }
 
           // open pop-up:
           modalClosed = false;
@@ -1220,10 +1190,7 @@
               Phase2()
             }
           }
-        } else if (!isPractice && curBlock<numBlocks) {
-          if (!isPractice) {
-            miniblockacc2() // keep track of face accuracy across miniblocks
-          }
+        } else if (!isPractice && (curBlock+1)<numBlocks) {
 
           // open pop-up:
           modalClosed = false;
@@ -1244,6 +1211,7 @@
               p = permutation(face_order.length)
               face_order = permute(face_order,p)
               scene_order = permute(scene_order,p)
+              miniblock_acc = [0,0,0,0,0]
               miniblock_faces = face_order
               passed_faces = []
               updateProgress()
@@ -1254,11 +1222,7 @@
           // open pop-up:
           modalClosed = false;
           $("#openModal").show()
-          if (loops>=40) {
-            document.getElementById("openModal_text").innerHTML = "Great job! You didn't reach 100% but you got close enough! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
-          } else {
-            document.getElementById("openModal_text").innerHTML = "Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
-          }
+          document.getElementById("openModal_text").innerHTML = "Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1396,20 +1360,22 @@
                     phase3_conf.push(cur_button)
                     if (cur_button == 1 || cur_button == 2) {
                       block_binary.push(1); overall_binary.push(1)
-                      miniblock_binary[curTrial+numTrials]=1
+                      miniblock_corr(curTrial)
                       phase3_accuracy.push(1)
                     } else {
                       block_binary.push(0); overall_binary.push(0)
+                      miniblock_incorr(curTrial)
                       phase3_accuracy.push(0)
                     }
                   } else {
                     $('#itemR').attr('style','display:inline; border:5px solid lime')
                     if (cur_button == 3 || cur_button == 4) {
                       block_binary.push(1); overall_binary.push(1)
+                      miniblock_corr(curTrial)
                       phase3_accuracy.push(1)
-                      miniblock_binary[curTrial+numTrials]=1
                     } else {
                       block_binary.push(0); overall_binary.push(0)
+                      miniblock_incorr(curTrial)
                       phase3_accuracy.push(0)
                     }
                   }
