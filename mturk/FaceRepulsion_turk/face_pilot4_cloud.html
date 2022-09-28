@@ -618,6 +618,7 @@
     var Ploops2 = 0
     var loops1 = 0
     var loops2 = 0
+    var loop_tracker = [];
     var phase_tracker = [];
     var phase1_faces = [];
     var phase1_associates = [];
@@ -933,7 +934,7 @@
 
     function FaceConfirm() {
       $('#slider').attr('style','height:0px')
-
+      loop_tracker.push(loops1)
       if (cur_phase==2) {
         if (isPractice) {
           Pphase2_faces.push(Pface_order[curTrial])
@@ -1123,6 +1124,7 @@
           "Pphase5_accuracy": Pphase5_accuracy,
           "Pphase5_rts": Pphase5_rts,
           "Pphase5_conf": Pphase5_conf,
+          "loop_tracker": loop_tracker,
           "loops": loops,
           "loops1": loops1,
           "loops2": loops2,
@@ -1671,6 +1673,7 @@
                   "Pphase5_accuracy": Pphase5_accuracy,
                   "Pphase5_rts": Pphase5_rts,
                   "Pphase5_conf": Pphase5_conf,
+                  "loop_tracker": loop_tracker,
                   "loops": loops,
                   "loops1": loops1,
                   "loops2": loops2,
@@ -1810,6 +1813,7 @@
             "Pphase5_accuracy": Pphase5_accuracy,
             "Pphase5_rts": Pphase5_rts,
             "Pphase5_conf": Pphase5_conf,
+            "loop_tracker": loop_tracker,
             "loops": loops,
             "loops1": loops1,
             "loops2": loops2,
@@ -2157,6 +2161,7 @@
         "Pphase5_accuracy": Pphase5_accuracy,
         "Pphase5_rts": Pphase5_rts,
         "Pphase5_conf": Pphase5_conf,
+        "loop_tracker": loop_tracker,
         "loops": loops,
         "loops1": loops1,
         "loops2": loops2,
