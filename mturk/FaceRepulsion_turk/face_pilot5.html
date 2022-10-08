@@ -7,7 +7,8 @@
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
-  let WORKERID = prompt("Please enter your ConnectID.")
+  // let WORKERID = prompt("Please enter your ConnectID.")
+  let WORKERID = 'workID'
   let ASSIGNMENTID = (Math.random()*100).toFixed(3)
   const startDate = new Date(); 
   </script>
@@ -33,7 +34,7 @@
     };
 
     function CheckInfo() {
-      if (($('#age').val() == "") || ($('#gender').val() == "")) {
+      if (($('#netid').val() == "") || ($('#age').val() == "") || ($('#gender').val() == "")) {
         alert('Please fill out all required input fields.')
       } else if (!(parseFloat($('#age').val()) >= 18)) {
         alert('Please input a valid age. You must be at least 18 years old to participate.')
@@ -43,8 +44,10 @@
         } else {
           $('#info').hide()
           document.body.scrollTop = document.documentElement.scrollTop = 0;
+          WORKERID = $('#netid').val()
           $('a#TextButton').hide()
           $('#instructions').show()
+          PrepExpt()
           ImagesReady()
         }
       }
@@ -395,12 +398,17 @@
     #slider { 
       position:relative; 
       height:0px; 
-      width:25px; 
+      width:30px; 
       background:grey; 
       left:.5px; 
       top:10.5px; 
       border-radius:100%;
       cursor:pointer;
+    }
+    #circle_timer {
+      position:absolute; 
+      left: 307px;
+      bottom: -6px;
     }
     /* #FaceConfirm {
       position: absolute;
@@ -505,8 +513,8 @@
     <h1>Subject Information</h1>
     Hello, before we begin please provide us with some information about yourself.
     <p>
-    <!-- Full Name: <textarea id="name" style="width: 200px; height: 1.5rem"></textarea><br><br> -->
-    <!-- Email (optional): <textarea id="email" style="width: 200px; height: 1.5rem"></textarea><br><br> -->
+    Princeton NetID: <textarea id="netid" style="width: 200px; height: 1.5rem"></textarea><br><br>
+    Full Name: <textarea id="fullname" style="width: 200px; height: 1.5rem"></textarea><br><br>
     Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Age: <textarea id="age" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Race (optional): <textarea id="race" style="width: 100px; height: 1.5rem"></textarea><br><br>
@@ -562,6 +570,9 @@
       <div id='circle'>
         <div id='slider'></div>
       </div>
+      <div id="circle_timer">
+        <img src="https://i.imgur.com/RLEM0Nz.gif" width="60">
+      </div>
     </div>
     <div id="feedback">
       <p class="feedback_buttons" id="original">Original</p>
@@ -577,7 +588,7 @@
       <p class="number_buttons" id="button4">4. Sure</p>
     </div>
     <div id="report_instruct">
-      <p>What face was paired?<br>(Click the circle & rotate until you find the paired face, then click confirm.)</p>
+      <p>What face was paired?<br>(Click on the circle & drag it around until you find the paired face, then click confirm.)</p>
     </div>
     <!-- <button class="Button" id="FaceConfirm" onclick="face_confirmed=true;FaceConfirm()">Confirm</button> -->
     <p id='progress'></p>
@@ -592,10 +603,6 @@
         return false;
     }
 
-    // set rng seed based on name
-    const chance1 = Chance(WORKERID); 
-    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
-
     /* Define variables */
     let modalClosed = false;
     var deg = 999;
@@ -606,7 +613,9 @@
     let numTrials = 2; // 20
     let curBlock = 0;
     let numBlocks = 4; // 4
-    let displayTime = 1000; //1000
+    let AFCTime = 2500;
+    let FaceRespTime = 8000;
+    let displayTime = 2000; //1000
     let feedbackTime = 2000;
     let isi1Time = 200;
     let isi2Time = 1200; //1200
@@ -682,6 +691,23 @@
     var face_order_full = derange(counter(5,24)) // number of face triangles
     var scene_order_full = derange(counter(10,119))
     var obj_order_full = derange(counter(10,119))
+    var chance1 = 0
+
+    function PrepExpt() {
+      // set rng seed based on name
+      chance1 = Chance(WORKERID); 
+      Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+
+      Pface_order_full = derange(counter(1,2)) // just 3 faces, not 4
+      Pscene_order_full = derange(counter(0,9))
+      Pobj_order_full = derange(counter(0,9))
+
+      face_order_full = derange(counter(5,24)) // number of face triangles
+      scene_order_full = derange(counter(10,119))
+      obj_order_full = derange(counter(10,119))
+
+      NextBlock()
+    }
 
     function botcheck() {
       if (document.querySelector("#bot").value==39480175619){
@@ -704,7 +730,6 @@
       scene_order = scene_order_full.slice(curBlock*numTrials,(curBlock+1)*numTrials)
       obj_order = obj_order_full
     }
-    NextBlock()
 
     function miniblock_corr(which){
       if (!isPractice) {
@@ -769,7 +794,7 @@
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "Beginning Phase 2/5. You will be shown a scene, and be asked to find the associated face using your mouse. After the scene disappears and the response wheel is presented, you will have 6 seconds to respond.";
+        document.getElementById("openModal_text").innerHTML = "Beginning Phase 2/5. You will be shown a scene, and be asked to find the associated face using your mouse. After the scene disappears and the response wheel is presented, you will have 8 seconds to respond.";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
@@ -895,7 +920,7 @@
                   $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
                 }
                 FaceConfirm()
-              }, 6000)
+              }, FaceRespTime)
             }, isi1Time);
           }, displayTime);
         } else {
@@ -924,7 +949,7 @@
                     $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
                   }
                   FaceConfirm()
-                }, 6000)
+                }, FaceRespTime)
               }, isi1Time);
             }, displayTime);
           }
@@ -1028,10 +1053,10 @@
         console.log("End of Phase 3.")
         $("#showTrial").hide()
 
-        if (Ploops1>=10 || Ploops2>=10) {
-          $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
-          return
-        }
+        // if (Ploops1>=30 || Ploops2>=30) {
+        //   $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
+        //   return
+        // }
         
         curTrial = 0;
         initial_afc_instruct = false
@@ -1071,6 +1096,7 @@
           "workid": WORKERID,
           "assignmentid": ASSIGNMENTID,
           "age": $('#age').val(),
+          "fullname": $('#fullname').val(),
           "gender": $('#gender').val(),
           "race": $('#race').val(),
           "hispanic": $('#hispanic').prop('checked'),
@@ -1305,7 +1331,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  Pphase3_rts.push(2500);
+                  Pphase3_rts.push(AFCTime);
                 } else {
                   Pphase3_rts.push(latest_button_time - start_time);
                 }
@@ -1321,9 +1347,9 @@
                     Phase3();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2500);  // time limit for AFC
+              }, AFCTime);  // time limit for AFC
             }, isi1Time);
-          }, 2000); // 2 seconds to think of scene
+          }, displayTime); // 2 seconds to think of scene
         } else {
           if (passed_faces.includes(face_order[curTrial])) {
             curTrial = curTrial + 1;
@@ -1381,7 +1407,7 @@
                     }
                   }
                   if (cur_button==0) {
-                    phase3_rts.push(2500);
+                    phase3_rts.push(AFCTime);
                   } else {
                     phase3_rts.push(latest_button_time - start_time);
                   }
@@ -1397,9 +1423,9 @@
                       Phase3();
                     }, isi1Time);
                   }, isi2Time-200);
-                }, 2500);  // time limit for AFC
+                }, AFCTime);  // time limit for AFC
               }, isi1Time);
-            }, 2000); // 2 seconds to think of scene
+            }, displayTime); // 2 seconds to think of scene
           }
         }
       }
@@ -1718,10 +1744,10 @@
       } else if (curTrial >= numTrials*2 && isPractice==true) { // if end of block
         $("#showTrial").hide()
 
-        if (Ploops1>=10 || Ploops2>=10) {
-          $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
-          return
-        }
+        // if (Ploops1>=30 || Ploops2>=30) {
+        //   $('body').html('<center><b>Unfortunately, your behavior has been determined as bot-like, with unusually poor practice performance. Please return this HIT.<br><br>You will not be paid if you try again and change your responses. Please contact scottibrain@gmail.com if this was an error.</b></center>');
+        //   return
+        // }
         
         curTrial = 0;
         updateProgress()
@@ -1991,7 +2017,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  Pphase5_rts.push(2500);
+                  Pphase5_rts.push(AFCTime);
                 } else {
                   Pphase5_rts.push(latest_button_time - start_time);
                 }
@@ -2007,7 +2033,7 @@
                     Phase5();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2500);  // time limit for AFC
+              }, AFCTime);  // time limit for AFC
             }, isi1Time);
           }, displayTime);
         } else {
@@ -2059,7 +2085,7 @@
                   }
                 }
                 if (cur_button==0) {
-                  phase5_rts.push(2500);
+                  phase5_rts.push(AFCTime);
                 } else {
                   phase5_rts.push(latest_button_time - start_time);
                 }
@@ -2075,7 +2101,7 @@
                     Phase5();
                   }, isi1Time);
                 }, isi2Time-200);
-              }, 2500);  // time limit for AFC
+              }, AFCTime);  // time limit for AFC
             }, isi1Time);
           }, displayTime);
         }
@@ -2192,7 +2218,8 @@
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
         // document.forms[0].submit();
-        window.location.replace("https://connect.cloudresearch.com/participant/project/3c6bf83eaf164c098c5d600e6c5fb34a/complete")
+        // window.location.replace("https://connect.cloudresearch.com/participant/project/3c6bf83eaf164c098c5d600e6c5fb34a/complete")
+        document.getElementById("saving").innerHTML = "Data has been successfully transferred! Please wait a few days for your course credit to be successfully listed in your account. Email scottibrain@gmail.com if you have any questions.";
       }, 5000);
       // setTimeout(function() {
       //   document.getElementById("saving").innerHTML = "Experiment complete! You may close this window.";
@@ -2232,7 +2259,7 @@
     function circle_slider() {
         $('.circle_container').attr('style','display:inline')
         var sliderW2 = $('#slider').width()/2;
-        var sliderH2 = 25/2; // $('#slider').height()/2
+        var sliderH2 = 30/2; // $('#slider').height()/2
         var radius = $('#circle').width()/2;   
         var elP = $('#circle').offset();
         var elPos = { x: elP.left, y: elP.top};
@@ -2244,7 +2271,7 @@
         .mouseup(function (e) { mdown = false; })
         .mousemove(function (e) {
             if (mdown) {
-              $('#slider').attr('style','height:25px')
+              $('#slider').attr('style','height:30px')
               var mPos = {x: e.clientX-elPos.x, y: e.clientY-elPos.y};
               var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
               deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
