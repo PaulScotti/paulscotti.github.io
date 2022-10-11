@@ -629,6 +629,7 @@
     var loops2 = 0
     var loop_tracker = [];
     var phase_tracker = [];
+    var phase_starts = [];
     var phase1_faces = [];
     var phase1_associates = [];
     var phase2_scenes = [];
@@ -673,7 +674,7 @@
     var Pphase5_accuracy = [];
     var Pphase5_rts = [];
     var Pphase5_conf = [];
-
+    
     var miniblock_acc = [0,0,0,0,0]
     var miniblock_faces = []
     var passed_faces = []
@@ -782,6 +783,8 @@
     /* Phase 1: Face-Scene Study */
     function Phase1() {
       cur_phase = 1
+      phase_tracker.push(cur_phase)
+      phase_starts.push(new Date())
       updateProgress()
       $('#fixation').attr('style','display:inline')
       if (curTrial >= (numTrials)) { // if end of block
@@ -841,7 +844,6 @@
         } else {
           $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
           phase1_faces.push(face_order[curTrial])
-          phase_tracker.push(cur_phase)
           $('#item').attr('style','display:inline')
           $('#showTrial').show();
           setTimeout(function() { // FACE displayTime
@@ -866,6 +868,8 @@
     /* Phase 2: Scene-Face Continuous Report */
     function Phase2() {
       cur_phase = 2
+      phase_tracker.push(cur_phase)
+      phase_starts.push(new Date())
       // $('#FaceConfirm').hide()
       updateProgress()
       if (curTrial >= numTrials) { // if end of block
@@ -1042,6 +1046,8 @@
 
     /* Phase 3: Scene-Face AFC */
     function Phase3() {
+      phase_tracker.push(cur_phase)
+      phase_starts.push(new Date())
       cur_button = 0;
       cur_phase = 3
       updateProgress()
@@ -1109,6 +1115,7 @@
           "seed": chance1.seed,
           "overall_accuracy": overall_accuracy,
           "phase_tracker": phase_tracker,
+          "phase_starts": phase_starts,
           "phase1_faces": phase1_faces,
           "phase1_associates": phase1_associates,
           "phase2_faces": phase2_faces,
@@ -1190,6 +1197,8 @@
           } else {
             document.getElementById("openModal_text").innerHTML = "Repeating phase 2-3 loop and removing faces that you have already fully memorized...";
           }
+          phase_tracker.push(0)
+          phase_starts.push(new Date())
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1223,6 +1232,8 @@
           modalClosed = false;
           $("#openModal").show()
           document.getElementById("openModal_text").innerHTML = "Great job! Starting next block of 5 faces to memorize. (Block " + (curBlock+2) + " of " + numBlocks +")";
+          phase_tracker.push(-1)
+          phase_starts.push(new Date())
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1434,6 +1445,8 @@
     /* Phase 4: Face-Obj Study */
     function Phase4() {
       cur_phase = 4
+      phase_tracker.push(cur_phase)
+      phase_starts.push(new Date())
       updateProgress()
       $('#fixation').attr('style','display:inline')
       if (curTrial >= (numTrials*2)) { // if end of block
@@ -1547,6 +1560,8 @@
     function Phase5() {
       cur_button = 0;
       cur_phase = 5;
+      phase_tracker.push(cur_phase)
+      phase_starts.push(new Date())
       updateProgress()
       $("#button1").attr("style","text-decoration:none")
       $("#button2").attr("style","text-decoration:none")
@@ -1658,6 +1673,7 @@
                   "seed": chance1.seed,
                   "overall_accuracy": overall_accuracy,
                   "phase_tracker": phase_tracker,
+                  "phase_starts": phase_starts,
                   "phase1_faces": phase1_faces,
                   "phase1_associates": phase1_associates,
                   "phase2_faces": phase2_faces,
@@ -1798,6 +1814,7 @@
             "seed": chance1.seed,
             "overall_accuracy": overall_accuracy,
             "phase_tracker": phase_tracker,
+            "phase_starts": phase_starts,
             "phase1_faces": phase1_faces,
             "phase1_associates": phase1_associates,
             "phase2_faces": phase2_faces,
@@ -2146,6 +2163,7 @@
         "seed": chance1.seed,
         "overall_accuracy": overall_accuracy,
         "phase_tracker": phase_tracker,
+        "phase_starts": phase_starts,
         "phase1_faces": phase1_faces,
         "phase1_associates": phase1_associates,
         "phase2_faces": phase2_faces,
