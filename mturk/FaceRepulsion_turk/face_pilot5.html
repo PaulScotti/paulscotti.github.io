@@ -520,7 +520,7 @@
     Race (optional): <textarea id="race" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Ethnicity (optional): Hispanic/Latino <input type="checkbox" id="hispanic"> &nbsp;&nbsp; Not Hispanic/Latino<input type="checkbox" id="nothispanic"><br><br>
     Normal or corrected-to-normal visual acuity? <input type="checkbox" id="acuity" checked><br><br>
-    Normal color vision? <input type="checkbox" id="colorvision" checked><br><br>
+    Normal color vision and face perception abilities? <input type="checkbox" id="colorvision" checked><br><br>
     </p>
     <button class="Button" onclick="CheckInfo()">Continue</button>
   </div>
@@ -1260,7 +1260,7 @@
           // open pop-up:
           modalClosed = false;
           $("#openModal").show()
-          document.getElementById("openModal_text").innerHTML = "Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase can be tricky because many faces will look very similar to other faces. To help you memorize, try imagining these people interacting with the objects presented!";
+          document.getElementById("openModal_text").innerHTML = "Great job! Beginning Phase 4/5. Memorize the faces and their associated objects. Note that this phase is tricky: half of the faces to be associated with objects will be faces you have seen before, but the other half of faces will be their doppelgangers--highly similar-looking but different faces! To help you memorize, try imagining these people interacting with the objects presented.";
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
