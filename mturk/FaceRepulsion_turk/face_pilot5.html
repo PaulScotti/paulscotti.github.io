@@ -784,7 +784,7 @@
     function Phase1() {
       cur_phase = 1
       phase_tracker.push(cur_phase)
-      phase_starts.push(new Date())
+      phase_starts.push(new Date().getTime())
       updateProgress()
       $('#fixation').attr('style','display:inline')
       if (curTrial >= (numTrials)) { // if end of block
@@ -869,7 +869,7 @@
     function Phase2() {
       cur_phase = 2
       phase_tracker.push(cur_phase)
-      phase_starts.push(new Date())
+      phase_starts.push(new Date().getTime())
       // $('#FaceConfirm').hide()
       updateProgress()
       if (curTrial >= numTrials) { // if end of block
@@ -1047,7 +1047,7 @@
     /* Phase 3: Scene-Face AFC */
     function Phase3() {
       phase_tracker.push(cur_phase)
-      phase_starts.push(new Date())
+      phase_starts.push(new Date().getTime())
       cur_button = 0;
       cur_phase = 3
       updateProgress()
@@ -1198,7 +1198,7 @@
             document.getElementById("openModal_text").innerHTML = "Repeating phase 2-3 loop and removing faces that you have already fully memorized...";
           }
           phase_tracker.push(0)
-          phase_starts.push(new Date())
+          phase_starts.push(new Date().getTime())
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1233,7 +1233,7 @@
           $("#openModal").show()
           document.getElementById("openModal_text").innerHTML = "Great job! Starting next block of 5 faces to memorize. (Block " + (curBlock+2) + " of " + numBlocks +")";
           phase_tracker.push(-1)
-          phase_starts.push(new Date())
+          phase_starts.push(new Date().getTime())
           window.location.href = '#openModal';
           checkFlag();
           function checkFlag() {
@@ -1446,7 +1446,7 @@
     function Phase4() {
       cur_phase = 4
       phase_tracker.push(cur_phase)
-      phase_starts.push(new Date())
+      phase_starts.push(new Date().getTime())
       updateProgress()
       $('#fixation').attr('style','display:inline')
       if (curTrial >= (numTrials*2)) { // if end of block
@@ -1561,7 +1561,7 @@
       cur_button = 0;
       cur_phase = 5;
       phase_tracker.push(cur_phase)
-      phase_starts.push(new Date())
+      phase_starts.push(new Date().getTime())
       updateProgress()
       $("#button1").attr("style","text-decoration:none")
       $("#button2").attr("style","text-decoration:none")
