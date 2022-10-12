@@ -1937,6 +1937,8 @@
           $("#openModal").show()
           document.getElementById("openModal_text").innerHTML = "Great job! Proceeding to the main experiment! You will now learn a new set of faces and associations. After you memorize these new faces (reaching 100% accuracy or completing a certain number of trials), the HIT will end. Note: You can forget about the previous images you've studied thus far, they will not be tested any more.";
           window.location.href = '#openModal';
+          phase_tracker.push(999)
+          phase_starts.push(new Date().getTime())
           checkFlag();
           function checkFlag() {
             if (modalClosed == false) {
