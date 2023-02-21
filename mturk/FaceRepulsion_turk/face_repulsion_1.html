@@ -40,7 +40,7 @@
         alert('Please input a valid age. You must be at least 18 years old to participate.')
       } else {
         if (($('#age').val() > 35) || (document.getElementById('acuity').checked==false) || (document.getElementById('colorvision').checked==false)) {
-          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations) or participants lacking color vision or normal visual acuity.<br><br>Please return this HIT.<br><br>You will not be paid if you try again and change your responses.</b></center>');
+          $('body').html('<center><b>Unfortunately, this experiment does not allow participants over 35 years old (we separately study older populations) or participants lacking normal color vision or visual acuity.</b></center>');
         } else {
           $('#info').hide()
           document.body.scrollTop = document.documentElement.scrollTop = 0;
