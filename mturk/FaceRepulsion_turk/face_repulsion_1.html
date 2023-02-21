@@ -676,10 +676,12 @@
     var phase_starts = [];
     var phase1_faces = [];
     var phase1_associates = [];
-    var phase1test_corrects = [];
-    var phase1test_wrongs = [];
-    var phase2_corrects = [];
-    var phase2_wrongs = [];
+    var phase1test_names = [];
+    var phase1test_accuracy = [];
+    var phase2_trial = [];
+    var phase2_names = [];
+    var phase2_reports = [];
+    var phase2_mag = [];
     var phase3_reports = [];
     var phase3_rts = [];
     var phase3_faces = [];
@@ -709,7 +711,22 @@
     scene_order = derange(counter(10,119))
     obj_order = derange(counter(10,119))
 
-    name_list = ['_','_','_','_','_', 'Jesse','Jackie','Ollie','Jamie','Pat','Tracy','Kris','Casey','Charlie','Stevie','Kirby','Elliot','Jude','Aubrey','Robin','Alex','Flynn','Blaire','Ira','Jordan']
+    p = permutation(face_order.length)
+    face_order = permute(face_order,p)
+
+    p = permutation(face_order.length)
+    face_order_rel = permute(face_order,p)
+    face_order_rel = face_order_rel.slice(10)
+
+    name_list = ['Jesse','Jackie','Ollie','Jamie','Pat','Tracy','Kris','Casey','Charlie','Stevie','Kirby','Elliot','Jude','Aubrey','Robin','Alex','Flynn','Blaire','Ira','Jordan']
+
+    p = permutation(face_order.length)
+    name_list = permute(name_list,p)
+    name_list.unshift('_')
+    name_list.unshift('_')
+    name_list.unshift('_')
+    name_list.unshift('_')
+    name_list.unshift('_')
 
     function botcheck() {
       if (document.querySelector("#bot").value==39480175619){
@@ -819,7 +836,7 @@
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "You will now be shown new faces one-at-a-time. If you see a face that could be the relative of a face that you previously memorized, click the Relative button and type in the name of the potential relative. Correct relative identifications will shorten the duration of this experiment.";
+        document.getElementById("openModal_text").innerHTML = "You will now be shown new faces one-at-a-time. If you see a face that could be the relative of a face that you previously memorized, click the Relative button and type in the name of the potential relative. Correct relative identifications will shorten the duration of the experiment.";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
@@ -837,13 +854,13 @@
         Phase1Test();
       } else {
         $('#item').attr('src',$(window[face_order[curTrial]+'_'+20])[0].src).attr("src")
-        phase1_faces.push(face_order[curTrial])
+        // phase1_faces.push(face_order[curTrial])
         $('#item').attr('style','display:inline')
         // $('#facename').text(name_list[face_order[curTrial]])
         $('#facetext').show();
         $('#FaceConfirm').show();
         $('#showTrial').show();
-        console.log(name_list[face_order[curTrial]])
+        // console.log(name_list[face_order[curTrial]])
       }
     }
 
@@ -871,7 +888,7 @@
         }, isi1Time);
       } else {
         correct_names.push(name_list[face_order[curTrial]])
-        console.log(correct_names)
+        // console.log(correct_names)
         phase1test_accuracy.push(1)
         $('#item').attr('style','display:none')
         $('#facename').val(" ")
@@ -891,26 +908,26 @@
       $('#facetext').hide();
       phase_starts.push(new Date().getTime())
       $('#fixation').attr('style','display:inline')
-      if ((curTrial >= numTrials)&&(curBlock<=numBlocks)) {
+      if ((curTrial >= numTrials/2)&&(curBlock<=numBlocks)) {
         curBlock+=1;
         curTrial=0;
-        p = permutation(face_order.length)
-        face_order = permute(face_order,p)
+        p = permutation(face_order_rel.length)
+        face_order_rel = permute(face_order_rel,p)
       }
       magnitude = magnitudes[curBlock]
       if (curBlock>numBlocks) { // if end of block
-        console.log("End of Phase1.")
+        console.log("End of Relatives.")
         $("#showTrial").hide()
         curTrial = 0;
         curBlock = 0;
 
-        p = permutation(face_order.length)
-        face_order = permute(face_order,p)
+        p = permutation(face_order_rel.length)
+        face_order_rel = permute(face_order_rel,p)
 
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "Beginning Phase 2/5. You will be shown a scene, and be asked to find the associated face using your mouse. After the scene disappears and the response wheel is presented, you will have 8 seconds to respond.";
+        document.getElementById("openModal_text").innerHTML = "Great job, beginning next phase. You will be shown the name of a face and you will need to find the original face on a circular response wheel by clicking and dragging your mouse around the circle. Try your best to find the most similar face to the original face and then click the Confirm button.";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
@@ -921,15 +938,15 @@
             FaceWheel()
           }
         }
-      } else if (correct_relatives.includes(name_list[face_order[curTrial]])) {
+      } else if (correct_relatives.includes(name_list[face_order_rel[curTrial]])) {
         curTrial = curTrial + 1;
         Relatives();
       } else {
-        $('#item').attr('src',$(window[face_order[curTrial]+'_'+magnitude])[0].src).attr("src")
-        phase1_faces.push(face_order[curTrial])
+        $('#item').attr('src',$(window[face_order_rel[curTrial]+'_'+magnitude])[0].src).attr("src")
+        phase2_trial.push(name_list[face_order_rel[curTrial]]+'_'+magnitude)
         $('#item').attr('style','display:inline')
         $('#RelativeConfirm').show();
-        // $('#facename').text(name_list[face_order[curTrial]])
+        // $('#facename').text(name_list[face_order_rel[curTrial]])
         $('#showTrial').show();
         setTimeout(function() { // FACE displayTime
           if (relativecheck==false) {
@@ -955,19 +972,20 @@
       relativecheck = true
       $('#FaceConfirm').hide();
       $('#RelativeConfirm').hide();
-      $('#item').attr('src',$(window[face_order[curTrial]+'_'+magnitude])[0].src).attr("src")
+      $('#item').attr('src',$(window[face_order_rel[curTrial]+'_'+magnitude])[0].src).attr("src")
       $('#item').attr('style','display:inline')
       $('#facetext').show();
       $('#FaceConfirm2').show();
       $('#showTrial').show();
-      console.log(name_list[face_order[curTrial]])
+      // console.log(name_list[face_order_rel[curTrial]])
     }
 
     function NameConfirm2() {
-      phase2_names.push(name_list[face_order[curTrial]])
+      phase2_names.push(name_list[face_order_rel[curTrial]])
       phase2_reports.push(capitalize($('#facetext').val()))
+      phase2_mag.push(magnitude)
       $('#FaceConfirm2').hide();
-      if (capitalize($('#facetext').val())!=name_list[face_order[curTrial]]) {
+      if (capitalize($('#facetext').val())!=name_list[face_order_rel[curTrial]]) {
         alert("Sorry, that is not the correct name of this person's relative!")
         $('#item').attr('style','display:none')
         $('#facename').val(" ")
@@ -977,11 +995,11 @@
         setTimeout(function() { // FACE displayTime
           curTrial = curTrial + 1;
           Relatives();
-        }, displayTime);
+        }, isi1Time);
       } else {
         alert("Correct! Well done!")
-        correct_relatives.push(name_list[face_order[curTrial]])
-        console.log(correct_relatives)
+        correct_relatives.push(name_list[face_order_rel[curTrial]])
+        // console.log(correct_relatives)
         $('#item').attr('style','display:none')
         $('#facename').val(" ")
         $('#facetext').val(" ")
@@ -990,7 +1008,7 @@
         setTimeout(function() { // FACE displayTime
           curTrial = curTrial + 1;
           Relatives();
-        }, displayTime);
+        }, isi1Time);
       }
     }
 
@@ -1032,7 +1050,7 @@
     function NameConfirm3() {
       phase3_rts.push(new Date() - start_time);
       phase3_faces.push(face_order[curTrial])
-      phase3_reports.push(deg_corr)
+      phase3_reports.push(wrap120(deg_corr,deg_rotation))
       $('#FaceConfirm3').hide()
       $('#item').attr('style','display:none')
       $('#report_instruct').hide()
@@ -1412,6 +1430,7 @@
         "Date": startDate.getMonth() + '_' + startDate.getDay() + '_' + startDate.getFullYear(),
         "seed": chance1.seed,
         "face_order": face_order,
+        "face_order_rel": face_order_rel,
         "name_list": name_list,
         "overall_accuracy": overall_accuracy,
         "phase_starts": phase_starts,
@@ -1419,6 +1438,8 @@
         "phase1_associates": phase1_associates,
         "phase1test_accuracy": phase1test_accuracy,
         "phase1test_names": phase1test_names,
+        "phase2_trial": phase2_trial,
+        "phase2_mag": phase2_mag,
         "phase2_names": phase2_names,
         "phase2_reports": phase2_reports,
         "phase3_reports": phase3_reports,
