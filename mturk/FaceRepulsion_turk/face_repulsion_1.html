@@ -670,7 +670,6 @@
     var correct_relatives = []
     var loops = 0;
     var magnitudes = [80,60,50,40,30]
-    var chance1 = Chance(WORKERID); 
     var relativecheck = false;
 
     var phase_starts = [];
@@ -693,6 +692,7 @@
     var phase5_accuracy = [];
     var phase5_rts = [];
     var phase5_conf = [];
+    var chance1 = 0;
 
     var miniblock_acc = [0,0,0,0,0]
     var miniblock_faces = []
@@ -703,30 +703,6 @@
     var overall_binary = [];
     let start_time = 0;
     var initial_afc_instruct = true
-
-    Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
-
-    face_order = derange(counter(5,24)) // number of face triangles
-    face_order2 = face_order.concat(makeListNegative(face_order))
-    scene_order = derange(counter(10,119))
-    obj_order = derange(counter(10,119))
-
-    p = permutation(face_order.length)
-    face_order = permute(face_order,p)
-
-    p = permutation(face_order.length)
-    face_order_rel = permute(face_order,p)
-    face_order_rel = face_order_rel.slice(10)
-
-    name_list = ['Jesse','Jackie','Ollie','Jamie','Pat','Tracy','Kris','Casey','Charlie','Stevie','Kirby','Elliot','Jude','Aubrey','Robin','Alex','Flynn','Blaire','Ira','Jordan']
-
-    p = permutation(face_order.length)
-    name_list = permute(name_list,p)
-    name_list.unshift('_')
-    name_list.unshift('_')
-    name_list.unshift('_')
-    name_list.unshift('_')
-    name_list.unshift('_')
 
     function botcheck() {
       if (document.querySelector("#bot").value==39480175619){
@@ -743,6 +719,31 @@
           alert("Please accept the HIT before continuing.");
           return false;
       }
+
+      chance1 = Chance(WORKERID); 
+      Math.seedrandom(chance1.seed); // Use current workerid as the shuffle seed, so you can trace back their trials
+
+      face_order = derange(counter(5,24)) // number of face triangles
+      face_order2 = face_order.concat(makeListNegative(face_order))
+      scene_order = derange(counter(10,119))
+      obj_order = derange(counter(10,119))
+
+      p = permutation(face_order.length)
+      face_order = permute(face_order,p)
+
+      p = permutation(face_order.length)
+      face_order_rel = permute(face_order,p)
+      face_order_rel = face_order_rel.slice(10)
+
+      name_list = ['Jesse','Jackie','Ollie','Jamie','Pat','Tracy','Kris','Casey','Charlie','Stevie','Kirby','Elliot','Jude','Aubrey','Robin','Alex','Flynn','Blaire','Ira','Jordan']
+
+      p = permutation(face_order.length)
+      name_list = permute(name_list,p)
+      name_list.unshift('_')
+      name_list.unshift('_')
+      name_list.unshift('_')
+      name_list.unshift('_')
+      name_list.unshift('_')
 
       // open pop-up:
       modalClosed = false;
