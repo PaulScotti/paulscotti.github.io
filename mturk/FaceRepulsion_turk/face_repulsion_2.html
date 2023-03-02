@@ -94,12 +94,11 @@
     }
     function novelLure(obj_order,face_order2,cur) {
       cur_obj = obj_order[cur]
-      for (let i = 0; i < obj_order.length; i++) {
-        // console.log(i, cur, face_order2[i], face_order2[cur]*-1, obj_order[i], obj_order[cur])
-        if (i!=cur && face_order2[i]!=(face_order2[cur]*-1)) {
-          other_obj = obj_order[i]
-        }
+      r = randomInts(1, 109)
+      while (r==cur) {
+        r = randomInts(1, 109)
       }
+      other_obj = obj_order[r]
       return other_obj
     }
     function back_to_back_faces(face_order2) {
