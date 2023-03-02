@@ -94,9 +94,9 @@
     }
     function novelLure(obj_order,face_order2,cur) {
       cur_obj = obj_order[cur]
-      r = randomInts(1, 109)
+      r = randomInts(1, 39)
       while (r==cur) {
-        r = randomInts(1, 109)
+        r = randomInts(1, 39)
       }
       other_obj = obj_order[r]
       return other_obj
@@ -1357,11 +1357,12 @@
           $('#item').attr('style','display:none')
           setTimeout(function() { // AFC wait till button press
             other_lure = otherLure(obj_order,face_order2,curTrial)
-            if (curTrial==0) {
-              novel_lure = obj_order[4]
-            } else {
-              novel_lure = obj_order[curTrial-1]
-            }
+            novel_lure = novelLure(obj_order,face_order2,curTrial)
+            // if (curTrial==0) {
+            //   novel_lure = obj_order[4]
+            // } else {
+            //   novel_lure = obj_order[curTrial-1]
+            // }
             if (orig_location==0) {
               $('#itemL').attr('src',$(window['object'+obj_order[curTrial]])[0].src).attr("src")
               $('#itemM').attr('src',$(window['object'+novel_lure])[0].src).attr("src")
