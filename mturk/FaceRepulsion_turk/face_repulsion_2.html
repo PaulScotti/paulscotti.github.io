@@ -1407,10 +1407,10 @@
                 $('#itemM').attr('style','display:inline; border:5px solid lime')
                 if (cur_button == 1) {
                   block_binary.push(0); overall_binary.push(0)
-                  phase5_accuracy.push(1); phase5_picked.push("lure")
+                  phase5_accuracy.push(0); phase5_picked.push("lure")
                 } else if (cur_button == 2) {
                   block_binary.push(1); overall_binary.push(1)
-                  phase5_accuracy.push(0); phase5_picked.push("old")
+                  phase5_accuracy.push(1); phase5_picked.push("old")
                 } else if (cur_button == 3) {
                   block_binary.push(0); overall_binary.push(0)
                   phase5_accuracy.push(0); phase5_picked.push("novel")
@@ -1422,13 +1422,13 @@
                 $('#itemR').attr('style','display:inline; border:5px solid lime')
                 if (cur_button == 1) {
                   block_binary.push(0); overall_binary.push(0)
-                  phase5_accuracy.push(1); phase5_picked.push("novel")
+                  phase5_accuracy.push(0); phase5_picked.push("novel")
                 } else if (cur_button == 2) {
                   block_binary.push(0); overall_binary.push(0)
                   phase5_accuracy.push(0); phase5_picked.push("lure")
                 } else if (cur_button == 3) {
                   block_binary.push(1); overall_binary.push(1)
-                  phase5_accuracy.push(0); phase5_picked.push("old")
+                  phase5_accuracy.push(1); phase5_picked.push("old")
                 } else {
                   block_binary.push(0); overall_binary.push(0)
                   phase5_accuracy.push(0); phase5_picked.push("none")
