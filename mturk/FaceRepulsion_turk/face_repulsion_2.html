@@ -1358,6 +1358,9 @@
           setTimeout(function() { // AFC wait till button press
             other_lure = otherLure(obj_order,face_order2,curTrial)
             novel_lure = novelLure(obj_order,face_order2,curTrial)
+            while (other_lure == novel_lure){
+              novel_lure = novelLure(obj_order,face_order2,curTrial)
+            }
             // if (curTrial==0) {
             //   novel_lure = obj_order[4]
             // } else {
