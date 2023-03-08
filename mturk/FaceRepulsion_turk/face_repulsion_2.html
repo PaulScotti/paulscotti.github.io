@@ -701,6 +701,7 @@
     var phase2_reports = [];
     var phase2_mag = [];
     var phase3_reports = [];
+    var phase3_mirror = [];
     var phase3_rts = [];
     var phase3_faces = [];
     var phase4_faces = [];
@@ -1072,6 +1073,7 @@
       phase3_rts.push(new Date() - start_time);
       phase3_faces.push(face_order[curTrial])
       phase3_reports.push(wrap120(deg_corr,deg_rotation))
+      phase3_mirror.push(mirror_rotation)
       $('#FaceConfirm3').hide()
       $('#item').attr('style','display:none')
       $('#report_instruct').hide()
@@ -1510,6 +1512,7 @@
         "phase2_names": phase2_names,
         "phase2_reports": phase2_reports,
         "phase3_reports": phase3_reports,
+        "phase3_mirror": phase3_mirror,
         "phase3_rts": phase3_rts,
         "phase3_faces": phase3_faces,
         "phase4_faces": phase4_faces,
@@ -1589,6 +1592,7 @@
         var X = $('.circle_container').left, Y = $('.circle_container').top;
         var mdown = false;
         deg_rotation = randomInts(0,119)
+        mirror_rotation = randomInts(0,1)
         $('#circle')
         .mousedown(function (e) { mdown = true; })
         .mouseup(function (e) { mdown = false; })
@@ -1599,7 +1603,13 @@
               var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
               deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
               // Present updated Face
-              deg_corr = Math.floor(deg / 3)           
+              if (mirror_rotation==1) {
+                mirror_deg = atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
+              } else {
+                mirror_deg = deg
+              }
+              console.log(mirror_rotation,mirror_deg)
+              deg_corr = Math.floor(mirror_deg / 3)
               // console.log(deg_corr)
               $('#item').attr('src',$(window[face_order[curTrial]+'_'+wrap120(deg_corr,deg_rotation)])[0].src).attr("src")
 
