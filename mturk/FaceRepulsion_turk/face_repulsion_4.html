@@ -756,7 +756,7 @@
 
       p = permutation(face_order.length)
       face_order_rel = permute(face_order,p)
-      face_order_rel = face_order_rel.slice(10)
+      face_order_rel = face_order_rel // .slice(10)
 
       name_list = ['Jesse','Jackie','Ollie','Jamie','Pat','Tracy','Kris','Casey','Charlie','Stevie','Kirby','Elliot','Jude','Aubrey','Robin','Alex','Flynn','Blaire','Ira','Jordan']
 
@@ -942,7 +942,7 @@
       $('#facetext').hide();
       phase_starts.push(new Date().getTime())
       $('#fixation').attr('style','display:inline')
-      if ((curTrial >= numTrials/2)&&(curBlock<=numBlocks)) {
+      if ((curTrial >= numTrials)&&(curBlock<=numBlocks)) {
         curBlock+=1;
         curTrial=0;
         p = permutation(face_order_rel.length)
@@ -1372,12 +1372,12 @@
       } else {
         orig_location = randomInts(0,3) // 0 = left 1 = middle 2 = right
         if (face_order2[curTrial]<0) {
-          reverse_magnitudes = rev_list[Math.abs(face_order2[curTrial])]
-          if (reverse_magnitudes==0) {
-            $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
-          } else {
-            $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+0])[0].src).attr("src")
-          }
+          // reverse_magnitudes = rev_list[Math.abs(face_order2[curTrial])]
+          // if (reverse_magnitudes==0) {
+            // $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
+          // } else {
+          $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+0])[0].src).attr("src")
+          // }
         } else {
           $('#item').attr('src',$(window[face_order2[curTrial]+'_'+20])[0].src).attr("src")
         }
