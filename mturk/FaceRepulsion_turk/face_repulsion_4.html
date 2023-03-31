@@ -712,6 +712,7 @@
     var phase5_orig = [];
     var phase5_lure = [];
     var phase5_novel = [];
+    var phase5_face = [];
     var phase5_accuracy = [];
     var phase5_picked = [];
     var phase5_rts = [];
@@ -1413,6 +1414,7 @@
             phase5_orig.push(obj_order[curTrial])
             phase5_lure.push(other_lure)
             phase5_novel.push(novel_lure)
+            phase5_face.push(face_order2[curTrial])
             $('#itemL').attr('style','display:inline')
             $('#itemM').attr('style','display:inline')
             $('#itemR').attr('style','display:inline')
@@ -1529,6 +1531,7 @@
         "seed": chance1.seed,
         "face_order": face_order,
         "face_order_rel": face_order_rel,
+        "face_order2": face_order2,
         "name_list": name_list,
         "rev_list": rev_list,
         "overall_accuracy": overall_accuracy,
@@ -1552,6 +1555,7 @@
         "phase5_orig": phase5_orig,
         "phase5_lure": phase5_lure,
         "phase5_novel": phase5_novel,
+        "phase5_face": phase5_face,
         "phase5_accuracy": phase5_accuracy,
         "phase5_picked": phase5_picked,
         "phase5_rts": phase5_rts,
