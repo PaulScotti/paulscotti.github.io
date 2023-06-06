@@ -744,8 +744,8 @@
     var wrong_names = []
     var correct_relatives = []
     var loops = 0;
-    var magnitudes = [50,50] //[70,60,50,40,30]
-    var rev_magnitudes = [110,110] //[90,100,110,0,10]
+    var magnitudes = [36,36] //[70,60,50,40,30] //[50,50]
+    var rev_magnitudes = [4,4] //[90,100,110,0,10] //[110,110]
     // var relativecheck = false;
     
     var phase_starts = [];
@@ -1108,6 +1108,9 @@
 
     function FaceWheel() {
       cur_phase = 3
+      $('#button1_txt').hide()
+      $('#button2_txt').hide()
+      $('#button3_txt').hide()
       $("#button1_afc").attr("style","text-decoration:none")
       $("#button2_afc").attr("style","text-decoration:none")
       phase_starts.push(new Date().getTime())
@@ -1147,16 +1150,18 @@
         face_side = randomInts(0,1) // 0=face_10 on left, face_30 on right 1=vice-versa
         
         if (face_side==0){
-          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_10'])[0].src).attr("src")
-          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_30'])[0].src).attr("src")
+          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
+          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
           if (rev_list[Math.abs(face_order_rel[curTrial])]) {
             left_congruent = true
           } else {
             left_congruent = false
           }
+          // console.log("left is 12")
         } else {
-          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_30'])[0].src).attr("src")
-          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_10'])[0].src).attr("src")
+          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
+          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
+          // console.log("right is 12")
           if (rev_list[Math.abs(face_order_rel[curTrial])]) {
             left_congruent = false
           } else {
@@ -1175,16 +1180,16 @@
           $('#report_instruct').hide();
           if (cur_button == 1) {
             if (face_side==0){
-              face_afc_resp = '10'
+              face_afc_resp = '12'
             } else {
-              face_afc_resp = '30'
+              face_afc_resp = '28'
             }
             face_afc_resp = 'left'
           } else if (cur_button == 2) {
             if (face_side==0){
-              face_afc_resp = '30'
+              face_afc_resp = '28'
             } else {
-              face_afc_resp = '10'
+              face_afc_resp = '12'
             }
           } else {
             face_afc_resp = 'none'
