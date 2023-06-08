@@ -7,8 +7,8 @@
   <script src="https://paulscotti.github.io/mturk/js_code/chance.js"></script>
   <script src="https://paulscotti.github.io/mturk/Cont_LTM_101_files/TimTurkTools.js"></script>
   <script>
-  // let WORKERID = prompt("Please enter your ConnectID.")
-  let WORKERID = 'workID'
+  let WORKERID = prompt("Please enter your ConnectID.")
+  // let WORKERID = 'workID'
   let ASSIGNMENTID = (Math.random()*100).toFixed(3)
   const startDate = new Date(); 
   </script>
@@ -44,7 +44,7 @@
         } else {
           $('#info').hide()
           document.body.scrollTop = document.documentElement.scrollTop = 0;
-          WORKERID = $('#netid').val()
+          // WORKERID = $('#netid').val()
           $('a#TextButton').hide()
           $('#instructions').show()
           ImagesReady()
@@ -615,10 +615,10 @@
     <h1>Subject Information</h1>
     Hello, before we begin please provide us with some information about yourself.
     <p>
-    Princeton NetID: <textarea id="netid" style="width: 200px; height: 1.5rem"></textarea><br><br>
-    Full Name: <textarea id="fullname" style="width: 200px; height: 1.5rem"></textarea><br><br>
-    Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
+    <!-- Princeton NetID: <textarea id="netid" style="width: 200px; height: 1.5rem"></textarea><br><br> -->
+    <!-- Full Name: <textarea id="fullname" style="width: 200px; height: 1.5rem"></textarea><br><br> -->
     Age: <textarea id="age" style="width: 100px; height: 1.5rem"></textarea><br><br>
+    Gender: <textarea id="gender" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Race (optional): <textarea id="race" style="width: 100px; height: 1.5rem"></textarea><br><br>
     Ethnicity (optional): Hispanic/Latino <input type="checkbox" id="hispanic"> &nbsp;&nbsp; Not Hispanic/Latino<input type="checkbox" id="nothispanic"><br><br>
     Normal or corrected-to-normal visual acuity? <input type="checkbox" id="acuity" checked><br><br>
@@ -744,8 +744,8 @@
     var wrong_names = []
     var correct_relatives = []
     var loops = 0;
-    var magnitudes = [36,36] //[70,60,50,40,30] //[50,50]
-    var rev_magnitudes = [4,4] //[90,100,110,0,10] //[110,110]
+    var magnitudes = [4,4] //[90,100,110,0,10] //[110,110]
+    var rev_magnitudes = [36,36] //[70,60,50,40,30] //[50,50]
     // var relativecheck = false;
     
     var phase_starts = [];
@@ -1059,18 +1059,18 @@
           $('#item').attr('src',$(window[face_order_rel[curTrial]+'_20'])[0].src).attr("src")
           phase2_trial.push(name_list[face_order_rel[curTrial]]+'_20')
           phase2_facenum.push(face_order_rel[curTrial])
-          console.log(name_list[face_order_rel[curTrial]], relative_type, 'old')
+          // console.log(name_list[face_order_rel[curTrial]], relative_type, 'old')
         } else if (relative_type == 'similar') {
           $('#item').attr('src',$(window[Math.abs(face_order_rel[curTrial])+'_'+magnitude])[0].src).attr("src")
           phase2_trial.push(name_list[Math.abs(face_order_rel[curTrial])]+'_'+magnitude)
           phase2_facenum.push(face_order_rel[curTrial])
-          console.log(name_list[Math.abs(face_order_rel[curTrial])], relative_type, magnitude)
+          // console.log(name_list[Math.abs(face_order_rel[curTrial])], relative_type, magnitude)
         } else { // relative_type == 'novel'
           $('#item').attr('src',$(window[novelcnt+'_20'])[0].src).attr("src")
           phase2_trial.push(name_list[novelcnt+'_20'])
           phase2_facenum.push(novelcnt)
           novelcnt = novelcnt + 1
-          console.log(relative_type)
+          // console.log(relative_type)
         }
         $('#item').attr('style','display:inline')
         // $('#RelativeConfirm').show();
@@ -1152,20 +1152,24 @@
         if (face_side==0){
           $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
           $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
-          if (rev_list[Math.abs(face_order_rel[curTrial])]) {
+          // console.log("left is 12")
+          // console.log(face_order[curTrial])
+          // console.log(rev_list[Math.abs(face_order[curTrial])])
+          // console.log(name_list[face_order[curTrial]])
+          // console.log(name_list[Math.abs(face_order[curTrial])])
+          if (rev_list[Math.abs(face_order[curTrial])]) {
             left_congruent = true
           } else {
             left_congruent = false
           }
-          // console.log("left is 12")
         } else {
           $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
           $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
           // console.log("right is 12")
-          if (rev_list[Math.abs(face_order_rel[curTrial])]) {
-            left_congruent = false
-          } else {
+          if (rev_list[Math.abs(face_order[curTrial])]) {
             left_congruent = true
+          } else {
+            left_congruent = false
           }
         }
         $('#itemL_AFC').attr('style','display:inline')
@@ -1184,7 +1188,6 @@
             } else {
               face_afc_resp = '28'
             }
-            face_afc_resp = 'left'
           } else if (cur_button == 2) {
             if (face_side==0){
               face_afc_resp = '28'
@@ -1202,6 +1205,7 @@
             phase3_rts.push(latest_button_time - start_time);
           }
           cur_button = 0
+          // repulsion if left_congruent==True and face_resp==12 OR left_congruent==False and face_resp==28
           setTimeout(function() { // FACE displayTime
               curTrial = curTrial + 1;
               FaceWheel();
@@ -1210,23 +1214,23 @@
       }
     }
 
-    function NameConfirm3() {
-      phase3_rts.push(new Date() - start_time);
-      phase3_faces.push(face_order[curTrial])
-      phase3_reports.push(wrap120(deg_corr,deg_rotation))
-      phase3_mirror.push(mirror_rotation)
-      phase3_magrev.push(reverse_magnitudes)
-      $('#FaceConfirm3').hide()
-      $('#item').attr('style','display:none')
-      $('#report_instruct').hide()
-      $('.circle_container').hide();
-      $('#FaceConfirm3').hide();
-      $('#fixation').attr('style','display:inline')
-      setTimeout(function() { // FACE displayTime
-        curTrial = curTrial + 1;
-        FaceWheel();
-      }, displayTime);
-    }
+    // function NameConfirm3() {
+    //   phase3_rts.push(new Date() - start_time);
+    //   phase3_faces.push(face_order[curTrial])
+    //   phase3_reports.push(wrap120(deg_corr,deg_rotation))
+    //   phase3_mirror.push(mirror_rotation)
+    //   phase3_magrev.push(reverse_magnitudes)
+    //   $('#FaceConfirm3').hide()
+    //   $('#item').attr('style','display:none')
+    //   $('#report_instruct').hide()
+    //   $('.circle_container').hide();
+    //   $('#FaceConfirm3').hide();
+    //   $('#fixation').attr('style','display:inline')
+    //   setTimeout(function() { // FACE displayTime
+    //     curTrial = curTrial + 1;
+    //     FaceWheel();
+    //   }, displayTime);
+    // }
 
     /* Phase 4: Face-Obj Study */
     function Phase4() {
@@ -1494,19 +1498,19 @@
         }
       } else {
         orig_location = randomInts(0,2) // 0 = left 1 = middle 2 = right
-        console.log(name_list[Math.abs(face_order2[curTrial])])
+        // console.log(name_list[Math.abs(face_order2[curTrial])])
         if (face_order2[curTrial]<0) {
           reverse_magnitudes = rev_list[Math.abs(face_order2[curTrial])]
           if (reverse_magnitudes==0) {
             $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+40])[0].src).attr("src")
-            console.log(40)
+            // console.log(40)
           } else {
             $('#item').attr('src',$(window[face_order2[curTrial]*-1+'_'+0])[0].src).attr("src")
-            console.log(0)
+            // console.log(0)
           }
         } else {
           $('#item').attr('src',$(window[face_order2[curTrial]+'_'+20])[0].src).attr("src")
-          console.log(20)
+          // console.log(20)
         }
         phase5_faces.push(face_order2[curTrial])
         $('#item').attr('style','display:inline')
@@ -1640,7 +1644,7 @@
       $('#saving').show();
       const endDate = new Date().getTime();
       const d = {
-        "fullname": $('#fullname').val(),
+        // "fullname": $('#fullname').val(),
         "workid": WORKERID,
         "assignmentid": ASSIGNMENTID,
         "age": $('#age').val(),
@@ -1712,7 +1716,7 @@
       /* submit after waiting a few seconds to make sure data got sent */
       setTimeout(function() {
         // document.forms[0].submit();
-        window.location.replace("https://connect.cloudresearch.com")///participant/project/3c6bf83eaf164c098c5d600e6c5fb34a/complete")
+        window.location.replace("https://connect.cloudresearch.com/participant/project/3c6bf83eaf164c098c5d600e6c5fb34a/complete")
         document.getElementById("saving").innerHTML = "Data has been successfully transferred! Email scottibrain@gmail.com if you have any questions.";
       }, 5000);
       // setTimeout(function() {
