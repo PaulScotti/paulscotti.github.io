@@ -744,8 +744,8 @@
     var wrong_names = []
     var correct_relatives = []
     var loops = 0;
-    var magnitudes = [4,4] //[90,100,110,0,10] //[110,110]
-    var rev_magnitudes = [36,36] //[70,60,50,40,30] //[50,50]
+    var magnitudes = [0,0] //[90,100,110,0,10] //[110,110]
+    var rev_magnitudes = [40,40] //[70,60,50,40,30] //[50,50]
     // var relativecheck = false;
     
     var phase_starts = [];
@@ -1151,22 +1151,16 @@
         face_side = randomInts(0,1) // 0=face_10 on left, face_30 on right 1=vice-versa
         
         if (face_side==0){
-          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
-          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
-          // console.log("left is 12")
-          // console.log(face_order[curTrial])
-          // console.log(rev_list[Math.abs(face_order[curTrial])])
-          // console.log(name_list[face_order[curTrial]])
-          // console.log(name_list[Math.abs(face_order[curTrial])])
+          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_15'])[0].src).attr("src")
+          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_25'])[0].src).attr("src")
           if (rev_list[Math.abs(face_order[curTrial])]) {
             left_congruent = true
           } else {
             left_congruent = false
           }
         } else {
-          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_28'])[0].src).attr("src")
-          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_12'])[0].src).attr("src")
-          // console.log("right is 12")
+          $('#itemL_AFC').attr('src',$(window[face_order[curTrial]+'_25'])[0].src).attr("src")
+          $('#itemR_AFC').attr('src',$(window[face_order[curTrial]+'_15'])[0].src).attr("src")
           if (rev_list[Math.abs(face_order[curTrial])]) {
             left_congruent = true
           } else {
@@ -1185,15 +1179,15 @@
           $('#report_instruct').hide();
           if (cur_button == 1) {
             if (face_side==0){
-              face_afc_resp = '12'
+              face_afc_resp = '15'
             } else {
-              face_afc_resp = '28'
+              face_afc_resp = '25'
             }
           } else if (cur_button == 2) {
             if (face_side==0){
-              face_afc_resp = '28'
+              face_afc_resp = '25'
             } else {
-              face_afc_resp = '12'
+              face_afc_resp = '15'
             }
           } else {
             face_afc_resp = 'none'
