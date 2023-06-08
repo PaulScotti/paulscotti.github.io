@@ -1026,7 +1026,7 @@
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "Great job, beginning next phase. You will be shown the name of a face along with two images of faces underneath. Select the original face corresponding to the name using the 1 or 2 keys on your keyboard. You will have 4 seconds to respond.";
+        document.getElementById("openModal_text").innerHTML = "Great job, beginning next phase. You will be shown the name of a face along with two images of faces underneath. Select the original face corresponding to the name using the 1 or 2 keys on your keyboard. You will have 8 seconds to respond.";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
@@ -1108,6 +1108,7 @@
 
     function FaceWheel() {
       cur_phase = 3
+      AFCTime = 8000
       $('#button1_txt').hide()
       $('#button2_txt').hide()
       $('#button3_txt').hide()
@@ -1235,6 +1236,7 @@
     /* Phase 4: Face-Obj Study */
     function Phase4() {
       cur_phase = 4
+      AFCTime = 4000
       phase_starts.push(new Date().getTime())
       $('#fixation').attr('style','display:inline')
       if (curTrial >= (numTrials*2)) { // if end of block
