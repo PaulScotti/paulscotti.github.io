@@ -911,7 +911,7 @@
         // open pop-up
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "You will now be shown faces one-at-a-time. Some of these faces will be the faces you just memorized ('real' faces) whereas others will be imposter ('fake') faces that look similar to, but are distinct from, the original faces. If it is a real face, press the 1 key. If it is a fake face, press the 2 key. You will only have 4 seconds to respond, and you will proceed to the next phase after you reach a certain accuracy threshold. Good luck!";
+        document.getElementById("openModal_text").innerHTML = "You will now be shown faces one-at-a-time. Some of these faces will be the faces you just memorized ('real' faces) whereas others will be imposter ('fake') faces that look similar to, but are distinct from, the original faces. If it is a real face, press the 1 key. If it is a fake face, press the 2 key. You will only have 4 seconds to respond, and you will proceed to the next phase after you reach a certain accuracy threshold. You will receive feedback after every trial, with the correct response in green text. Good luck!";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
@@ -1004,7 +1004,7 @@
         // open pop-up:
         modalClosed = false;
         $("#openModal").show()
-        document.getElementById("openModal_text").innerHTML = "Great job, beginning the final phase of the experiment! You will be shown the name of a face and two face images underneath. You will need to press the 1 or 2 key corresponding to which face you think is the REAL face associated with the name. You will have 8 seconds to respond. Good luck!";
+        document.getElementById("openModal_text").innerHTML = "Great job, beginning the final phase of the experiment! You will be shown the name of a face and two face images underneath. You will need to press the 1 or 2 key corresponding to which face you think is the REAL face associated with the name. You will have 8 seconds to respond. You will not receive feedback during this phase. Good luck!";
         window.location.href = '#openModal';
         checkFlag();
         function checkFlag() {
