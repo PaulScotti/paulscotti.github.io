@@ -1078,7 +1078,7 @@ function startSlideshow() {
                     generateRandomNumber();
                 }, 1200);
             }, 1200);
-        }, 4500);
+        }, 6000);
         pauseResumeButton.textContent = "Pause";
     }
 }
