@@ -1092,11 +1092,15 @@ function stopSlideshow() {
     }
 }
 
+const noSleep = new NoSleep();
+
 pauseResumeButton.addEventListener('click', () => {
     if (isSlideshowRunning) {
         stopSlideshow();
+        noSleep.disable();
     } else {
         startSlideshow();
+        noSleep.enable();
     }
 });
 
