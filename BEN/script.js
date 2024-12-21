@@ -6,6 +6,8 @@ const maxNumberInput = document.getElementById('max-number'); // Get input eleme
 const setRangeButton = document.getElementById('set-range-button'); // Get button element
 const pauseResumeButton = document.getElementById('pause-resume-button');
 
+const noSleep = new NoSleep();
+
 // Ben System List (Full List)
 const benSystemList = {
 "000": "Dr Seuss // Cat in the hat",
@@ -37,7 +39,7 @@ const benSystemList = {
 "026": "segway",
 "027": "sex // Lexi Belle",
 "028": "cephalopod // squid",
-"029": "Sebastion Michelmann",
+"029": "Sebastian Michelmann",
 "030": "scissors",
 "031": "sitar",
 "032": "cinder block",
@@ -1050,15 +1052,39 @@ let slideshowInterval; // Variable to hold the interval ID
 let minNumber = 0;
 let maxNumber = 999;
 
+// Array to store the last 5 numbers presented
+let lastFiveNumbers = [];
+
 function generateRandomNumber() {
-    currentNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber)
-        .toString()
-        .padStart(3, '0');
+    let newNumber;
+    const rangeSize = maxNumber - minNumber + 1;
+
+    if (rangeSize <= 5) {
+        // If the range is too small, just generate a random number without checking for repeats
+        newNumber = Math.floor(Math.random() * rangeSize + minNumber)
+            .toString()
+            .padStart(3, '0');
+    } else {
+        // If the range is large enough, ensure no repeats in the last 5
+        do {
+            newNumber = Math.floor(Math.random() * rangeSize + minNumber)
+                .toString()
+                .padStart(3, '0');
+        } while (lastFiveNumbers.includes(newNumber));
+    }
+
+    currentNumber = newNumber;
+
+    // Update the last five numbers array
+    lastFiveNumbers.push(currentNumber);
+    if (lastFiveNumbers.length > 5) {
+        lastFiveNumbers.shift(); // Remove the oldest number
+    }
+
     numberDisplay.textContent = currentNumber;
     // soundDisplay.textContent = `(${getBenSystemSound(currentNumber)})`;
-    answerDisplay.textContent = ''; // Clear previous answer
-
-    speakText(currentNumber); // Speak the number
+    answerDisplay.textContent = '';
+    speakText(currentNumber);
 }
 
 function showAnswer() {
@@ -1091,8 +1117,6 @@ function stopSlideshow() {
         pauseResumeButton.textContent = "Resume";
     }
 }
-
-const noSleep = new NoSleep();
 
 pauseResumeButton.addEventListener('click', () => {
     if (isSlideshowRunning) {
