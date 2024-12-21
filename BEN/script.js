@@ -6,8 +6,6 @@ const maxNumberInput = document.getElementById('max-number'); // Get input eleme
 const setRangeButton = document.getElementById('set-range-button'); // Get button element
 const pauseResumeButton = document.getElementById('pause-resume-button');
 
-const noSleep = new NoSleep();
-
 // Ben System List (Full List)
 const benSystemList = {
 "000": "Dr Seuss // Cat in the hat",
@@ -1121,10 +1119,8 @@ function stopSlideshow() {
 pauseResumeButton.addEventListener('click', () => {
     if (isSlideshowRunning) {
         stopSlideshow();
-        noSleep.disable();
     } else {
         startSlideshow();
-        noSleep.enable();
     }
 });
 
