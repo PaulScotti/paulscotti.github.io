@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example Blog Post - Gwern Style</title>
+    <style>
+        :root {
+            --background-color: #181818;
+            --text-color: #eee;
+            --link-color: #9db4ff;
+            --link-hover-color: #4a64b0;
+            --border-color: #555;
+            --toc-bg-color: #282828;
+            --code-bg-color: #333;
+            --popup-bg-color: #333;
+            --popup-text-color: #eee;
+            --quote-bg-color: #282828;
+            --button-bg-color: #333;
+            --button-text-color: #eee;
+            --button-hover-bg-color: #555;
+            --button-hover-text-color: #fff;
+        }
+
+        .light-mode {
+            --background-color: #f8f8f8;
+            --text-color: #222;
+            --link-color: #0645ad;
+            --link-hover-color: #002878;
+            --border-color: #ccc;
+            --toc-bg-color: #f5f5f5;
+            --code-bg-color: #eee;
+            --popup-bg-color: #f8f8f8;
+            --popup-text-color: #222;
+            --quote-bg-color: #f0f0f0;
+            --button-bg-color: #eee;
+            --button-text-color: #222;
+            --button-hover-bg-color: #ccc;
+            --button-hover-text-color: #000;
+        }
+
+        body {
+            font-family: Georgia, serif;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 50rem;
+            padding: 2rem;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for theme change */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Trebuchet MS", sans-serif;
+            font-weight: bold;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: var(--link-hover-color);
+            text-decoration: none;
+        }
+
+        ul, ol {
+            padding-left: 2rem;
+        }
+
+        blockquote {
+            border-left: 5px solid var(--border-color);
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background-color: var(--quote-bg-color);
+        }
+
+        code {
+            font-family: "Courier New", monospace;
+            background-color: var(--code-bg-color);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            color: inherit; /* Inherit text color from surrounding text */
+        }
+
+        pre {
+            background-color: var(--code-bg-color);
+            padding: 1rem;
+            overflow-x: auto;
+            border-radius: 3px;
+        }
+
+        pre code {
+            padding: 0;
+            background-color: transparent;
+            border-radius: 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* Gwern-style footnotes */
+        .footnote-ref {
+            vertical-align: super;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--link-color);
+        }
+
+        .footnotes {
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .footnotes li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footnotes p {
+            margin: 0;
+            display: inline;
+        }
+
+        /* Gwern-style popups (simplified) */
+        .popup-link {
+            border-bottom: 1px dotted var(--link-color);
+            cursor: pointer;
+        }
+
+        .popup-content {
+            display: none;
+            position: absolute;
+            background-color: var(--popup-bg-color);
+            color: var(--popup-text-color);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            z-index: 10;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            border-radius: 5px; /* Add rounded corners */
+        }
+
+        .popup-link:hover .popup-content {
+            display: block;
+        }
+
+        /* Metadata */
+        .metadata {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 2rem;
+        }
+
+        .metadata span {
+            margin: 0 0.5rem;
+        }
+
+        /* Table of Contents (TOC) */
+        #toc {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            background-color: var(--toc-bg-color);
+            border-radius: 5px; /* Add rounded corners */
+        }
+        #toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        /* Light/Dark Mode Button */
+        #theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Trebuchet MS", sans-serif;
+            transition: background-color 0.3s, color 0.3s; /* Add transition */
+        }
+
+        #theme-toggle:hover {
+            background-color: var(--button-hover-bg-color);
+            color: var(--button-hover-text-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                font-size: 15px;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .popup-content {
+                position: static;
+                display: block; /* Always show on small screens */
+                max-width: none;
+                border: none;
+                box-shadow: none;
+                margin-top: 0.5rem;
+                border-radius: 0;
+            }
+
+            #theme-toggle {
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle">Light Mode</button>
+
+    <h1>The Fascinating World of Metadata</h1>
+    <div class="metadata">
+        <span>By: Your Name</span>
+        <span>Date: 2023-10-27</span>
+        <span>Topics: <a href="#">Metadata</a>, <a href="#">Data Science</a>, <a href="#">Information</a></span>
+    </div>
+
+    <div id="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#introduction">1. Introduction</a></li>
+            <li><a href="#what-is-metadata">2. What is Metadata?</a></li>
+            <li><a href="#types-of-metadata">3. Types of Metadata</a>
+                <ul>
+                    <li><a href="#descriptive">3.1 Descriptive Metadata</a></li>
+                    <li><a href="#structural">3.2 Structural Metadata</a></li>
+                    <li><a href="#administrative">3.3 Administrative Metadata</a></li>
+                </ul>
+            </li>
+            <li><a href="#importance">4. The Importance of Metadata</a></li>
+            <li><a href="#conclusion">5. Conclusion</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. Introduction</h2>
+    <p>
+        Metadata, often described as "data about data," plays a crucial role in organizing, understanding, and utilizing information effectively. This post explores the various facets of metadata, its significance, and its impact on data management and analysis.
+    </p>
+
+    <h2 id="what-is-metadata">2. What is Metadata?</h2>
+    <p>
+        Metadata provides context and details about data. <span class="popup-link">For example<span class="popup-content">Think of a library catalog: it contains information about books (author, title, publication date), which is metadata.</span></span>, it can describe the who, what, where, when, why, and how of a dataset, a file, or any piece of information.
+    </p>
+
+    <h2 id="types-of-metadata">3. Types of Metadata</h2>
+    <p>
+        There are primarily three types of metadata:
+    </p>
+
+    <h3 id="descriptive">3.1 Descriptive Metadata</h3>
+    <p>
+        This type describes a resource for purposes such as discovery and identification. It can include elements like title, abstract, author, and keywords.
+    </p>
+
+    <h3 id="structural">3.2 Structural Metadata</h3>
+    <p>
+        Structural metadata indicates how a digital resource is organized. <span class="popup-link">For instance<span class="popup-content">It can describe the order of pages in a book, the structure of chapters, or the arrangement of data in a spreadsheet.</span></span>, it defines the relationships between parts of a whole.
+    </p>
+
+    <h3 id="administrative">3.3 Administrative Metadata</h3>
+    <p>
+        Administrative metadata helps manage a resource. It includes technical details like file type, creation date, and access permissions.
+    </p>
+
+    <h2 id="importance">4. The Importance of Metadata</h2>
+    <p>
+        Metadata is essential for several reasons:
+    </p>
+    <ul>
+        <li><b>Data Discovery:</b> Metadata makes it easier to find and retrieve relevant data.</li>
+        <li><b>Data Understanding:</b> It provides context, making data more meaningful.</li>
+        <li><b>Data Management:</b> Metadata supports efficient storage, organization, and maintenance of data.</li>
+        <li><b>Interoperability:</b> It enables data exchange and integration between different systems.</li>
+    </ul>
+
+    <h2 id="conclusion">5. Conclusion</h2>
+    <p>
+        Metadata is the backbone of effective data management and information retrieval. Understanding its various types and functions is crucial for anyone working with data in today's digital age. Without metadata, our vast digital landscape would be a chaotic and unnavigable mess.<sup id="fnref-1" class="footnote-ref"><a href="#fn-1">1</a></sup>
+    </p>
+
+    <div class="footnotes">
+        <hr>
+        <ol>
+            <li id="fn-1">
+                <p>This is an example footnote. You can add more details or references here. <a href="#fnref-1" title="return to article">↩</a></p>
+            </li>
+        </ol>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        let currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            body.classList.add(currentTheme);
+            if (currentTheme === 'light-mode') {
+              themeToggle.textContent = "Dark Mode";
+            }
+        } else {
+            // Default to dark mode
+            currentTheme = 'dark-mode';
+            body.classList.add(currentTheme);
+            themeToggle.textContent = "Light Mode";
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'dark-mode') {
+                body.classList.replace('dark-mode', 'light-mode');
+                currentTheme = 'light-mode';
+                themeToggle.textContent = "Dark Mode";
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                currentTheme = 'dark-mode';
+                themeToggle.textContent = "Light Mode";
+            }
+
+            // Save the current theme preference
+            localStorage.setItem('theme', currentTheme);
+        });
+
+        // JavaScript for more interactive popups (optional, very basic)
+        document.addEventListener('DOMContentLoaded', () => {
+            const popupLinks = document.querySelectorAll('.popup-link');
+
+            popupLinks.forEach(link => {
+                const popupContent = link.querySelector('.popup-content');
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default link behavior
+                    if (popupContent.style.display === 'block') {
+                        popupContent.style.display = 'none';
+                    } else {
+                        popupContent.style.display = 'block';
+                        // Basic positioning (you'd need more complex logic for better positioning)
+                        popupContent.style.top = `${link.offsetTop + link.offsetHeight}px`;
+                        popupContent.style.left = `${link.offsetLeft}px`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
