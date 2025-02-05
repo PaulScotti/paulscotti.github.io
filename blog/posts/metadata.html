@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paul Scotti's Blog</title>
+    <title>NeuNeuro: Paul Scotti's Blog</title>
     <style>
         :root {
             --background-color: #181818;
@@ -20,7 +20,8 @@
             --button-text-color: #eee;
             --button-hover-bg-color: #555;
             --button-hover-text-color: #fff;
-            --sidebar-width: 12rem; /* Set the desired sidebar width */
+            --sidebar-width: 12rem;
+            --mailing-color: #f6d491;
         }
 
         .light-mode {
@@ -38,11 +39,12 @@
             --button-text-color: #222;
             --button-hover-bg-color: #ccc;
             --button-hover-text-color: #000;
+            --mailing-color: #aa760f;
         }
 
         body {
-            font-family: Georgia, serif;
-            font-size: 16px;
+            font-family: "Source Serif Pro", "Apple Garamond", "Baskerville", "Libre Baskerville", "Droid Serif", "Times New Roman", "Times", serif, "Noto Emoji", "Quivira";
+            font-size: 18px;
             line-height: 1.6;
             margin: 0 auto;
             max-width: 60rem;
@@ -55,33 +57,34 @@
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Source Sans Pro", "Lucida Sans Unicode", "Helvetica", "Trebuchet MS", sans-serif, "Noto Emoji", "Quivira";
             font-weight: bold;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             text-align: center;
             margin: 0px;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin: 0px;
         }
 
         h3 {
-            font-size: 1.6rem;
+            font-size: 2rem;
             margin: 0px;
         }
 
         p {
+            font-size: 1.25rem;
             margin-bottom: 1.2rem;
         }
 
         a {
             color: var(--link-color);
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         a:hover {
@@ -107,6 +110,11 @@
             padding: 0.1rem 0.3rem;
             border-radius: 3px;
             color: inherit;
+        }
+
+        .mailing_list {
+            font-size: 18px;
+            color: var(--mailing-color);
         }
 
         pre {
@@ -186,8 +194,8 @@
             margin: 0 0.5rem;
         }
 
-        /* Sidebar Styles (initially hidden) */
-        #sidebar {
+        /* Sidebar Styles */
+        #sidebar-toc {
             position: fixed;
             left: 1rem;
             top: 2rem;
@@ -197,28 +205,31 @@
             padding: 1rem;
             border-radius: 5px;
             z-index: 20;
-            display: none;
         }
 
-        #sidebar.show-sidebar {
-            display: block; /* Class to show the sidebar */
-        }
-
-        #sidebar h3 {
+        #sidebar-toc h3 {
             margin-top: 0;
             font-size: 1.2rem;
         }
 
-        #sidebar ul {
+        #sidebar-toc ul {
             list-style: none;
             padding-left: 0;
         }
 
-        #sidebar a {
+        #sidebar-toc li a {
+            font-size: 1rem; /* Default TOC font size */
+        }
+
+        #sidebar-toc ul ul li a {
+            font-size: 0.9rem; /* Smaller font size for sub-headers */
+        }
+
+        #sidebar-toc a {
             text-decoration: none;
         }
 
-        #sidebar a:hover {
+        #sidebar-toc a:hover {
             text-decoration: underline;
         }
 
@@ -260,14 +271,57 @@
         }
 
         /* TOC Container for Top Placement */
-        #toc-container {
-            margin-bottom: 2rem; /* Add some spacing */
+        #inline-toc {
+            margin-bottom: 1rem; /* Add some spacing */
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            padding-bottom: 0px;
+            background-color: var(--toc-bg-color);
+            border-radius: 5px;
+        }
+        #inline-toc h3 {
+            margin-top: 0;
+            font-size: 1.2rem; /* Adjust as needed */
+        }
+
+        #inline-toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        #inline-toc li a {
+            font-size: 1rem; /* Default TOC font size */
+        }
+
+        #inline-toc ul ul li a {
+            font-size: 0.9rem; /* Smaller font size for sub-headers */
+        }
+
+        #inline-toc a {
+            text-decoration: none;
+        }
+
+        #inline-toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Hide the appropriate TOC based on screen size */
+        @media (min-width: 769px) {
+            #inline-toc {
+                display: none; /* Hide inline TOC on wider screens */
+            }
         }
 
         /* Mobile Styles */
         @media (max-width: 768px) {
+            #sidebar-toc {
+                display: none; /* Hide sidebar TOC on mobile */
+            }
+            #inline-toc {
+                display: block; /* Show inline TOC on mobile */
+            }
             body {
-                font-size: 15px;
+                font-size: 16px;
                 padding: 1rem;
                 max-width: 100%;
             }
@@ -280,22 +334,18 @@
                 font-size: 1.8rem;
             }
 
-            /* Make popup content visible by default on mobile */
+            /* Make popup content hidden by default on mobile */
             .popup-content {
-                position: static;
-                display: block; 
-                max-width: none;
-                border: none;
-                box-shadow: none;
-                margin-top: 0.5rem;
-                border-radius: 0;
+                position: absolute;
+                display: none; 
+                max-width: 300px;
+                border: 1px solid var(--border-color);
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
             }
 
-            /* Sidebar becomes top bar */
-            #sidebar {
-                position: static;
-                width: auto;
-                margin-bottom: 1rem;
+            .popup-link:hover .popup-content {
+                display: block; /* Show on hover */
             }
 
             #content {
@@ -308,16 +358,48 @@
                 right: 0.5rem;
             }
         }
+
+        /* Image Styles */
+        .content-image {
+            max-width: 75%; /* Image will not exceed 75% of its container's width */
+            height: auto;    /* Height will adjust automatically to maintain aspect ratio */
+            display: block;  /* Makes the image a block-level element */
+            margin: 2rem auto; /* 2rem top and bottom margin, auto left and right for centering */
+        }
+
     </style>
 </head>
 <body>
     <div class="button-container">
-        <a href="../home.html" class="nav-button">Home</a>
+        <a href="../home.html" class="nav-button" style="text-align: center">Home</a>
         <button id="theme-toggle" class="nav-button">Light Mode</button>
     </div>
 
-    <div id="toc-container">
-        <div id="sidebar">
+    <div id="sidebar-toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#introduction">1. Introduction</a></li>
+            <li><a href="#what-is-metadata">2. What is Metadata?</a></li>
+            <li><a href="#types-of-metadata">3. Types of Metadata</a>
+                <ul>
+                    <li><a href="#descriptive">3.1 Descriptive Metadata</a></li>
+                    <li><a href="#structural">3.2 Structural Metadata</a></li>
+                    <li><a href="#administrative">3.3 Administrative Metadata</a></li>
+                </ul>
+            </li>
+            <li><a href="#importance">4. The Importance of Metadata</a></li>
+            <li><a href="#conclusion">5. Conclusion</a></li>
+        </ul>
+    </div>
+
+    <div id="content">
+        <h1>The Fascinating World of Metadata</h1>
+        <div class="metadata">
+            <span>By: Paul Scotti</span>
+            <span class="date">Date: Feb. 5 2025</span>
+        </div>
+
+        <div id="inline-toc">
             <h3>Table of Contents</h3>
             <ul>
                 <li><a href="#introduction">1. Introduction</a></li>
@@ -333,16 +415,11 @@
                 <li><a href="#conclusion">5. Conclusion</a></li>
             </ul>
         </div>
-    </div>
-
-    <div id="content">
-        <h1>The Fascinating World of Metadata</h1>
-        <div class="metadata">
-            <span>By: Paul Scotti</span>
-            <span class="date">Date: Feb. 5 2025</span>
-        </div>
 
         <h2 id="introduction">1. Introduction</h2>
+        <p>
+            This is an example blog post for me to use as reference for future blog posts. 
+        </p>
         <p>
             Metadata, often described as "data about data," plays a crucial role in organizing, understanding, and utilizing information effectively. This post explores the various facets of metadata, its significance, and its impact on data management and analysis.
         </p>
@@ -361,6 +438,8 @@
         <p>
             This type describes a resource for purposes such as discovery and identification. It can include elements like title, abstract, author, and keywords.
         </p>
+
+        <img src="https://paulscotti.github.io/images/twittersquare.png" class="content-image">
 
         <h3 id="structural">3.2 Structural Metadata</h3>
         <p>
@@ -389,17 +468,20 @@
         </p>
 
         <div class="footnotes">
-            <hr>
             <ol>
                 <li id="fn-1">
                     <p>This is an example footnote. You can add more details or references here. <a href="#fnref-1" title="return to article">↩</a></p>
                 </li>
             </ol>
         </div>
+
+        <div class="mailing_list">
+            <hr>
+            <p>Join my mailing list to receive new blog posts in your email. Just send an empty email to <a href="mailto:neuneuro+subscribe@googlegroups.com">neuneuro+subscribe@googlegroups.com</a>. You'll then receive a verification email—note that it often goes to spam so please check!</p>
+        </div>
     </div>
 
     <script>
-        // Theme Toggle Logic
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
 
@@ -454,23 +536,17 @@
         });
 
         // TOC Layout Logic
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        const tocContainer = document.getElementById('toc-container');
-        const sidebarWidth = parseInt(getComputedStyle(sidebar).getPropertyValue('width')); // Get sidebar width
-        const horizontalPadding = 4 * 16; // Assuming 2rem padding on each side of body (converted to pixels, 1rem = 16px)
+        const sidebarToc = document.getElementById('sidebar-toc'); // Corrected variable name
+        const inlineToc = document.getElementById('inline-toc');   // Get inline TOC element
 
         function adjustLayout() {
-            const availableWidth = window.innerWidth - sidebarWidth - horizontalPadding;
-
-            if (availableWidth < 600) { // 600px is an example threshold
-                // Move TOC to top
-                tocContainer.prepend(sidebar);
-                sidebar.classList.remove('show-sidebar');
+            console.log(window.innerWidth)
+            if (window.innerWidth <= 1500) {
+                inlineToc.style.display = 'block';
+                sidebarToc.style.display = 'none';
             } else {
-                // Display sidebar
-                tocContainer.appendChild(sidebar);
-                sidebar.classList.add('show-sidebar');
+                inlineToc.style.display = 'none';
+                sidebarToc.style.display = 'block';
             }
         }
 
