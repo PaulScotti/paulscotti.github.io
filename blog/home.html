@@ -42,17 +42,44 @@
             --mailing-color: #aa760f;
         }
 
-
         body {
             font-family: "Source Serif Pro", "Apple Garamond", "Baskerville", "Libre Baskerville", "Droid Serif", "Times New Roman", "Times", serif, "Noto Emoji", "Quivira";
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.6;
             margin: 0 auto;
-            max-width: 50rem;
+            max-width: 60rem;
             padding: 2rem;
             color: var(--text-color);
             background-color: var(--background-color);
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition for theme change */
+            transition: background-color 0.3s, color 0.3s;
+            /* For mobile responsiveness */
+            overflow-x: hidden; 
+        }
+
+        .button-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; 
+            z-index: 30; 
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Trebuchet MS", sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: var(--button-hover-bg-color);
+            color: var(--button-hover-text-color);
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -196,7 +223,6 @@
 
         /* Light/Dark Mode Button */
         #theme-toggle {
-            position: fixed;
             top: 1rem;
             right: 1rem;
             padding: 0.5rem 1rem;
@@ -267,9 +293,12 @@
     </style>
 </head>
 <body>
-    <button id="theme-toggle">Light Mode</button>
+    <div class="button-container">
+        <a href="https://paulscotti.github.io/" class="nav-button" style="text-align: center">Non-blog site</a>
+        <button id="theme-toggle" class="nav-button">Light Mode</button>
+    </div>
 
-    <h2><a href="https://paulscotti.github.io">NeuNeuro: Paul Scotti Blog</a></h2>
+    <h2>NeuNeuro: Paul Scotti Blog</h2>
     Blog posts usually about neuroAI (but not always).
 
     <p style="font-size:18px">
