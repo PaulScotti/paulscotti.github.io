@@ -99,7 +99,7 @@
         blockquote {
             border-left: 5px solid var(--border-color);
             margin: 1.5rem 0;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.25rem;
             font-style: italic;
             background-color: var(--quote-bg-color);
         }
@@ -218,11 +218,11 @@
         }
 
         #sidebar-toc li a {
-            font-size: 1rem; /* Default TOC font size */
+            font-size: 1rem; 
         }
 
         #sidebar-toc ul ul li a {
-            font-size: 0.9rem; /* Smaller font size for sub-headers */
+            font-size: .85rem; 
         }
 
         #sidebar-toc a {
@@ -250,8 +250,8 @@
             right: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem; /* Spacing between buttons */
-            z-index: 30; /* Ensure buttons are above other content */
+            gap: 0.5rem; 
+            z-index: 30; 
         }
 
         .nav-button {
@@ -272,7 +272,7 @@
 
         /* TOC Container for Top Placement */
         #inline-toc {
-            margin-bottom: 1rem; /* Add some spacing */
+            margin-bottom: 1rem; 
             border: 1px solid var(--border-color);
             padding: 1rem;
             padding-bottom: 0px;
@@ -281,7 +281,7 @@
         }
         #inline-toc h3 {
             margin-top: 0;
-            font-size: 1.2rem; /* Adjust as needed */
+            font-size: 1.2rem; 
         }
 
         #inline-toc ul {
@@ -290,11 +290,11 @@
         }
 
         #inline-toc li a {
-            font-size: 1rem; /* Default TOC font size */
+            font-size: 1.1rem; 
         }
 
         #inline-toc ul ul li a {
-            font-size: 0.9rem; /* Smaller font size for sub-headers */
+            font-size: 0.9rem; 
         }
 
         #inline-toc a {
@@ -308,17 +308,17 @@
         /* Hide the appropriate TOC based on screen size */
         @media (min-width: 769px) {
             #inline-toc {
-                display: none; /* Hide inline TOC on wider screens */
+                display: none;
             }
         }
 
         /* Mobile Styles */
         @media (max-width: 768px) {
             #sidebar-toc {
-                display: none; /* Hide sidebar TOC on mobile */
+                display: none;
             }
             #inline-toc {
-                display: block; /* Show inline TOC on mobile */
+                display: block; 
             }
             body {
                 font-size: 16px;
@@ -345,11 +345,11 @@
             }
 
             .popup-link:hover .popup-content {
-                display: block; /* Show on hover */
+                display: block;
             }
 
             #content {
-                margin-left: 0; /* Reset margin */
+                margin-left: 0;
                 max-width: 100%;
             }
 
@@ -359,12 +359,11 @@
             }
         }
 
-        /* Image Styles */
         .content-image {
-            max-width: 75%; /* Image will not exceed 75% of its container's width */
-            height: auto;    /* Height will adjust automatically to maintain aspect ratio */
-            display: block;  /* Makes the image a block-level element */
-            margin: 2rem auto; /* 2rem top and bottom margin, auto left and right for centering */
+            max-width: 75%;
+            height: auto;    
+            display: block; 
+            margin: 1.5rem auto;
         }
 
     </style>
