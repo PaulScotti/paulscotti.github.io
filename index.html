@@ -1,5 +1,553 @@
----
-layout: home
-title: Home
-comments: false
----
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Paul S. Scotti</title>
+    <meta name="description" content="Paul S. Scotti's personal website">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="https://paulscotti.github.io/favicon.png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YJN2KMKXW"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5YJN2KMKXW');
+    </script>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            background-image: url("paulscotti.github.io/images/leaf_desktop_bg.jpg");
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        .container {
+            width: 20%;
+            max-width: 1500px;
+            min-width: 500px;
+            padding-bottom: 20px;
+            margin: 0 auto;
+            animation: fadeIn 1s;
+        }
+        .main-row {
+            border: 6px solid transparent;
+            border-image: linear-gradient(to bottom right, #431358 0%, #08294d 25%, #28750a 50%, #524b14 75%, #46132e 100%);
+            border-image-slice: 1;
+            background-color: rgba(255, 255, 255);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .img-circle {
+            border-radius: 50%;
+            width: 150px; /* Adjusted size */
+            height: 150px; /* Adjusted size */
+            display: block;
+            margin: 20px auto;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .title {
+            text-align: center;
+        }
+        .title p {
+            font-size: 1rem;
+            font-weight: 300;
+            margin: 0;
+        }
+        .hr-line {
+            border: none;
+            height: 1px;
+            background-color: #dbdbdb;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            border: 1px solid #ccc; /* Add border here */
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .social-links {
+            text-align: center;
+            padding: 20px;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #333;
+            font-size: 0px;
+        }
+        .social-links a:hover {
+            color: #0077b5;
+        }
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            transition: transform 0.3s ease;
+        }
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes rotateIn {
+            from {
+                transform: rotate(-360deg);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0);
+                opacity: 1;
+            }
+        }
+        .zoombtn {
+            transition: transform 0.3s ease;
+        }
+        .zoombtn:hover {
+            transform: scale(1.05);
+        }
+        #names {
+            font-size: 14px;
+            font-weight: normal;
+        }
+        .cbar {
+            text-align: center;
+            font-weight: normal;
+            font-size: 16px;
+            float: center;
+        }
+        .pub-container .cbar img {
+            width: auto;
+            max-width: 45%; 
+        }
+        @media (min-width: 1200px) { /* Large screens */
+            .pub-container .cbar img {
+                max-width: 25%;
+            }
+        }
+        .cbar2 {
+            text-align: center;
+            font-weight: normal;
+            font-size: 16px;
+        }
+        .pub-container .cbar2 img {
+            width: auto;
+            max-width: 70%; 
+        }
+        @media (min-width: 1200px) { /* Large screens */
+            .pub-container .cbar2 img {
+                max-width: 40%;
+            }
+        }
+        .crow:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .title .btn {
+            margin: 2px !important;
+            padding: 6px !important;
+            font-size: 16px !important;
+            font-size: 1rem !important;
+            font-weight: 300 !important;
+        }
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+        .btn-rainbow {
+            color: white !important;
+            background: linear-gradient(124deg, #3A2D68, #2C5182, #277A2B, #9D9340, #A36234, #963239);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
+            background-size: 1800% 1800%;
+            -webkit-animation: rainbow 18s ease infinite;
+            -z-animation: rainbow 18s ease infinite;
+            -o-animation: rainbow 18s ease infinite;
+            animation: rainbow 18s ease infinite;
+        }
+        .btn-rainboww {
+            color: white !important;
+            background: linear-gradient(124deg, #9D9340, #A36234, #963239, #3A2D68, #2C5182, #277A2B);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
+            background-size: 1800% 1800%;
+            -webkit-animation: rainbow 18s ease infinite;
+            -z-animation: rainbow 18s ease infinite;
+            -o-animation: rainbow 18s ease infinite;
+            animation: rainbow 18s ease infinite;
+        }
+        @-webkit-keyframes rainbow {
+            0%{background-position:0% 82%}
+            50%{background-position:100% 19%}
+            100%{background-position:0% 82%}
+        }
+        @-moz-keyframes rainbow {
+            0%{background-position:0% 82%}
+            50%{background-position:100% 19%}
+            100%{background-position:0% 82%}
+        }
+        @-o-keyframes rainbow {
+            0%{background-position:0% 82%}
+            50%{background-position:100% 19%}
+            100%{background-position:0% 82%}
+        }
+        @keyframes rainbow { 
+            0%{background-position:0% 82%}
+            50%{background-position:100% 19%}
+            100%{background-position:0% 82%}
+        }
+        .btn-yellow {
+            color: black !important;
+            background-color: #ffeb3b52;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
+        }
+        #published {
+            width: 80%;
+            max-width: 3000px;
+            min-width: 500px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            margin: 0 auto;
+        }
+        #published .row {
+            border: 6px solid rgb(255, 255, 255);
+            background-color: rgba(0, 0, 0, 1); 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            border-radius: 10px;
+        }
+        #published .title {
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            color: white;
+        }
+        .pub-container {
+            width: 80%;
+            max-width: 3000px;
+            min-width: 500px;
+            padding-top: 6px;
+            padding-bottom: 0px;
+            margin: 10px auto;
+        }
+        .pub-container .row {
+            border: 6px solid rgb(0, 0, 0);
+            background-color: rgba(255, 255, 255);
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            border-radius: 10px;
+        }
+        .pub-container .title {
+            text-align: center;
+            padding: 0px;
+        }
+        .pub-container img {
+            width: 400px;
+            max-width: 90%;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .pub-container .title a {
+          color: #0077b5;
+        }
+        .social-links {
+            text-align: center;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #333; /* Default color */
+            font-size: 24px;
+            text-decoration: none; /* Remove underline */
+            transition: color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        .social-links a:hover {
+            color: #0077b5; /* Change color on hover */
+        }
+        .fa-twitter:hover { color: #1DA1F2; } /* Twitter blue */
+        .fa-linkedin-in:hover { color: #0A66C2; } /* LinkedIn blue */
+        .fa-github:hover { color: #171515; } /* GitHub dark */
+        .fa-google-scholar:hover { color: #4285F4; } /* Google Scholar blue */
+        .fa-envelope:hover { color: #DB4437; } /* Email red */
+
+    </style>
+</head>
+<script data-goatcounter="https://paulscotti.goatcounter.com/count"
+async src="//gc.zgo.at/count.js"></script>
+<script>
+    function scroller(id) {
+        $('html, body').animate({
+            scrollTop: $("#"+id).offset().top
+        }, 1000);
+    }
+</script>
+<body>
+    <div class="container">
+        <div class="row main-row">
+            <a href="https://paulscotti.github.io/">
+                <img src="https://paulscotti.github.io/favicon.png" class="img-circle zoombtn animated rotateIn">
+            </a>
+            <h3 class="title">
+                <p style="font-size:1.2rem;font-weight:300">Paul S. Scotti</p>
+            </h3>
+            <hr class="hr-line">
+            <h3 class="title">
+                <p style="font-size:1rem;font-weight:300">Research scientist at Princeton Neuroscience Institute
+                    <br>scottibrain@gmail.com
+                </p>
+            </h3>
+            <hr class="hr-line">
+            <h3 class="title">
+                <!-- <a class="btn btn-rainbow" href="http://paulscotti.github.io/medarc_lab.html">
+                    <b>Neuroimaging & AI Lab</b>
+                </a> -->
+                <a class="btn btn-rainbow" href="https://paulscotti.github.io/images/Scotti_CV.pdf">
+                    <b>Curriculum vitae</b>
+                </a>
+                <br>
+                <button class="btn btn-rainboww" onclick="scroller('published')">
+                    <b>Publications / Projects</b>
+                </button>
+            </h3>
+            <hr class="hr-line">
+            <h3 class="title">
+                <p style="font-size:1rem;font-weight:300">My Neuroscience Educational Tools:</p>
+                <br>
+                <a class="btn btn-yellow" href="https://groups.google.com/g/neuneuro">
+                    NeuroAI Mailing List
+                </a>
+                <br>
+                <a class="btn btn-yellow" href="https://paulscotti.github.io/educortex">
+                    EduCortex <font size="-1">(Brain visualizer)</font>
+                </a>
+                <br>
+                <a class="btn btn-yellow" href="https://www.youtube.com/channel/UCEGD13q4cWw5Lvkwo2uZKVg">
+                    OnNeuro <font size="-1">(Lecture repository)</font>
+                </a>
+                <br>
+                <a class="btn btn-yellow" href="https://pypi.org/project/inverted-encoding">
+                    Inverted Encoding <font size="-1">(Python package)</font>
+                </a>
+                <br>
+                <a class="btn btn-yellow" href="https://paulscotti.github.io/fmriplayground/">
+                    fMRI Playground <font size="-1">(Interactive textbook)</font>
+                </a>
+            </h3>
+            <div class="social-links">
+                <a href="mailto:scottibrain@gmail.com">
+                    <img src="https://paulscotti.github.io/images/emailsquare.png" class="social-icon" alt="Email">
+                </a>
+                <a href="https://scholar.google.com/citations?user=AE-k4ukAAAAJ&hl=en&oi=ao">
+                    <img src="paulscotti.github.io/images/google_scholar_logo.png" class="social-icon" alt="GScholar">
+                </a>
+                <a href="https://x.com/humanscotti">
+                    <img src="https://paulscotti.github.io/images/twittersquare.png" class="social-icon" alt="Twitter">
+                </a>
+                <a href="https://bsky.app/profile/humanscotti.bsky.social">
+                    <img src="paulscotti.github.io/images/bluesky_logo.jpeg" class="social-icon" alt="BlueSky">
+                </a>
+                <a href="https://www.linkedin.com/in/paulscotti">
+                    <img src="paulscotti.github.io/images/linkedin_logo.png" class="social-icon" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <header id="published">
+        <div class="container" style="width: 100%; max-width: 3000px; min-width: 500px; padding-top: 6px; padding-bottom: 0px">
+            <div class="row" style="border: 6px solid rgb(255, 255, 255); background-color: black">
+                <h3 class="title" style="text-align: center; padding-top: 5px; color: white">
+                    CURATED WORK
+                </h3>
+            </div>
+        </div>
+    </header>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                Trainees’ perspectives and recommendations for catalyzing the next generation of NeuroAI researchers
+                <div id="names">Andrea Luppi, Jascha Achterberg, ... Paul S. Scotti, Helena M. Gellersen</div>
+                <a class="btn zoombtn" href="https://www.nature.com/articles/s41467-024-53375-2">
+                Nature Communications (2024)
+                </a>
+                <div class="cbar">
+                    NeuroAI trainees often feel caught between AI and neuro groups, lacking dedicated programs. Our work explores this, offering survey results & resources for trainees and institutions. We provide a living list of trainee resources in <a href="https://github.com/8erberg/NeuroAI_Trainee_Resources">our GitHub: github.com/8erberg/NeuroAI_Trainee_Resources</a></a>
+                </div>
+                <div class="cbar">
+                    <img src="https://paulscotti.github.io/images/neuroai_trainee.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                MindEye2: Shared-Subject Models Enable fMRI-To-Image With 1 Hour of Data
+                <div id="names">Paul S. Scotti, ... Thomas Naselaris, Kenneth A. Norman, Tanishq Mathew Abraham</div>
+                <a class="btn zoombtn" href="https://medarc-ai.github.io/mindeye2/">
+                ICML (2024)
+                </a>
+                <div class="cbar">
+                    SOTA in reconstructing seen images from fMRI brain activity, achieved via shared-subject modeling and fine-tuning SDXL.
+                </div>
+                <div class="cbar2">
+                    <img src="https://github.com/MedARC-AI/MindEyeV2/blob/main/figs/recon_comparison_small_alt.png?raw=true">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                Reconstructing the Mind’s Eye: fMRI-to-Image with Contrastive Learning and Diffusion Priors
+                <div id="names">Paul S. Scotti, Atmadeep Banerjee, ... Kenneth A. Norman, Tanishq Mathew Abraham</div>
+                <a class="btn zoombtn" href="https://medarc-ai.github.io/mindeye/">
+                NeurIPS (2024) (awarded as spotlight paper)
+                </a>
+                <div class="cbar">
+                    Retrieval and reconstruction of seen images from fMRI brain activity using contrastive learning and diffusion modeling.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/mindeye_crop.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                AI Alibis: Multi-Agent LLM Murder Mystery
+                <div id="names">Paul S. Scotti & Will Beddow</div>
+                <a class="btn zoombtn" href="https://ai-murder-mystery.onrender.com/">
+                Interactive website (reached #1 on Hacker News)
+                </a>
+                <div class="cbar">
+                    Violation & principles refinement can address pink elephant problem in large language models, illustrated via short interactive murder mystery game built with React.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/aialibis_crop.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                EduCortex: browser-based 3D brain visualization of fMRI meta-analysis maps
+                <div id="names">Paul S. Scotti, Arman Kulkarni, Matan Mazor, Eduard Klapwijk, Tal Yarkoni, & Alexander Huth</div>
+                <a class="btn zoombtn" href="https://paulscotti.github.io/educortex">
+                    Interactive website
+                </a>
+                <a class="btn zoombtn" href="https://jose.theoj.org/papers/10.21105/jose.00075.pdf">
+                Journal of Open Source Education (2021)
+                </a>
+                <div class="cbar">
+                    Browser visualization tool. User can visualize anatomical areas of the brain and use our meta-analysis interface to overlay functional specializations.
+                </div>
+                <div class="cbar">
+                    <img src="https://paulscotti.github.io/images/educortex.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                fMRI Playground: Simple summaries & simulations of neuroimaging methods
+                <div id="names">Paul S. Scotti, Jiageng Chen, Xiaoli Chen, & Julie D. Golomb</div>
+                <a class="btn zoombtn" href="https://paulscotti.github.io/fmriplayground/">
+                Interactive website
+                </a>
+                <div class="cbar">
+                    Interactive textbook on computational neuroimaging methods using flowcharts, high-level method summaries, and practical Python examples using simulated data.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/playground_crop.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                An enhanced inverted encoding model for neural reconstructions
+                <div id="names">Paul S. Scotti, Jiageng Chen, & Julie D. Golomb</div>
+                <a class="btn zoombtn" href="https://www.biorxiv.org/content/10.1101/2021.05.22.445245v4">
+                bioRxiv (2021)
+                </a>
+                <a class="btn zoombtn" href="https://pypi.org/project/inverted-encoding/">
+                    PyPI
+                </a>
+                <div class="cbar">
+                    Python package for inverted encoding models to improve flexibility and interpretability of stimulus reconstructions.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/iem_crop.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                Visual working memory items drift apart due to active, not passive, maintenance
+                <div id="names">Paul S. Scotti, Yoolim Hong, Andrew B. Leber, & Julie D. Golomb</div>
+                <a class="btn zoombtn" href="https://paulscotti.github.io/pubs/repulsion.pdf">
+                Journal of Experimental Psychology: General (2021)
+                </a>
+                <div class="cbar">
+                    We show how memories interact with each other to sometimes unconscious systematic repulsion biases.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/repulsion.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <div class="pub-container">
+        <div class="row">
+            <h3 class="title">
+                Attention scales according to inferred real-world object size
+                <div id="names">Andrew J. Collegio, Joseph C. Nah, Paul S. Scotti, & Sarah Shomstein</div>
+                <a class="btn zoombtn" href="https://paulscotti.github.io/pubs/collegio_nah_scotti_shomstein_2019.pdf">
+                Nature Human Behavior (2019)
+                </a>
+                <div class="cbar">
+                    We show it takes longer for attention to spread across a 10-inch picture of a car compared to a 10-inch picture of an eraser.
+                </div>
+                <div class="cbar2">
+                    <img src="https://paulscotti.github.io/images/sizematters.png">
+                </div>
+            </h3>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</body>
+</html>
