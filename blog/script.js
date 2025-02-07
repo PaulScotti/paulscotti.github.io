@@ -164,8 +164,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const mailingListHTML = `
         <div class="mailing_list">
             <hr>
-            <p><a href="https://groups.google.com/g/neuneuro">Click here to join my email list</a> to get new posts and updates to your inbox.<br>
-                (Or send an empty email to <a href="mailto:neuneuro+subscribe@googlegroups.com">neuneuro+subscribe@googlegroups.com</a>.)
+            <p><a href="https://groups.google.com/g/paulscotti">Click here to join my email list</a> to get new posts and updates to your inbox.<br>
+                (Or send an empty email to <a href="mailto:paulscotti+subscribe@googlegroups.com">paulscotti+subscribe@googlegroups.com</a>.)
             </p>
         </div>
     `;
