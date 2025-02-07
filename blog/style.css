@@ -364,8 +364,50 @@ body {
 }
 
 .content-image {
-    max-width: 75%;
-    height: auto;    
-    display: block; 
+    max-width: 75%; 
+    height: auto;
+    display: block;
+    margin: 1.5rem auto; 
+}
+
+.side-by-side-images-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px; 
+    justify-content: center; 
+    margin: 1.5rem auto; 
+    max-width: 75%; 
+}
+
+.side-by-side-images-container .content-image {
+    max-width: 100%; 
+    width: auto; 
+    margin: 0; 
+}
+
+.image-paragraph {
+    text-align: center; 
+}
+
+figure {
+    text-align: center; 
     margin: 1.5rem auto;
+    max-width: 75%;
+}
+
+figcaption {
+    font-style: italic;
+    font-size: smaller;
+    text-align: center;
+}
+
+figure {
+    text-align: center;
+}
+
+figure .content-image {
+    max-width: 500px;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
 }
