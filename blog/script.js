@@ -1,0 +1,91 @@
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+
+// Check for saved theme preference
+let currentTheme = localStorage.getItem('theme');
+
+if (currentTheme) {
+    body.classList.add(currentTheme);
+    if (currentTheme === 'light-mode') {
+        themeToggle.textContent = "Dark";
+    }
+} else {
+    // Default to dark mode
+    currentTheme = 'dark-mode';
+    body.classList.add(currentTheme);
+    themeToggle.textContent = "Light";
+}
+
+themeToggle.addEventListener('click', () => {
+    if (currentTheme === 'dark-mode') {
+        body.classList.replace('dark-mode', 'light-mode');
+        currentTheme = 'light-mode';
+        themeToggle.textContent = "Dark";
+    } else {
+        body.classList.replace('light-mode', 'dark-mode');
+        currentTheme = 'dark-mode';
+        themeToggle.textContent = "Light";
+    }
+
+    // Save the current theme preference
+    localStorage.setItem('theme', currentTheme);
+});
+
+// JavaScript for more interactive popups (optional, very basic)
+document.addEventListener('DOMContentLoaded', () => {
+    const popupLinks = document.querySelectorAll('.popup-link');
+
+    popupLinks.forEach(link => {
+        const popupContent = link.querySelector('.popup-content');
+        link.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            if (popupContent.style.display === 'block') {
+                popupContent.style.display = 'none';
+            } else {
+                popupContent.style.display = 'block';
+                // Basic positioning
+                popupContent.style.top = `${link.offsetTop + link.offsetHeight}px`;
+                popupContent.style.left = `${link.offsetLeft}px`;
+            }
+        });
+    });
+});
+
+// TOC Layout Logic
+const sidebarToc = document.getElementById('sidebar-toc'); // Corrected variable name
+const inlineToc = document.getElementById('inline-toc');   // Get inline TOC element
+
+function adjustLayout() {
+    // console.log(window.innerWidth)
+    if (window.innerWidth <= 1400) {
+        inlineToc.style.display = 'block';
+        sidebarToc.style.display = 'none';
+    } else {
+        inlineToc.style.display = 'none';
+        sidebarToc.style.display = 'block';
+    }
+}
+
+// Call on load and resize
+window.addEventListener('load', adjustLayout);
+window.addEventListener('resize', adjustLayout);
+
+// Add mailing list div
+document.addEventListener("DOMContentLoaded", function () {
+    const mailingListHTML = `
+        <div class="mailing_list">
+            <hr>
+            <p><a href="https://groups.google.com/g/neuneuro">Click here to join my email list</a> to get new posts and updates to your inbox.<br>
+                (Or send an empty email to <a href="mailto:neuneuro+subscribe@googlegroups.com">neuneuro+subscribe@googlegroups.com</a>.)
+            </p>
+        </div>
+    `;
+
+    // Append it to a specific container
+    const targetContainer = document.getElementById("mailingListContainer");
+    if (targetContainer) {
+        targetContainer.innerHTML = mailingListHTML;
+    } else {
+        console.error("Target container not found!");
+    }
+});
