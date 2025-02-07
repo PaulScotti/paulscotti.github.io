@@ -381,7 +381,7 @@ body {
     justify-content: flex-start; 
     align-items: center; 
     margin: 1.5rem auto; 
-    max-width: 75%;
+    max-width: 85%;
 }
 
 .side-by-side-images-container .content-image:first-child { 
@@ -407,7 +407,7 @@ body {
     justify-content: flex-start; 
     align-items: center; 
     margin: 1.5rem auto; 
-    max-width: 75%;
+    max-width: 85%;
 }
 
 .side-by-side-images-container_equal .content-image:first-child { 
@@ -433,7 +433,7 @@ body {
 figure {
     text-align: center; 
     margin: 1.5rem auto;
-    max-width: 75%;
+    max-width: 90%;
 }
 
 figcaption {
