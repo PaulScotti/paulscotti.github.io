@@ -374,15 +374,26 @@ body {
     display: flex;
     flex-direction: row;
     gap: 10px; 
-    justify-content: center; 
+    justify-content: flex-start; 
+    align-items: center; 
     margin: 1.5rem auto; 
-    max-width: 75%; 
+    max-width: 75%;
 }
 
-.side-by-side-images-container .content-image {
-    max-width: 100%; 
-    width: auto; 
+.side-by-side-images-container .content-image:first-child { 
+    flex-basis: 30%; 
+    max-width: 30%;
+    height: auto; 
     margin: 0; 
+    display: block; 
+}
+
+.side-by-side-images-container .content-image:last-child { 
+    flex-basis: 70%;
+    max-width: 70%; 
+    height: auto; 
+    margin: 0; 
+    display: block; 
 }
 
 .image-paragraph {
