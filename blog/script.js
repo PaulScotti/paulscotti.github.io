@@ -31,22 +31,35 @@ themeToggle.addEventListener('click', () => {
     localStorage.setItem('theme', currentTheme);
 });
 
-// JavaScript for more interactive popups (optional, very basic)
+// JavaScript for more interactive popups
 document.addEventListener('DOMContentLoaded', () => {
     const popupLinks = document.querySelectorAll('.popup-link');
 
     popupLinks.forEach(link => {
         const popupContent = link.querySelector('.popup-content');
         link.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent default link behavior
-            if (popupContent.style.display === 'block') {
-                popupContent.style.display = 'none';
-            } else {
-                popupContent.style.display = 'block';
-                popupContent.style.top = `${link.offsetTop + link.offsetHeight}px`;
-                popupContent.style.left = `${link.offsetLeft}px`;
+            // Check if the click target is a link INSIDE the popup
+            if (!event.target.closest('.popup-content')) {
+                // If not inside .popup-content, then we toggle the popup
+                event.preventDefault(); // Prevent default link behavior ONLY for the outer link
+                if (popupContent.style.display === 'block') {
+                    popupContent.style.display = 'none';
+                } else {
+                    popupContent.style.display = 'block';
+                    popupContent.style.top = `${link.offsetTop + link.offsetHeight}px`;
+                    popupContent.style.left = `${link.offsetLeft}px`;
+                }
             }
         });
+    });
+
+      // Close popups when clicking outside
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.popup-link')) {
+            document.querySelectorAll('.popup-content').forEach(popup => {
+                popup.style.display = 'none';
+            });
+        }
     });
 });
 
