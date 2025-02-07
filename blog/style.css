@@ -400,6 +400,32 @@ body {
     display: block; 
 }
 
+.side-by-side-images-container_equal {
+    display: flex;
+    flex-direction: row;
+    gap: 10px; 
+    justify-content: flex-start; 
+    align-items: center; 
+    margin: 1.5rem auto; 
+    max-width: 75%;
+}
+
+.side-by-side-images-container_equal .content-image:first-child { 
+    flex-basis: 50%; 
+    max-width: 50%;
+    height: auto; 
+    margin: 0; 
+    display: block; 
+}
+
+.side-by-side-images-container_equal .content-image:last-child { 
+    flex-basis: 50%;
+    max-width: 50%; 
+    height: auto; 
+    margin: 0; 
+    display: block; 
+}
+
 .image-paragraph {
     text-align: center; 
 }
