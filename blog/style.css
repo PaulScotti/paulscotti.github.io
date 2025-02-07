@@ -223,8 +223,12 @@ hr {
     font-size: 1rem; 
 }
 
-#sidebar-toc ul ul li a {
+#sidebar-toc ul li a {
     font-size: .85rem; 
+}
+
+#sidebar-toc ul li a.active {
+    color: rgb(0, 255, 238) !important; 
 }
 
 #sidebar-toc a {
