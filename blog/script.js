@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 popupContent.style.display = 'none';
             } else {
                 popupContent.style.display = 'block';
-                // Basic positioning
                 popupContent.style.top = `${link.offsetTop + link.offsetHeight}px`;
                 popupContent.style.left = `${link.offsetLeft}px`;
             }
@@ -52,11 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // TOC Layout Logic
-const sidebarToc = document.getElementById('sidebar-toc'); // Corrected variable name
-const inlineToc = document.getElementById('inline-toc');   // Get inline TOC element
+const sidebarToc = document.getElementById('sidebar-toc');
+const inlineToc = document.getElementById('inline-toc');
 
 function adjustLayout() {
-    // console.log(window.innerWidth)
     if (window.innerWidth <= 1400) {
         inlineToc.style.display = 'block';
         sidebarToc.style.display = 'none';
@@ -88,4 +86,37 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("Target container not found!");
     }
+});
+
+// Scrollspy Functionality for Sidebar TOC
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('#content h1, #content h2'); 
+    const tocLinks = document.querySelectorAll('#sidebar-toc ul li a'); 
+
+    function highlightActiveLink() {
+        let currentSectionId = null;
+        let viewportHeight = window.innerHeight;
+        let scrollY = window.scrollY;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollY >= sectionTop - viewportHeight / 3) { 
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+
+        tocLinks.forEach(link => {
+            link.classList.remove('active'); 
+            if (link.getAttribute('href') === `#${currentSectionId}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    if (tocLinks.length > 0 && sections.length > 0) {
+        tocLinks[0].classList.add('active'); 
+    }
+
+    window.addEventListener('scroll', highlightActiveLink);
+    highlightActiveLink(); 
 });
