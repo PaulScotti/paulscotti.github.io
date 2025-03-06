@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophont - Multimodal Medical Foundation Models</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Sophont</div>
+                <ul class="nav-links">
+                    <li><a href="#platform">Platform</a></li>
+                    <li><a href="#research">Research</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#press">Press</a></li>
+                    <li><a href="#contact" class="btn-primary">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Building the Future of Medical AI</h1>
+                    <p>Open multimodal foundation models for healthcare, uniting diverse medical data into unified representations.</p>
+                    <div class="hero-buttons">
+                        <a href="#platform" class="btn-primary">Explore Platform</a>
+                        <a href="#contact" class="btn-secondary">Partner With Us</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="model-visualization">
+                        <div id="model-info-panel" class="model-info-panel">
+                            <h4>Node Info</h4>
+                            <p>Interact with the nodes to explore how our multimodal system integrates diverse medical data.</p>
+                        </div>
+                        <div class="chalkboard-overlay"></div>
+                    </div>
+                    <div class="visualization-caption">
+                        <p>Interactive visualization: Tap and drag the medical data nodes to explore their relationships</p>
+                        <p class="mobile-hint">On mobile, touch and move to interact with nodes</p>
+                    </div>
+                    <div class="applications-showcase">
+                        <h3>Downstream Applications</h3>
+                        <div class="apps-container">
+                            <div class="app-demo clinical-assistant">
+                                <div class="app-header">
+                                    <div class="app-icon"></div>
+                                    <h4>Doctor-Facing AI Assistant</h4>
+                                </div>
+                                <div class="chat-interface">
+                                    <div class="chat-message system">
+                                        <p>Patient's brain MRI shows mild periventricular white matter hyperintensities and recent lab results indicate elevated HbA1c (7.2%). Clinical notes mention increasing fatigue and mild cognitive complaints.</p>
+                                    </div>
+                                    <div class="chat-message user">
+                                        <p>What is the most likely clinical correlation between these findings?</p>
+                                    </div>
+                                    <div class="chat-message assistant">
+                                        <p>The combination of periventricular white matter hyperintensities on MRI, elevated HbA1c, and cognitive complaints suggests early small vessel disease likely related to poorly controlled diabetes. This pattern is consistent with early diabetic microvascular changes affecting cerebral vessels.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="app-demo patient-ehr">
+                                <div class="app-header">
+                                    <div class="app-icon"></div>
+                                    <h4>Patient-Facing EHR Chatbot</h4>
+                                </div>
+                                <div class="chat-interface">
+                                    <div class="chat-message user">
+                                        <p>Can you explain my recent lab results in simple terms?</p>
+                                    </div>
+                                    <div class="chat-message assistant">
+                                        <p>Your recent blood tests show your blood sugar levels have been running a bit high over the past 3 months (HbA1c of 7.2%). Your doctor has recommended some lifestyle changes to bring this down. Your kidney and liver function tests are all normal.</p>
+                                    </div>
+                                    <div class="chat-message user">
+                                        <p>What should I do to lower my blood sugar?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="platform" class="platform">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Platform</h2>
+                <p>Self-supervised multimodal medical models that transform healthcare AI</p>
+            </div>
+            
+            <div class="platform-workflow">
+                <div class="workflow-step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon" id="data-icon"></div>
+                    <h3>Data Integration</h3>
+                    <p>Unifying diverse medical inputs: health records, brain scans, blood tests, histopathology images, and more.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon" id="model-icon"></div>
+                    <h3>Multimodal Learning</h3>
+                    <p>Self-supervised models that understand connections between different medical data types.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon" id="latent-icon"></div>
+                    <h3>Rich Latent Space</h3>
+                    <p>Generating unified representations with cross-modal signals for downstream applications.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">04</div>
+                    <div class="step-icon" id="apps-icon"></div>
+                    <h3>Applications</h3>
+                    <p>Enabling healthcare AI assistants, diagnostic tools, medical analysis, and specialized APIs.</p>
+                </div>
+            </div>
+
+            <div class="platform-benefits">
+                <div class="benefit">
+                    <h4>Open Architecture</h4>
+                    <p>Transparent and adaptable foundation models that evolve with the medical field.</p>
+                </div>
+                <div class="benefit">
+                    <h4>Cross-Modal Understanding</h4>
+                    <p>Unique insights from correlations between different medical data types.</p>
+                </div>
+                <div class="benefit">
+                    <h4>Scalable Infrastructure</h4>
+                    <p>Built for healthcare's massive and complex data landscape.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="research" class="research">
+        <div class="container">
+            <div class="section-header">
+                <h2>Research Publications</h2>
+                <p>Advancing the field of medical AI through innovation and peer-reviewed research</p>
+            </div>
+
+            <div class="publications">
+                <div class="publication">
+                    <div class="pub-meta">
+                        <span class="pub-date">2024</span>
+                        <span class="pub-journal">Nature Medicine</span>
+                    </div>
+                    <h3>Multimodal Foundation Models for Clinical Decision Support</h3>
+                    <p class="authors">Chen, J., Wang, L., Smith, K., et al.</p>
+                    <a href="#" class="read-more">Read Paper →</a>
+                </div>
+                
+                <div class="publication">
+                    <div class="pub-meta">
+                        <span class="pub-date">2023</span>
+                        <span class="pub-journal">NeurIPS</span>
+                    </div>
+                    <h3>Self-Supervised Learning from Multi-institutional Medical Imaging</h3>
+                    <p class="authors">Lopez, A., Kumar, R., Johnson, T., et al.</p>
+                    <a href="#" class="read-more">Read Paper →</a>
+                </div>
+                
+                <div class="publication">
+                    <div class="pub-meta">
+                        <span class="pub-date">2023</span>
+                        <span class="pub-journal">JAMA</span>
+                    </div>
+                    <h3>Integrated Analysis of Electronic Health Records and Imaging Data</h3>
+                    <p class="authors">Patel, S., Rodriguez, M., Wu, D., et al.</p>
+                    <a href="#" class="read-more">Read Paper →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Team</h2>
+                <p>A multidisciplinary group of experts in AI, medicine, and healthcare systems</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo" style="background-color: #0f3a5d;"></div>
+                    <h3>Sarah Chen, PhD</h3>
+                    <p class="member-title">Co-Founder & CEO</p>
+                    <p class="member-bio">Former AI research lead at Stanford Medicine with 15+ years experience in healthcare AI systems.</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-color: #0c4d6c;"></div>
+                    <h3>Michael Rodriguez, MD</h3>
+                    <p class="member-title">Co-Founder & Chief Medical Officer</p>
+                    <p class="member-bio">Practicing radiologist and clinical informatics expert with deep experience in medical imaging.</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-color: #085e7d;"></div>
+                    <h3>David Kumar, PhD</h3>
+                    <p class="member-title">Chief Technology Officer</p>
+                    <p class="member-bio">Pioneer in multimodal learning systems, previously led AI research teams at Google Health.</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-color: #06768e;"></div>
+                    <h3>Lisa Washington</h3>
+                    <p class="member-title">Chief Operating Officer</p>
+                    <p class="member-bio">Healthcare operations executive with experience scaling healthtech startups from seed to IPO.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="press" class="press">
+        <div class="container">
+            <div class="section-header">
+                <h2>Press & Recognition</h2>
+                <p>What leading voices in healthcare and technology are saying about Sophont</p>
+            </div>
+
+            <div class="press-grid">
+                <div class="press-item">
+                    <div class="press-logo" id="techcrunch"></div>
+                    <blockquote>"Sophont's approach to unified medical AI could transform how we deliver healthcare in the next decade."</blockquote>
+                    <div class="press-source">TechCrunch</div>
+                </div>
+                
+                <div class="press-item">
+                    <div class="press-logo" id="nature"></div>
+                    <blockquote>"A breakthrough in how medical data can be contextualized across modalities, creating entirely new diagnostic possibilities."</blockquote>
+                    <div class="press-source">Nature Biotechnology</div>
+                </div>
+                
+                <div class="press-item">
+                    <div class="press-logo" id="forbes"></div>
+                    <blockquote>"Among the most promising medical AI startups of 2024, with technology that could fundamentally change clinical workflows."</blockquote>
+                    <div class="press-source">Forbes</div>
+                </div>
+                
+                <div class="press-item">
+                    <div class="press-logo" id="mit"></div>
+                    <blockquote>"Sophont is building the infrastructure layer that could power the next generation of healthcare applications."</blockquote>
+                    <div class="press-source">MIT Technology Review</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-content">
+                    <h2>Partner With Sophont</h2>
+                    <p>Interested in working with us? Whether you're a healthcare provider, research institution, or investor, we'd love to hear from you.</p>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="method-icon" id="email-icon"></div>
+                            <div class="method-details">
+                                <h4>Email Us</h4>
+                                <p>partners@sophont.ai</p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <div class="method-icon" id="location-icon"></div>
+                            <div class="method-details">
+                                <h4>Visit Us</h4>
+                                <p>101 Innovation Drive<br>Cambridge, MA 02142</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="partnership-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="organization">Organization</label>
+                            <input type="text" id="organization" name="organization">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">Sophont</div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#platform">Platform</a></li>
+                            <li><a href="#research">Research</a></li>
+                            <li><a href="#team">Team</a></li>
+                            <li><a href="#careers">Careers</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">HIPAA Compliance</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                            <li><a href="#">GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Sophont, Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
