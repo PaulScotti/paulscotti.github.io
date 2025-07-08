@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- Fonts -->
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"> -->
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
@@ -23,8 +20,8 @@
     <img src="logo.png" alt="Sophont logo" class="logo">
     <nav>
       <a class="nav-link active" href="#">Home</a>
-      <a class="nav-link" href="#careers">Careers</a>
-      <a class="nav-link" href="mailto:contact@sophontai.com">Contact</a>
+      <a class="nav-link" href="#contact">Partner with us</a>
+      <a class="nav-link" href="#publications">Past research</a>
     </nav>
   </header>
 
@@ -40,8 +37,12 @@
         neuro­imaging, clinical text and more—empowering clinicians and researchers worldwide.
       </p>
 
-      <a href="YOUR-BLOG-POST-URL" class="btn">
-        Read our&nbsp;$8.75&nbsp;M seed announcement →
+      <!-- <a href="YOUR-BLOG-POST-URL" class="btn">
+        Read our seed announcement →
+      </a> -->
+
+      <a href="https://www.tanishq.ai/blog/posts/sophont.html" class="btn">
+        Read our medical AI manifesto →
       </a>
 
       <!-- Team -->
@@ -52,8 +53,8 @@
             <img class="avatar" src="tanishq.png" alt="Tanishq Abraham">
           </a>
           <div class="bio">
-            <strong>Tanishq&nbsp;Mathew&nbsp;Abraham – CEO</strong><br>
-            Former Research Director at Stability&nbsp;AI; founded MedARC, the world’s largest online medical AI research community.
+            <strong>Tanishq Mathew Abraham – CEO</strong><br>
+            Former Research Director at Stability AI; founded MedARC, the world’s largest online medical AI research community.
           </div>
         </li>
         <li>
@@ -61,7 +62,7 @@
             <img class="avatar" src="paul.png" alt="Paul Scotti">
           </a>
           <div class="bio">
-            <strong>Paul&nbsp;Scotti – CTO</strong><br>
+            <strong>Paul Scotti – CTO</strong><br>
             Former Head of NeuroAI at Stability AI and postdoc at Princeton University. Paul brings over a decade of experience in computational neuroscience.
           </div>
         </li>
@@ -70,38 +71,246 @@
 
     <!-- RIGHT COLUMN ─────────────────────────────────────── -->
     <aside class="info">
-      <div class="pattern"></div>
-
       <!-- Panel 1: About + Hiring -->
       <div class="panel">
-        <h2>About&nbsp;Sophont</h2>
+        <h2>About Sophont</h2>
         <p>
           Founded in 2025, Sophont aims to be the “DeepSeek of medical AI” by releasing
           large-scale, transparent multimodal models in partnership with academia, hospitals and industry.
         </p>
 
-        <h2 id="careers">We’re&nbsp;hiring</h2>
-        <p>
-          We’re looking for <strong>Founding&nbsp;Research&nbsp;Engineers</strong> who believe open, multimodal
-          AI will transform healthcare. <a href="YOUR-JOB-POSTING-URL">See open roles&nbsp;→</a>
-        </p>
+        <h2 id="careers">We’re hiring</h2>
+        <p>We’re looking for founding team members who believe open, multimodal AI will transform healthcare.</p>
+        <div class="job-listings">
+            <a href="job_postings/llm.html" class="job-button">Founding Research Engineer - LLM Team →</a>
+            <a href="job_postings/vision.html" class="job-button">Founding Research Scientist - Vision Team →</a>
+            <a href="job_postings/misc.html" class="job-button">Founding Research Scientist - Misc. →</a>
+        </div>
       </div>
     </aside>
   </main>
+  
+  <!-- ▒▒  Contact Section (Full-Width)  ▒▒ -->
+  <section id="contact" class="contact-section">
+    <div class="contact-container">
+        <h2 class="section-title">Partner With Us</h2>
+        <p class="contact-lead">
+            Collaborate with us at the frontier of open medical AI. Whether you're a healthcare provider, research institution, or investor, let's connect.
+        </p>
+        <form class="contact-form" action="https://formspree.io/f/mjkygqpd" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-submit">Send Message</button>
+        </form>
+    </div>
+  </section>
+
+  <!-- ▒▒  Publications Section  ▒▒ -->
+  <section id="publications" class="publications-section">
+    <h2 class="section-title">Research Publications</h2>
+    <div class="scroll-container">
+      <div class="publications-grid">
+        <!-- All 13 publication cards from the previous step remain here unchanged -->
+        <article class="publication-card">
+            <img src="https://images.pexels.com/photos/4226219/pexels-photo-4226219.jpeg?auto=compress&cs=tinysrgb&w=600" alt="fMRI brain visualization">
+            <div class="card-content">
+              <h3>Reconstructing the mind's eye: fmri-to-image...</h3>
+              <p class="authors">P. Scotti, ... T.M. Abraham</p>
+              <p class="venue">NeurIPS (spotlight), 2023</p>
+              <p class="description">Introduces a method to reconstruct images from fMRI signals by aligning brain activity with image embeddings and using a diffusion model.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/4ddab70bf41ffe5d423840644d3357f4-Paper-Conference.pdf" target="_blank" rel="noopener">Read Paper →</a>
+              <a href="https://github.com/paulscotti/mind-eye" target="_blank" rel="noopener">GitHub Code →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/3825586/pexels-photo-3825586.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Abstract AI visualization">
+            <div class="card-content">
+              <h3>MindEye2: Shared-Subject Models Enable fMRI-To-Image With 1 Hour of Data</h3>
+              <p class="authors">P. Scotti, ... T.M. Abraham</p>
+              <p class="venue">ICML, 2024</p>
+              <p class="description">Demonstrates that a shared fMRI-to-image model can be fine-tuned on just one hour of data from a new person, enabling high-quality brain decoding with minimal data.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://arxiv.org/abs/2403.11207" target="_blank" rel="noopener">Read Paper →</a>
+              <a href="https://github.com/MedARC-AI/MindEyeV2" target="_blank" rel="noopener">GitHub Code →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/4225923/pexels-photo-4225923.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Chest X-ray on a monitor">
+            <div class="card-content">
+              <h3>A vision–language foundation model for the generation of realistic chest X-ray images</h3>
+              <p class="authors">C. Bluethgen, ... T.M. Abraham, et al.</p>
+              <p class="venue">Nature Biomedical Engineering, 2024</p>
+              <p class="description">Presents RoentGen, a model that can generate realistic, high-resolution X-ray images from clinical text prompts, aiding in data augmentation and education.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://www.nature.com/articles/s41551-024-01246-y" target="_blank" rel="noopener">Read Paper →</a>
+              <a href="https://github.com/TUD-MIA/RoentGen" target="_blank" rel="noopener">GitHub Code →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/5452291/pexels-photo-5452291.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Doctor interpreting medical scans">
+            <div class="card-content">
+              <h3>A Vision-Language Foundation Model to Enhance Efficiency of Chest X-ray Interpretation</h3>
+              <p class="authors">Z. Chen, ... T.M. Abraham, et al.</p>
+              <p class="venue">AAAI, 2024</p>
+              <p class="description">This model generates preliminary reports from chest X-rays, significantly improving radiologists' diagnostic efficiency without compromising accuracy.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://arxiv.org/abs/2401.12208" target="_blank" rel="noopener">Read Paper →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Code on a dark screen">
+            <div class="card-content">
+              <h3>LLMs in medicine: evaluations, advances, and the future</h3>
+              <p class="authors">T.M. Abraham</p>
+              <p class="venue">Blog post, 2025</p>
+              <p class="description">Provides a comprehensive overview of how LLMs are evaluated for medical applications, highlighting the critical need for more robust, multimodal evaluation frameworks.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://www.tanishq.ai/blog/posts/llm-medical-evals.html" target="_blank" rel="noopener">Read Post →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Abstract colorful generative art">
+            <div class="card-content">
+              <h3>DALL-E Mini</h3>
+              <p class="authors">B. Dayma, ... T.M. Abraham, et al.</p>
+              <p class="venue">Blog post, 2021</p>
+              <p class="description">Details the community-led creation of DALL·E mini, an open-source text-to-image model, explaining its architecture, training, and impact.</p>
+            </div>
+            <div class="card-links">
+              <a href="https://wandb.ai/dalle-mini/dalle-mini/reports/DALL-E-Mini-Explained--Vmlldzo4NjIxODA" target="_blank" rel="noopener">Read Post →</a>
+              <a href="https://github.com/borisdayma/dalle-mini" target="_blank" rel="noopener">GitHub Code →</a>
+            </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/7089020/pexels-photo-7089020.jpeg?auto=compress&cs=tinysrgb&w=600" alt="3D visualization of a human brain">
+              <div class="card-content">
+                  <h3>EduCortex: browser-based 3D brain visualization of fMRI meta-analysis maps</h3>
+                  <p class="authors">P. Scotti, et al.</p>
+                  <p class="venue">JOSE, 2021</p>
+                  <p class="description">A lightweight, open-source JavaScript library for visualizing 3D brain maps directly in a web browser to share and explore fMRI meta-analysis results.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://jose.theoj.org/papers/10.21105/jose.00075.pdf" target="_blank" rel="noopener">Read Paper →</a>
+                  <a href="https://github.com/paulscotti/educortex" target="_blank" rel="noopener">GitHub Code →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/2280568/pexels-photo-2280568.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Digital pathology slide">
+              <div class="card-content">
+                  <h3>Label- and slide-free tissue histology using 3D epi-mode quantitative phase imaging...</h3>
+                  <p class="authors">T.M. Abraham, et al.</p>
+                  <p class="venue">Optica, 2023</p>
+                  <p class="description">A microscopy technique using deep learning to create virtual H&E stains of unlabeled tissue, providing real-time histology without chemical staining.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://opg.optica.org/optica/fulltext.cfm?uri=optica-10-12-1605&id=544067" target="_blank" rel="noopener">Read Paper →</a>
+                  <a href="https://github.com/T-Ab/SLIDE" target="_blank" rel="noopener">GitHub Code →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+              <img src="https://images.pexels.com/photos/7108111/pexels-photo-7108111.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Retina scan equipment">
+              <div class="card-content">
+                  <h3>Progress Towards Decoding Visual Imagery via fNIRS</h3>
+                  <p class="authors">M. Adamic, ... P. Scotti, et al.</p>
+                  <p class="venue">arXiv, 2024</p>
+                  <p class="description">This study explores using fNIRS, a portable alternative to fMRI, for decoding visual imagery, showing promise in classifying imagined visual categories.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://arxiv.org/abs/2406.07662" target="_blank" rel="noopener">Read Paper →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/5473956/pexels-photo-5473956.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Abstract data visualization with flowing lines">
+              <div class="card-content">
+                  <h3>Scalable High-Resolution Pixel-Space Image Synthesis with Hourglass Diffusion Transformers</h3>
+                  <p class="authors">K. Crowson, ... T.M. Abraham, et al.</p>
+                  <p class="venue">ICML, 2024</p>
+                  <p class="description">Introduces the Hourglass Diffusion Transformer (HDiT), a novel architecture for generating high-resolution images directly in pixel space.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://arxiv.org/abs/2401.11605" target="_blank" rel="noopener">Read Paper →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/3938022/pexels-photo-3938022.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Abstract representation of connected nodes">
+              <div class="card-content">
+                  <h3>Trainees' perspectives and recommendations for catalyzing the next generation of NeuroAI researchers</h3>
+                  <p class="authors">A. Luppi, ... P. Scotti, & H. Gellersen</p>
+                  <p class="venue">Nature Communications, 2024</p>
+                  <p class="description">Identifies key challenges in NeuroAI training and provides recommendations for fostering an interdisciplinary environment for the next generation of scientists.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://www.nature.com/articles/s41467-024-53375-2" target="_blank" rel="noopener">Read Paper →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+              <img src="https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Microscope view of cells">
+              <div class="card-content">
+                  <h3>NSD-Imagery: A benchmark dataset for extending fMRI vision decoding methods to mental imagery</h3>
+                  <p class="authors">R. Kneeland, P. Scotti, et al.</p>
+                  <p class="venue">CVPR, In press</p>
+                  <p class="description">Introduces NSD-Imagery, the first large-scale fMRI dataset dedicated to mental imagery, designed to advance brain decoding models for imagined visuals.</p>
+              </div>
+              <div class="card-links">
+                  <a href="https://arxiv.org/abs/2406.03925" target="_blank" rel="noopener">Read Paper →</a>
+              </div>
+          </article>
+    
+          <article class="publication-card">
+            <img src="https://images.pexels.com/photos/5723840/pexels-photo-5723840.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Abstract neural network graphic">
+              <div class="card-content">
+                  <h3>MIRAGE: Robust multi-modal architectures translate fMRI-to-image models from vision to mental imagery</h3>
+                  <p class="authors">R. Kneeland, ... P. Scotti, et al.</p>
+                  <p class="venue">Under review</p>
+                  <p class="description">Presents a robust multimodal architecture that adapts fMRI-to-image models from visual perception to mental imagery, improving decoding of imagined scenes.</p>
+              </div>
+          </article>
+      </div>
+    </div>
+  </section>
 
   <!-- ▒▒  Footer  ▒▒ -->
   <footer>
     <div class="footer-links">
       <span class="footer-group">
         <strong>Legal:</strong>
-        <a href="YOUR-PRIVACY-POLICY-URL">Privacy&nbsp;Policy</a> ·
-        <a href="YOUR-TOS-URL">Terms&nbsp;of&nbsp;Service</a>
+        <a href="https://sophontai.com/legal/Sophont%20Inc.%20Form%20of%20Website%20Privacy%20Policy.pdf">Privacy&nbsp;Policy</a> ·
+        <a href="https://sophontai.com/legal/Sophont%20Inc.%20Form%20of%20Website%20Terms%20of%20Use.pdf">Terms&nbsp;of&nbsp;Service</a>
       </span>
       <span class="footer-group">
         <strong>Connect:</strong>
-        <a href="https://twitter.com/PLACEHOLDER" target="_blank" rel="noopener">Twitter</a> ·
-        <a href="https://linkedin.com/company/PLACEHOLDER" target="_blank" rel="noopener">LinkedIn</a> ·
-        <a href="https://github.com/PLACEHOLDER" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://twitter.com/SophontAI" target="_blank" rel="noopener">Twitter</a> ·
+        <a href="https://linkedin.com/company/sophont" target="_blank" rel="noopener">LinkedIn</a> ·
+        <a href="https://github.com/SophontAI" target="_blank" rel="noopener">GitHub</a>
       </span>
     </div>
     <p class="copyright">© 2025 Sophont Inc. All rights reserved.</p>

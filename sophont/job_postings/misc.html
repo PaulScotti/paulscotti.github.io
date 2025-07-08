@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles (note the ../ path) -->
+  <link rel="stylesheet" href="../styles.css" />
+
+  <title>Founding Research Engineer, Miscellaneous — Sophont</title>
+</head>
+<body>
+
+  <canvas id="bg"></canvas>
+
+  <!-- ▒▒  Top Bar  ▒▒ -->
+  <header class="topbar">
+    <a href="../index.html">
+      <img src="../logo.png" alt="Sophont logo" class="logo">
+    </a>
+    <nav>
+      <a class="nav-link" href="../index.html">Home</a>
+    </nav>
+  </header>
+
+  <!-- ▒▒  Job Posting Content  ▒▒ -->
+  <main class="job-posting-page">
+    <div class="job-content">
+        <h1>Founding Research Engineer, Miscellaneous</h1>
+
+        <h2>About the Role</h2>
+        <p>Sophont is a public-benefit corporation building open multimodal foundation models for medicine. Joining Sophont means you are paid to lead and contribute to high-impact medical AI research ultimately aimed to transform healthcare and life sciences.</p>
+        <p>We are looking for exceptional, high-agency ML research engineers who are passionate about using AI to build the future of healthcare.</p>
+        <p>We especially value creative and unconventional approaches to research, and we care only about what you have built, not what your credentials are. You will have access to dedicated GPU clusters and you will work alongside top researchers in the field (both within Sophont and through collaborations with other institutions) to work on applying foundation models to the impactful field of medicine.</p>
+        <p>We are very open to remote employees and welcome applications from all locations, though we have a preference for candidates based in the US (and more specifically, the San Francisco area).</p>
+        <p>If you’re interested in working on highly impactful AI projects that could have the potential to transform and save many lives, Sophont is the company to work at.</p>
+        
+        <div class="apply-box">
+            <p><strong>To apply, send an email with your CV attached to <a href="mailto:hiring@sophontai.com?subject=CV%20-%20Miscellaneous">hiring@sophontai.com</a>, using the subject line '[Your Full Name] CV - Miscellaneous'</strong></p>
+        </div>
+
+        <h2>Responsibilities</h2>
+        <ul>
+            <li>Lead, contribute to, and execute efforts to pre-train and fine-tune medical foundation models</li>
+            <li>Writing papers and publishing at top conferences and scientific journals</li>
+            <li>Collaborate internally at Sophont on additional foundation model projects across a wide range of medical domains (text, neuroimaging, pathology, genomics, etc.)</li>
+            <li>Contribute to any potential external collaborations focused on medical foundation models</li>
+            <li>Stay up-to-date with the latest advancements in AI/ML infrastructure and tools, self-supervised, RL, multimodal, medical training opportunities to enhance our model’s capabilities.</li>
+        </ul>
+
+        <h2>Qualifications</h2>
+        <ul>
+            <li>2+ years working on ML projects (training and fine-tuning ML models, especially for research projects)</li>
+            <li>Experience with training and fine-tuning foundation models</li>
+            <li>Experience with PyTorch</li>
+            <li>Experience scaling up to multi-node model training (e.g., DeepSpeed, FSDP, NeMO, torchtitan)</li>
+            <li>Publications in top-tier conferences (NeurIPS, ICML, EMNLP, CVPR, etc.), peer-reviewed journals, or code contributions to high-profile open-source repositories</li>
+            <li>Effectively communicate ML insights and results—verbally, in writing, and through visualizations</li>
+            <li>Self-motivated, high-agency, well-organized (e.g. keep track of your own priorities and refine the plan according to new insights), self-reliant (able to debug complex issues with minimal supervision)</li>
+            <li>Optionally, we are also looking for (ranked in preference):
+                <ul>
+                    <li>Familiarity with the medical foundation model space</li>
+                    <li>Experience and contributions in the open-source ML ecosystem (e.g., HuggingFace, W&B)</li>
+                    <li>Experience with Discord-based public research communities (e.g., MedARC, EleutherAI, LAION)</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>Compensation</h2>
+        <p>The expected salary range for this position is $125,000–$225,000 per year, depending on experience and location. In addition to base salary, employees are eligible for meaningful equity incentives and a comprehensive benefits package.</p>
+        
+        <h2>Benefits and Perks</h2>
+        <ul>
+            <li>Competitive compensation, including meaningful equity incentives</li>
+            <li>Employees are covered by medical, dental, vision, and basic life insurance</li>
+            <li>Employees are able to enroll in our company’s 401(k) plan with 4% Company match</li>
+            <li>Employees will participate in workshops, hackathons, conferences and other learning opportunities</li>
+            <li>Employees are encouraged to publish and open-source their work</li>
+            <li>Employees have the freedom to work remotely and mostly dictate their own working hours, provided they are available during core collaboration hours</li>
+            <li>Employees will work with a talented, hard-working, passionate, and mission-driven team focused on saving and improving lives by advancing medical AI</li>
+        </ul>
+        <p>We are an equal opportunity employer and welcome applicants from all backgrounds.</p>
+
+    </div>
+  </main>
+
+  <!-- ▒▒  Footer  ▒▒ -->
+  <footer>
+    <div class="footer-links">
+      <span class="footer-group">
+        <strong>Legal:</strong>
+        <a href="YOUR-PRIVACY-POLICY-URL">Privacy Policy</a> ·
+        <a href="YOUR-TOS-URL">Terms of Service</a>
+      </span>
+      <span class="footer-group">
+        <strong>Connect:</strong>
+        <a href="https://twitter.com/PLACEHOLDER" target="_blank" rel="noopener">Twitter</a> ·
+        <a href="https://linkedin.com/company/PLACEHOLDER" target="_blank" rel="noopener">LinkedIn</a> ·
+        <a href="https://github.com/PLACEHOLDER" target="_blank" rel="noopener">GitHub</a>
+      </span>
+    </div>
+    <p class="copyright">© 2025 Sophont Inc. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* ───── network-nodes background ───── */
+    (() => {
+      const cvs = document.getElementById('bg');
+      const ctx  = cvs.getContext('2d');
+      let w, h, dots;
+    
+      function resize() {
+        w = cvs.width  = window.innerWidth;
+        h = cvs.height = window.innerHeight;
+        // 1 dot per ~22 000 px² (unchanged)
+        const count = Math.floor((w * h) / 22000);
+        dots = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2
+        }));
+      }
+      window.addEventListener('resize', resize);
+      resize();
+    
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+    
+        /* ⇢ slightly brighter blue, slightly higher fill opacity               */
+        ctx.fillStyle   = 'rgba(0,134,214,0.9)';
+        /* ⇢ thicker stroke + higher base opacity                               */
+        ctx.strokeStyle = 'rgba(0,134,214,0.55)';
+        ctx.lineWidth   = 1.6;                 // was 1
+    
+        // move & wrap dots
+        dots.forEach(d => {
+          d.x = (d.x + d.vx + w) % w;
+          d.y = (d.y + d.vy + h) % h;
+    
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, 2, 0, Math.PI * 2); // radius 2 px (was 1.2)
+          ctx.fill();
+        });
+    
+        // draw lines between near dots
+        for (let i = 0; i < dots.length; i++) {
+          for (let j = i + 1; j < dots.length; j++) {
+            const dx = dots[i].x - dots[j].x;
+            const dy = dots[i].y - dots[j].y;
+            const dist2 = dx * dx + dy * dy;
+    
+            if (dist2 < 9000) {                // keep 95 px cutoff
+              const alpha = 1 - dist2 / 9000;
+              ctx.globalAlpha = alpha * 0.8;   // was 0.6
+              ctx.beginPath();
+              ctx.moveTo(dots[i].x, dots[i].y);
+              ctx.lineTo(dots[j].x, dots[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+    </script>
+
+</body>
+</html>
