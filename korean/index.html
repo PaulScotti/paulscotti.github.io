@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f2ea">
+  <title>Korean Cards</title>
+  <link rel="icon" type="image/png" href="https://paulscotti.github.io/favicon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f2ea;
+      --surface: #fffdfa;
+      --ink: #171916;
+      --muted: #62695f;
+      --line: #ded8cc;
+      --leaf: #526b55;
+      --blue: #4b75a1;
+      --rose: #bd574b;
+      --gold: #d39b32;
+      --shadow: 0 24px 80px rgba(29, 31, 27, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--paper);
+    }
+
+    body {
+      min-height: 100dvh;
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 250, 0.8), rgba(245, 242, 234, 0.98)),
+        repeating-linear-gradient(90deg, rgba(23, 25, 22, 0.025) 0, rgba(23, 25, 22, 0.025) 1px, transparent 1px, transparent 72px);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, 980px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(88px, auto) 1fr;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(82, 107, 85, 0.14), rgba(75, 117, 161, 0.1)),
+        var(--surface);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 28px rgba(29, 31, 27, 0.08);
+    }
+
+    .brand-mark svg {
+      width: 25px;
+      height: 25px;
+      display: block;
+    }
+
+    .brand-text {
+      display: grid;
+      gap: 1px;
+    }
+
+    .brand-title {
+      font-size: 0.98rem;
+      font-weight: 760;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 650;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      justify-self: end;
+      width: min(100%, 420px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 253, 250, 0.74);
+      overflow: hidden;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 10px 12px;
+      display: grid;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .stat + .stat {
+      border-left: 1px solid var(--line);
+    }
+
+    .stat-value {
+      min-height: 1.45rem;
+      font-size: 1.2rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 780;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 720;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 8px;
+      background: rgba(23, 25, 22, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--leaf), var(--blue), var(--gold));
+      transition: width 220ms ease;
+    }
+
+    .stage {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(310px, 1fr) auto;
+      align-items: stretch;
+      gap: 18px;
+    }
+
+    .flashcard {
+      position: relative;
+      width: 100%;
+      min-height: min(58dvh, 520px);
+      border: 1px solid color-mix(in srgb, var(--line), var(--ink) 8%);
+      border-radius: 8px;
+      padding: clamp(24px, 5vw, 56px);
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 250, 0.95), rgba(255, 253, 250, 0.82)),
+        var(--surface);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .flashcard::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(82, 107, 85, 0.13), transparent 32%, transparent 68%, rgba(189, 87, 75, 0.1)),
+        repeating-linear-gradient(0deg, rgba(23, 25, 22, 0.028) 0, rgba(23, 25, 22, 0.028) 1px, transparent 1px, transparent 28px);
+      opacity: 0.64;
+    }
+
+    .flashcard:focus-visible {
+      outline: 3px solid rgba(75, 117, 161, 0.44);
+      outline-offset: 4px;
+    }
+
+    .flashcard:active {
+      transform: translateY(1px) scale(0.998);
+    }
+
+    .flashcard.is-revealed {
+      border-color: color-mix(in srgb, var(--blue), var(--line) 52%);
+      box-shadow: 0 24px 90px rgba(75, 117, 161, 0.18);
+    }
+
+    .side-label {
+      position: relative;
+      z-index: 1;
+      justify-self: start;
+      min-height: 28px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      background: rgba(255, 253, 250, 0.72);
+      border: 1px solid rgba(222, 216, 204, 0.82);
+      font-size: 0.72rem;
+      font-weight: 760;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .term {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      align-self: center;
+      justify-self: center;
+      text-align: center;
+      font-weight: 780;
+      line-height: 1.12;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+
+    .flashcard[data-script="korean"] .term {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      font-weight: 750;
+      line-height: 1.18;
+    }
+
+    .flashcard[data-density="short"] .term {
+      font-size: clamp(3rem, 11vw, 7.2rem);
+    }
+
+    .flashcard[data-density="medium"] .term {
+      font-size: clamp(2.45rem, 8vw, 5.4rem);
+    }
+
+    .flashcard[data-density="long"] .term {
+      font-size: clamp(1.85rem, 6vw, 3.8rem);
+    }
+
+    .flashcard[data-density="dense"] .term {
+      font-size: clamp(1.4rem, 4.8vw, 2.65rem);
+    }
+
+    .card-count {
+      position: relative;
+      z-index: 1;
+      justify-self: end;
+      color: color-mix(in srgb, var(--muted), var(--ink) 14%);
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      min-height: 94px;
+    }
+
+    .answer-button,
+    .reset-button {
+      min-width: 0;
+      min-height: 92px;
+      border: 0;
+      border-radius: 8px;
+      color: #fffdfa;
+      font-size: clamp(1.55rem, 5.2vw, 2.35rem);
+      font-weight: 820;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 140ms ease, filter 140ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .answer-button:focus-visible,
+    .reset-button:focus-visible {
+      outline: 3px solid rgba(75, 117, 161, 0.44);
+      outline-offset: 4px;
+    }
+
+    .answer-button:active,
+    .reset-button:active {
+      transform: translateY(1px) scale(0.996);
+    }
+
+    .answer-button:disabled {
+      cursor: not-allowed;
+      filter: saturate(0.42) opacity(0.48);
+    }
+
+    .answer-button.no {
+      background: linear-gradient(135deg, #a94339, var(--rose));
+    }
+
+    .answer-button.yes {
+      background: linear-gradient(135deg, #416245, var(--leaf));
+    }
+
+    .finish,
+    .load-state {
+      flex: 1;
+      display: none;
+      min-height: min(58dvh, 520px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 253, 250, 0.86);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 52px);
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 18px;
+    }
+
+    .finish-title {
+      margin: 0;
+      font-size: clamp(2.2rem, 8vw, 5rem);
+      line-height: 1.02;
+    }
+
+    .finish-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-weight: 700;
+    }
+
+    .reset-button {
+      min-height: 64px;
+      padding: 0 28px;
+      background: linear-gradient(135deg, var(--blue), #315c7d);
+      font-size: 1.12rem;
+    }
+
+    .load-state-title {
+      margin: 0;
+      font-size: clamp(1.6rem, 5vw, 2.5rem);
+      line-height: 1.05;
+    }
+
+    .load-state-copy {
+      max-width: 34rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .loading-bars {
+      width: min(260px, 70vw);
+      height: 8px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(23, 25, 22, 0.08);
+    }
+
+    .loading-bars::before {
+      content: "";
+      display: block;
+      width: 44%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--leaf), var(--blue), var(--gold));
+      animation: loadSlide 960ms ease-in-out infinite alternate;
+    }
+
+    .is-loading .stage,
+    .is-loading .progress,
+    .is-failed .stage,
+    .is-failed .progress,
+    .is-finished .stage {
+      display: none;
+    }
+
+    .is-loading #loadingState,
+    .is-failed #errorState,
+    .is-finished #finishState {
+      display: grid;
+    }
+
+    .actions[hidden] {
+      visibility: hidden;
+      display: grid;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes loadSlide {
+      from {
+        transform: translateX(-12%);
+      }
+      to {
+        transform: translateX(138%);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app {
+        gap: 14px;
+        padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .stats {
+        justify-self: stretch;
+        width: 100%;
+      }
+
+      .stage {
+        grid-template-rows: minmax(330px, 1fr) auto;
+        gap: 14px;
+      }
+
+      .flashcard {
+        min-height: 52dvh;
+      }
+
+      .actions {
+        min-height: 84px;
+      }
+
+      .answer-button {
+        min-height: 84px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand-text {
+        display: none;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .stat {
+        padding: 9px 7px;
+      }
+
+      .stat-value {
+        font-size: 1.05rem;
+      }
+
+      .stat-label {
+        font-size: 0.62rem;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+        min-height: 168px;
+      }
+
+      .answer-button {
+        min-height: 78px;
+      }
+    }
+  </style>
+</head>
+<body class="is-loading">
+  <main class="app" aria-live="polite">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Paul Scotti home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img" focusable="false">
+            <path d="M7 22.5c5.8-8.8 11.8-12.9 18-12.4" fill="none" stroke="#526b55" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M8 9.5c3.5 2 6.5 6.4 8.8 13.2" fill="none" stroke="#4b75a1" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M21.8 10.4c-1.6 5.4-1.7 9.8-.2 13.1" fill="none" stroke="#bd574b" stroke-width="3.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">Korean Cards</span>
+          <span class="brand-subtitle">Flash deck</span>
+        </span>
+      </a>
+
+      <div class="stats" aria-label="Game stats">
+        <div class="stat">
+          <span class="stat-value" id="remainingValue">0</span>
+          <span class="stat-label">Left</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="errorValue">0</span>
+          <span class="stat-label">Errors</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="timerValue">0:00</span>
+          <span class="stat-label">Time</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="progress" aria-hidden="true">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <section class="load-state" id="loadingState">
+      <div class="loading-bars" aria-hidden="true"></div>
+      <h1 class="load-state-title">Loading cards</h1>
+      <p class="load-state-copy" id="loadingCopy">Connecting to the sheet.</p>
+    </section>
+
+    <section class="load-state" id="errorState">
+      <h1 class="load-state-title">Cards did not load</h1>
+      <p class="load-state-copy" id="errorCopy">The sheet is not reachable right now.</p>
+      <button class="reset-button" type="button" id="retryButton">Retry</button>
+    </section>
+
+    <section class="stage" id="gameStage" aria-label="Flashcard game">
+      <button class="flashcard" type="button" id="cardButton" aria-pressed="false" aria-keyshortcuts="Space" data-density="medium" data-script="latin">
+        <span class="side-label" id="sideLabel">English</span>
+        <span class="term" id="cardText">Loading</span>
+        <span class="card-count" id="cardCount">0 / 0</span>
+      </button>
+
+      <div class="actions" id="answerActions" hidden>
+        <button class="answer-button no" type="button" id="noButton">No</button>
+        <button class="answer-button yes" type="button" id="yesButton">Yes</button>
+      </div>
+    </section>
+
+    <section class="finish" id="finishState" tabindex="-1">
+      <h1 class="finish-title">Done</h1>
+      <div class="finish-stats">
+        <span id="finishTime">0:00</span>
+        <span aria-hidden="true">/</span>
+        <span id="finishErrors">0 errors</span>
+      </div>
+      <button class="reset-button" type="button" id="restartButton">Restart</button>
+    </section>
+
+    <p class="sr-only" id="screenReaderStatus" aria-live="assertive"></p>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var SHEET_ID = "1ejk0F6ppoLUu20XuykaJ9WASObmQaUitecyewjP7K2I";
+      var SHEET_QUERY = "select A,B where A is not null and B is not null";
+      var LOAD_TIMEOUT_MS = 12000;
+
+      var body = document.body;
+      var cardButton = document.getElementById("cardButton");
+      var cardText = document.getElementById("cardText");
+      var sideLabel = document.getElementById("sideLabel");
+      var cardCount = document.getElementById("cardCount");
+      var actions = document.getElementById("answerActions");
+      var yesButton = document.getElementById("yesButton");
+      var noButton = document.getElementById("noButton");
+      var retryButton = document.getElementById("retryButton");
+      var restartButton = document.getElementById("restartButton");
+      var remainingValue = document.getElementById("remainingValue");
+      var errorValue = document.getElementById("errorValue");
+      var timerValue = document.getElementById("timerValue");
+      var progressFill = document.getElementById("progressFill");
+      var errorCopy = document.getElementById("errorCopy");
+      var finishState = document.getElementById("finishState");
+      var finishTime = document.getElementById("finishTime");
+      var finishErrors = document.getElementById("finishErrors");
+      var screenReaderStatus = document.getElementById("screenReaderStatus");
+
+      var sourceCards = [];
+      var deck = [];
+      var currentCard = null;
+      var revealed = false;
+      var totalCards = 0;
+      var completedCards = 0;
+      var errors = 0;
+      var startedAt = 0;
+      var timerId = null;
+
+      function loadCards() {
+        if (new URLSearchParams(window.location.search).has("forceSheetFailure")) {
+          return Promise.reject(new Error("Forced sheet failure."));
+        }
+
+        return new Promise(function (resolve, reject) {
+          var callbackName = "__koreanCardsLoaded_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+          var script = document.createElement("script");
+          var timeoutId = window.setTimeout(function () {
+            cleanup();
+            reject(new Error("The sheet request timed out."));
+          }, LOAD_TIMEOUT_MS);
+
+          function cleanup() {
+            window.clearTimeout(timeoutId);
+            delete window[callbackName];
+            if (script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          }
+
+          window[callbackName] = function (payload) {
+            cleanup();
+            if (!payload || payload.status !== "ok" || !payload.table) {
+              reject(new Error("The sheet response was not usable."));
+              return;
+            }
+            resolve(parseCards(payload.table));
+          };
+
+          script.onerror = function () {
+            cleanup();
+            reject(new Error("The sheet request failed."));
+          };
+
+          var url = "https://docs.google.com/spreadsheets/d/" + encodeURIComponent(SHEET_ID) + "/gviz/tq";
+          url += "?headers=1";
+          url += "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName);
+          url += "&tq=" + encodeURIComponent(SHEET_QUERY);
+          url += "&cachebust=" + Date.now();
+          script.async = true;
+          script.src = url;
+          document.head.appendChild(script);
+        });
+      }
+
+      function parseCards(table) {
+        var rows = table.rows || [];
+        return rows.map(function (row, index) {
+          return {
+            id: "card-" + index,
+            english: cellText(row, 0),
+            korean: cellText(row, 1)
+          };
+        }).filter(function (card) {
+          return card.english && card.korean;
+        });
+      }
+
+      function cellText(row, index) {
+        if (!row || !row.c || !row.c[index]) {
+          return "";
+        }
+        var cell = row.c[index];
+        var value = cell.f != null ? cell.f : cell.v;
+        return value == null ? "" : String(value).trim();
+      }
+
+      function begin(cards) {
+        sourceCards = cards.slice();
+        if (!sourceCards.length) {
+          showError(new Error("No usable cards were found in the first two sheet columns."));
+          return;
+        }
+        startGame();
+      }
+
+      function startGame() {
+        stopTimer();
+        totalCards = sourceCards.length;
+        completedCards = 0;
+        errors = 0;
+        startedAt = Date.now();
+        deck = buildDeck(sourceCards);
+        body.classList.remove("is-loading", "is-failed", "is-finished");
+        cardButton.disabled = false;
+        yesButton.disabled = false;
+        noButton.disabled = false;
+        updateTimer();
+        timerId = window.setInterval(updateTimer, 250);
+        renderNextCard();
+      }
+
+      function buildDeck(cards) {
+        var sessionCards = shuffle(cards.map(function (card) {
+          return {
+            id: card.id,
+            english: card.english,
+            korean: card.korean,
+            misses: 0,
+            front: "english"
+          };
+        }));
+        var englishFirstCount = Math.floor(sessionCards.length / 2);
+        if (sessionCards.length % 2 && Math.random() > 0.5) {
+          englishFirstCount += 1;
+        }
+        var directions = [];
+        for (var i = 0; i < sessionCards.length; i += 1) {
+          directions.push(i < englishFirstCount ? "english" : "korean");
+        }
+        directions = shuffle(directions);
+        return sessionCards.map(function (card, index) {
+          card.front = directions[index];
+          return card;
+        });
+      }
+
+      function renderNextCard() {
+        currentCard = deck[0] || null;
+        revealed = false;
+        actions.hidden = true;
+        cardButton.classList.remove("is-revealed");
+        cardButton.setAttribute("aria-pressed", "false");
+        updateStats();
+
+        if (!currentCard) {
+          finishGame();
+          return;
+        }
+
+        renderCurrentSide();
+      }
+
+      function renderCurrentSide() {
+        var side = revealed ? oppositeSide(currentCard.front) : currentCard.front;
+        var text = side === "english" ? currentCard.english : currentCard.korean;
+        sideLabel.textContent = side === "english" ? "English" : "Korean";
+        cardText.textContent = text;
+        cardButton.dataset.script = containsKorean(text) ? "korean" : "latin";
+        cardButton.dataset.density = densityFor(text);
+        cardButton.setAttribute("aria-label", sideLabel.textContent + ": " + text);
+        screenReaderStatus.textContent = sideLabel.textContent + " card " + (completedCards + 1) + " of " + totalCards + ".";
+      }
+
+      function flipCard() {
+        if (!currentCard || revealed) {
+          return;
+        }
+        revealed = true;
+        cardButton.classList.add("is-revealed");
+        cardButton.setAttribute("aria-pressed", "true");
+        actions.hidden = false;
+        renderCurrentSide();
+      }
+
+      function answerCard(known) {
+        if (!currentCard) {
+          return;
+        }
+        if (!revealed) {
+          flipCard();
+          return;
+        }
+
+        var answered = deck.shift();
+        if (known) {
+          completedCards += 1;
+        } else {
+          errors += 1;
+          answered.misses += 1;
+          reinsertMiss(answered);
+        }
+        renderNextCard();
+      }
+
+      function reinsertMiss(card) {
+        if (!deck.length) {
+          deck.push(card);
+          return;
+        }
+
+        var minGap = Math.min(deck.length, 2 + card.misses);
+        var maxGap = Math.min(deck.length, 7 + card.misses * 4);
+        var insertIndex = randomInt(minGap, maxGap);
+        deck.splice(insertIndex, 0, card);
+      }
+
+      function finishGame() {
+        stopTimer();
+        cardButton.disabled = true;
+        yesButton.disabled = true;
+        noButton.disabled = true;
+        body.classList.add("is-finished");
+        var elapsed = elapsedSeconds();
+        finishTime.textContent = formatTime(elapsed);
+        finishErrors.textContent = errors + (errors === 1 ? " error" : " errors");
+        screenReaderStatus.textContent = "Finished in " + formatTime(elapsed) + " with " + finishErrors.textContent + ".";
+        window.setTimeout(function () {
+          finishState.focus();
+        }, 0);
+      }
+
+      function updateStats() {
+        remainingValue.textContent = String(deck.length);
+        errorValue.textContent = String(errors);
+        cardCount.textContent = totalCards ? String(completedCards + 1) + " / " + totalCards : "0 / 0";
+        var progress = totalCards ? (completedCards / totalCards) * 100 : 0;
+        progressFill.style.width = progress.toFixed(2) + "%";
+      }
+
+      function updateTimer() {
+        timerValue.textContent = formatTime(elapsedSeconds());
+      }
+
+      function elapsedSeconds() {
+        if (!startedAt) {
+          return 0;
+        }
+        return Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+      }
+
+      function stopTimer() {
+        if (timerId) {
+          window.clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function showError(error) {
+        stopTimer();
+        body.classList.remove("is-loading", "is-finished");
+        body.classList.add("is-failed");
+        var message = error && error.message ? error.message : "The sheet is not reachable right now.";
+        errorCopy.textContent = message;
+        remainingValue.textContent = "0";
+        errorValue.textContent = "0";
+        timerValue.textContent = "0:00";
+        progressFill.style.width = "0%";
+      }
+
+      function oppositeSide(side) {
+        return side === "english" ? "korean" : "english";
+      }
+
+      function containsKorean(text) {
+        return /[\u3131-\u318e\uac00-\ud7a3]/.test(text);
+      }
+
+      function densityFor(text) {
+        var length = text.length;
+        if (length > 64) {
+          return "dense";
+        }
+        if (length > 36) {
+          return "long";
+        }
+        if (length > 18) {
+          return "medium";
+        }
+        return "short";
+      }
+
+      function shuffle(items) {
+        var copy = items.slice();
+        for (var i = copy.length - 1; i > 0; i -= 1) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      function randomInt(min, max) {
+        if (max <= min) {
+          return min;
+        }
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function formatTime(totalSeconds) {
+        var minutes = Math.floor(totalSeconds / 60);
+        var seconds = totalSeconds % 60;
+        return minutes + ":" + String(seconds).padStart(2, "0");
+      }
+
+      cardButton.addEventListener("click", flipCard);
+      yesButton.addEventListener("click", function () {
+        answerCard(true);
+      });
+      noButton.addEventListener("click", function () {
+        answerCard(false);
+      });
+      retryButton.addEventListener("click", function () {
+        body.classList.remove("is-failed", "is-finished");
+        body.classList.add("is-loading");
+        loadCards().then(begin).catch(showError);
+      });
+      restartButton.addEventListener("click", startGame);
+
+      window.addEventListener("keydown", function (event) {
+        var key = event.key.toLowerCase();
+        if (event.code === "Space") {
+          event.preventDefault();
+          flipCard();
+          return;
+        }
+        if (revealed && key === "y") {
+          answerCard(true);
+        }
+        if (revealed && key === "n") {
+          answerCard(false);
+        }
+      });
+
+      loadCards().then(begin).catch(showError);
+    }());
+  </script>
+</body>
+</html>
