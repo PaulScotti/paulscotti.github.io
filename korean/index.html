@@ -203,8 +203,46 @@
       gap: 18px;
     }
 
+    .card-shell {
+      position: relative;
+      min-height: min(58dvh, 520px);
+      display: grid;
+      isolation: isolate;
+      border-radius: 8px;
+      transition: background 120ms ease, box-shadow 120ms ease;
+    }
+
+    .card-shell.is-drag-left {
+      background: linear-gradient(90deg, rgba(189, 87, 75, 0.22), rgba(189, 87, 75, 0.08));
+      box-shadow: inset 28px 0 80px rgba(189, 87, 75, 0.16);
+    }
+
+    .card-shell.is-drag-right {
+      background: linear-gradient(90deg, rgba(82, 107, 85, 0.08), rgba(82, 107, 85, 0.24));
+      box-shadow: inset -28px 0 80px rgba(82, 107, 85, 0.18);
+    }
+
+    .swipe-zone {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: 8px;
+      opacity: var(--zone-opacity, 0);
+      pointer-events: none;
+      transition: opacity 120ms ease;
+    }
+
+    .swipe-zone.left {
+      background: linear-gradient(90deg, rgba(189, 87, 75, 0.5), rgba(189, 87, 75, 0.12) 48%, transparent 74%);
+    }
+
+    .swipe-zone.right {
+      background: linear-gradient(270deg, rgba(82, 107, 85, 0.52), rgba(82, 107, 85, 0.12) 48%, transparent 74%);
+    }
+
     .flashcard {
       position: relative;
+      z-index: 1;
       width: 100%;
       min-height: min(58dvh, 520px);
       border: 1px solid color-mix(in srgb, var(--line), var(--ink) 8%);
@@ -223,7 +261,9 @@
       cursor: pointer;
       touch-action: pan-y;
       -webkit-tap-highlight-color: transparent;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      transform: translate3d(var(--drag-x, 0px), 0, 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
+      transition: transform 180ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      will-change: transform;
     }
 
     .flashcard::before {
@@ -244,6 +284,22 @@
 
     .flashcard:active {
       transform: translateY(1px) scale(0.998);
+    }
+
+    .flashcard.is-dragging,
+    .flashcard.is-dragging:active {
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+      transform: translate3d(var(--drag-x, 0px), 0, 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
+    }
+
+    .flashcard.is-drag-left {
+      border-color: rgba(189, 87, 75, 0.72);
+      box-shadow: 0 24px 90px rgba(189, 87, 75, 0.18);
+    }
+
+    .flashcard.is-drag-right {
+      border-color: rgba(82, 107, 85, 0.72);
+      box-shadow: 0 24px 90px rgba(82, 107, 85, 0.18);
     }
 
     .flashcard.is-revealed {
@@ -599,11 +655,15 @@
     </section>
 
     <section class="stage" id="gameStage" aria-label="Flashcard game">
-      <button class="flashcard" type="button" id="cardButton" aria-pressed="false" aria-keyshortcuts="Space ArrowLeft ArrowRight" data-density="medium" data-script="latin">
-        <span class="side-label" id="sideLabel">English</span>
-        <span class="term" id="cardText">Loading</span>
-        <span class="card-count" id="cardCount">0 / 0</span>
-      </button>
+      <div class="card-shell" id="cardShell">
+        <div class="swipe-zone left" id="leftZone" aria-hidden="true"></div>
+        <div class="swipe-zone right" id="rightZone" aria-hidden="true"></div>
+        <button class="flashcard" type="button" id="cardButton" aria-pressed="false" aria-keyshortcuts="Space ArrowUp ArrowDown ArrowLeft ArrowRight" data-density="medium" data-script="latin">
+          <span class="side-label" id="sideLabel">English</span>
+          <span class="term" id="cardText">Loading</span>
+          <span class="card-count" id="cardCount">0 / 0</span>
+        </button>
+      </div>
 
       <div class="actions" id="answerActions" hidden>
         <button class="answer-button no" type="button" id="noButton">No</button>
@@ -636,13 +696,16 @@
       var STORAGE_VERSION = 2;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
       var SAVE_INTERVAL_MS = 1000;
-      var SWIPE_MIN_X = 58;
+      var SWIPE_MIN_X = 38;
       var SWIPE_MAX_Y = 90;
 
       var body = document.body;
       var cardButton = document.getElementById("cardButton");
+      var cardShell = document.getElementById("cardShell");
       var cardText = document.getElementById("cardText");
       var sideLabel = document.getElementById("sideLabel");
+      var leftZone = document.getElementById("leftZone");
+      var rightZone = document.getElementById("rightZone");
       var cardCount = document.getElementById("cardCount");
       var actions = document.getElementById("answerActions");
       var yesButton = document.getElementById("yesButton");
@@ -674,6 +737,8 @@
       var timerId = null;
       var lastSavedAt = 0;
       var pointerStart = null;
+      var swipeAnswerPending = false;
+      var swipeTimerId = null;
       var suppressClickUntil = 0;
 
       function loadCards() {
@@ -952,6 +1017,8 @@
       }
 
       function renderNextCard() {
+        resetDragFeedback();
+        swipeAnswerPending = false;
         currentCard = deck[0] || null;
         revealed = false;
         actions.hidden = true;
@@ -980,7 +1047,7 @@
       }
 
       function flipCard() {
-        if (!currentCard || revealed) {
+        if (!currentCard || revealed || swipeAnswerPending) {
           return;
         }
         revealed = true;
@@ -992,7 +1059,7 @@
       }
 
       function answerCard(known) {
-        if (!currentCard) {
+        if (!currentCard || swipeAnswerPending) {
           return;
         }
         if (!revealed) {
@@ -1147,28 +1214,90 @@
       }
 
       function resetGame() {
+        if (swipeTimerId) {
+          window.clearTimeout(swipeTimerId);
+          swipeTimerId = null;
+        }
+        swipeAnswerPending = false;
+        resetDragFeedback();
         clearSavedGame();
         startGame({ clearSaved: false });
       }
 
+      function activateCard() {
+        flipCard();
+      }
+
       function answerFromDirection(known) {
-        if (!currentCard || !revealed) {
+        if (!currentCard || !revealed || swipeAnswerPending) {
           return;
         }
         answerCard(known);
       }
 
       function handleSwipe(deltaX, deltaY) {
-        var isHorizontal = Math.abs(deltaX) >= SWIPE_MIN_X && Math.abs(deltaY) <= SWIPE_MAX_Y && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
+        var isHorizontal = Math.abs(deltaX) >= swipeThreshold() && Math.abs(deltaY) <= SWIPE_MAX_Y && Math.abs(deltaX) > Math.abs(deltaY) * 1.15;
         if (!isHorizontal) {
           return false;
         }
         if (revealed) {
-          answerCard(deltaX > 0);
+          commitSwipeAnswer(deltaX > 0);
         } else {
-          flipCard();
+          resetDragFeedback();
+          activateCard();
         }
         return true;
+      }
+
+      function swipeThreshold() {
+        var width = cardShell ? cardShell.getBoundingClientRect().width : 0;
+        return Math.min(64, Math.max(SWIPE_MIN_X, width * 0.12));
+      }
+
+      function updateDragFeedback(deltaX) {
+        var width = Math.max(cardShell ? cardShell.getBoundingClientRect().width : 1, 1);
+        var maxDrag = width * 0.42;
+        var dragX = Math.max(-maxDrag, Math.min(maxDrag, deltaX));
+        var intensity = Math.min(Math.abs(deltaX) / Math.max(swipeThreshold() * 1.75, 1), 1);
+        var rotate = (dragX / width) * 9;
+
+        cardButton.style.setProperty("--drag-x", dragX.toFixed(2) + "px");
+        cardButton.style.setProperty("--drag-rotate", rotate.toFixed(2) + "deg");
+        cardButton.style.setProperty("--drag-scale", String(1 - intensity * 0.01));
+
+        var leftOpacity = revealed && deltaX < 0 ? intensity : 0;
+        var rightOpacity = revealed && deltaX > 0 ? intensity : 0;
+        leftZone.style.setProperty("--zone-opacity", leftOpacity.toFixed(2));
+        rightZone.style.setProperty("--zone-opacity", rightOpacity.toFixed(2));
+        cardButton.classList.toggle("is-drag-left", leftOpacity > 0.08);
+        cardButton.classList.toggle("is-drag-right", rightOpacity > 0.08);
+        cardShell.classList.toggle("is-drag-left", leftOpacity > 0.08);
+        cardShell.classList.toggle("is-drag-right", rightOpacity > 0.08);
+      }
+
+      function resetDragFeedback() {
+        cardButton.style.removeProperty("--drag-x");
+        cardButton.style.removeProperty("--drag-rotate");
+        cardButton.style.removeProperty("--drag-scale");
+        leftZone.style.removeProperty("--zone-opacity");
+        rightZone.style.removeProperty("--zone-opacity");
+        cardButton.classList.remove("is-dragging", "is-drag-left", "is-drag-right");
+        cardShell.classList.remove("is-drag-left", "is-drag-right");
+      }
+
+      function commitSwipeAnswer(known) {
+        if (swipeAnswerPending || !currentCard || !revealed) {
+          return;
+        }
+        swipeAnswerPending = true;
+        suppressClickUntil = Date.now() + 700;
+        updateDragFeedback((known ? 1 : -1) * Math.max(cardShell.getBoundingClientRect().width * 1.08, 360));
+        swipeTimerId = window.setTimeout(function () {
+          swipeTimerId = null;
+          swipeAnswerPending = false;
+          resetDragFeedback();
+          answerCard(known);
+        }, 140);
       }
 
       cardButton.addEventListener("click", function (event) {
@@ -1176,32 +1305,66 @@
           event.preventDefault();
           return;
         }
-        flipCard();
+        activateCard();
       });
       cardButton.addEventListener("pointerdown", function (event) {
-        if (!event.isPrimary) {
+        if (!event.isPrimary || swipeAnswerPending || !currentCard) {
           return;
         }
         pointerStart = {
           x: event.clientX,
-          y: event.clientY
+          y: event.clientY,
+          id: event.pointerId,
+          dragging: false
         };
+        if (cardButton.setPointerCapture) {
+          cardButton.setPointerCapture(event.pointerId);
+        }
+      });
+      cardButton.addEventListener("pointermove", function (event) {
+        if (!pointerStart || pointerStart.id !== event.pointerId || swipeAnswerPending) {
+          return;
+        }
+        var deltaX = event.clientX - pointerStart.x;
+        var deltaY = event.clientY - pointerStart.y;
+        var wantsHorizontalDrag = Math.abs(deltaX) > 6 && Math.abs(deltaX) > Math.abs(deltaY) * 1.05;
+        if (!pointerStart.dragging && !wantsHorizontalDrag) {
+          return;
+        }
+        pointerStart.dragging = true;
+        cardButton.classList.add("is-dragging");
+        suppressClickUntil = Date.now() + 450;
+        updateDragFeedback(deltaX);
+        if (event.cancelable) {
+          event.preventDefault();
+        }
       });
       cardButton.addEventListener("pointerup", function (event) {
-        if (!pointerStart || !event.isPrimary) {
+        if (!pointerStart || !event.isPrimary || pointerStart.id !== event.pointerId) {
           pointerStart = null;
           return;
         }
         var deltaX = event.clientX - pointerStart.x;
         var deltaY = event.clientY - pointerStart.y;
+        var wasDragging = pointerStart.dragging;
         pointerStart = null;
-        if (handleSwipe(deltaX, deltaY)) {
+        if (cardButton.releasePointerCapture && (!cardButton.hasPointerCapture || cardButton.hasPointerCapture(event.pointerId))) {
+          cardButton.releasePointerCapture(event.pointerId);
+        }
+        if ((wasDragging || Math.abs(deltaX) >= swipeThreshold()) && handleSwipe(deltaX, deltaY)) {
           suppressClickUntil = Date.now() + 450;
+          event.preventDefault();
+          return;
+        }
+        if (wasDragging) {
+          suppressClickUntil = Date.now() + 450;
+          resetDragFeedback();
           event.preventDefault();
         }
       });
       cardButton.addEventListener("pointercancel", function () {
         pointerStart = null;
+        resetDragFeedback();
       });
       yesButton.addEventListener("click", function () {
         answerCard(true);
@@ -1226,7 +1389,12 @@
         var key = event.key.toLowerCase();
         if (event.code === "Space") {
           event.preventDefault();
-          flipCard();
+          activateCard();
+          return;
+        }
+        if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+          event.preventDefault();
+          activateCard();
           return;
         }
         if (event.code === "ArrowLeft") {
