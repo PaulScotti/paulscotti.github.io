@@ -111,7 +111,9 @@ h1 {
   align-items: center;
   padding: 3px 6px;
   border-radius: 4px;
+  contain: size layout paint;
   overflow: hidden;
+  overflow: clip;
 }
 .task-row:hover {
   background: var(--cursor);
