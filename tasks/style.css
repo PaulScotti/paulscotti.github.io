@@ -104,8 +104,7 @@ h1 {
   font-weight: 500;
 }
 .task-row {
-  display: grid;
-  grid-template-columns: 4ch 2ch 5ch minmax(0, 1fr);
+  display: flex;
   gap: 0;
   height: 27px;
   line-height: 21px;
@@ -116,6 +115,24 @@ h1 {
 }
 .task-row:hover {
   background: var(--cursor);
+}
+.line-no, .status, .priority, .body {
+  min-height: 0;
+}
+.line-no, .status, .priority {
+  height: 21px;
+  line-height: 21px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.line-no {
+  flex: 0 0 4ch;
+}
+.status {
+  flex: 0 0 2ch;
+}
+.priority {
+  flex: 0 0 5ch;
 }
 .line-no, .status, .priority.empty, .meta {
   color: var(--dim);
@@ -130,6 +147,7 @@ h1 {
 }
 .body {
   display: block;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   overflow-wrap: normal;
@@ -175,8 +193,8 @@ h1 {
     white-space: nowrap;
   }
   .task-row {
-    grid-template-columns: 3ch 2ch 5ch minmax(0, 1fr);
     padding-left: 0;
     padding-right: 0;
   }
+  .line-no { flex-basis: 3ch; }
 }
