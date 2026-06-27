@@ -107,10 +107,12 @@ h1 {
   display: grid;
   grid-template-columns: 4ch 2ch 5ch minmax(0, 1fr);
   gap: 0;
-  min-height: 27px;
-  align-items: baseline;
+  height: 27px;
+  line-height: 21px;
+  align-items: center;
   padding: 3px 6px;
   border-radius: 4px;
+  overflow: hidden;
 }
 .task-row:hover {
   background: var(--cursor);
@@ -127,9 +129,12 @@ h1 {
   font-weight: 800;
 }
 .body {
+  display: block;
   min-width: 0;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .project { color: var(--project); }
 .context-token { color: var(--context); }
