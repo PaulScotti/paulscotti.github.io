@@ -7,21 +7,21 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Tasks</title>
-  <link rel="stylesheet" href="style.css?v=df682c55bf33b81b">
+  <link rel="stylesheet" href="style.css?v=b9419a0e8550f6fc">
 </head>
 <body>
 <main class="screen">
   <header class="topbar">
-    <a class="mark" href=".?v=df682c55bf33b81b">▶▮◀</a>
+    <a class="mark" href=".?v=b9419a0e8550f6fc">▶▮◀</a>
     <div>
       <h1>All Tasks</h1>
       <p><span data-visible-count>61</span> visible tasks · due sorted · ~/todo</p>
     </div>
-    <time>v df682c55bf33</time>
+    <time>v b9419a0e8550</time>
   </header>
   <p class="note">Quick note: (A) represents top priority tasks.</p>
   <nav class="contexts" aria-label="Task contexts">
-    <a class="context active" href=".?v=df682c55bf33b81b">All</a>
+    <a class="context active" href=".?v=b9419a0e8550f6fc">All</a>
     <a class="context" href="benjamin/"><span>@Benjamin</span><b>5</b></a>
     <a class="context" href="chris/"><span>@Chris</span><b>1</b></a>
     <a class="context" href="connor/"><span>@Connor</span><b>2</b></a>
@@ -334,13 +334,26 @@
         }
     }
 
+    function scheduleNextRefresh() {
+        var now = new Date();
+        var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+        var delay = Math.max(1000, next.getTime() - now.getTime());
+        window.setTimeout(function () {
+            renderForDate(localToday());
+            scheduleNextRefresh();
+        }, Math.min(delay, 2147483647));
+    }
+
+    function boot() {
+        renderForDate(localToday());
+        scheduleNextRefresh();
+    }
+
     window.tuxedoRefreshTasksForDate = renderForDate;
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", function () {
-            renderForDate(localToday());
-        });
+        document.addEventListener("DOMContentLoaded", boot);
     } else {
-        renderForDate(localToday());
+        boot();
     }
 }());
   </script>
