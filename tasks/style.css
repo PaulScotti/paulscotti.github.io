@@ -50,6 +50,11 @@ h1 {
   color: var(--dim);
   font-size: 12px;
 }
+.note {
+  margin: 10px 0 0;
+  color: var(--dim);
+  font-size: 12px;
+}
 .contexts {
   display: flex;
   flex-wrap: wrap;
