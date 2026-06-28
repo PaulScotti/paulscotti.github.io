@@ -693,11 +693,14 @@
       var SHEET_ID = "1ejk0F6ppoLUu20XuykaJ9WASObmQaUitecyewjP7K2I";
       var SHEET_QUERY = "select A,B where A is not null and B is not null";
       var LOAD_TIMEOUT_MS = 12000;
-      var STORAGE_VERSION = 2;
+      var STORAGE_VERSION = 3;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
       var SAVE_INTERVAL_MS = 1000;
       var SWIPE_MIN_X = 38;
       var SWIPE_MAX_Y = 90;
+      var GENERATED_NUMBER_COUNT = 10;
+      var GENERATED_TIME_COUNT = 5;
+      var GENERATED_MONEY_COUNT = 5;
 
       var body = document.body;
       var cardButton = document.getElementById("cardButton");
@@ -725,6 +728,8 @@
       var finishCorrect = document.getElementById("finishCorrect");
       var screenReaderStatus = document.getElementById("screenReaderStatus");
 
+      var sheetCards = [];
+      var sheetSignature = "";
       var sourceCards = [];
       var sourceSignature = "";
       var deck = [];
@@ -810,16 +815,19 @@
       }
 
       function begin(cards) {
-        sourceCards = cards.slice();
-        sourceSignature = signatureFor(sourceCards);
-        if (!sourceCards.length) {
+        sheetCards = cards.slice();
+        sheetSignature = signatureFor(sheetCards);
+        if (!sheetCards.length) {
           showError(new Error("No usable cards were found in the first two sheet columns."));
           return;
         }
         resetButton.disabled = false;
-        if (!restoreSavedGame(false)) {
-          startGame({ clearSaved: false });
+        if (!shouldSkipRestore() && prepareSavedGameForLoadedSheet() && restoreSavedGame(false)) {
+          return;
         }
+        sourceCards = buildSourceCards(sheetCards);
+        sourceSignature = signatureFor(sourceCards);
+        startGame({ clearSaved: false });
       }
 
       function startGame(options) {
@@ -855,23 +863,213 @@
             id: card.id,
             english: card.english,
             korean: card.korean,
+            generated: Boolean(card.generated),
+            kind: card.kind || "",
             misses: 0,
             front: "english"
           };
         }));
-        var englishFirstCount = Math.floor(sessionCards.length / 2);
-        if (sessionCards.length % 2 && Math.random() > 0.5) {
+        var regularCount = sessionCards.filter(function (card) {
+          return !card.generated;
+        }).length;
+        var englishFirstCount = Math.floor(regularCount / 2);
+        if (regularCount % 2 && Math.random() > 0.5) {
           englishFirstCount += 1;
         }
         var directions = [];
-        for (var i = 0; i < sessionCards.length; i += 1) {
+        for (var i = 0; i < regularCount; i += 1) {
           directions.push(i < englishFirstCount ? "english" : "korean");
         }
         directions = shuffle(directions);
+        var directionIndex = 0;
         return sessionCards.map(function (card, index) {
-          card.front = directions[index];
+          card.front = card.generated ? "english" : directions[directionIndex];
+          if (!card.generated) {
+            directionIndex += 1;
+          }
           return card;
         });
+      }
+
+      function buildSourceCards(cards) {
+        return cards.concat(buildGeneratedCards());
+      }
+
+      function buildGeneratedCards() {
+        var cards = [];
+        var numberValues = sampleUniqueIntegers(0, 100, GENERATED_NUMBER_COUNT);
+        numberValues.forEach(function (value, index) {
+          var system = value === 0 || value === 100 ? "sino" : (Math.random() < 0.5 ? "native" : "sino");
+          cards.push({
+            id: "generated-number-" + index + "-" + value + "-" + system,
+            english: value + " (" + system + ") " + (system === "native" ? "(counting, age, hours)" : "(dates, money, minutes)"),
+            korean: system === "native" ? nativeNumber(value) : sinoNumber(value),
+            generated: true,
+            kind: "number"
+          });
+        });
+
+        sampleUniqueTimes(GENERATED_TIME_COUNT).forEach(function (time, index) {
+          cards.push({
+            id: "generated-time-" + index + "-" + time.hour24 + "-" + time.minute,
+            english: formatTimeFront(time.hour24, time.minute),
+            korean: koreanTime(time.hour24, time.minute),
+            generated: true,
+            kind: "time"
+          });
+        });
+
+        sampleUniqueIntegers(0, 10000000, GENERATED_MONEY_COUNT).forEach(function (amount, index) {
+          cards.push({
+            id: "generated-money-" + index + "-" + amount,
+            english: formatMoneyFront(amount),
+            korean: moneyKorean(amount),
+            generated: true,
+            kind: "money"
+          });
+        });
+
+        return cards;
+      }
+
+      function sampleUniqueIntegers(min, max, count) {
+        var values = [];
+        var seen = Object.create(null);
+        while (values.length < count) {
+          var value = randomInt(min, max);
+          if (!seen[value]) {
+            seen[value] = true;
+            values.push(value);
+          }
+        }
+        return values;
+      }
+
+      function sampleUniqueTimes(count) {
+        var times = [];
+        var seen = Object.create(null);
+        while (times.length < count) {
+          var hour24 = randomInt(0, 23);
+          var minute = randomInt(0, 59);
+          var key = hour24 + ":" + minute;
+          if (!seen[key]) {
+            seen[key] = true;
+            times.push({
+              hour24: hour24,
+              minute: minute
+            });
+          }
+        }
+        return times;
+      }
+
+      function nativeNumber(value) {
+        var units = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"];
+        var tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+        if (value <= 0 || value >= 100) {
+          return sinoNumber(value);
+        }
+        var ten = Math.floor(value / 10);
+        var unit = value % 10;
+        return tens[ten] + units[unit];
+      }
+
+      function nativeHour(value) {
+        var hours = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두"];
+        return hours[value];
+      }
+
+      function sinoNumber(value) {
+        if (value === 0) {
+          return "영 / 공";
+        }
+        return sinoNumberPlain(value);
+      }
+
+      function sinoNumberPlain(value) {
+        if (value === 0) {
+          return "영";
+        }
+        var largeUnits = [
+          { value: 10000, label: "만" },
+          { value: 1, label: "" }
+        ];
+        var parts = [];
+        var remainder = value;
+        largeUnits.forEach(function (unit) {
+          var group = Math.floor(remainder / unit.value);
+          remainder = remainder % unit.value;
+          if (!group) {
+            return;
+          }
+          var groupText = smallSinoNumber(group);
+          parts.push((unit.value === 10000 && group === 1 ? "" : groupText) + unit.label);
+        });
+        return parts.join(" ");
+      }
+
+      function smallSinoNumber(value) {
+        var digits = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+        var places = [
+          { value: 1000, label: "천" },
+          { value: 100, label: "백" },
+          { value: 10, label: "십" },
+          { value: 1, label: "" }
+        ];
+        var text = "";
+        var remainder = value;
+        places.forEach(function (place) {
+          var digit = Math.floor(remainder / place.value);
+          remainder = remainder % place.value;
+          if (!digit) {
+            return;
+          }
+          if (digit === 1 && place.value > 1) {
+            text += place.label;
+          } else {
+            text += digits[digit] + place.label;
+          }
+        });
+        return text;
+      }
+
+      function formatTimeFront(hour24, minute) {
+        var suffix = hour24 < 12 ? "AM" : "PM";
+        var hour12 = hour24 % 12 || 12;
+        return hour12 + ":" + String(minute).padStart(2, "0") + " " + suffix;
+      }
+
+      function koreanTime(hour24, minute) {
+        var period = hour24 < 12 ? "오전" : "오후";
+        var hour12 = hour24 % 12 || 12;
+        var text = period + " " + nativeHour(hour12) + " 시";
+        if (minute) {
+          text += " " + sinoNumberPlain(minute) + " 분";
+        }
+        return text;
+      }
+
+      function formatMoneyFront(amount) {
+        return amount.toLocaleString("en-US") + " won";
+      }
+
+      function moneyKorean(amount) {
+        return sinoNumberPlain(amount) + " 원";
+      }
+
+      function prepareSavedGameForLoadedSheet() {
+        var saved = readSavedGame();
+        if (!saved || saved.version !== STORAGE_VERSION || saved.sheetId !== SHEET_ID || saved.sheetSignature !== sheetSignature) {
+          return false;
+        }
+        var savedSourceCards = normalizeSourceCards(saved.sourceCards || []);
+        var savedSignature = signatureFor(savedSourceCards);
+        if (!savedSourceCards.length || saved.signature !== savedSignature) {
+          return false;
+        }
+        sourceCards = savedSourceCards;
+        sourceSignature = savedSignature;
+        return true;
       }
 
       function restoreSavedGame(allowCachedSource) {
@@ -881,7 +1079,8 @@
         }
         if (allowCachedSource && (!sourceCards.length || !sourceSignature)) {
           sourceCards = normalizeSourceCards(saved.sourceCards || []);
-          sourceSignature = saved.signature || signatureFor(sourceCards);
+          sourceSignature = signatureFor(sourceCards);
+          sheetSignature = saved.sheetSignature || "";
         }
         if (!sourceCards.length || !saved.deck || !saved.deck.length && !saved.finished) {
           return false;
@@ -944,6 +1143,7 @@
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
             version: STORAGE_VERSION,
             sheetId: SHEET_ID,
+            sheetSignature: sheetSignature,
             signature: sourceSignature,
             sourceCards: sourceCards,
             deck: deck,
@@ -976,7 +1176,9 @@
           return {
             id: String(card && card.id ? card.id : "card-" + index),
             english: String(card && card.english ? card.english : "").trim(),
-            korean: String(card && card.korean ? card.korean : "").trim()
+            korean: String(card && card.korean ? card.korean : "").trim(),
+            generated: Boolean(card && card.generated),
+            kind: String(card && card.kind ? card.kind : "")
           };
         }).filter(function (card) {
           return card.english && card.korean;
@@ -992,8 +1194,10 @@
             id: String(card && card.id ? card.id : ""),
             english: String(card && card.english ? card.english : "").trim(),
             korean: String(card && card.korean ? card.korean : "").trim(),
+            generated: Boolean(card && card.generated),
+            kind: String(card && card.kind ? card.kind : ""),
             misses: clampNumber(card && card.misses, 0, 999999),
-            front: card && card.front === "korean" ? "korean" : "english"
+            front: card && !card.generated && card.front === "korean" ? "korean" : "english"
           };
         }).filter(function (card) {
           return card.id && card.english && card.korean;
@@ -1002,7 +1206,7 @@
 
       function signatureFor(cards) {
         var text = cards.map(function (card) {
-          return card.english + "\u0001" + card.korean;
+          return card.english + "\u0001" + card.korean + "\u0001" + (card.generated ? "g" : "s") + "\u0001" + (card.kind || "");
         }).join("\u0002");
         return String(cards.length) + ":" + hashText(text);
       }
@@ -1221,6 +1425,10 @@
         swipeAnswerPending = false;
         resetDragFeedback();
         clearSavedGame();
+        if (sheetCards.length) {
+          sourceCards = buildSourceCards(sheetCards);
+          sourceSignature = signatureFor(sourceCards);
+        }
         startGame({ clearSaved: false });
       }
 
