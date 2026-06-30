@@ -693,7 +693,7 @@
       var SHEET_ID = "1ejk0F6ppoLUu20XuykaJ9WASObmQaUitecyewjP7K2I";
       var SHEET_QUERY = "select A,B where A is not null and B is not null";
       var LOAD_TIMEOUT_MS = 12000;
-      var STORAGE_VERSION = 5;
+      var STORAGE_VERSION = 6;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
       var SAVE_INTERVAL_MS = 1000;
       var SWIPE_MIN_X = 38;
@@ -703,7 +703,11 @@
       var GENERATED_MONEY_COUNT = 1;
       var GENERATED_AGE_COUNT = 1;
       var GENERATED_CUP_COUNT = 1;
+      var GENERATED_CARD_COUNT = GENERATED_NUMBER_COUNT + GENERATED_TIME_COUNT + GENERATED_MONEY_COUNT + GENERATED_AGE_COUNT + GENERATED_CUP_COUNT;
       var GENERATED_MONEY_MAX = 100000000;
+      var SESSION_CARD_LIMIT = 300;
+      var BOTTOM_SHEET_CARD_COUNT = 80;
+      var RANDOM_SHEET_CARD_COUNT = SESSION_CARD_LIMIT - BOTTOM_SHEET_CARD_COUNT - GENERATED_CARD_COUNT;
 
       var body = document.body;
       var cardButton = document.getElementById("cardButton");
@@ -895,7 +899,14 @@
       }
 
       function buildSourceCards(cards) {
-        return cards.concat(buildGeneratedCards());
+        return buildSessionSheetCards(cards).concat(buildGeneratedCards());
+      }
+
+      function buildSessionSheetCards(cards) {
+        var bottomCards = cards.slice(Math.max(0, cards.length - BOTTOM_SHEET_CARD_COUNT));
+        var olderCards = cards.slice(0, Math.max(0, cards.length - bottomCards.length));
+        var randomOlderCards = shuffle(olderCards).slice(0, Math.max(0, RANDOM_SHEET_CARD_COUNT));
+        return randomOlderCards.concat(bottomCards);
       }
 
       function buildGeneratedCards() {
