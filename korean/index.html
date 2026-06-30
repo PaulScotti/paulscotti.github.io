@@ -693,14 +693,17 @@
       var SHEET_ID = "1ejk0F6ppoLUu20XuykaJ9WASObmQaUitecyewjP7K2I";
       var SHEET_QUERY = "select A,B where A is not null and B is not null";
       var LOAD_TIMEOUT_MS = 12000;
-      var STORAGE_VERSION = 4;
+      var STORAGE_VERSION = 5;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
       var SAVE_INTERVAL_MS = 1000;
       var SWIPE_MIN_X = 38;
       var SWIPE_MAX_Y = 90;
-      var GENERATED_NUMBER_COUNT = 3;
+      var GENERATED_NUMBER_COUNT = 2;
       var GENERATED_TIME_COUNT = 2;
-      var GENERATED_MONEY_COUNT = 2;
+      var GENERATED_MONEY_COUNT = 1;
+      var GENERATED_AGE_COUNT = 1;
+      var GENERATED_CUP_COUNT = 1;
+      var GENERATED_MONEY_MAX = 100000000;
 
       var body = document.body;
       var cardButton = document.getElementById("cardButton");
@@ -897,19 +900,15 @@
 
       function buildGeneratedCards() {
         var cards = [];
-        var numberValues = sampleUniqueIntegers(0, 100, GENERATED_NUMBER_COUNT);
-        numberValues.forEach(function (value, index) {
-          var system = value === 0 || value === 100 ? "sino" : (Math.random() < 0.5 ? "native" : "sino");
-          cards.push({
-            id: "generated-number-" + index + "-" + value + "-" + system,
-            english: value + " (" + system + ") " + (system === "native" ? "(counting, age, hours)" : "(dates, money, minutes)"),
-            korean: system === "native" ? nativeNumber(value) : sinoNumber(value),
-            generated: true,
-            kind: "number"
-          });
-        });
+        var nativeNumberValue = randomInt(1, 99);
+        var sinoNumberValue = sampleUniqueIntegersExcluding(0, 100, GENERATED_NUMBER_COUNT - 1, [nativeNumberValue])[0];
+        addGeneratedNumber(cards, nativeNumberValue, "native", 0);
+        addGeneratedNumber(cards, sinoNumberValue, "sino", 1);
 
-        sampleUniqueTimes(GENERATED_TIME_COUNT).forEach(function (time, index) {
+        [
+          sampleTimeInRange(0, 11),
+          sampleTimeInRange(12, 23)
+        ].slice(0, GENERATED_TIME_COUNT).forEach(function (time, index) {
           cards.push({
             id: "generated-time-" + index + "-" + time.hour24 + "-" + time.minute,
             english: formatTimeFront(time.hour24, time.minute),
@@ -919,7 +918,7 @@
           });
         });
 
-        sampleUniqueIntegers(0, 10000000, GENERATED_MONEY_COUNT).forEach(function (amount, index) {
+        sampleUniqueIntegers(0, GENERATED_MONEY_MAX, GENERATED_MONEY_COUNT).forEach(function (amount, index) {
           cards.push({
             id: "generated-money-" + index + "-" + amount,
             english: formatMoneyFront(amount),
@@ -929,12 +928,49 @@
           });
         });
 
+        sampleUniqueIntegers(1, 100, GENERATED_AGE_COUNT).forEach(function (age, index) {
+          cards.push({
+            id: "generated-age-" + index + "-" + age,
+            english: age + " " + (age === 1 ? "year" : "years") + " old",
+            korean: nativeCounterNumber(age) + " 살",
+            generated: true,
+            kind: "age"
+          });
+        });
+
+        sampleUniqueIntegers(1, 20, GENERATED_CUP_COUNT).forEach(function (cups, index) {
+          cards.push({
+            id: "generated-cups-" + index + "-" + cups,
+            english: cups + " " + (cups === 1 ? "cup" : "cups"),
+            korean: nativeCounterNumber(cups) + " 잔",
+            generated: true,
+            kind: "cups"
+          });
+        });
+
         return cards;
       }
 
+      function addGeneratedNumber(cards, value, system, index) {
+        cards.push({
+          id: "generated-number-" + index + "-" + value + "-" + system,
+          english: value + " (" + system + ") " + (system === "native" ? "(counting, age, hours)" : "(dates, money, minutes)"),
+          korean: system === "native" ? nativeNumber(value) : sinoNumber(value),
+          generated: true,
+          kind: "number"
+        });
+      }
+
       function sampleUniqueIntegers(min, max, count) {
+        return sampleUniqueIntegersExcluding(min, max, count, []);
+      }
+
+      function sampleUniqueIntegersExcluding(min, max, count, excludedValues) {
         var values = [];
         var seen = Object.create(null);
+        (excludedValues || []).forEach(function (value) {
+          seen[value] = true;
+        });
         while (values.length < count) {
           var value = randomInt(min, max);
           if (!seen[value]) {
@@ -945,22 +981,11 @@
         return values;
       }
 
-      function sampleUniqueTimes(count) {
-        var times = [];
-        var seen = Object.create(null);
-        while (times.length < count) {
-          var hour24 = randomInt(0, 23);
-          var minute = randomInt(0, 59);
-          var key = hour24 + ":" + minute;
-          if (!seen[key]) {
-            seen[key] = true;
-            times.push({
-              hour24: hour24,
-              minute: minute
-            });
-          }
-        }
-        return times;
+      function sampleTimeInRange(minHour, maxHour) {
+        return {
+          hour24: randomInt(minHour, maxHour),
+          minute: randomInt(0, 59)
+        };
       }
 
       function nativeNumber(value) {
@@ -979,6 +1004,21 @@
         return hours[value];
       }
 
+      function nativeCounterNumber(value) {
+        if (value <= 0 || value >= 100) {
+          return sinoNumberPlain(value);
+        }
+        var text = nativeNumber(value);
+        if (value === 20) {
+          return "스무";
+        }
+        return text
+          .replace(/하나$/, "한")
+          .replace(/둘$/, "두")
+          .replace(/셋$/, "세")
+          .replace(/넷$/, "네");
+      }
+
       function sinoNumber(value) {
         if (value === 0) {
           return "영 / 공";
@@ -991,6 +1031,7 @@
           return "영";
         }
         var largeUnits = [
+          { value: 100000000, label: "억" },
           { value: 10000, label: "만" },
           { value: 1, label: "" }
         ];
