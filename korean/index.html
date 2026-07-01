@@ -696,8 +696,14 @@
       var STORAGE_VERSION = 6;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
       var SAVE_INTERVAL_MS = 1000;
-      var SWIPE_MIN_X = 38;
-      var SWIPE_MAX_Y = 90;
+      var SWIPE_MIN_X = 24;
+      var SWIPE_MAX_X = 54;
+      var SWIPE_WIDTH_RATIO = 0.08;
+      var SWIPE_MAX_Y = 110;
+      var SWIPE_AXIS_DOMINANCE = 0.78;
+      var SWIPE_DRAG_START_X = 5;
+      var SWIPE_DRAG_AXIS_DOMINANCE = 0.82;
+      var SWIPE_FEEDBACK_DISTANCE_FACTOR = 1.32;
       var GENERATED_NUMBER_COUNT = 2;
       var GENERATED_TIME_COUNT = 2;
       var GENERATED_MONEY_COUNT = 1;
@@ -1496,7 +1502,7 @@
       }
 
       function handleSwipe(deltaX, deltaY) {
-        var isHorizontal = Math.abs(deltaX) >= swipeThreshold() && Math.abs(deltaY) <= SWIPE_MAX_Y && Math.abs(deltaX) > Math.abs(deltaY) * 1.15;
+        var isHorizontal = Math.abs(deltaX) >= swipeThreshold() && Math.abs(deltaY) <= SWIPE_MAX_Y && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_AXIS_DOMINANCE;
         if (!isHorizontal) {
           return false;
         }
@@ -1511,14 +1517,14 @@
 
       function swipeThreshold() {
         var width = cardShell ? cardShell.getBoundingClientRect().width : 0;
-        return Math.min(64, Math.max(SWIPE_MIN_X, width * 0.12));
+        return Math.min(SWIPE_MAX_X, Math.max(SWIPE_MIN_X, width * SWIPE_WIDTH_RATIO));
       }
 
       function updateDragFeedback(deltaX) {
         var width = Math.max(cardShell ? cardShell.getBoundingClientRect().width : 1, 1);
         var maxDrag = width * 0.42;
         var dragX = Math.max(-maxDrag, Math.min(maxDrag, deltaX));
-        var intensity = Math.min(Math.abs(deltaX) / Math.max(swipeThreshold() * 1.75, 1), 1);
+        var intensity = Math.min(Math.abs(deltaX) / Math.max(swipeThreshold() * SWIPE_FEEDBACK_DISTANCE_FACTOR, 1), 1);
         var rotate = (dragX / width) * 9;
 
         cardButton.style.setProperty("--drag-x", dragX.toFixed(2) + "px");
@@ -1578,7 +1584,11 @@
           dragging: false
         };
         if (cardButton.setPointerCapture) {
-          cardButton.setPointerCapture(event.pointerId);
+          try {
+            cardButton.setPointerCapture(event.pointerId);
+          } catch (error) {
+            // Pointer capture can be unavailable for synthetic or interrupted touch streams.
+          }
         }
       });
       cardButton.addEventListener("pointermove", function (event) {
@@ -1587,7 +1597,7 @@
         }
         var deltaX = event.clientX - pointerStart.x;
         var deltaY = event.clientY - pointerStart.y;
-        var wantsHorizontalDrag = Math.abs(deltaX) > 6 && Math.abs(deltaX) > Math.abs(deltaY) * 1.05;
+        var wantsHorizontalDrag = Math.abs(deltaX) > SWIPE_DRAG_START_X && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DRAG_AXIS_DOMINANCE;
         if (!pointerStart.dragging && !wantsHorizontalDrag) {
           return;
         }
