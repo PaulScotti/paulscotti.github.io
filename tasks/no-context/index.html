@@ -7,33 +7,33 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>No Context Tasks</title>
-  <link rel="stylesheet" href="../style.css?v=fa025217d953de2f">
+  <link rel="stylesheet" href="../style.css?v=3a91b90432070507">
 </head>
 <body>
 <main class="screen">
   <header class="topbar">
-    <a class="mark" href="..?v=fa025217d953de2f">▶▮◀</a>
+    <a class="mark" href="..?v=3a91b90432070507">▶▮◀</a>
     <div>
       <h1>No Context</h1>
-      <p><span data-visible-count>0</span> visible tasks · due sorted · ~/todo</p>
+      <p><span data-visible-count>0</span> visible tasks · due sorted · ~/todo.txt</p>
     </div>
-    <time>v fa025217d953</time>
+    <time>v 3a91b9043207</time>
   </header>
   <p class="note">Quick note: (A) represents top priority tasks.</p>
   <nav class="contexts" aria-label="Task filters">
-    <a class="context" href="..?v=fa025217d953de2f">All</a>
+    <a class="context" href="..?v=3a91b90432070507">All</a>
     <a class="context" href="../employees/"><span>Employees</span><b>19</b></a>
     <a class="context" href="../c-suite/"><span>C-Suite</span><b>69</b></a>
     <a class="context active" href="../no-context/"><span>No Context</span><b>0</b></a>
-    <a class="context" href="../benjamin/"><span>@Benjamin</span><b>7</b></a>
+    <a class="context" href="../benjamin/"><span>@Benjamin</span><b>8</b></a>
     <a class="context" href="../chris/"><span>@Chris</span><b>5</b></a>
     <a class="context" href="../connor/"><span>@Connor</span><b>3</b></a>
     <a class="context" href="../hassan/"><span>@Hassan</span><b>4</b></a>
-    <a class="context" href="../paul/"><span>@Paul</span><b>42</b></a>
-    <a class="context" href="../tanishq/"><span>@Tanishq</span><b>31</b></a>
+    <a class="context" href="../paul/"><span>@Paul</span><b>41</b></a>
+    <a class="context" href="../tanishq/"><span>@Tanishq</span><b>32</b></a>
     <a class="context" href="../varun/"><span>@Varun</span><b>4</b></a>
   </nav>
-  <section class="task-list" aria-label="Tasks" data-generated-today="2026-06-30">
+  <section class="task-list" aria-label="Tasks" data-generated-today="2026-07-01">
     <p class="empty">no visible tasks</p>
   </section>
   <script>
@@ -47,6 +47,7 @@
         { id: "next-week", label: "NEXT WEEK", color: "var(--accent)" },
         { id: "later", label: "LATER", color: "var(--accent)" },
         { id: "no-due", label: "NO DUE DATE", color: "var(--dim)" },
+        { id: "pending", label: "PENDING", color: "var(--dim)" },
         { id: "waiting", label: "WAITING", color: "var(--dim)" },
         { id: "done", label: "DONE", color: "var(--done)" }
     ];
@@ -114,8 +115,11 @@
         if (/^[1-9]$/.test(value || "")) {
             return value.charCodeAt(0) - "1".charCodeAt(0);
         }
-        if (value === "W") {
+        if (value === "P") {
             return 1001;
+        }
+        if (value === "W") {
+            return 1002;
         }
         if (/^[A-Z]$/.test(value || "")) {
             return 10 + value.charCodeAt(0) - "A".charCodeAt(0);
@@ -130,6 +134,9 @@
         }
         if (row.dataset.done === "1") {
             return doneIsRecent(row, today) && due === today ? "today" : "";
+        }
+        if (row.dataset.priority === "P") {
+            return "pending";
         }
         if (row.dataset.priority === "W") {
             return "waiting";
