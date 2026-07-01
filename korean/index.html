@@ -704,6 +704,10 @@
       var SWIPE_DRAG_START_X = 5;
       var SWIPE_DRAG_AXIS_DOMINANCE = 0.82;
       var SWIPE_FEEDBACK_DISTANCE_FACTOR = 1.32;
+      var SWIPE_ANSWER_ANIMATION_MS = 140;
+      var CLICK_SUPPRESS_AFTER_SWIPE_MS = 180;
+      var CLICK_SUPPRESS_AFTER_NEW_CARD_MS = 30;
+      var CLICK_SUPPRESS_AFTER_DRAG_MS = 180;
       var GENERATED_NUMBER_COUNT = 2;
       var GENERATED_TIME_COUNT = 2;
       var GENERATED_MONEY_COUNT = 1;
@@ -1556,14 +1560,15 @@
           return;
         }
         swipeAnswerPending = true;
-        suppressClickUntil = Date.now() + 700;
+        suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_SWIPE_MS;
         updateDragFeedback((known ? 1 : -1) * Math.max(cardShell.getBoundingClientRect().width * 1.08, 360));
         swipeTimerId = window.setTimeout(function () {
           swipeTimerId = null;
           swipeAnswerPending = false;
           resetDragFeedback();
           answerCard(known);
-        }, 140);
+          suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_NEW_CARD_MS;
+        }, SWIPE_ANSWER_ANIMATION_MS);
       }
 
       cardButton.addEventListener("click", function (event) {
@@ -1603,7 +1608,7 @@
         }
         pointerStart.dragging = true;
         cardButton.classList.add("is-dragging");
-        suppressClickUntil = Date.now() + 450;
+        suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_DRAG_MS;
         updateDragFeedback(deltaX);
         if (event.cancelable) {
           event.preventDefault();
@@ -1622,12 +1627,12 @@
           cardButton.releasePointerCapture(event.pointerId);
         }
         if ((wasDragging || Math.abs(deltaX) >= swipeThreshold()) && handleSwipe(deltaX, deltaY)) {
-          suppressClickUntil = Date.now() + 450;
+          suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_SWIPE_MS;
           event.preventDefault();
           return;
         }
         if (wasDragging) {
-          suppressClickUntil = Date.now() + 450;
+          suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_DRAG_MS;
           resetDragFeedback();
           event.preventDefault();
         }
