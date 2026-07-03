@@ -21,6 +21,20 @@
       --shadow: 0 24px 80px rgba(29, 31, 27, 0.12);
     }
 
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #151713;
+      --surface: #20231f;
+      --ink: #f4f0e8;
+      --muted: #b7bcae;
+      --line: #3b4138;
+      --leaf: #8db890;
+      --blue: #82a9cf;
+      --rose: #d47b70;
+      --gold: #d4a84c;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -40,6 +54,12 @@
         repeating-linear-gradient(90deg, rgba(23, 25, 22, 0.025) 0, rgba(23, 25, 22, 0.025) 1px, transparent 1px, transparent 72px);
       -webkit-font-smoothing: antialiased;
       text-rendering: geometricPrecision;
+    }
+
+    :root[data-theme="dark"] body {
+      background:
+        linear-gradient(180deg, rgba(31, 34, 30, 0.86), rgba(18, 20, 17, 0.98)),
+        repeating-linear-gradient(90deg, rgba(255, 253, 250, 0.035) 0, rgba(255, 253, 250, 0.035) 1px, transparent 1px, transparent 72px);
     }
 
     button {
@@ -110,6 +130,13 @@
       text-transform: uppercase;
     }
 
+    .top-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-self: start;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -121,7 +148,8 @@
       overflow: hidden;
     }
 
-    .top-reset-button {
+    .top-reset-button,
+    .theme-button {
       min-width: 74px;
       min-height: 38px;
       padding: 0 14px;
@@ -137,18 +165,64 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .top-reset-button:focus-visible {
+    .theme-button {
+      width: 38px;
+      min-width: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .theme-icon {
+      width: 17px;
+      height: 17px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .theme-icon.moon {
+      display: none;
+    }
+
+    :root[data-theme="dark"] .theme-icon.sun {
+      display: none;
+    }
+
+    :root[data-theme="dark"] .theme-icon.moon {
+      display: block;
+    }
+
+    .top-reset-button:focus-visible,
+    .theme-button:focus-visible {
       outline: 3px solid rgba(75, 117, 161, 0.44);
       outline-offset: 4px;
     }
 
-    .top-reset-button:active {
+    .top-reset-button:active,
+    .theme-button:active {
       transform: translateY(1px) scale(0.996);
     }
 
     .top-reset-button:disabled {
       cursor: not-allowed;
       filter: saturate(0.3) opacity(0.45);
+    }
+
+    :root[data-theme="dark"] .brand-mark {
+      background:
+        linear-gradient(135deg, rgba(141, 184, 144, 0.16), rgba(130, 169, 207, 0.12)),
+        var(--surface);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    :root[data-theme="dark"] .stats,
+    :root[data-theme="dark"] .top-reset-button,
+    :root[data-theme="dark"] .theme-button {
+      background: rgba(31, 35, 31, 0.78);
     }
 
     .stat {
@@ -192,6 +266,11 @@
       border-radius: inherit;
       background: linear-gradient(90deg, var(--leaf), var(--blue), var(--gold));
       transition: width 220ms ease;
+    }
+
+    :root[data-theme="dark"] .progress,
+    :root[data-theme="dark"] .loading-bars {
+      background: rgba(255, 253, 250, 0.1);
     }
 
     .stage {
@@ -266,6 +345,12 @@
       will-change: transform;
     }
 
+    :root[data-theme="dark"] .flashcard {
+      background:
+        linear-gradient(180deg, rgba(36, 40, 35, 0.96), rgba(27, 31, 27, 0.9)),
+        var(--surface);
+    }
+
     .flashcard::before {
       content: "";
       position: absolute;
@@ -275,6 +360,13 @@
         linear-gradient(90deg, rgba(82, 107, 85, 0.13), transparent 32%, transparent 68%, rgba(189, 87, 75, 0.1)),
         repeating-linear-gradient(0deg, rgba(23, 25, 22, 0.028) 0, rgba(23, 25, 22, 0.028) 1px, transparent 1px, transparent 28px);
       opacity: 0.64;
+    }
+
+    :root[data-theme="dark"] .flashcard::before {
+      background:
+        linear-gradient(90deg, rgba(141, 184, 144, 0.12), transparent 32%, transparent 68%, rgba(212, 123, 112, 0.1)),
+        repeating-linear-gradient(0deg, rgba(255, 253, 250, 0.035) 0, rgba(255, 253, 250, 0.035) 1px, transparent 1px, transparent 28px);
+      opacity: 0.7;
     }
 
     .flashcard:focus-visible {
@@ -321,6 +413,11 @@
       font-weight: 760;
       line-height: 1;
       text-transform: uppercase;
+    }
+
+    :root[data-theme="dark"] .side-label {
+      background: rgba(31, 35, 31, 0.76);
+      border-color: rgba(72, 79, 70, 0.86);
     }
 
     .term {
@@ -433,6 +530,11 @@
       gap: 18px;
     }
 
+    :root[data-theme="dark"] .finish,
+    :root[data-theme="dark"] .load-state {
+      background: rgba(30, 34, 30, 0.9);
+    }
+
     .finish-title {
       margin: 0;
       font-size: clamp(2.2rem, 8vw, 5rem);
@@ -543,6 +645,10 @@
         justify-self: end;
       }
 
+      .top-actions {
+        justify-self: end;
+      }
+
       .stats {
         grid-column: 1 / -1;
         justify-self: stretch;
@@ -616,7 +722,18 @@
         </span>
       </a>
 
-      <button class="top-reset-button" type="button" id="resetButton" disabled>Reset</button>
+      <div class="top-actions">
+        <button class="theme-button" type="button" id="themeButton" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+          <svg class="theme-icon sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2.5v2.2M12 19.3v2.2M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"></path>
+          </svg>
+          <svg class="theme-icon moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20.4 14.7A7.8 7.8 0 0 1 9.3 3.6a8.2 8.2 0 1 0 11.1 11.1Z"></path>
+          </svg>
+        </button>
+        <button class="top-reset-button" type="button" id="resetButton" disabled>Reset</button>
+      </div>
 
       <div class="stats" aria-label="Game stats">
         <div class="stat">
@@ -695,6 +812,9 @@
       var LOAD_TIMEOUT_MS = 12000;
       var STORAGE_VERSION = 6;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
+      var THEME_STORAGE_KEY = "koreanCardsTheme";
+      var LIGHT_THEME_COLOR = "#f5f2ea";
+      var DARK_THEME_COLOR = "#151713";
       var SAVE_INTERVAL_MS = 1000;
       var SWIPE_MIN_X = 24;
       var SWIPE_MAX_X = 54;
@@ -730,6 +850,7 @@
       var actions = document.getElementById("answerActions");
       var yesButton = document.getElementById("yesButton");
       var noButton = document.getElementById("noButton");
+      var themeButton = document.getElementById("themeButton");
       var resetButton = document.getElementById("resetButton");
       var retryButton = document.getElementById("retryButton");
       var restartButton = document.getElementById("restartButton");
@@ -744,6 +865,7 @@
       var finishErrors = document.getElementById("finishErrors");
       var finishCorrect = document.getElementById("finishCorrect");
       var screenReaderStatus = document.getElementById("screenReaderStatus");
+      var themeColorMeta = document.querySelector("meta[name='theme-color']");
 
       var sheetCards = [];
       var sheetSignature = "";
@@ -762,6 +884,43 @@
       var swipeAnswerPending = false;
       var swipeTimerId = null;
       var suppressClickUntil = 0;
+      var currentTheme = "light";
+
+      function readThemePreference() {
+        try {
+          return window.localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
+        } catch (error) {
+          return "light";
+        }
+      }
+
+      function saveThemePreference(theme) {
+        try {
+          window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+        } catch (error) {
+          // Theme preference is optional; the app remains usable without storage.
+        }
+      }
+
+      function applyTheme(theme) {
+        currentTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = currentTheme;
+        if (themeColorMeta) {
+          themeColorMeta.setAttribute("content", currentTheme === "dark" ? DARK_THEME_COLOR : LIGHT_THEME_COLOR);
+        }
+        if (themeButton) {
+          var nextTheme = currentTheme === "dark" ? "light" : "dark";
+          themeButton.setAttribute("aria-label", "Switch to " + nextTheme + " theme");
+          themeButton.setAttribute("aria-pressed", currentTheme === "dark" ? "true" : "false");
+          themeButton.title = "Switch to " + nextTheme + " theme";
+        }
+      }
+
+      function toggleTheme() {
+        var nextTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme(nextTheme);
+        saveThemePreference(nextTheme);
+      }
 
       function loadCards() {
         if (new URLSearchParams(window.location.search).has("forceSheetFailure")) {
@@ -1647,6 +1806,7 @@
       noButton.addEventListener("click", function () {
         answerCard(false);
       });
+      themeButton.addEventListener("click", toggleTheme);
       retryButton.addEventListener("click", function () {
         body.classList.remove("is-failed", "is-finished");
         body.classList.add("is-loading");
@@ -1697,6 +1857,8 @@
       function shouldSkipRestore() {
         return new URLSearchParams(window.location.search).has("noRestore");
       }
+
+      applyTheme(readThemePreference());
 
       loadCards().then(begin).catch(function (error) {
         if (!shouldSkipRestore() && restoreSavedGame(true)) {
