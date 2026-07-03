@@ -1,0 +1,2540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3efe6">
+  <title>Korean Chat</title>
+  <link rel="icon" type="image/png" href="https://paulscotti.github.io/favicon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3efe6;
+      --surface: #fffdfa;
+      --ink: #161916;
+      --muted: #657063;
+      --line: #ded6c8;
+      --leaf: #526b55;
+      --blue: #426e9f;
+      --rose: #b84f44;
+      --gold: #bc8429;
+      --violet: #5d587c;
+      --shadow: 0 24px 90px rgba(31, 34, 29, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+	    html {
+	      height: 100%;
+	      background: var(--paper);
+	      overflow: hidden;
+	    }
+
+	    body {
+	      height: 100dvh;
+	      margin: 0;
+	      color: var(--ink);
+	      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	      background: linear-gradient(180deg, #faf7f0, var(--paper));
+	      -webkit-font-smoothing: antialiased;
+	      text-rendering: geometricPrecision;
+	      overflow: hidden;
+	    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+	    .app {
+	      width: min(100%, 1180px);
+	      height: 100dvh;
+	      min-height: 0;
+	      margin: 0 auto;
+	      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+	      display: grid;
+	      grid-template-rows: auto auto minmax(0, 1fr);
+	      gap: 12px;
+	      overflow: hidden;
+	    }
+
+    .topbar {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(82, 107, 85, 0.14), rgba(66, 110, 159, 0.1)),
+        var(--surface);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 28px rgba(31, 34, 29, 0.08);
+    }
+
+    .brand-mark svg {
+      width: 25px;
+      height: 25px;
+      display: block;
+    }
+
+    .brand-text {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+
+    .brand-title {
+      font-size: 1rem;
+      font-weight: 780;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 720;
+      line-height: 1.1;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .icon-button,
+    .text-button,
+    .send-button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(255, 253, 250, 0.82);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, filter 140ms ease;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      font-size: 1.04rem;
+      font-weight: 800;
+    }
+
+	    .text-button {
+	      min-height: 42px;
+	      padding: 0 14px;
+	      font-size: 0.86rem;
+	      font-weight: 780;
+	    }
+
+	    .toggle-button {
+	      color: var(--muted);
+	    }
+
+	    .toggle-button.active {
+	      color: #fffdfa;
+	      background: color-mix(in srgb, var(--leaf), var(--blue) 32%);
+	      border-color: rgba(82, 107, 85, 0.42);
+	    }
+
+    .icon-button:hover,
+    .text-button:hover {
+      background: #fffdfa;
+      border-color: color-mix(in srgb, var(--blue), var(--line) 56%);
+    }
+
+    .icon-button:focus-visible,
+    .text-button:focus-visible,
+    .send-button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(66, 110, 159, 0.34);
+      outline-offset: 3px;
+    }
+
+    .icon-button:active,
+    .text-button:active,
+    .send-button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+	    .scenario {
+	      border-bottom: 1px solid rgba(222, 214, 200, 0.86);
+	      padding: 0 0 12px;
+	      display: grid;
+	      align-items: start;
+	    }
+
+    .scenario-main {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--leaf);
+      font-size: 0.72rem;
+      font-weight: 820;
+      letter-spacing: 0;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+	    .scenario h1 {
+	      margin: 0;
+	      font-size: clamp(1.22rem, 3vw, 1.72rem);
+	      line-height: 1.08;
+	      letter-spacing: 0;
+	      overflow-wrap: anywhere;
+	    }
+
+	    .scenario-focus {
+	      margin: 0;
+	      color: var(--muted);
+	      font-size: clamp(0.92rem, 1.8vw, 1.03rem);
+	      font-weight: 650;
+	      line-height: 1.35;
+	    }
+
+	    .workspace {
+	      min-height: 0;
+	      display: grid;
+	      grid-template-columns: minmax(0, 1.5fr) minmax(330px, 0.72fr);
+	      gap: 12px;
+	    }
+
+	    .workspace.teacher-hidden {
+	      grid-template-columns: minmax(0, 1fr);
+	    }
+
+	    .workspace.teacher-hidden .teacher-shell {
+	      display: none;
+	    }
+
+	    .chat-shell {
+	      min-height: 0;
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: rgba(255, 253, 250, 0.7);
+	      box-shadow: 0 12px 46px rgba(31, 34, 29, 0.08);
+	      overflow: hidden;
+	      display: grid;
+	      grid-template-rows: minmax(0, 1fr) auto;
+	    }
+
+    .chat-log {
+      min-height: 0;
+      padding: clamp(14px, 2.2vw, 20px);
+      overflow: auto;
+      scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      width: min(100%, 720px);
+      display: grid;
+      gap: 7px;
+    }
+
+    .message.user {
+      align-self: end;
+      justify-items: end;
+    }
+
+    .message.assistant {
+      align-self: start;
+      justify-items: start;
+    }
+
+    .bubble {
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fffdfa;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+
+    .message.user .bubble {
+      color: #fffdfa;
+      background: linear-gradient(135deg, #426e9f, #5d587c);
+      border-color: rgba(66, 110, 159, 0.28);
+    }
+
+	    .ko {
+	      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+	      font-size: clamp(1.05rem, 2.6vw, 1.24rem);
+	      font-weight: 720;
+	      line-height: 1.45;
+	    }
+
+	    .ko-token {
+	      margin: 0;
+	      border: 0;
+	      border-radius: 5px;
+	      padding: 0 2px;
+	      color: inherit;
+	      background: transparent;
+	      font: inherit;
+	      line-height: inherit;
+	      cursor: pointer;
+	    }
+
+	    .ko-token:hover,
+	    .ko-token:focus-visible {
+	      background: rgba(188, 132, 41, 0.18);
+	      outline: none;
+	    }
+
+	    .message.user .ko-token:hover,
+	    .message.user .ko-token:focus-visible {
+	      background: rgba(255, 253, 250, 0.2);
+	    }
+
+    .en {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+	    .message.user .en {
+	      color: rgba(255, 253, 250, 0.82);
+	    }
+
+	    .teacher-text {
+	      color: color-mix(in srgb, var(--ink), var(--muted) 20%);
+	      font-size: 0.96rem;
+	      font-weight: 650;
+	      line-height: 1.42;
+	      overflow-wrap: anywhere;
+	    }
+
+	    .teacher-shell .bubble {
+	      word-break: normal;
+	    }
+
+	    .teacher-shell {
+	      background: rgba(250, 248, 243, 0.82);
+	      box-shadow: 0 10px 34px rgba(31, 34, 29, 0.06);
+	    }
+
+		    .feedback {
+		      width: min(100%, 720px);
+	      border-left: 3px solid var(--gold);
+	      padding: 10px 12px;
+	      background: rgba(255, 253, 250, 0.72);
+	      display: grid;
+	      gap: 7px;
+    }
+
+    .feedback-head {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 820;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      min-width: 0;
+      border-radius: 8px;
+      padding: 5px 8px;
+      color: #fffdfa;
+      background: var(--leaf);
+      font-size: 0.68rem;
+      font-weight: 830;
+      line-height: 1;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+	      white-space: nowrap;
+	    }
+
+	    .teacher-shell .pill {
+	      font-size: 0.64rem;
+	    }
+
+    .pill.minor_fix {
+      background: var(--gold);
+    }
+
+    .pill.needs_work,
+    .pill.english_only {
+      background: var(--rose);
+    }
+
+    .feedback p {
+      margin: 0;
+      color: color-mix(in srgb, var(--muted), var(--ink) 24%);
+      font-size: 0.92rem;
+      font-weight: 620;
+      line-height: 1.42;
+    }
+
+	    .next-prompt {
+	      display: block;
+	      width: min(100%, 720px);
+	      padding: 0 8px 2px 14px;
+	      border: 0;
+	      background: transparent;
+	      color: color-mix(in srgb, var(--muted), var(--ink) 10%);
+	      font: inherit;
+	      font-size: 0.92rem;
+	      font-style: italic;
+	      font-weight: 560;
+	      line-height: 1.36;
+	      opacity: 0.55;
+	      overflow-wrap: anywhere;
+	      text-align: left;
+	      cursor: help;
+	    }
+
+	    .next-message {
+	      pointer-events: auto;
+	    }
+
+    .better-line {
+      margin: 0;
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      font-size: 1.03rem;
+      font-weight: 760;
+      line-height: 1.36;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+
+    .vocab {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+	    .vocab-item {
+	      max-width: 100%;
+	      border: 1px solid rgba(222, 214, 200, 0.86);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgba(255, 253, 250, 0.78);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 680;
+      line-height: 1.15;
+	      overflow-wrap: anywhere;
+	    }
+
+	    .composer {
+	      border-top: 1px solid rgba(222, 214, 200, 0.86);
+	      background: rgba(255, 253, 250, 0.9);
+	      padding: 10px;
+	      display: grid;
+	      grid-template-columns: minmax(0, 1fr) auto;
+	      gap: 10px;
+    }
+
+    .input-wrap {
+      min-width: 0;
+      display: grid;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 58px;
+      max-height: 168px;
+      resize: none;
+      border: 1px solid rgba(222, 214, 200, 0.92);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--ink);
+      background: #fffdfa;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      font-size: 1rem;
+      font-weight: 660;
+      line-height: 1.4;
+    }
+
+    textarea::placeholder {
+      color: color-mix(in srgb, var(--muted), transparent 22%);
+    }
+
+    .send-button {
+      min-width: 72px;
+      min-height: 58px;
+      padding: 0 16px;
+      color: #fffdfa;
+      background: linear-gradient(135deg, var(--leaf), var(--blue));
+      border-color: rgba(82, 107, 85, 0.36);
+      font-size: 0.94rem;
+      font-weight: 830;
+    }
+
+    .send-button:disabled,
+    .icon-button:disabled,
+    .text-button:disabled {
+      cursor: not-allowed;
+      filter: saturate(0.2) opacity(0.46);
+    }
+
+	    .status-line {
+	      grid-column: 1 / -1;
+	      min-height: 18px;
+	      color: var(--muted);
+	      font-size: 0.78rem;
+	      font-weight: 660;
+	      line-height: 1.3;
+	    }
+
+	    .status-line:empty {
+	      display: none;
+	    }
+
+    dialog {
+      width: min(94vw, 520px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0;
+      color: var(--ink);
+      background: #fffdfa;
+      box-shadow: 0 28px 100px rgba(31, 34, 29, 0.24);
+    }
+
+    dialog::backdrop {
+      background: rgba(22, 25, 22, 0.32);
+      backdrop-filter: blur(4px);
+    }
+
+    .settings {
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .settings h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      line-height: 1.1;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 820;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 11px;
+      color: var(--ink);
+      background: #fffdfa;
+      font-size: 0.96rem;
+      font-weight: 650;
+    }
+
+    .settings-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .danger {
+      color: #fffdfa;
+      background: linear-gradient(135deg, #a94339, var(--rose));
+      border-color: rgba(184, 79, 68, 0.4);
+    }
+
+    .primary {
+      color: #fffdfa;
+      background: linear-gradient(135deg, var(--leaf), var(--blue));
+      border-color: rgba(82, 107, 85, 0.42);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 12;
+      width: min(calc(100% - 28px), 540px);
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      border: 1px solid rgba(222, 214, 200, 0.86);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #fffdfa;
+      background: rgba(22, 25, 22, 0.88);
+      box-shadow: 0 18px 60px rgba(31, 34, 29, 0.2);
+      font-size: 0.9rem;
+      font-weight: 690;
+      line-height: 1.35;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+	    @media (max-width: 900px), (orientation: portrait) {
+	      .workspace {
+	        grid-template-columns: 1fr;
+	        grid-template-rows: minmax(0, 1fr) minmax(132px, 0.32fr);
+	      }
+
+	      .workspace.teacher-hidden {
+	        grid-template-rows: minmax(0, 1fr);
+	      }
+
+	      .teacher-shell {
+	        box-shadow: 0 12px 36px rgba(31, 34, 29, 0.1);
+	      }
+
+	      .teacher-shell .chat-log {
+	        padding: 8px 10px;
+	        gap: 8px;
+	      }
+
+	      .teacher-shell .composer {
+	        padding: 7px;
+	        gap: 7px;
+	      }
+
+	      .teacher-shell textarea {
+	        min-height: 36px;
+	        max-height: 72px;
+	        padding: 8px 10px;
+	        font-size: 0.9rem;
+	      }
+
+	      .teacher-shell .send-button {
+	        min-width: 54px;
+	        min-height: 36px;
+	        padding: 0 10px;
+	        font-size: 0.82rem;
+	      }
+	    }
+
+	    @media (max-width: 700px) {
+	      .app {
+	        padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+	        gap: 7px;
+	      }
+
+	      .topbar {
+	        min-height: 38px;
+	        gap: 8px;
+	      }
+
+	      .brand-mark {
+	        width: 34px;
+	        height: 34px;
+	      }
+
+	      .brand-mark svg {
+	        width: 22px;
+	        height: 22px;
+	      }
+
+	      .scenario {
+	        padding: 0 0 7px;
+	      }
+
+	      .scenario-main {
+	        gap: 4px;
+	      }
+
+	      .scenario h1,
+	      .scenario-focus {
+	        white-space: nowrap;
+	        overflow: hidden;
+	        text-overflow: ellipsis;
+	      }
+
+	      .scenario h1 {
+	        font-size: 1.22rem;
+	        line-height: 1.08;
+	      }
+
+	      .scenario-focus {
+	        font-size: 0.86rem;
+	        line-height: 1.18;
+	      }
+
+	      .eyebrow {
+	        font-size: 0.62rem;
+	      }
+
+	      .workspace {
+	        gap: 7px;
+	      }
+
+	      .chat-log {
+	        padding: 10px;
+	        gap: 9px;
+	      }
+
+	      .ko {
+	        font-size: 1.04rem;
+	        line-height: 1.38;
+	      }
+
+	      .bubble {
+	        padding: 9px 11px;
+	      }
+
+	      .feedback {
+	        padding: 8px 10px;
+	        font-size: 0.86rem;
+	      }
+
+	      .next-prompt {
+	        padding: 0 8px 1px 12px;
+	        font-size: 0.84rem;
+	        line-height: 1.3;
+	      }
+
+	      .feedback p,
+	      .teacher-text {
+	        font-size: 0.84rem;
+	        line-height: 1.32;
+	      }
+
+	      .better-line {
+	        font-size: 0.95rem;
+	      }
+
+	      .composer {
+	        padding: 8px;
+	        gap: 8px;
+	      }
+
+	      textarea {
+	        min-height: 44px;
+	        max-height: 96px;
+	        padding: 9px 10px;
+	        font-size: 0.96rem;
+	      }
+
+	      .send-button {
+	        min-width: 58px;
+	        min-height: 44px;
+	        padding: 0 12px;
+	        font-size: 0.84rem;
+	      }
+
+	      .brand-subtitle {
+	        display: none;
+      }
+
+      .text-button {
+        padding: 0 11px;
+      }
+    }
+
+	    @media (max-width: 520px) {
+      .brand-text {
+        display: none;
+      }
+
+      .toolbar {
+        gap: 6px;
+      }
+
+      .icon-button {
+        width: 40px;
+        height: 40px;
+      }
+
+      .text-button {
+        min-height: 40px;
+        font-size: 0.8rem;
+      }
+
+	      .composer {
+	        grid-template-columns: minmax(0, 1fr) auto;
+	      }
+
+	      .send-button {
+	        width: auto;
+	      }
+	    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="/korean/" aria-label="Korean cards">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img" focusable="false">
+            <path d="M6.8 21.8c6.1-8.4 12.2-12.3 18.3-11.7" fill="none" stroke="#526b55" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M8.2 9.7c3.4 1.9 6.4 6.2 8.8 12.7" fill="none" stroke="#426e9f" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M22 10.7c-1.5 5.1-1.5 9.3 0 12.6" fill="none" stroke="#b84f44" stroke-width="3.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">Korean Chat</span>
+          <span class="brand-subtitle">Seoul role-play</span>
+        </span>
+      </a>
+
+	      <div class="toolbar">
+	        <button class="text-button" type="button" id="topicButton">New topic</button>
+	        <button class="text-button toggle-button active" type="button" id="teacherToggleButton" aria-controls="teacherPane" aria-expanded="true" aria-pressed="true">Teacher</button>
+	        <button class="icon-button" type="button" id="settingsButton" aria-label="Settings" title="Settings">⚙</button>
+	      </div>
+    </header>
+
+	    <section class="scenario" aria-labelledby="topicTitle">
+	      <div class="scenario-main">
+	        <p class="eyebrow" id="topicIndex">Topic</p>
+	        <h1 id="topicTitle">Loading Seoul topics</h1>
+	        <p class="scenario-focus" id="topicFocus">Preparing a practice situation.</p>
+	      </div>
+	    </section>
+
+	    <section class="workspace" id="workspace">
+	      <div class="chat-shell">
+	        <div class="chat-log" id="practiceLog" aria-live="polite"></div>
+	        <form class="composer" id="practiceForm">
+	          <div class="input-wrap">
+	            <label class="sr-only" for="messageInput">Korean message</label>
+	            <textarea id="messageInput" rows="2" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="한국어로 입력하세요"></textarea>
+	          </div>
+	          <button class="send-button" type="submit" id="sendButton">Send</button>
+	          <div class="status-line" id="statusLine"></div>
+	        </form>
+	      </div>
+
+	      <div class="chat-shell teacher-shell" id="teacherPane">
+	        <div class="chat-log" id="teacherLog" aria-live="polite"></div>
+	        <form class="composer" id="teacherForm">
+	          <div class="input-wrap">
+	            <label class="sr-only" for="teacherInput">Teacher question</label>
+	            <textarea id="teacherInput" rows="2" autocomplete="off" autocapitalize="sentences" spellcheck="true" placeholder="Ask a side question"></textarea>
+	          </div>
+	          <button class="send-button" type="submit" id="teacherSendButton">Ask</button>
+	          <div class="status-line" id="teacherStatusLine"></div>
+	        </form>
+	      </div>
+	    </section>
+	  </main>
+
+  <dialog id="settingsDialog">
+    <form class="settings" method="dialog" id="settingsForm">
+      <h2>Settings</h2>
+      <label class="field">
+        <span>Browser API key</span>
+        <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Uses window.OPENAI_API_KEY first if set" inputmode="text">
+      </label>
+      <label class="field">
+        <span>Model</span>
+        <input id="modelInput" type="text" autocomplete="off" value="gpt-5.5">
+      </label>
+      <div class="settings-actions">
+        <button class="text-button danger" type="button" id="forgetKeyButton">Forget key</button>
+        <button class="text-button" value="cancel" type="submit">Cancel</button>
+        <button class="text-button primary" value="save" type="submit" id="saveSettingsButton">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+	    (function () {
+	      "use strict";
+	
+	      var SETTINGS_KEY = "kchat.settings.v1";
+	      var DEFAULT_MODEL = "gpt-5.5";
+	      var DEFAULT_EFFORT = "low";
+	      var TOPIC_URL = "../korean/dialogue.txt";
+	
+	      var VOCAB_SCHEMA = {
+	        type: "array",
+	        items: {
+	          type: "object",
+	          additionalProperties: false,
+	          properties: {
+	            ko: { type: "string" },
+	            en: { type: "string", description: "English meaning only, not pronunciation. For verbs/adjectives, define the dictionary form, not a whole conjugated phrase." }
+	          },
+	          required: ["ko", "en"]
+	        }
+	      };
+
+	      var SCENE_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          persona_en: {
+	            type: "string",
+	            description: "Who the Korean-speaking roleplay partner is in this scenario."
+	          },
+	          learner_role_en: {
+	            type: "string",
+	            description: "Who the learner is in this scenario."
+	          },
+	          opening_ko: {
+	            type: "string",
+	            description: "The first Korean line from the roleplay partner. Use Korean characters, standard digits, and real travel/service codes only."
+	          },
+	          opening_en: {
+	            type: "string",
+	            description: "Brief English meaning of opening_ko. Do not include romanized Korean."
+	          },
+	          next_prompt_en: {
+	            type: "string",
+	            description: "The exact English line the learner should say back to opening_ko."
+	          }
+	        },
+	        required: ["persona_en", "learner_role_en", "opening_ko", "opening_en", "next_prompt_en"]
+	      };
+	
+	      var TURN_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          roleplay_reply_ko: {
+	            type: "string",
+	            description: "One or two short Korean sentences continuing the role-play. Use Korean characters, standard digits, and real travel/service codes only."
+	          },
+	          roleplay_reply_en: {
+	            type: "string",
+	            description: "Brief English meaning of the Korean role-play reply. Do not include romanized Korean."
+	          },
+	          correction_status: {
+	            type: "string",
+	            enum: ["natural", "minor_fix", "needs_work", "english_only"]
+	          },
+	          correction_en: {
+	            type: "string",
+	            description: "Short English correction. Keep it focused and beginner-friendly. Do not call optional particle additions corrections. Do not include romanized Korean."
+	          },
+	          corrected_user_ko: {
+	            type: "string",
+	            description: "The most natural beginner-friendly Korean version of what the user tried to say. If the user's sentence is already natural, preserve it exactly except for tiny punctuation/spacing cleanup. Preserve natural spoken particle omissions when appropriate. Keep it at the learner's level."
+	          },
+	          pattern_note_en: {
+	            type: "string",
+	            description: "One quick grammar, vocabulary, or politeness note. Do not include romanized Korean."
+	          },
+	          score: { type: "integer", description: "0 to 5 score for the user's latest Korean in this context." },
+	          vocab: VOCAB_SCHEMA
+	        },
+	        required: [
+	          "roleplay_reply_ko",
+	          "roleplay_reply_en",
+	          "correction_status",
+	          "correction_en",
+	          "corrected_user_ko",
+	          "pattern_note_en",
+	          "score",
+	          "vocab"
+	        ]
+	      };
+
+	      var NEXT_LINE_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          next_prompt_en: {
+	            type: "string",
+	            description: "The exact English line the learner should say back to the latest Korean line."
+	          }
+	        },
+	        required: ["next_prompt_en"]
+	      };
+
+	      var REVIEWED_TURN_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          roleplay_reply_ko: TURN_SCHEMA.properties.roleplay_reply_ko,
+	          roleplay_reply_en: TURN_SCHEMA.properties.roleplay_reply_en,
+	          correction_status: TURN_SCHEMA.properties.correction_status,
+	          correction_en: TURN_SCHEMA.properties.correction_en,
+	          corrected_user_ko: TURN_SCHEMA.properties.corrected_user_ko,
+	          pattern_note_en: TURN_SCHEMA.properties.pattern_note_en,
+	          score: TURN_SCHEMA.properties.score,
+	          vocab: VOCAB_SCHEMA,
+	          next_prompt_en: NEXT_LINE_SCHEMA.properties.next_prompt_en
+	        },
+	        required: TURN_SCHEMA.required.concat(["next_prompt_en"])
+	      };
+	
+	      var TEACHER_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          answer_en: {
+	            type: "string",
+	            description: "Concise beginner-friendly English answer. Do not include romanized Korean."
+	          },
+	          example_ko: {
+	            type: "string",
+	            description: "Optional Korean example in Korean characters, standard digits, and real travel/service codes only. Use an empty string if no example is needed."
+	          },
+	          vocab: VOCAB_SCHEMA
+	        },
+	        required: ["answer_en", "example_ko", "vocab"]
+	      };
+
+	      var WORD_SCHEMA = {
+	        type: "object",
+	        additionalProperties: false,
+	        properties: {
+	          surface_ko: {
+	            type: "string",
+	            description: "The clicked Korean surface form exactly as shown."
+	          },
+	          dictionary_form_ko: {
+	            type: "string",
+	            description: "Dictionary form in Korean characters. For verbs/adjectives, use the infinitive/dictionary form ending in 다."
+	          },
+	          part_of_speech_en: {
+	            type: "string",
+	            description: "Beginner-friendly part of speech label in English."
+	          },
+	          meaning_en: {
+	            type: "string",
+	            description: "English meaning of the base word or dictionary form only. Do not fold endings, particles, or the whole sentence into this field. Do not include romanized Korean."
+	          },
+	          context_use_en: {
+	            type: "string",
+	            description: "How the clicked surface form is being used in context, including any ending or particle attached to the base word."
+	          },
+	          ambiguity_en: {
+	            type: "string",
+	            description: "If it can be used as more than one part of speech, explain that briefly. Otherwise use an empty string."
+	          },
+	          example_ko: {
+	            type: "string",
+	            description: "One short Korean example in Korean characters, standard digits, and real travel/service codes only."
+	          },
+	          example_en: {
+	            type: "string",
+	            description: "English meaning of the example. Do not include romanized Korean."
+	          }
+	        },
+	        required: [
+	          "surface_ko",
+	          "dictionary_form_ko",
+	          "part_of_speech_en",
+	          "meaning_en",
+	          "context_use_en",
+	          "ambiguity_en",
+	          "example_ko",
+	          "example_en"
+	        ]
+	      };
+	
+	      var els = {
+	        topicIndex: document.getElementById("topicIndex"),
+	        topicTitle: document.getElementById("topicTitle"),
+	        topicFocus: document.getElementById("topicFocus"),
+	        workspace: document.getElementById("workspace"),
+	        practiceLog: document.getElementById("practiceLog"),
+	        teacherLog: document.getElementById("teacherLog"),
+	        practiceForm: document.getElementById("practiceForm"),
+	        teacherForm: document.getElementById("teacherForm"),
+	        messageInput: document.getElementById("messageInput"),
+	        teacherInput: document.getElementById("teacherInput"),
+	        sendButton: document.getElementById("sendButton"),
+	        teacherSendButton: document.getElementById("teacherSendButton"),
+	        statusLine: document.getElementById("statusLine"),
+	        teacherStatusLine: document.getElementById("teacherStatusLine"),
+	        topicButton: document.getElementById("topicButton"),
+	        teacherToggleButton: document.getElementById("teacherToggleButton"),
+	        settingsButton: document.getElementById("settingsButton"),
+	        settingsDialog: document.getElementById("settingsDialog"),
+	        settingsForm: document.getElementById("settingsForm"),
+	        apiKeyInput: document.getElementById("apiKeyInput"),
+	        modelInput: document.getElementById("modelInput"),
+	        forgetKeyButton: document.getElementById("forgetKeyButton"),
+	        toast: document.getElementById("toast")
+	      };
+	
+	      var state = {
+	        topics: [],
+	        scenario: null,
+	        chat: [],
+	        teacherChat: [],
+	        feedbackHistory: [],
+	        nextPromptNode: null,
+	        nextPromptText: "",
+	        practiceBusy: false,
+	        teacherBusy: false,
+	        teacherVisible: true,
+	        sceneReady: false,
+	        settings: loadSettings()
+	      };
+	
+	      init();
+	
+	      function init() {
+	        hydrateSettingsForm();
+	        setTeacherVisible(state.teacherVisible);
+	        updatePracticeInputState();
+	        updateTeacherInputState();
+	        updateTopicButtonState();
+	        bindEvents();
+	        loadTopics();
+	      }
+	
+	      function bindEvents() {
+	        els.practiceForm.addEventListener("submit", function (event) {
+	          event.preventDefault();
+	          submitPracticeTurn();
+	        });
+	
+	        els.teacherForm.addEventListener("submit", function (event) {
+	          event.preventDefault();
+	          submitTeacherQuestion();
+	        });
+	
+	        els.messageInput.addEventListener("input", function () {
+	          autoResize(els.messageInput);
+	        });
+	        els.teacherInput.addEventListener("input", function () {
+	          autoResize(els.teacherInput);
+	        });
+	        bindEnterSubmit(els.messageInput, submitPracticeTurn);
+	        bindEnterSubmit(els.teacherInput, submitTeacherQuestion);
+	
+	        els.topicButton.addEventListener("click", function () {
+	          chooseScenario();
+	        });
+
+	        els.teacherToggleButton.addEventListener("click", function () {
+	          setTeacherVisible(!state.teacherVisible);
+	        });
+	
+	        els.settingsButton.addEventListener("click", function () {
+	          openSettings();
+	        });
+	
+	        els.settingsForm.addEventListener("submit", function (event) {
+	          if (event.submitter && event.submitter.value === "save") {
+	            saveSettingsFromForm();
+	          }
+	        });
+	
+	        els.forgetKeyButton.addEventListener("click", function () {
+	          state.settings.apiKey = "";
+	          saveSettings();
+	          hydrateSettingsForm();
+	          showToast("API key removed.");
+	        });
+	      }
+	
+	      function bindEnterSubmit(input, handler) {
+	        input.addEventListener("keydown", function (event) {
+	          if (event.key === "Enter" && !event.shiftKey) {
+	            event.preventDefault();
+	            handler();
+	          }
+	        });
+	      }
+	
+	      function loadTopics() {
+	        setPracticeStatus("Loading topics.");
+	        fetch(TOPIC_URL, { cache: "no-store" })
+	          .then(function (response) {
+	            if (!response.ok) {
+	              throw new Error("Could not load dialogue.txt.");
+	            }
+	            return response.text();
+	          })
+	          .then(function (text) {
+	            state.topics = parseTopics(text);
+	            if (!state.topics.length) {
+	              throw new Error("No topics were found.");
+	            }
+	            updateTopicButtonState();
+	            setPracticeStatus("");
+	            chooseScenario();
+	          })
+	          .catch(function (error) {
+	            state.topics = [];
+	            state.sceneReady = false;
+	            updatePracticeInputState();
+	            updateTeacherInputState();
+	            updateTopicButtonState();
+	            setPracticeStatus(error.message || "Topic load failed.");
+	            showToast(error.message || "Topic load failed.");
+	          });
+	      }
+	
+	      function parseTopics(text) {
+	        var topics = [];
+	        var current = null;
+	        text.split(/\r?\n/).forEach(function (line) {
+	          var titleMatch = line.match(/^(\d+)\.\s+(.+)$/);
+	          var bulletMatch = line.match(/^\s+-\s+(.+)$/);
+	          if (titleMatch) {
+	            current = {
+	              number: Number(titleMatch[1]),
+	              title: titleMatch[2].trim(),
+	              subtopics: []
+	            };
+	            topics.push(current);
+	          } else if (bulletMatch && current) {
+	            current.subtopics.push(bulletMatch[1].trim());
+	          }
+	        });
+	        return topics.filter(function (topic) {
+	          return topic.title && topic.subtopics.length;
+	        });
+	      }
+	
+	      function chooseScenario() {
+	        if (!state.topics.length || state.practiceBusy || state.teacherBusy) {
+	          return;
+	        }
+	        if (!ensureApiKey()) {
+	          setPracticeStatus("Set an API key to start a scene.");
+	          return;
+	        }
+	        var topic = state.topics[Math.floor(Math.random() * state.topics.length)];
+	        var focus = topic.subtopics[Math.floor(Math.random() * topic.subtopics.length)];
+	        state.scenario = {
+	          number: topic.number,
+	          title: topic.title,
+	          focus: focus,
+	          persona_en: "",
+	          learner_role_en: ""
+	        };
+	        state.chat = [];
+	        state.teacherChat = [];
+	        state.feedbackHistory = [];
+	        clearMainNextPrompt();
+	        state.sceneReady = false;
+	        updatePracticeInputState();
+	        updateTeacherInputState();
+	        els.topicIndex.textContent = "Topic " + topic.number;
+	        els.topicTitle.textContent = topic.title;
+	        els.topicFocus.textContent = focus;
+	        els.practiceLog.innerHTML = "";
+	        els.teacherLog.innerHTML = "";
+	        setPracticeBusy(true);
+	        setPracticeStatus("Starting scene.");
+	        setTeacherStatus("");
+	        requestOpenAI(buildScenePayload(topic, focus))
+	          .then(function (body) {
+	            var draft = normalizeScene(parseJsonResponse(body));
+	            setPracticeStatus("Reviewing scene.");
+	            return requestOpenAI(buildSceneReviewPayload(topic, focus, draft));
+	          })
+	          .then(function (body) {
+	            var parsed = normalizeScene(parseJsonResponse(body));
+	            state.scenario.persona_en = parsed.persona_en;
+	            state.scenario.learner_role_en = parsed.learner_role_en;
+	            addPracticeAssistantMessage(parsed.opening_ko);
+	            setMainNextPrompt(parsed.next_prompt_en);
+	            state.sceneReady = true;
+	            updatePracticeInputState();
+	            updateTeacherInputState();
+	            setPracticeStatus("");
+	          })
+	          .catch(function (error) {
+	            var message = error.message || "Scene setup failed.";
+	            addTeacherAssistantResponse({
+	              answer_en: "Scene setup failed: " + message,
+	              example_ko: "",
+	              vocab: []
+	            });
+	            setPracticeStatus("Scene setup failed.");
+	            showToast(message);
+	          })
+	          .finally(function () {
+	            setPracticeBusy(false);
+	            focusPracticeInput();
+	          });
+	      }
+	
+	      function activeApiKey() {
+	        if (typeof globalThis.OPENAI_API_KEY === "string" && globalThis.OPENAI_API_KEY.trim()) {
+	          return globalThis.OPENAI_API_KEY.trim();
+	        }
+	        return state.settings.apiKey || "";
+	      }
+
+	      function ensureApiKey() {
+	        if (activeApiKey()) {
+	          return true;
+	        }
+	        openSettings();
+	        showToast("Set window.OPENAI_API_KEY or add a browser key.");
+	        return false;
+	      }
+	
+	      function submitPracticeTurn() {
+	        var text = els.messageInput.value.trim();
+	        if (!text || state.practiceBusy) {
+	          return;
+	        }
+	        if (!state.sceneReady) {
+	          showToast("Start a scene first.");
+	          return;
+	        }
+	        if (!ensureApiKey()) {
+	          return;
+	        }
+	        var suggestedPrompt = state.nextPromptText;
+	        clearMainNextPrompt();
+	        addPracticeUserMessage(text);
+	        clearInput(els.messageInput);
+	        callPracticeTutor(text, suggestedPrompt);
+	      }
+	
+	      function submitTeacherQuestion() {
+	        var text = els.teacherInput.value.trim();
+	        if (!text || state.teacherBusy) {
+	          return;
+	        }
+	        if (!state.sceneReady) {
+	          showToast("Start a scene first.");
+	          return;
+	        }
+	        if (!ensureApiKey()) {
+	          return;
+	        }
+	        addTeacherUserMessage(text);
+	        clearInput(els.teacherInput);
+	        callTeacherAssistant(text);
+	      }
+	
+	      function callPracticeTutor(userText, suggestedPrompt) {
+	        setPracticeBusy(true);
+	        setPracticeStatus("Checking Korean.");
+	        requestOpenAI(buildPracticePayload(userText, suggestedPrompt))
+	          .then(function (body) {
+	            var draftTurn = normalizeTurn(parseJsonResponse(body));
+	            setPracticeStatus("Choosing next line.");
+	            return requestOpenAI(buildNextLinePayload(draftTurn.roleplay_reply_ko, draftTurn.roleplay_reply_en))
+	              .then(function (nextBody) {
+	                var draftNext = normalizeNextLine(parseJsonResponse(nextBody));
+	                setPracticeStatus("Reviewing flow.");
+	                return requestOpenAI(buildTurnReviewPayload(userText, suggestedPrompt, draftTurn, draftNext));
+	              })
+	              .then(function (reviewBody) {
+	                var reviewed = normalizeReviewedTurn(parseJsonResponse(reviewBody));
+	                addPracticeAssistantMessage(reviewed.roleplay_reply_ko);
+	                addTeacherFeedback(reviewed);
+	                setMainNextPrompt(reviewed.next_prompt_en);
+	                setPracticeStatus("");
+	              });
+	          })
+	          .catch(function (error) {
+	            addTeacherAssistantResponse({
+	              answer_en: "Practice request failed: " + (error.message || "The correction request failed."),
+	              example_ko: "",
+	              vocab: []
+	            });
+	            setPracticeStatus("Request failed.");
+	            showToast(error.message || "Practice request failed.");
+	          })
+	          .finally(function () {
+	            setPracticeBusy(false);
+	            focusPracticeInput();
+	          });
+	      }
+	
+	      function callTeacherAssistant(question) {
+	        setTeacherBusy(true);
+	        setTeacherStatus("Thinking.");
+	        requestOpenAI(buildTeacherPayload(question))
+	          .then(function (body) {
+	            var parsed = normalizeTeacher(parseJsonResponse(body));
+	            addTeacherAssistantResponse(parsed);
+	            setTeacherStatus("");
+	          })
+	          .catch(function (error) {
+	            addTeacherAssistantResponse({
+	              answer_en: error.message || "The teacher assistant request failed.",
+	              example_ko: "",
+	              vocab: []
+	            });
+	            setTeacherStatus("Request failed.");
+	          })
+	          .finally(function () {
+	            setTeacherBusy(false);
+	            focusPracticeInput();
+	          });
+	      }
+
+	      function explainClickedWord(word, sentence) {
+	        if (state.teacherBusy) {
+	          showToast("Teacher is already responding.");
+	          return;
+	        }
+	        if (!state.sceneReady) {
+	          showToast("Start a scene first.");
+	          return;
+	        }
+	        if (!ensureApiKey()) {
+	          return;
+	        }
+	        setTeacherVisible(true);
+	        addTeacherWordRequest(word);
+	        setTeacherBusy(true);
+	        setTeacherStatus("Explaining " + word + ".");
+	        requestOpenAI(buildWordPayload(word, sentence))
+	          .then(function (body) {
+	            var parsed = normalizeWord(parseJsonResponse(body));
+	            addTeacherWordResponse(parsed);
+	            setTeacherStatus("");
+	          })
+	          .catch(function (error) {
+	            addTeacherAssistantResponse({
+	              answer_en: error.message || "The word lookup failed.",
+	              example_ko: "",
+	              vocab: []
+	            });
+	            setTeacherStatus("Lookup failed.");
+	          })
+	          .finally(function () {
+	            setTeacherBusy(false);
+	          });
+	      }
+
+	      function requestTeacherHelpForNextPrompt(prompt) {
+	        var text = String(prompt || "").trim();
+	        if (!text) {
+	          return;
+	        }
+	        if (state.teacherBusy) {
+	          showToast("Teacher is already responding.");
+	          return;
+	        }
+	        if (!state.sceneReady) {
+	          showToast("Start a scene first.");
+	          return;
+	        }
+	        if (!ensureApiKey()) {
+	          return;
+	        }
+	        setTeacherVisible(true);
+	        var question = 'How should I say this in Korean: "' + text + '"?';
+	        addTeacherUserMessage(question);
+	        callTeacherAssistant(question);
+	      }
+	
+	      function requestOpenAI(payload) {
+	        return fetch("https://api.openai.com/v1/responses", {
+	          method: "POST",
+	          headers: {
+	            "Content-Type": "application/json",
+	            "Authorization": "Bearer " + activeApiKey()
+	          },
+	          body: JSON.stringify(payload)
+	        }).then(function (response) {
+	          return response.json().catch(function () {
+	            return {};
+	          }).then(function (body) {
+	            if (!response.ok) {
+	              var message = body && body.error && body.error.message ? body.error.message : "OpenAI request failed.";
+	              throw new Error(message);
+	            }
+	            return body;
+	          });
+	        });
+	      }
+
+	      function buildScenePayload(topic, focus) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildSceneInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildSceneContext(topic, focus)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_scene_setup",
+	              strict: true,
+	              schema: SCENE_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 700,
+	          store: false
+	        };
+	      }
+
+	      function buildSceneReviewPayload(topic, focus, draftScene) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildSceneReviewInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildSceneReviewContext(topic, focus, draftScene)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_scene_review",
+	              strict: true,
+	              schema: SCENE_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 700,
+	          store: false
+	        };
+	      }
+	
+	      function buildPracticePayload(userText, suggestedPrompt) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildPracticeInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildPracticeContext(userText, suggestedPrompt)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_chat_turn",
+	              strict: true,
+	              schema: TURN_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 900,
+	          store: false
+	        };
+	      }
+
+	      function buildNextLinePayload(assistantKo, assistantEn) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildNextLineInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildNextLineContext(assistantKo, assistantEn)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_next_line",
+	              strict: true,
+	              schema: NEXT_LINE_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 300,
+	          store: false
+	        };
+	      }
+
+	      function buildTurnReviewPayload(userText, suggestedPrompt, draftTurn, draftNext) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildTurnReviewInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildTurnReviewContext(userText, suggestedPrompt, draftTurn, draftNext)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_turn_review",
+	              strict: true,
+	              schema: REVIEWED_TURN_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 1100,
+	          store: false
+	        };
+	      }
+	
+	      function buildTeacherPayload(question) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildTeacherInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildTeacherContext(question)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_teacher_answer",
+	              strict: true,
+	              schema: TEACHER_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 800,
+	          store: false
+	        };
+	      }
+
+	      function buildWordPayload(word, sentence) {
+	        return {
+	          model: state.settings.model || DEFAULT_MODEL,
+	          instructions: buildWordInstructions(),
+	          input: [
+	            {
+	              role: "user",
+	              content: [
+	                {
+	                  type: "input_text",
+	                  text: buildWordContext(word, sentence)
+	                }
+	              ]
+	            }
+	          ],
+	          reasoning: { effort: DEFAULT_EFFORT },
+	          text: {
+	            verbosity: "low",
+	            format: {
+	              type: "json_schema",
+	              name: "korean_word_lookup",
+	              strict: true,
+	              schema: WORD_SCHEMA
+	            }
+	          },
+	          max_output_tokens: 750,
+	          store: false
+	        };
+	      }
+	
+	      function buildSceneInstructions() {
+	        return [
+	          "You are setting up a Korean role-play practice scene for an English-speaking beginner visiting Seoul.",
+	          "Create a realistic first line from the Korean-speaking person in the selected scenario.",
+	          "The opening_ko field must be Korean written in Hangeul/Korean characters. Standard digits and real travel/service codes like 2호선, 6015번, or KE908편 are allowed when natural. Do not include English explanation, romanized Korean, or pronunciation hints.",
+	          "Use polite -요 Korean by default unless the scenario is clearly casual. Keep opening_ko to one short natural sentence.",
+	          "Make the opening directly fit both the topic and focus. Do not use a generic cafe or store greeting if the focus is more specific.",
+	          "Treat the focus as the practical action Paul should practice in his next line whenever possible: asking, ordering, requesting, explaining, confirming, refusing, apologizing, giving information, or checking something.",
+	          "The roleplay partner should say what that person would realistically say, not the learner's target sentence. The partner's opening should invite Paul to perform the focus action in next_prompt_en.",
+	          "If the focus is 'asking where COEX is', next_prompt_en should be like 'Excuse me, where is COEX?', not 'I'm going to COEX.' If the focus is complimenting a vendor's food or goods, the vendor can invite Paul to look or try it; Paul should make the compliment in next_prompt_en.",
+	          "Prefer natural domain-specific service phrasing over literal English-shaped Korean. The line should sound like something a Seoul clerk, staff member, neighbor, guide, or passerby would actually say in that situation.",
+	          "Avoid awkward service hyper-honorifics where objects, tickets, foods, payments, or abstract choices are treated like people.",
+	          "Use digits for identifiers and amounts like subway lines, bus numbers, flight numbers, prices, phone numbers, and queue numbers when that is more natural than spelling them out.",
+	          "Do not force digits for natural spoken counters. Use forms like 한 분, 두 명, 몇 개, 한 장, and 두 장 when they sound more natural than 1분 or 2명.",
+	          "Use established Korean collocations and argument structure instead of word-by-word English translation patterns.",
+	          "Place particles on the Korean phrase that actually carries the topic, contrast, or 'also' meaning. Do not attach 은, 는, or 도 to a nearby noun just because English has 'also' or contrast there if that changes the semantic role.",
+	          "The next_prompt_en field must be the exact English line the learner should say back to opening_ko.",
+	          "If opening_ko asks a question, next_prompt_en must answer that exact question. Example: if opening_ko means 'What is your name?', next_prompt_en should be 'My name is Paul.'",
+	          "If opening_ko states a requirement, warning, answer, or instruction, next_prompt_en must acknowledge it or comply. Do not ask a question that opening_ko already answered.",
+	          "Example: if opening_ko means 'A passport is needed to exchange money,' next_prompt_en should be 'Here is my passport.' or 'I have my passport here,' not 'Do I need my passport?'",
+	          "Example: if opening_ko means 'The street is slippery because it rained,' next_prompt_en should be 'Okay, I will walk carefully,' not 'Are the streets slippery here?'",
+	          "Make next_prompt_en concrete, immediate, and beginner-friendly. It should usually be 4 to 14 words.",
+	          "Never include Korean or romanized Korean in English fields.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+
+	      function buildSceneReviewInstructions() {
+	        return [
+	          "You are the quality gate for a Korean role-play app for an English-speaking beginner visiting Seoul.",
+	          "Review the drafted scene before the learner sees it. Return the final scene JSON, either unchanged or revised.",
+	          "Only revise when it improves practical usefulness, beginner clarity, scenario fit, or natural Korean. Do not rewrite a good draft just to be different.",
+	          "Evaluate by general criteria, not by memorizing a list of banned phrases: natural Seoul service/social phrasing, correct collocations, correct honorific level, non-literal Korean structure, and realistic next turn.",
+	          "Check particle placement semantically. 은, 는, and 도 should attach to the phrase that actually carries topic, contrast, or 'also' meaning, not to a nearby noun if that makes the Korean argument structure odd.",
+	          "opening_ko must be one short natural Korean line written in Hangeul/Korean characters. Standard digits and real travel/service codes are allowed when natural.",
+	          "opening_ko should be what the Korean-speaking roleplay partner would actually say, not Paul's target sentence.",
+	          "The selected focus describes what Paul should practice saying or doing next whenever possible. Reject drafts where next_prompt_en dodges that focus.",
+	          "For an asking/requesting/ordering/explaining/checking focus, opening_ko should naturally invite that speech act. Example: for 'Asking where COEX is', '어디 가세요?' with next_prompt_en 'I'm going to COEX' misses the focus; revise to a setup like a passerby or information desk asking if Paul needs help, with next_prompt_en 'Excuse me, where is COEX?'",
+	          "opening_en must briefly mean the same thing as opening_ko. Do not include romanized Korean.",
+	          "next_prompt_en must be the exact English line Paul should say next. It must be directly translatable into a valid Korean reply in the current conversation.",
+	          "If opening_ko asks a question, next_prompt_en must answer that specific question. If opening_ko gives an instruction, requirement, warning, or answer, next_prompt_en must acknowledge it or take the next practical action.",
+	          "Do not let next_prompt_en be a task label, scenario objective, duplicate question, grammar exercise, or meta instruction.",
+	          "Keep next_prompt_en concrete, immediate, and beginner-friendly, usually 4 to 14 words.",
+	          "Never include Korean or romanized Korean in English fields.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+
+	      function buildPracticeInstructions() {
+	        return [
+	          "You are KChat, a practical Korean tutor for an English-speaking beginner visiting Seoul.",
+	          "Simulate a realistic short exchange with the most likely Seoul local, staff member, friend, clerk, guide, or passerby for the scenario.",
+	          "Stay in role. roleplay_reply_ko is what the other person says next, not a correction, translation, or teacher note.",
+	          "The main roleplay reply must be Korean written in Hangeul/Korean characters. Standard digits and real travel/service codes like 2호선, 6015번, or KE908편 are allowed when natural. Do not include English explanation, romanized Korean, or pronunciation hints in roleplay_reply_ko.",
+	          "Use polite -요 Korean by default unless the scenario is clearly casual. Keep it beginner-friendly: one or two short sentences, common Seoul phrasing, and no idioms, dialect, sarcasm, or textbook-stiff lines.",
+	          "Use digits for identifiers and amounts like subway lines, bus numbers, flight numbers, prices, phone numbers, and queue numbers when that is more natural than spelling them out.",
+	          "Do not force digits for natural spoken counters. Use forms like 한 분, 두 명, 몇 개, 한 장, and 두 장 when they sound more natural than 1분 or 2명.",
+	          "Prefer natural domain-specific service phrasing over literal English-shaped Korean. The reply should sound like something a Seoul clerk, staff member, neighbor, guide, or passerby would actually say in that situation.",
+	          "Avoid awkward service hyper-honorifics where objects, tickets, foods, payments, or abstract choices are treated like people.",
+	          "Use established Korean collocations and argument structure instead of word-by-word English translation patterns.",
+	          "Place particles on the Korean phrase that actually carries the topic, contrast, or 'also' meaning. Do not attach 은, 는, or 도 to a nearby noun just because English has 'also' or contrast there if that changes the semantic role.",
+	          "If the user's Korean is understandable, answer it directly and move the situation forward by one natural step.",
+	          "If the user's Korean is awkward or incorrect, infer the intended meaning from the user's actual text plus the shown English next-line suggestion when present, but do not ignore a valid different response.",
+	          "The English direct-reply suggestion is only a hint, not an answer key. If the user gives a valid different response, corrected_user_ko must preserve the user's intended meaning and must not rewrite it toward the suggestion.",
+	          "Correct grammar, vocabulary, required particles, word order, and politeness level in the correction fields.",
+	          "Do not treat dropped subject, topic, or object particles as mistakes when the user's line is natural in spoken Korean. Examples like '여권 필요해요?', '커피 주세요', and '화장실 어디예요?' can be natural beginner travel Korean.",
+	          "If a particle would make the sentence fuller or more textbook-like but is not required, mention it only as an optional fuller version, not as a correction. In that case, keep correction_status natural unless there is another real issue.",
+	          "If the user's Korean is already natural enough for the situation, corrected_user_ko should preserve the user's wording or make only a tiny practical cleanup, not add optional particles by default.",
+	          "If correction_status is natural and score is 5, corrected_user_ko must match the user's latest Korean sentence except for tiny spacing or punctuation cleanup.",
+	          "For natural 5/5 lines, correction_en should usually just confirm the sentence is natural. Do not add 'you can also say...' alternatives unless the user's current line could be misunderstood, sound rude, or miss the situation's core meaning.",
+	          "Keep feedback short. Prefer the single most useful correction and one reusable pattern note over a long lesson.",
+	          "Do not translate the roleplay partner's Korean reply in correction_en or pattern_note_en. The learner can click words or ask the side teacher when they want meaning help.",
+	          "corrected_user_ko should be one natural beginner-friendly line the learner could actually type next time, not an advanced rewrite.",
+	          "Do not recommend unnatural honorific/service forms such as '드실게요' as a correction. For medicine instructions, staff can say '드세요' or '복용하세요'; the learner can say '먹을게요' naturally.",
+	          "English feedback and vocabulary definitions must be English meanings only, not pronunciation spellings.",
+	          "For vocab, include 0 to 3 high-value Korean words from the reply or correction. For verbs and adjectives, prefer dictionary forms ending in 다.",
+	          "If the user writes English or mixed English, set correction_status to english_only and give the Korean sentence they were probably trying to say in corrected_user_ko.",
+	          "If the user goes off scenario, answer briefly if needed, then steer back to the current topic.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+
+	      function buildNextLineInstructions() {
+	        return [
+	          "You generate the faded English next-line hint for a Korean role-play app.",
+	          "Your only job is to suggest what the learner should say back to the latest Korean line from the other person.",
+	          "Use the latest Korean line and its English meaning as the authority. The hint is not a scenario objective, grammar task, or summary.",
+	          "If the Korean line asks a question, answer that exact question directly.",
+	          "Example: if the Korean line means 'What is your name?', next_prompt_en should be 'My name is Paul.'",
+	          "Example: if the Korean line means 'Would you like to order?', next_prompt_en could be 'I would like an iced Americano, please.'",
+	          "If the Korean line states a requirement, warning, answer, or instruction, do not ask the same question again. Suggest an acknowledgement or concrete next action.",
+	          "Example: if the Korean line means 'A passport is needed,' next_prompt_en should be 'Here is my passport.'",
+	          "Example: if the Korean line means 'Please show me your passport,' next_prompt_en should be 'Here is my passport.'",
+	          "Example: if the Korean line means 'The street is slippery because it rained,' next_prompt_en should be 'Okay, I will walk carefully.'",
+	          "Make next_prompt_en practical for Seoul, beginner-friendly, and usually 4 to 14 words.",
+	          "Write next_prompt_en in English only. Never include Korean or romanized Korean.",
+	          "Do not write a task or label. Bad: Ask about the price. Bad: Explain your allergy. Good: How much is this? Good: I have a peanut allergy.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+
+	      function buildTurnReviewInstructions() {
+	        return [
+	          "You are the final quality gate for a Korean role-play app for an English-speaking beginner visiting Seoul.",
+	          "Review the drafted roleplay reply, correction, and next-line hint as one coherent learning experience. Return the final JSON, either unchanged or revised.",
+	          "Only revise when the draft has a real issue. Do not make stylistic changes that do not improve naturalness, correctness, beginner usefulness, or conversation flow.",
+	          "Apply general criteria across every topic: natural Seoul phrasing, correct collocations, realistic staff/local behavior, appropriate -요 politeness, no awkward hyper-honorific treatment of objects, no literal English-shaped Korean, and no textbook-stiff lines.",
+	          "Check particle placement semantically. 은, 는, and 도 should attach to the phrase that actually carries topic, contrast, or 'also' meaning, not to a nearby noun if that makes the Korean argument structure odd.",
+	          "roleplay_reply_ko must be what the Korean-speaking partner says next in the role-play, written only in Korean characters plus natural digits/codes. It should move the situation forward by one realistic step.",
+	          "roleplay_reply_en must briefly mean the same thing as roleplay_reply_ko. Do not include romanized Korean.",
+	          "Correction fields should evaluate the learner's latest Korean, not translate the partner's reply.",
+	          "Do not overcorrect natural spoken Korean. Dropped subject, topic, or object particles are often natural when context is clear; call them optional fuller wording only when useful, not errors.",
+	          "If the user's line is natural for the situation and score is 5, corrected_user_ko must preserve the user's wording except tiny spacing or punctuation cleanup.",
+	          "For natural 5/5 lines, correction_en should usually just confirm the sentence is natural. Remove draft 'you can also say...' alternatives unless the user's current line could be misunderstood, sound rude, or miss the situation's core meaning.",
+	          "If the user gave a valid different reply from the English hint, preserve the user's intended meaning. The hint is guidance, not an answer key.",
+	          "corrected_user_ko must be one natural beginner-friendly Korean line the learner could actually type next time, not an advanced rewrite.",
+	          "Keep correction_en and pattern_note_en short. Prefer one actionable correction and one reusable pattern note. Do not provide a literal translation of roleplay_reply_ko there.",
+	          "next_prompt_en must respond to the final roleplay_reply_ko. It must be the exact English line Paul should say next, directly translatable into a valid Korean reply.",
+	          "If the partner asks a question, next_prompt_en must answer that question. If the partner gives an instruction, requirement, warning, or answer, next_prompt_en must acknowledge it or take the next practical action.",
+	          "Replace task-shaped hints like 'Explain your allergy' with first-person utterances like 'I have a peanut allergy.' Replace duplicate questions with a direct answer or next action.",
+	          "Keep next_prompt_en concrete, immediate, and beginner-friendly, usually 4 to 14 words.",
+	          "For vocab, include 0 to 3 high-value Korean words from the reply or correction. For verbs and adjectives, prefer dictionary forms ending in 다.",
+	          "Never include romanized Korean anywhere.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+	
+	      function buildTeacherInstructions() {
+	        return [
+	          "You are the teacher assistant for a Korean role-play practice app.",
+	          "Answer side questions about the current Korean conversation and explain corrections in simple English.",
+	          "Stay separate from the role-play: do not pretend to be the Seoul local here.",
+	          "Never use romanized Korean. Korean examples must be written in Korean characters, but standard digits and real travel/service codes like 2호선, 6015번, or KE908편 are allowed when natural.",
+	          "Do not give pronunciation spellings. Use English meanings and short grammar explanations instead.",
+	          "If the user asks how to say something, give one beginner-friendly Korean example in Korean characters, with standard digits or real travel/service codes when natural, and keep the form useful for the current scenario.",
+	          "For vocab chips, use dictionary forms for verbs/adjectives when possible. Do not define a conjugated form as a whole English sentence fragment.",
+	          "When explaining corrections, distinguish true errors from optional fuller wording. Dropping subject, topic, or object particles is often natural in spoken Korean when context is clear, so do not call that wrong by itself.",
+	          "Tie your answer to the current scenario and recent conversation when useful. Prefer one actionable explanation over a broad lesson.",
+	          "Do not update or replace the main conversation next-line hint. This side chat is for explanation only.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+
+	      function buildWordInstructions() {
+	        return [
+	          "You are the word lookup teacher for a Korean role-play practice app.",
+	          "Explain the clicked Korean surface word or short phrase in the current sentence context.",
+	          "Never use romanized Korean. Korean text must be written in Korean characters, but standard digits and real travel/service codes like 2호선, 6015번, or KE908편 are allowed when natural.",
+	          "For verbs and adjectives, dictionary_form_ko must be the dictionary form ending in 다, for example 가요 becomes 가다.",
+	          "If the clicked form includes endings or particles, explain the base word and how the ending or particle is functioning. If the clicked surface is only a particle or ending, repeat it as dictionary_form_ko and explain its function.",
+	          "meaning_en must define the base word, not the whole inflected phrase. Put ending or particle meaning in context_use_en. Example for 오니까: dictionary_form_ko='오다', meaning_en='to come; with rain, to fall/rain', context_use_en='-니까 means because/since, so 비가 오니까 gives the reason.'",
+	          "If the word can be used as both a noun and a verb, or has another important part-of-speech ambiguity, explain that in ambiguity_en and give an example.",
+	          "Use English meanings only, not pronunciation spellings.",
+	          "Keep the explanation beginner-friendly, concise, and grounded in the provided sentence.",
+	          "Do not update or replace the main conversation next-line hint. This lookup is for explanation only.",
+	          "Return JSON that matches the provided schema. Do not include markdown."
+	        ].join("\n");
+	      }
+	
+	      function buildSceneContext(topic, focus) {
+	        return [
+	          "SCENARIO TOPIC",
+	          topic.title,
+	          "",
+	          "SCENARIO FOCUS",
+	          focus,
+	          "",
+	          "LEARNER PROFILE",
+	          "The learner is Paul, an English-speaking beginner practicing practical Korean for Seoul travel.",
+	          "",
+	          "SETUP REQUIREMENT",
+	          "Start the conversation with the Korean-speaking person, then provide the exact English line Paul should say back.",
+	          "The English line should practice the selected focus whenever possible. If the focus names a learner action like asking, ordering, requesting, explaining, confirming, or checking, make Paul's next line perform that action."
+	        ].join("\n");
+	      }
+
+	      function buildSceneReviewContext(topic, focus, draftScene) {
+	        return [
+	          "SCENARIO TOPIC",
+	          topic.title,
+	          "",
+	          "SCENARIO FOCUS",
+	          focus,
+	          "",
+	          "LEARNER PROFILE",
+	          "The learner is Paul, an English-speaking beginner practicing practical Korean for Seoul travel.",
+	          "",
+	          "FOCUS INTERPRETATION",
+	          "The focus is the action Paul should practice in the next line whenever possible.",
+	          "",
+	          "DRAFT SCENE JSON",
+	          JSON.stringify(draftScene, null, 2),
+	          "",
+	          "REVIEW TASK",
+	          "Return the final scene JSON. Leave strong drafts unchanged; revise only real issues in naturalness, beginner practicality, scenario fit, or next-line usefulness."
+	        ].join("\n");
+	      }
+
+	      function buildPracticeContext(userText, suggestedPrompt) {
+	        return [
+	          "SCENARIO",
+	          "Topic: " + state.scenario.title,
+	          "Focus: " + state.scenario.focus,
+	          "Roleplay partner: " + (state.scenario.persona_en || "(not specified)"),
+	          "Learner role: " + (state.scenario.learner_role_en || "Paul, a beginner visiting Seoul"),
+	          "",
+	          "RECENT MAIN CONVERSATION",
+	          formatHistory(state.chat.slice(-8)) || "(new conversation)",
+	          "",
+	          "ENGLISH DIRECT-REPLY SUGGESTION SHOWN TO THE LEARNER BEFORE THIS REPLY",
+	          suggestedPrompt || "(none)",
+	          "",
+	          "USER'S LATEST MESSAGE",
+	          userText
+	        ].join("\n");
+	      }
+
+	      function buildNextLineContext(assistantKo, assistantEn) {
+	        return [
+	          "SCENARIO",
+	          "Topic: " + state.scenario.title,
+	          "Focus: " + state.scenario.focus,
+	          "Roleplay partner: " + (state.scenario.persona_en || "(not specified)"),
+	          "Learner role: " + (state.scenario.learner_role_en || "Paul, a beginner visiting Seoul"),
+	          "",
+	          "RECENT MAIN CONVERSATION",
+	          formatHistory(state.chat.slice(-10)) || "(new conversation)",
+	          "",
+	          "LATEST KOREAN LINE THE LEARNER MUST RESPOND TO",
+	          assistantKo,
+	          "",
+	          "ENGLISH MEANING OF LATEST KOREAN LINE",
+	          assistantEn
+	        ].join("\n");
+	      }
+
+	      function buildTurnReviewContext(userText, suggestedPrompt, draftTurn, draftNext) {
+	        return [
+	          "SCENARIO",
+	          "Topic: " + state.scenario.title,
+	          "Focus: " + state.scenario.focus,
+	          "Roleplay partner: " + (state.scenario.persona_en || "(not specified)"),
+	          "Learner role: " + (state.scenario.learner_role_en || "Paul, a beginner visiting Seoul"),
+	          "",
+	          "RECENT MAIN CONVERSATION BEFORE DRAFT REPLY",
+	          formatHistory(state.chat.slice(-10)) || "(new conversation)",
+	          "",
+	          "ENGLISH DIRECT-REPLY SUGGESTION SHOWN TO THE LEARNER BEFORE THIS REPLY",
+	          suggestedPrompt || "(none)",
+	          "",
+	          "USER'S LATEST MESSAGE",
+	          userText,
+	          "",
+	          "DRAFT ROLEPLAY AND CORRECTION JSON",
+	          JSON.stringify(draftTurn, null, 2),
+	          "",
+	          "DRAFT NEXT-LINE JSON",
+	          JSON.stringify(draftNext, null, 2),
+	          "",
+	          "REVIEW TASK",
+	          "Return the final turn JSON including next_prompt_en. Leave strong drafts unchanged; revise only real issues in naturalness, correction quality, intent preservation, or next-line usefulness."
+	        ].join("\n");
+	      }
+	
+	      function buildTeacherContext(question) {
+	        return [
+	          "SCENARIO",
+	          "Topic: " + state.scenario.title,
+	          "Focus: " + state.scenario.focus,
+	          "Roleplay partner: " + (state.scenario.persona_en || "(not specified)"),
+	          "Learner role: " + (state.scenario.learner_role_en || "Paul, a beginner visiting Seoul"),
+	          "",
+	          "CURRENT MAIN-CHAT NEXT-LINE HINT",
+	          state.nextPromptText || "(none)",
+	          "",
+	          "MAIN CONVERSATION SO FAR",
+	          formatHistory(state.chat.slice(-12)) || "(new conversation)",
+	          "",
+	          "RECENT AUTOMATIC FEEDBACK",
+	          state.feedbackHistory.slice(-4).join("\n---\n") || "(none)",
+	          "",
+	          "RECENT TEACHER SIDE CHAT",
+	          formatHistory(state.teacherChat.slice(-6)) || "(none)",
+	          "",
+	          "USER'S SIDE QUESTION",
+	          question
+	        ].join("\n");
+	      }
+
+	      function buildWordContext(word, sentence) {
+	        return [
+	          "SCENARIO",
+	          "Topic: " + state.scenario.title,
+	          "Focus: " + state.scenario.focus,
+	          "Roleplay partner: " + (state.scenario.persona_en || "(not specified)"),
+	          "Learner role: " + (state.scenario.learner_role_en || "Paul, a beginner visiting Seoul"),
+	          "",
+	          "CURRENT MAIN-CHAT NEXT-LINE HINT",
+	          state.nextPromptText || "(none)",
+	          "",
+	          "CLICKED KOREAN SURFACE FORM",
+	          word,
+	          "",
+	          "FULL SENTENCE CONTAINING THE CLICKED WORD",
+	          sentence,
+	          "",
+	          "MAIN CONVERSATION SO FAR",
+	          formatHistory(state.chat.slice(-12)) || "(new conversation)",
+	          "",
+	          "RECENT AUTOMATIC FEEDBACK",
+	          state.feedbackHistory.slice(-4).join("\n---\n") || "(none)"
+	        ].join("\n");
+	      }
+	
+	      function formatHistory(items) {
+	        return items.map(function (item) {
+	          return item.role.toUpperCase() + ": " + item.text;
+	        }).join("\n");
+	      }
+	
+	      function parseJsonResponse(body) {
+	        var text = body.output_text || "";
+	        if (!text && Array.isArray(body.output)) {
+	          body.output.forEach(function (item) {
+	            if (item && Array.isArray(item.content)) {
+	              item.content.forEach(function (part) {
+	                if (part && part.type === "output_text" && part.text) {
+	                  text += part.text;
+	                }
+	              });
+	            }
+	          });
+	        }
+	        if (!text) {
+	          throw new Error("The model returned no text.");
+	        }
+	        return JSON.parse(text);
+	      }
+	
+	      function normalizeScene(parsed) {
+	        return {
+	          persona_en: requireString(parsed, "persona_en"),
+	          learner_role_en: requireString(parsed, "learner_role_en"),
+	          opening_ko: requireString(parsed, "opening_ko"),
+	          opening_en: requireString(parsed, "opening_en"),
+	          next_prompt_en: requireString(parsed, "next_prompt_en")
+	        };
+	      }
+
+	      function normalizeTurn(parsed) {
+	        var status = requireString(parsed, "correction_status");
+	        if (!["natural", "minor_fix", "needs_work", "english_only"].includes(status)) {
+	          throw new Error("Model response used invalid correction_status.");
+	        }
+	        var score = Number(parsed.score);
+	        if (!Number.isInteger(score) || score < 0 || score > 5) {
+	          throw new Error("Model response used invalid score.");
+	        }
+	        return {
+	          roleplay_reply_ko: requireString(parsed, "roleplay_reply_ko"),
+	          roleplay_reply_en: requireString(parsed, "roleplay_reply_en"),
+	          correction_status: status,
+	          correction_en: requireString(parsed, "correction_en", true),
+	          corrected_user_ko: requireString(parsed, "corrected_user_ko", true),
+	          pattern_note_en: requireString(parsed, "pattern_note_en", true),
+	          score: score,
+	          vocab: requireVocab(parsed)
+	        };
+	      }
+
+	      function normalizeNextLine(parsed) {
+	        return {
+	          next_prompt_en: requireString(parsed, "next_prompt_en")
+	        };
+	      }
+
+	      function normalizeReviewedTurn(parsed) {
+	        var turn = normalizeTurn(parsed);
+	        turn.next_prompt_en = requireString(parsed, "next_prompt_en");
+	        return turn;
+	      }
+	
+	      function normalizeTeacher(parsed) {
+	        return {
+	          answer_en: requireString(parsed, "answer_en"),
+	          example_ko: requireString(parsed, "example_ko", true),
+	          vocab: requireVocab(parsed)
+	        };
+	      }
+
+	      function normalizeWord(parsed) {
+	        return {
+	          surface_ko: requireString(parsed, "surface_ko"),
+	          dictionary_form_ko: requireString(parsed, "dictionary_form_ko"),
+	          part_of_speech_en: requireString(parsed, "part_of_speech_en", true),
+	          meaning_en: requireString(parsed, "meaning_en"),
+	          context_use_en: requireString(parsed, "context_use_en"),
+	          ambiguity_en: requireString(parsed, "ambiguity_en", true),
+	          example_ko: requireString(parsed, "example_ko", true),
+	          example_en: requireString(parsed, "example_en", true)
+	        };
+	      }
+
+	      function requireString(parsed, key, allowEmpty) {
+	        if (!parsed || typeof parsed[key] !== "string") {
+	          throw new Error("Model response missing " + key + ".");
+	        }
+	        var value = parsed[key].trim();
+	        if (!allowEmpty && !value) {
+	          throw new Error("Model response returned empty " + key + ".");
+	        }
+	        return value;
+	      }
+
+	      function requireVocab(parsed) {
+	        if (!parsed || !Array.isArray(parsed.vocab)) {
+	          throw new Error("Model response missing vocab.");
+	        }
+	        return parsed.vocab.map(function (item) {
+	          if (!item || typeof item.ko !== "string" || typeof item.en !== "string") {
+	            throw new Error("Model response returned invalid vocab.");
+	          }
+	          return {
+	            ko: item.ko.trim(),
+	            en: item.en.trim()
+	          };
+	        });
+	      }
+
+	      function addPracticeUserMessage(text) {
+	        state.chat.push({ role: "user", text: text });
+	        appendBubble(els.practiceLog, "user", [makeKoreanDiv(text)]);
+	      }
+
+	      function addPracticeAssistantMessage(text) {
+	        state.chat.push({ role: "assistant", text: text });
+	        appendBubble(els.practiceLog, "assistant", [makeKoreanDiv(text)]);
+	      }
+	
+	      function addTeacherUserMessage(text) {
+	        state.teacherChat.push({ role: "user", text: text });
+	        appendBubble(els.teacherLog, "user", [makeDiv("teacher-text", text)]);
+	      }
+
+	      function addTeacherWordRequest(word) {
+	        var text = "Clicked word: " + word;
+	        state.teacherChat.push({ role: "user", text: text });
+	        appendBubble(els.teacherLog, "user", [makeDiv("teacher-text", text)]);
+	      }
+	
+	      function addTeacherFeedback(data) {
+	        var node = document.createElement("div");
+	        node.className = "message assistant";
+	        node.appendChild(renderFeedback(data));
+	        els.teacherLog.appendChild(node);
+	        state.feedbackHistory.push(feedbackSummary(data));
+	        state.teacherChat.push({ role: "assistant", text: feedbackSummary(data) });
+	        scrollLog(els.teacherLog);
+	      }
+	
+	      function addTeacherAssistantResponse(data) {
+	        var node = document.createElement("div");
+	        node.className = "message assistant";
+	        var bubble = document.createElement("div");
+	        bubble.className = "bubble";
+	        bubble.appendChild(makeDiv("teacher-text", data.answer_en));
+	        if (data.example_ko) {
+	          bubble.appendChild(makeDiv("better-line", data.example_ko));
+	        }
+	        if (data.vocab && data.vocab.length) {
+	          bubble.appendChild(renderVocab(data.vocab));
+	        }
+	        node.appendChild(bubble);
+	        els.teacherLog.appendChild(node);
+	        state.teacherChat.push({ role: "assistant", text: teacherSummary(data) });
+	        scrollLog(els.teacherLog);
+	      }
+
+	      function addTeacherWordResponse(data) {
+	        var node = document.createElement("div");
+	        node.className = "message assistant";
+	        var bubble = document.createElement("div");
+	        bubble.className = "bubble";
+
+	        bubble.appendChild(makeDiv("better-line", data.surface_ko + " -> " + data.dictionary_form_ko));
+	        if (data.part_of_speech_en) {
+	          bubble.appendChild(makeDiv("teacher-text", "Part of speech: " + data.part_of_speech_en));
+	        }
+	        if (data.meaning_en) {
+	          bubble.appendChild(makeDiv("teacher-text", "Meaning: " + data.meaning_en));
+	        }
+	        if (data.context_use_en) {
+	          bubble.appendChild(makeDiv("teacher-text", "In this sentence: " + data.context_use_en));
+	        }
+	        if (data.ambiguity_en) {
+	          bubble.appendChild(makeDiv("teacher-text", "Other use: " + data.ambiguity_en));
+	        }
+	        if (data.example_ko) {
+	          bubble.appendChild(makeDiv("better-line", data.example_ko));
+	        }
+	        if (data.example_en) {
+	          bubble.appendChild(makeDiv("teacher-text", data.example_en));
+	        }
+	
+	        node.appendChild(bubble);
+	        els.teacherLog.appendChild(node);
+	        state.teacherChat.push({ role: "assistant", text: wordSummary(data) });
+	        scrollLog(els.teacherLog);
+	      }
+
+	      function setMainNextPrompt(prompt) {
+	        clearMainNextPrompt();
+	        if (!prompt) {
+	          return;
+	        }
+	        state.nextPromptText = prompt;
+	        var node = document.createElement("div");
+	        node.className = "message assistant next-message";
+	        node.appendChild(renderNextPrompt(prompt));
+	        state.nextPromptNode = node;
+	        els.practiceLog.appendChild(node);
+	        scrollLog(els.practiceLog);
+	      }
+
+	      function clearMainNextPrompt() {
+	        if (state.nextPromptNode && state.nextPromptNode.parentNode) {
+	          state.nextPromptNode.parentNode.removeChild(state.nextPromptNode);
+	        }
+	        state.nextPromptNode = null;
+	        state.nextPromptText = "";
+	      }
+	
+	      function appendBubble(log, role, children) {
+	        var node = document.createElement("div");
+	        var bubble = document.createElement("div");
+	        node.className = "message " + role;
+	        bubble.className = "bubble";
+	        children.forEach(function (child) {
+	          bubble.appendChild(child);
+	        });
+	        node.appendChild(bubble);
+	        log.appendChild(node);
+	        scrollLog(log);
+	      }
+	
+	      function makeDiv(className, text) {
+	        var node = document.createElement("div");
+	        node.className = className;
+	        node.textContent = text || "";
+	        return node;
+	      }
+
+	      function makeKoreanDiv(text) {
+	        var node = document.createElement("div");
+	        node.className = "ko";
+	        tokenizeKoreanText(text).forEach(function (part) {
+	          if (part.isKorean) {
+	            var button = document.createElement("button");
+	            button.className = "ko-token";
+	            button.type = "button";
+	            button.textContent = part.text;
+	            button.setAttribute("aria-label", "Explain " + part.text);
+	            button.addEventListener("click", function () {
+	              explainClickedWord(part.text, text);
+	            });
+	            node.appendChild(button);
+	          } else {
+	            node.appendChild(document.createTextNode(part.text));
+	          }
+	        });
+	        return node;
+	      }
+
+	      function tokenizeKoreanText(text) {
+	        var parts = [];
+	        String(text || "").replace(/[가-힣]+|[^가-힣]+/g, function (part) {
+	          parts.push({
+	            text: part,
+	            isKorean: /^[가-힣]+$/.test(part)
+	          });
+	          return part;
+	        });
+	        return parts;
+	      }
+	
+	      function renderNextPrompt(prompt) {
+	        var wrap = document.createElement("button");
+	        wrap.className = "next-prompt";
+	        wrap.type = "button";
+	        wrap.title = "Ask teacher how to say this";
+	        wrap.addEventListener("click", function () {
+	          requestTeacherHelpForNextPrompt(prompt);
+	        });
+	        wrap.appendChild(document.createTextNode(prompt));
+	        return wrap;
+	      }
+	
+	      function renderFeedback(data) {
+	        var wrap = document.createElement("div");
+	        wrap.className = "feedback";
+	
+	        var head = document.createElement("div");
+	        head.className = "feedback-head";
+	        var pill = document.createElement("span");
+	        pill.className = "pill " + data.correction_status;
+	        pill.textContent = statusLabel(data.correction_status) + " - " + String(data.score) + "/5";
+	        head.appendChild(pill);
+	        wrap.appendChild(head);
+	
+	        if (data.correction_en) {
+	          var correction = document.createElement("p");
+	          correction.textContent = data.correction_en;
+	          wrap.appendChild(correction);
+	        }
+	
+	        if (data.corrected_user_ko) {
+	          wrap.appendChild(makeDiv("better-line", data.corrected_user_ko));
+	        }
+	
+	        if (data.pattern_note_en) {
+	          var note = document.createElement("p");
+	          note.textContent = data.pattern_note_en;
+	          wrap.appendChild(note);
+	        }
+	
+	        if (data.vocab && data.vocab.length) {
+	          wrap.appendChild(renderVocab(data.vocab));
+	        }
+	
+	        return wrap;
+	      }
+	
+	      function renderVocab(vocab) {
+	        var list = document.createElement("div");
+	        list.className = "vocab";
+	        vocab.slice(0, 3).forEach(function (item) {
+	          var chip = document.createElement("span");
+	          chip.className = "vocab-item";
+	          chip.textContent = item.ko + " - " + item.en;
+	          list.appendChild(chip);
+	        });
+	        return list;
+	      }
+	
+	      function feedbackSummary(data) {
+	        var lines = [
+	          "Correction: " + statusLabel(data.correction_status) + " " + String(data.score) + "/5. " + (data.correction_en || ""),
+	          "Better Korean: " + (data.corrected_user_ko || ""),
+	          "Pattern note: " + (data.pattern_note_en || "")
+	        ];
+	        return lines.join("\n");
+	      }
+	
+	      function teacherSummary(data) {
+	        return [
+	          data.answer_en || "",
+	          data.example_ko ? "Example: " + data.example_ko : ""
+	        ].filter(Boolean).join("\n");
+	      }
+
+	      function wordSummary(data) {
+	        return [
+	          "Clicked word: " + (data.surface_ko || ""),
+	          "Dictionary form: " + (data.dictionary_form_ko || ""),
+	          "Part of speech: " + (data.part_of_speech_en || ""),
+	          "Meaning: " + (data.meaning_en || ""),
+	          "Context: " + (data.context_use_en || ""),
+	          data.ambiguity_en ? "Other use: " + data.ambiguity_en : "",
+	          data.example_ko ? "Example: " + data.example_ko : ""
+	        ].filter(Boolean).join("\n");
+	      }
+
+	      function statusLabel(status) {
+	        if (status === "natural") {
+	          return "Natural";
+	        }
+	        if (status === "minor_fix") {
+	          return "Small fix";
+	        }
+	        if (status === "english_only") {
+	          return "Try Korean";
+	        }
+	        return "Fix";
+	      }
+	
+	      function autoResize(input) {
+	        input.style.height = "auto";
+	        input.style.height = Math.min(168, input.scrollHeight) + "px";
+	      }
+	
+	      function clearInput(input) {
+	        input.value = "";
+	        autoResize(input);
+	      }
+	
+	      function setPracticeBusy(isBusy) {
+	        state.practiceBusy = isBusy;
+	        updatePracticeInputState();
+	        updateTopicButtonState();
+	      }
+	
+	      function setTeacherBusy(isBusy) {
+	        state.teacherBusy = isBusy;
+	        updateTeacherInputState();
+	        updateTopicButtonState();
+	      }
+
+	      function updatePracticeInputState() {
+	        var disabled = state.practiceBusy || !state.sceneReady;
+	        els.sendButton.disabled = disabled;
+	        els.messageInput.disabled = disabled;
+	      }
+
+	      function updateTeacherInputState() {
+	        var disabled = state.teacherBusy || !state.sceneReady;
+	        els.teacherSendButton.disabled = disabled;
+	        els.teacherInput.disabled = disabled;
+	      }
+	
+	      function updateTopicButtonState() {
+	        els.topicButton.disabled = state.practiceBusy || state.teacherBusy || !state.topics.length;
+	      }
+
+	      function setTeacherVisible(isVisible) {
+	        state.teacherVisible = isVisible;
+	        els.workspace.classList.toggle("teacher-hidden", !isVisible);
+	        els.teacherToggleButton.setAttribute("aria-expanded", String(isVisible));
+	        els.teacherToggleButton.setAttribute("aria-pressed", String(isVisible));
+	        els.teacherToggleButton.classList.toggle("active", isVisible);
+	        if (isVisible) {
+	          scrollLog(els.teacherLog);
+	        }
+	      }
+	
+	      function setPracticeStatus(message) {
+	        els.statusLine.textContent = message || "";
+	      }
+	
+	      function setTeacherStatus(message) {
+	        els.teacherStatusLine.textContent = message || "";
+	      }
+	
+	      function scrollLog(log) {
+	        requestAnimationFrame(function () {
+	          log.scrollTop = log.scrollHeight;
+	        });
+	      }
+	
+	      function focusPracticeInput() {
+	        if (window.matchMedia("(pointer: fine)").matches) {
+	          els.messageInput.focus();
+	        }
+	      }
+	
+	      function focusTeacherInput() {
+	        if (state.teacherVisible && window.matchMedia("(pointer: fine)").matches) {
+	          els.teacherInput.focus();
+	        }
+	      }
+	
+	      function openSettings() {
+	        hydrateSettingsForm();
+	        if (typeof els.settingsDialog.showModal === "function") {
+	          els.settingsDialog.showModal();
+	        } else {
+	          els.settingsDialog.setAttribute("open", "");
+	        }
+	      }
+	
+	      function hydrateSettingsForm() {
+	        els.apiKeyInput.value = state.settings.apiKey || "";
+	        els.modelInput.value = state.settings.model || DEFAULT_MODEL;
+	      }
+	
+	      function saveSettingsFromForm() {
+	        state.settings = {
+	          apiKey: els.apiKeyInput.value.trim(),
+	          model: els.modelInput.value.trim() || DEFAULT_MODEL
+	        };
+	        saveSettings();
+	        showToast("Settings saved.");
+	        if (state.topics.length && !state.sceneReady && activeApiKey()) {
+	          chooseScenario();
+	        }
+	      }
+	
+	      function loadSettings() {
+	        try {
+	          var raw = window.localStorage.getItem(SETTINGS_KEY);
+	          if (!raw) {
+	            return { apiKey: "", model: DEFAULT_MODEL };
+	          }
+	          var parsed = JSON.parse(raw);
+	          return {
+	            apiKey: parsed.apiKey || "",
+	            model: parsed.model || DEFAULT_MODEL
+	          };
+	        } catch (error) {
+	          return { apiKey: "", model: DEFAULT_MODEL };
+	        }
+	      }
+	
+	      function saveSettings() {
+	        window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+	      }
+	
+	      function showToast(message) {
+	        els.toast.textContent = message;
+	        els.toast.classList.add("show");
+	        window.clearTimeout(showToast.timer);
+	        showToast.timer = window.setTimeout(function () {
+	          els.toast.classList.remove("show");
+	        }, 2200);
+	      }
+	    })();
+  </script>
+</body>
+</html>
