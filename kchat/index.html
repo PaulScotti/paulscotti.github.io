@@ -893,7 +893,7 @@
       <h2>Settings</h2>
       <label class="field">
         <span>Browser API key</span>
-        <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Uses window.OPENAI_API_KEY first if set" inputmode="text">
+        <input id="apiKeyInput" type="password" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Uses window.OPENAI_API_KEY first if set" inputmode="text">
       </label>
       <label class="field">
         <span>Model</span>
@@ -1190,7 +1190,10 @@
 	
 	        els.forgetKeyButton.addEventListener("click", function () {
 	          state.settings.apiKey = "";
-	          saveSettings();
+	          if (!saveSettings()) {
+	            showToast("Browser storage is blocked. Key may reappear after reload.");
+	            return;
+	          }
 	          hydrateSettingsForm();
 	          showToast("API key removed.");
 	        });
@@ -2499,8 +2502,11 @@
 	          apiKey: els.apiKeyInput.value.trim(),
 	          model: els.modelInput.value.trim() || DEFAULT_MODEL
 	        };
-	        saveSettings();
-	        showToast("Settings saved.");
+	        if (saveSettings()) {
+	          showToast(state.settings.apiKey ? "API key saved on this browser." : "Settings saved.");
+	        } else {
+	          showToast("Browser storage is blocked. Key works only until reload.");
+	        }
 	        if (state.topics.length && !state.sceneReady && activeApiKey()) {
 	          chooseScenario();
 	        }
@@ -2523,7 +2529,15 @@
 	      }
 	
 	      function saveSettings() {
-	        window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+	        try {
+	          window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+	          var raw = window.localStorage.getItem(SETTINGS_KEY);
+	          var parsed = raw ? JSON.parse(raw) : {};
+	          return (parsed.apiKey || "") === (state.settings.apiKey || "") &&
+	            (parsed.model || DEFAULT_MODEL) === (state.settings.model || DEFAULT_MODEL);
+	        } catch (error) {
+	          return false;
+	        }
 	      }
 	
 	      function showToast(message) {
