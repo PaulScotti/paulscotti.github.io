@@ -826,8 +826,9 @@
       var SWIPE_FEEDBACK_DISTANCE_FACTOR = 1.32;
       var SWIPE_ANSWER_ANIMATION_MS = 140;
       var CLICK_SUPPRESS_AFTER_SWIPE_MS = 180;
-      var CLICK_SUPPRESS_AFTER_NEW_CARD_MS = 30;
+      var CLICK_SUPPRESS_AFTER_NEW_CARD_MS = 320;
       var CLICK_SUPPRESS_AFTER_DRAG_MS = 180;
+      var CLICK_SUPPRESS_AFTER_TAP_MS = 180;
       var GENERATED_NUMBER_COUNT = 2;
       var GENERATED_TIME_COUNT = 2;
       var GENERATED_MONEY_COUNT = 1;
@@ -1741,6 +1742,7 @@
         if (!event.isPrimary || swipeAnswerPending || !currentCard) {
           return;
         }
+        suppressClickUntil = 0;
         pointerStart = {
           x: event.clientX,
           y: event.clientY,
@@ -1793,6 +1795,12 @@
         if (wasDragging) {
           suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_DRAG_MS;
           resetDragFeedback();
+          event.preventDefault();
+          return;
+        }
+        activateCard();
+        suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_TAP_MS;
+        if (event.cancelable) {
           event.preventDefault();
         }
       });
