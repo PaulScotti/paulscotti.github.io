@@ -878,7 +878,8 @@
       var totalCards = 0;
       var completedCards = 0;
       var errors = 0;
-      var startedAt = 0;
+      var elapsedActiveMs = 0;
+      var timerActiveSince = 0;
       var timerId = null;
       var lastSavedAt = 0;
       var pointerStart = null;
@@ -1019,7 +1020,8 @@
         totalCards = sourceCards.length;
         completedCards = 0;
         errors = 0;
-        startedAt = Date.now();
+        elapsedActiveMs = 0;
+        timerActiveSince = 0;
         deck = buildDeck(sourceCards);
         currentCard = null;
         revealed = false;
@@ -1029,7 +1031,7 @@
         noButton.disabled = false;
         resetButton.disabled = false;
         updateTimer();
-        timerId = window.setInterval(updateTimer, 250);
+        syncTimerActivity();
         renderNextCard();
         saveGame(true);
       }
@@ -1316,7 +1318,8 @@
         completedCards = clampNumber(saved.completedCards, 0, totalCards);
         errors = clampNumber(saved.errors, 0, 999999);
         revealed = Boolean(saved.revealed);
-        startedAt = Date.now() - clampNumber(saved.elapsedMs, 0, 999999999);
+        elapsedActiveMs = clampNumber(saved.elapsedMs, 0, 999999999);
+        timerActiveSince = 0;
         currentCard = deck[0] || null;
 
         body.classList.remove("is-loading", "is-failed", "is-finished");
@@ -1325,7 +1328,7 @@
         noButton.disabled = false;
         resetButton.disabled = false;
         updateTimer();
-        timerId = window.setInterval(updateTimer, 250);
+        syncTimerActivity();
 
         if (!currentCard || saved.finished) {
           deck = [];
@@ -1373,7 +1376,7 @@
             totalCards: totalCards,
             completedCards: completedCards,
             errors: errors,
-            elapsedMs: startedAt ? Math.max(0, Date.now() - startedAt) : 0,
+            elapsedMs: elapsedMilliseconds(),
             finished: body.classList.contains("is-finished") || deck.length === 0,
             savedAt: now
           }));
@@ -1549,18 +1552,59 @@
         saveGame(false);
       }
 
-      function elapsedSeconds() {
-        if (!startedAt) {
-          return 0;
+      function elapsedMilliseconds() {
+        var elapsed = elapsedActiveMs;
+        if (timerActiveSince) {
+          elapsed += Math.max(0, Date.now() - timerActiveSince);
         }
-        return Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+        return elapsed;
+      }
+
+      function elapsedSeconds() {
+        return Math.max(0, Math.floor(elapsedMilliseconds() / 1000));
       }
 
       function stopTimer() {
+        pauseTimer(false);
+      }
+
+      function pauseTimer(saveAfterPause) {
+        if (timerActiveSince) {
+          elapsedActiveMs += Math.max(0, Date.now() - timerActiveSince);
+          timerActiveSince = 0;
+        }
         if (timerId) {
           window.clearInterval(timerId);
           timerId = null;
         }
+        updateTimer();
+        if (saveAfterPause) {
+          saveGame(true);
+        }
+      }
+
+      function syncTimerActivity() {
+        if (!shouldRunTimer()) {
+          pauseTimer(true);
+          return;
+        }
+        if (!timerActiveSince) {
+          timerActiveSince = Date.now();
+        }
+        if (!timerId) {
+          timerId = window.setInterval(updateTimer, 250);
+        }
+        updateTimer();
+      }
+
+      function shouldRunTimer() {
+        if (!sourceCards.length || body.classList.contains("is-loading") || body.classList.contains("is-failed") || body.classList.contains("is-finished")) {
+          return false;
+        }
+        if (document.visibilityState === "hidden") {
+          return false;
+        }
+        return typeof document.hasFocus !== "function" || document.hasFocus();
       }
 
       function showError(error) {
@@ -1858,8 +1902,25 @@
         }
       });
 
+      document.addEventListener("visibilitychange", function () {
+        syncTimerActivity();
+      });
+
+      window.addEventListener("blur", function () {
+        pauseTimer(true);
+      });
+
+      window.addEventListener("focus", function () {
+        syncTimerActivity();
+      });
+
       window.addEventListener("pagehide", function () {
+        pauseTimer(true);
         saveGame(true);
+      });
+
+      window.addEventListener("pageshow", function () {
+        syncTimerActivity();
       });
 
       function shouldSkipRestore() {
