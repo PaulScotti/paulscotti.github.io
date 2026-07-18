@@ -7,21 +7,21 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Employees Tasks</title>
-  <link rel="stylesheet" href="../style.css?v=bf105913962c4b25">
+  <link rel="stylesheet" href="../style.css?v=048367849e61d3d5">
 </head>
 <body>
 <main class="screen">
   <header class="topbar">
-    <a class="mark" href="..?v=bf105913962c4b25">▶▮◀</a>
+    <a class="mark" href="..?v=048367849e61d3d5">▶▮◀</a>
     <div>
-      <h1>Employees</h1>
+      <h1 data-page-heading>Employees</h1>
       <p><span data-visible-count>25</span> visible tasks · due sorted · ~/todo.txt</p>
     </div>
-    <time>v bf105913962c</time>
+    <time>v 048367849e61</time>
   </header>
-  <p class="note">Quick note: (A) represents top priority tasks.</p>
+  <p class="note" data-page-note>Quick note: (A) represents top priority tasks.</p>
   <nav class="contexts" aria-label="Task filters">
-    <a class="context" href="..?v=bf105913962c4b25">All</a>
+    <a class="context" href="..?v=048367849e61d3d5">All</a>
     <a class="context active" href="../employees/"><span>Employees</span><b>25</b></a>
     <a class="context" href="../c-suite/"><span>C-Suite</span><b>50</b></a>
     <a class="context" href="../no-context/"><span>No Context</span><b>0</b></a>
@@ -33,7 +33,7 @@
     <a class="context" href="../tanishq/"><span>@Tanishq</span><b>31</b></a>
     <a class="context" href="../varun/"><span>@Varun</span><b>6</b></a>
   </nav>
-  <section class="task-list" aria-label="Tasks" data-generated-today="2026-07-18">
+  <section class="task-list" aria-label="Tasks" data-task-view="public" data-generated-today="2026-07-18">
     <h2 class="bucket" data-bucket="next-week" style="--bucket-color:#8aa9c9"><span>(2)</span> NEXT WEEK</h2>
     <div class="task-tree" role="group" data-tree-root="134" data-row-kind="primary" data-bucket="next-week" data-due="2026-07-20" data-done="0" data-done-date="" data-priority="A" data-order="134">
       <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="next-week" data-due="2026-07-20" data-done="0" data-done-date="" data-priority="A" data-order="0"><span class="line-no">  1</span><span class="status"> </span><span class="priority" style="--priority-color:#e07a7a" title="Priority A">(A)</span><span class="body">Compute MedPsy 1.7B/4B win rates, update MedMarks leaderboard, and reply to Amril <span class="context-token">@Benjamin</span> <span class="due">due:2026-07-20</span></span></article>
@@ -127,8 +127,6 @@
         { id: "waiting", label: "WAITING", color: "var(--dim)" },
         { id: "done", label: "DONE", color: "var(--done)" }
     ];
-    var cachedTrees = null;
-
     function pad2(n) {
         return String(n).padStart(2, "0");
     }
@@ -315,22 +313,19 @@
         }
     }
 
-    function renderForDate(today) {
-        var list = document.querySelector(".task-list");
+    function renderListForDate(list, today) {
         if (!list) {
             return;
         }
-        if (!cachedTrees) {
-            cachedTrees = Array.prototype.slice.call(list.querySelectorAll(".task-tree"));
-        }
+        var trees = Array.prototype.slice.call(list.querySelectorAll(".task-tree"));
         var grouped = {};
         var cutoffs = weekCutoffs(today);
         var total = 0;
         for (var i = 0; i < buckets.length; i += 1) {
             grouped[buckets[i].id] = [];
         }
-        for (var j = 0; j < cachedTrees.length; j += 1) {
-            var tree = cachedTrees[j];
+        for (var j = 0; j < trees.length; j += 1) {
+            var tree = trees[j];
             var bucket = bucketForTree(tree, today, cutoffs);
             tree.dataset.currentBucket = bucket;
             if (!bucket) {
@@ -372,6 +367,76 @@
         }
     }
 
+    function renderForDate(today) {
+        renderListForDate(document.querySelector(".task-list:not([hidden])"), today);
+    }
+
+    function setHidden(list, hidden) {
+        if (!list) {
+            return;
+        }
+        list.hidden = hidden;
+        list.setAttribute("aria-hidden", hidden ? "true" : "false");
+    }
+
+    function installPersonalReveal() {
+        var toggle = document.querySelector("[data-personal-toggle]");
+        var publicList = document.querySelector('[data-task-view="public"]');
+        var personalList = document.querySelector('[data-task-view="personal"]');
+        if (!toggle || !publicList || !personalList) {
+            return;
+        }
+        var heading = document.querySelector("[data-page-heading]");
+        var note = document.querySelector("[data-page-note]");
+        var publicHeading = heading ? heading.textContent : "@Paul";
+        var publicNote = note ? note.textContent : "";
+        var publicTitle = document.title;
+        var showingPersonal = false;
+        var keyBuffer = "";
+
+        function showPersonal(show) {
+            showingPersonal = show;
+            setHidden(publicList, show);
+            setHidden(personalList, !show);
+            document.body.classList.toggle("personal-visible", show);
+            toggle.setAttribute("aria-pressed", show ? "true" : "false");
+            if (heading) {
+                heading.textContent = show ? "@Paul + @Personal" : publicHeading;
+            }
+            if (note) {
+                note.textContent = show
+                    ? "Personal tasks included. Type personal again to hide."
+                    : publicNote;
+            }
+            document.title = show ? "@Paul + @Personal Tasks" : publicTitle;
+            renderForDate(localToday());
+        }
+
+        function togglePersonal() {
+            showPersonal(!showingPersonal);
+        }
+
+        document.addEventListener("keydown", function (event) {
+            var target = event.target;
+            var tag = target && target.tagName ? target.tagName.toLowerCase() : "";
+            if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey ||
+                    event.key.length !== 1 || tag === "input" || tag === "textarea" ||
+                    tag === "select" || (target && target.isContentEditable)) {
+                return;
+            }
+            keyBuffer = (keyBuffer + event.key.toLowerCase()).slice(-8);
+            if (keyBuffer === "personal") {
+                keyBuffer = "";
+                togglePersonal();
+            }
+        });
+        toggle.addEventListener("click", function (event) {
+            if (event.detail === 2) {
+                togglePersonal();
+            }
+        });
+    }
+
     function scheduleNextRefresh() {
         var now = new Date();
         var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
@@ -383,6 +448,7 @@
     }
 
     function boot() {
+        installPersonalReveal();
         renderForDate(localToday());
         scheduleNextRefresh();
     }

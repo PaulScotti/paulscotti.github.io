@@ -45,11 +45,20 @@ h1 {
   font-size: 18px;
   letter-spacing: 0;
 }
-.topbar p, .topbar time {
+.topbar p, .topbar time, .version-toggle {
   margin: 3px 0 0;
   color: var(--dim);
   font-size: 12px;
 }
+.version-toggle {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: default;
+}
+.personal-visible .version-toggle { color: var(--context); }
 .note {
   margin: 10px 0 0;
   color: var(--dim);
@@ -83,6 +92,7 @@ h1 {
 .task-list {
   border-top: 1px solid transparent;
 }
+.task-list[hidden] { display: none !important; }
 .bucket {
   display: flex;
   align-items: center;
@@ -189,8 +199,9 @@ h1 {
   .topbar {
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .topbar time {
+  .topbar time, .version-toggle {
     grid-column: 1 / -1;
+    justify-self: start;
   }
   .contexts {
     overflow-x: auto;
