@@ -301,6 +301,11 @@
       box-shadow: inset -28px 0 80px rgba(82, 107, 85, 0.18);
     }
 
+    .card-shell.is-drag-up {
+      background: linear-gradient(180deg, rgba(75, 117, 161, 0.24), rgba(75, 117, 161, 0.07));
+      box-shadow: inset 0 28px 80px rgba(75, 117, 161, 0.18);
+    }
+
     .swipe-zone {
       position: absolute;
       inset: 0;
@@ -317,6 +322,10 @@
 
     .swipe-zone.right {
       background: linear-gradient(270deg, rgba(82, 107, 85, 0.52), rgba(82, 107, 85, 0.12) 48%, transparent 74%);
+    }
+
+    .swipe-zone.up {
+      background: linear-gradient(180deg, rgba(75, 117, 161, 0.54), rgba(75, 117, 161, 0.12) 48%, transparent 74%);
     }
 
     .flashcard {
@@ -340,7 +349,7 @@
       cursor: pointer;
       touch-action: pan-y;
       -webkit-tap-highlight-color: transparent;
-      transform: translate3d(var(--drag-x, 0px), 0, 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
+      transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
       transition: transform 180ms ease, border-color 160ms ease, box-shadow 160ms ease;
       will-change: transform;
     }
@@ -381,7 +390,7 @@
     .flashcard.is-dragging,
     .flashcard.is-dragging:active {
       transition: border-color 120ms ease, box-shadow 120ms ease;
-      transform: translate3d(var(--drag-x, 0px), 0, 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
+      transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotate(var(--drag-rotate, 0deg)) scale(var(--drag-scale, 1));
     }
 
     .flashcard.is-drag-left {
@@ -394,9 +403,20 @@
       box-shadow: 0 24px 90px rgba(82, 107, 85, 0.18);
     }
 
+    .flashcard.is-drag-up {
+      border-color: rgba(75, 117, 161, 0.78);
+      box-shadow: 0 24px 90px rgba(75, 117, 161, 0.2);
+    }
+
     .flashcard.is-revealed {
       border-color: color-mix(in srgb, var(--blue), var(--line) 52%);
       box-shadow: 0 24px 90px rgba(75, 117, 161, 0.18);
+      touch-action: none;
+    }
+
+    .flashcard.is-revealed.is-drag-up {
+      border-color: rgba(75, 117, 161, 0.78);
+      box-shadow: 0 24px 90px rgba(75, 117, 161, 0.24);
     }
 
     .side-label {
@@ -775,6 +795,7 @@
       <div class="card-shell" id="cardShell">
         <div class="swipe-zone left" id="leftZone" aria-hidden="true"></div>
         <div class="swipe-zone right" id="rightZone" aria-hidden="true"></div>
+        <div class="swipe-zone up" id="learnedZone" aria-hidden="true"></div>
         <button class="flashcard" type="button" id="cardButton" aria-pressed="false" aria-keyshortcuts="Space ArrowUp ArrowDown ArrowLeft ArrowRight" data-density="medium" data-script="latin">
           <span class="side-label" id="sideLabel">English</span>
           <span class="term" id="cardText">Loading</span>
@@ -809,9 +830,16 @@
 
       var SHEET_ID = "1ejk0F6ppoLUu20XuykaJ9WASObmQaUitecyewjP7K2I";
       var SHEET_QUERY = "select A,B where A is not null and B is not null";
+      var LEARNED_SYNC_URL = "https://script.google.com/macros/s/AKfycbx3-7EF5eyhFTUD6Ix1vL6lW7n0e86voucaCqxe7aJPPxyljVelhiFqJBR1rsCxuo8I/exec";
+      var LEARNED_SYNC_TOKEN = "5d1c2b29793d4f4f9a717a5a3b895c50b8d8a78273c7405a9f075021db6ac24e";
+      var APP_VERSION = "learned-v1";
       var LOAD_TIMEOUT_MS = 12000;
+      var LEARNED_SHEET_TIMEOUT_MS = 8000;
+      var LEARNED_SYNC_TIMEOUT_MS = 15000;
       var STORAGE_VERSION = 6;
       var STORAGE_KEY = "koreanCardsState:v" + STORAGE_VERSION + ":" + SHEET_ID;
+      var LEARNED_STORAGE_KEY = "koreanCardsLearned:v1:" + SHEET_ID;
+      var LEARNED_PENDING_KEY = "koreanCardsLearnedPending:v1:" + SHEET_ID;
       var THEME_STORAGE_KEY = "koreanCardsTheme";
       var LIGHT_THEME_COLOR = "#f5f2ea";
       var DARK_THEME_COLOR = "#151713";
@@ -824,6 +852,12 @@
       var SWIPE_DRAG_START_X = 5;
       var SWIPE_DRAG_AXIS_DOMINANCE = 0.82;
       var SWIPE_FEEDBACK_DISTANCE_FACTOR = 1.32;
+      var LEARN_SWIPE_MIN_Y = 32;
+      var LEARN_SWIPE_MAX_Y = 58;
+      var LEARN_SWIPE_HEIGHT_RATIO = 0.08;
+      var LEARN_SWIPE_MAX_X = 96;
+      var LEARN_SWIPE_AXIS_DOMINANCE = 0.82;
+      var LEARN_DRAG_START_Y = 5;
       var SWIPE_ANSWER_ANIMATION_MS = 140;
       var CLICK_SUPPRESS_AFTER_SWIPE_MS = 180;
       var CLICK_SUPPRESS_AFTER_NEW_CARD_MS = 320;
@@ -847,6 +881,7 @@
       var sideLabel = document.getElementById("sideLabel");
       var leftZone = document.getElementById("leftZone");
       var rightZone = document.getElementById("rightZone");
+      var learnedZone = document.getElementById("learnedZone");
       var cardCount = document.getElementById("cardCount");
       var actions = document.getElementById("answerActions");
       var yesButton = document.getElementById("yesButton");
@@ -887,6 +922,11 @@
       var swipeTimerId = null;
       var suppressClickUntil = 0;
       var currentTheme = "light";
+      var learnedKeys = Object.create(null);
+      var learnedSignature = "";
+      var pendingLearnedCards = [];
+      var learnedFlushBusy = false;
+      var learnedListRequestInFlight = false;
 
       function readThemePreference() {
         try {
@@ -961,12 +1001,296 @@
 
           var url = "https://docs.google.com/spreadsheets/d/" + encodeURIComponent(SHEET_ID) + "/gviz/tq";
           url += "?headers=1";
+          url += "&gid=0";
           url += "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName);
           url += "&tq=" + encodeURIComponent(SHEET_QUERY);
           url += "&cachebust=" + Date.now();
           script.async = true;
           script.src = url;
           document.head.appendChild(script);
+        });
+      }
+
+      function loadApplicationData() {
+        initializeLearnedSync();
+        var learnedLoad = loadLearnedKeysFromSheet().catch(function (error) {
+          console.warn("The learned tab was not reachable; using the local cache.", error);
+          refreshRemoteLearnedKeys();
+        });
+        return Promise.all([loadCards(), learnedLoad]).then(function (results) {
+          return results[0];
+        });
+      }
+
+      function initializeLearnedSync() {
+        loadStoredLearnedState();
+        flushPendingLearned();
+      }
+
+      function loadLearnedKeysFromSheet() {
+        if (new URLSearchParams(window.location.search).has("forceLearnedFailure")) {
+          return Promise.reject(new Error("Forced learned-card sync failure."));
+        }
+        return new Promise(function (resolve, reject) {
+          var callbackName = "__koreanLearnedSheet_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+          var script = document.createElement("script");
+          var timeoutId = window.setTimeout(function () {
+            cleanup();
+            reject(new Error("The learned tab request timed out."));
+          }, LEARNED_SHEET_TIMEOUT_MS);
+
+          function cleanup() {
+            window.clearTimeout(timeoutId);
+            delete window[callbackName];
+            if (script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          }
+
+          window[callbackName] = function (payload) {
+            cleanup();
+            if (!payload || payload.status !== "ok" || !payload.table) {
+              reject(new Error("The learned tab response was not usable."));
+              return;
+            }
+            var keys = (payload.table.rows || []).map(function (row) {
+              return cellText(row, 0);
+            }).filter(Boolean);
+            mergeLearnedKeys(keys);
+            persistLearnedKeys();
+            resolve();
+          };
+          script.onerror = function () {
+            cleanup();
+            reject(new Error("The learned tab request failed."));
+          };
+
+          var url = "https://docs.google.com/spreadsheets/d/" + encodeURIComponent(SHEET_ID) + "/gviz/tq";
+          url += "?headers=1";
+          url += "&sheet=" + encodeURIComponent("learned");
+          url += "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName);
+          url += "&tq=" + encodeURIComponent("select A where A is not null");
+          url += "&cachebust=" + Date.now();
+          script.async = true;
+          script.src = url;
+          document.head.appendChild(script);
+        });
+      }
+
+      function refreshRemoteLearnedKeys() {
+        if (learnedListRequestInFlight || !LEARNED_SYNC_URL || !LEARNED_SYNC_TOKEN) {
+          return;
+        }
+        learnedListRequestInFlight = true;
+        learnedRequest({ action: "list" }).then(function (payload) {
+          if (!payload || !payload.ok || !Array.isArray(payload.keys)) {
+            throw new Error(payload && payload.error ? payload.error : "Learned-card sync was not usable.");
+          }
+          var changed = mergeLearnedKeys(payload.keys);
+          persistLearnedKeys();
+          learnedListRequestInFlight = false;
+          if (changed) {
+            reconcileActiveGameWithLearnedCards();
+          } else {
+            saveGame(true);
+          }
+          flushPendingLearned();
+        }).catch(function (error) {
+          learnedListRequestInFlight = false;
+          console.warn("Learned-card sync unavailable; using the local cache.", error);
+        });
+      }
+
+      function learnedRequest(params) {
+        if (new URLSearchParams(window.location.search).has("forceLearnedFailure")) {
+          return Promise.reject(new Error("Forced learned-card sync failure."));
+        }
+        return new Promise(function (resolve, reject) {
+          var callbackName = "__koreanLearnedSync_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+          var script = document.createElement("script");
+          var timeoutId = window.setTimeout(function () {
+            cleanup(true);
+            reject(new Error("Learned-card sync timed out."));
+          }, LEARNED_SYNC_TIMEOUT_MS);
+
+          function cleanup(keepLateCallback) {
+            window.clearTimeout(timeoutId);
+            if (keepLateCallback) {
+              window[callbackName] = function () {
+                delete window[callbackName];
+              };
+            } else {
+              delete window[callbackName];
+            }
+            if (script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+          }
+
+          window[callbackName] = function (payload) {
+            cleanup();
+            resolve(payload);
+          };
+          script.onerror = function () {
+            cleanup();
+            reject(new Error("Learned-card sync request failed."));
+          };
+
+          var query = Object.assign({}, params, {
+            token: LEARNED_SYNC_TOKEN,
+            callback: callbackName,
+            cachebust: Date.now()
+          });
+          var url = LEARNED_SYNC_URL + "?" + Object.keys(query).map(function (key) {
+            return encodeURIComponent(key) + "=" + encodeURIComponent(query[key] == null ? "" : query[key]);
+          }).join("&");
+          script.async = true;
+          script.src = url;
+          document.head.appendChild(script);
+        });
+      }
+
+      function loadStoredLearnedState() {
+        learnedKeys = Object.create(null);
+        readStorageArray(LEARNED_STORAGE_KEY).forEach(addLearnedKey);
+        pendingLearnedCards = readStorageArray(LEARNED_PENDING_KEY).filter(function (card) {
+          return card && typeof card.key === "string" && card.key;
+        });
+        pendingLearnedCards.forEach(function (card) {
+          addLearnedKey(card.key);
+        });
+        refreshLearnedSignature();
+      }
+
+      function readStorageArray(key) {
+        try {
+          var value = JSON.parse(window.localStorage.getItem(key) || "[]");
+          return Array.isArray(value) ? value : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function persistLearnedKeys() {
+        try {
+          window.localStorage.setItem(LEARNED_STORAGE_KEY, JSON.stringify(Object.keys(learnedKeys).sort()));
+        } catch (error) {
+          // The remote learned list remains authoritative if local storage is unavailable.
+        }
+      }
+
+      function persistPendingLearned() {
+        try {
+          window.localStorage.setItem(LEARNED_PENDING_KEY, JSON.stringify(pendingLearnedCards));
+        } catch (error) {
+          // The current in-memory queue can still finish while this page remains open.
+        }
+      }
+
+      function addLearnedKey(key) {
+        if (typeof key === "string" && key) {
+          learnedKeys[key] = true;
+        }
+      }
+
+      function mergeLearnedKeys(keys) {
+        var previousCount = Object.keys(learnedKeys).length;
+        keys.forEach(addLearnedKey);
+        refreshLearnedSignature();
+        return Object.keys(learnedKeys).length !== previousCount;
+      }
+
+      function refreshLearnedSignature() {
+        var keys = Object.keys(learnedKeys).sort();
+        learnedSignature = String(keys.length) + ":" + hashText(keys.join("\u0001"));
+      }
+
+      function normalizeLearnedText(value) {
+        var text = String(value || "").trim().replace(/\s+/g, " ");
+        if (typeof text.normalize === "function") {
+          text = text.normalize("NFC");
+        }
+        return text.toLocaleLowerCase("en-US");
+      }
+
+      function learnedKeyFor(card) {
+        var source = card && card.generated ? "generated" : "sheet";
+        return source + "|" + JSON.stringify([
+          normalizeLearnedText(card && card.kind),
+          normalizeLearnedText(card && card.english),
+          normalizeLearnedText(card && card.korean)
+        ]);
+      }
+
+      function isLearnedCard(card) {
+        return Boolean(learnedKeys[learnedKeyFor(card)]);
+      }
+
+      function reconcileActiveGameWithLearnedCards() {
+        if (!sourceCards.length || body.classList.contains("is-loading") || body.classList.contains("is-failed")) {
+          return;
+        }
+        var previousCurrentKey = currentCard ? learnedKeyFor(currentCard) : "";
+        var previousSourceLength = sourceCards.length;
+        var previousDeckLength = deck.length;
+        sourceCards = sourceCards.filter(function (card) { return !isLearnedCard(card); });
+        deck = deck.filter(function (card) { return !isLearnedCard(card); });
+        var removedFromSource = previousSourceLength - sourceCards.length;
+        var removedFromDeck = previousDeckLength - deck.length;
+        completedCards = Math.max(0, completedCards - Math.max(0, removedFromSource - removedFromDeck));
+        totalCards = sourceCards.length;
+        sourceSignature = signatureFor(sourceCards);
+
+        if (previousCurrentKey && learnedKeys[previousCurrentKey]) {
+          renderNextCard();
+          return;
+        }
+        currentCard = deck[0] || null;
+        if (!currentCard) {
+          finishGame();
+          return;
+        }
+        updateStats();
+        saveGame(true);
+      }
+
+      function rememberLearnedCard(card) {
+        var key = learnedKeyFor(card);
+        addLearnedKey(key);
+        refreshLearnedSignature();
+        persistLearnedKeys();
+        if (!pendingLearnedCards.some(function (pending) { return pending.key === key; })) {
+          pendingLearnedCards.push({
+            key: key,
+            english: card.english,
+            korean: card.korean,
+            source: card.generated ? "generated" : "sheet",
+            kind: card.kind || "",
+            app_version: APP_VERSION
+          });
+          persistPendingLearned();
+        }
+        flushPendingLearned();
+        return key;
+      }
+
+      function flushPendingLearned() {
+        if (learnedFlushBusy || !pendingLearnedCards.length || !LEARNED_SYNC_URL || !LEARNED_SYNC_TOKEN) {
+          return;
+        }
+        learnedFlushBusy = true;
+        var pending = pendingLearnedCards[0];
+        learnedRequest(Object.assign({ action: "learn" }, pending)).then(function (payload) {
+          if (!payload || !payload.ok) {
+            throw new Error(payload && payload.error ? payload.error : "Learned card was not saved remotely.");
+          }
+          pendingLearnedCards.shift();
+          persistPendingLearned();
+          learnedFlushBusy = false;
+          flushPendingLearned();
+        }).catch(function (error) {
+          learnedFlushBusy = false;
+          console.warn("Learned card remains queued for retry.", error);
         });
       }
 
@@ -1011,6 +1335,16 @@
       function startGame(options) {
         options = options || {};
         if (!sourceCards.length) {
+          stopTimer();
+          deck = [];
+          currentCard = null;
+          totalCards = 0;
+          completedCards = 0;
+          errors = 0;
+          elapsedActiveMs = 0;
+          timerActiveSince = 0;
+          body.classList.remove("is-loading", "is-failed");
+          finishGame();
           return;
         }
         if (options.clearSaved) {
@@ -1071,7 +1405,10 @@
       }
 
       function buildSourceCards(cards) {
-        return buildSessionSheetCards(cards).concat(buildGeneratedCards());
+        var availableSheetCards = cards.filter(function (card) {
+          return !isLearnedCard(card);
+        });
+        return buildSessionSheetCards(availableSheetCards).concat(buildGeneratedCards());
       }
 
       function buildSessionSheetCards(cards) {
@@ -1083,85 +1420,110 @@
 
       function buildGeneratedCards() {
         var cards = [];
-        var nativeNumberValue = randomInt(1, 99);
-        var sinoNumberValue = sampleUniqueIntegersExcluding(0, 100, GENERATED_NUMBER_COUNT - 1, [nativeNumberValue])[0];
-        addGeneratedNumber(cards, nativeNumberValue, "native", 0);
-        addGeneratedNumber(cards, sinoNumberValue, "sino", 1);
+        var nativeNumberCard = pickUnlearnedGeneratedCard(function () {
+          return generatedNumberCard(randomInt(1, 99), "native", 0);
+        });
+        if (nativeNumberCard && GENERATED_NUMBER_COUNT > 0) {
+          cards.push(nativeNumberCard);
+        }
+        var nativeNumberValue = nativeNumberCard ? nativeNumberCard.generatedValue : null;
+        var sinoNumberCard = pickUnlearnedGeneratedCard(function () {
+          var value = randomInt(0, 100);
+          return value === nativeNumberValue ? null : generatedNumberCard(value, "sino", 1);
+        });
+        if (sinoNumberCard && GENERATED_NUMBER_COUNT > 1) {
+          cards.push(sinoNumberCard);
+        }
 
         [
-          sampleTimeInRange(0, 11),
-          sampleTimeInRange(12, 23)
-        ].slice(0, GENERATED_TIME_COUNT).forEach(function (time, index) {
-          cards.push({
-            id: "generated-time-" + index + "-" + time.hour24 + "-" + time.minute,
-            english: formatTimeFront(time.hour24, time.minute),
-            korean: koreanTime(time.hour24, time.minute),
-            generated: true,
-            kind: "time"
+          { min: 0, max: 11 },
+          { min: 12, max: 23 }
+        ].slice(0, GENERATED_TIME_COUNT).forEach(function (range, index) {
+          var card = pickUnlearnedGeneratedCard(function () {
+            var time = sampleTimeInRange(range.min, range.max);
+            return {
+              id: "generated-time-" + index + "-" + time.hour24 + "-" + time.minute,
+              english: formatTimeFront(time.hour24, time.minute),
+              korean: koreanTime(time.hour24, time.minute),
+              generated: true,
+              kind: "time"
+            };
           });
+          if (card) {
+            cards.push(card);
+          }
         });
 
-        sampleUniqueIntegers(0, GENERATED_MONEY_MAX, GENERATED_MONEY_COUNT).forEach(function (amount, index) {
-          cards.push({
-            id: "generated-money-" + index + "-" + amount,
-            english: formatMoneyFront(amount),
-            korean: moneyKorean(amount),
-            generated: true,
-            kind: "money"
+        for (var moneyIndex = 0; moneyIndex < GENERATED_MONEY_COUNT; moneyIndex += 1) {
+          var moneyCard = pickUnlearnedGeneratedCard(function () {
+            var amount = randomInt(0, GENERATED_MONEY_MAX);
+            return {
+              id: "generated-money-" + moneyIndex + "-" + amount,
+              english: formatMoneyFront(amount),
+              korean: moneyKorean(amount),
+              generated: true,
+              kind: "money"
+            };
           });
-        });
+          if (moneyCard) {
+            cards.push(moneyCard);
+          }
+        }
 
-        sampleUniqueIntegers(1, 100, GENERATED_AGE_COUNT).forEach(function (age, index) {
-          cards.push({
-            id: "generated-age-" + index + "-" + age,
-            english: age + " " + (age === 1 ? "year" : "years") + " old",
-            korean: nativeCounterNumber(age) + " 살",
-            generated: true,
-            kind: "age"
+        for (var ageIndex = 0; ageIndex < GENERATED_AGE_COUNT; ageIndex += 1) {
+          var ageCard = pickUnlearnedGeneratedCard(function () {
+            var age = randomInt(1, 100);
+            return {
+              id: "generated-age-" + ageIndex + "-" + age,
+              english: age + " " + (age === 1 ? "year" : "years") + " old",
+              korean: nativeCounterNumber(age) + " 살",
+              generated: true,
+              kind: "age"
+            };
           });
-        });
+          if (ageCard) {
+            cards.push(ageCard);
+          }
+        }
 
-        sampleUniqueIntegers(1, 20, GENERATED_CUP_COUNT).forEach(function (cups, index) {
-          cards.push({
-            id: "generated-cups-" + index + "-" + cups,
-            english: cups + " " + (cups === 1 ? "cup" : "cups"),
-            korean: nativeCounterNumber(cups) + " 잔",
-            generated: true,
-            kind: "cups"
+        for (var cupIndex = 0; cupIndex < GENERATED_CUP_COUNT; cupIndex += 1) {
+          var cupCard = pickUnlearnedGeneratedCard(function () {
+            var cups = randomInt(1, 20);
+            return {
+              id: "generated-cups-" + cupIndex + "-" + cups,
+              english: cups + " " + (cups === 1 ? "cup" : "cups"),
+              korean: nativeCounterNumber(cups) + " 잔",
+              generated: true,
+              kind: "cups"
+            };
           });
-        });
+          if (cupCard) {
+            cards.push(cupCard);
+          }
+        }
 
         return cards;
       }
 
-      function addGeneratedNumber(cards, value, system, index) {
-        cards.push({
+      function generatedNumberCard(value, system, index) {
+        return {
           id: "generated-number-" + index + "-" + value + "-" + system,
           english: value + " (" + system + ") " + (system === "native" ? "(counting, age, hours)" : "(dates, money, minutes)"),
           korean: system === "native" ? nativeNumber(value) : sinoNumber(value),
           generated: true,
-          kind: "number"
-        });
+          kind: "number",
+          generatedValue: value
+        };
       }
 
-      function sampleUniqueIntegers(min, max, count) {
-        return sampleUniqueIntegersExcluding(min, max, count, []);
-      }
-
-      function sampleUniqueIntegersExcluding(min, max, count, excludedValues) {
-        var values = [];
-        var seen = Object.create(null);
-        (excludedValues || []).forEach(function (value) {
-          seen[value] = true;
-        });
-        while (values.length < count) {
-          var value = randomInt(min, max);
-          if (!seen[value]) {
-            seen[value] = true;
-            values.push(value);
+      function pickUnlearnedGeneratedCard(factory) {
+        for (var attempt = 0; attempt < 500; attempt += 1) {
+          var card = factory();
+          if (card && !isLearnedCard(card)) {
+            return card;
           }
         }
-        return values;
+        return null;
       }
 
       function sampleTimeInRange(minHour, maxHour) {
@@ -1283,7 +1645,7 @@
 
       function prepareSavedGameForLoadedSheet() {
         var saved = readSavedGame();
-        if (!saved || saved.version !== STORAGE_VERSION || saved.sheetId !== SHEET_ID || saved.sheetSignature !== sheetSignature) {
+        if (!saved || saved.version !== STORAGE_VERSION || saved.sheetId !== SHEET_ID || saved.sheetSignature !== sheetSignature || !savedLearnedStateMatches(saved)) {
           return false;
         }
         var savedSourceCards = normalizeSourceCards(saved.sourceCards || []);
@@ -1309,7 +1671,7 @@
         if (!sourceCards.length || !saved.deck || !saved.deck.length && !saved.finished) {
           return false;
         }
-        if (saved.version !== STORAGE_VERSION || saved.sheetId !== SHEET_ID || saved.signature !== sourceSignature) {
+        if (saved.version !== STORAGE_VERSION || saved.sheetId !== SHEET_ID || saved.signature !== sourceSignature || !savedLearnedStateMatches(saved)) {
           return false;
         }
 
@@ -1369,6 +1731,7 @@
             version: STORAGE_VERSION,
             sheetId: SHEET_ID,
             sheetSignature: sheetSignature,
+            learnedSignature: learnedSignature,
             signature: sourceSignature,
             sourceCards: sourceCards,
             deck: deck,
@@ -1391,6 +1754,13 @@
         } catch (error) {
           // Ignore storage cleanup failures; reset still works in memory.
         }
+      }
+
+      function savedLearnedStateMatches(saved) {
+        if (typeof saved.learnedSignature === "string") {
+          return saved.learnedSignature === learnedSignature;
+        }
+        return Object.keys(learnedKeys).length === 0;
       }
 
       function normalizeSourceCards(cards) {
@@ -1505,6 +1875,24 @@
           reinsertMiss(answered);
         }
         renderNextCard();
+      }
+
+      function learnCurrentCard() {
+        if (!currentCard || !revealed) {
+          return;
+        }
+        var learnedCard = currentCard;
+        var key = rememberLearnedCard(learnedCard);
+        var previousLength = deck.length;
+        deck = deck.filter(function (card) {
+          return learnedKeyFor(card) !== key;
+        });
+        var removedCount = Math.max(1, previousLength - deck.length);
+        completedCards = Math.min(totalCards, completedCards + removedCount);
+        renderNextCard();
+        if (currentCard) {
+          screenReaderStatus.textContent = "Marked learned. Next card: " + sideLabel.textContent + ", " + cardText.textContent + ".";
+        }
       }
 
       function reinsertMiss(card) {
@@ -1710,6 +2098,11 @@
       }
 
       function handleSwipe(deltaX, deltaY) {
+        var isLearnedSwipe = revealed && deltaY <= -learnSwipeThreshold() && Math.abs(deltaX) <= LEARN_SWIPE_MAX_X && Math.abs(deltaY) > Math.abs(deltaX) * LEARN_SWIPE_AXIS_DOMINANCE;
+        if (isLearnedSwipe) {
+          commitSwipeLearned();
+          return true;
+        }
         var isHorizontal = Math.abs(deltaX) >= swipeThreshold() && Math.abs(deltaY) <= SWIPE_MAX_Y && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_AXIS_DOMINANCE;
         if (!isHorizontal) {
           return false;
@@ -1728,35 +2121,53 @@
         return Math.min(SWIPE_MAX_X, Math.max(SWIPE_MIN_X, width * SWIPE_WIDTH_RATIO));
       }
 
-      function updateDragFeedback(deltaX) {
+      function learnSwipeThreshold() {
+        var height = cardShell ? cardShell.getBoundingClientRect().height : 0;
+        return Math.min(LEARN_SWIPE_MAX_Y, Math.max(LEARN_SWIPE_MIN_Y, height * LEARN_SWIPE_HEIGHT_RATIO));
+      }
+
+      function updateDragFeedback(deltaX, deltaY) {
+        deltaY = Number(deltaY) || 0;
         var width = Math.max(cardShell ? cardShell.getBoundingClientRect().width : 1, 1);
+        var height = Math.max(cardShell ? cardShell.getBoundingClientRect().height : 1, 1);
+        var isLearnedDirection = revealed && deltaY < 0 && Math.abs(deltaY) > Math.abs(deltaX) * LEARN_SWIPE_AXIS_DOMINANCE;
         var maxDrag = width * 0.42;
-        var dragX = Math.max(-maxDrag, Math.min(maxDrag, deltaX));
-        var intensity = Math.min(Math.abs(deltaX) / Math.max(swipeThreshold() * SWIPE_FEEDBACK_DISTANCE_FACTOR, 1), 1);
-        var rotate = (dragX / width) * 9;
+        var dragX = isLearnedDirection ? Math.max(-maxDrag, Math.min(maxDrag, deltaX * 0.12)) : Math.max(-maxDrag, Math.min(maxDrag, deltaX));
+        var dragY = isLearnedDirection ? Math.max(-height * 0.38, deltaY) : 0;
+        var intensity = isLearnedDirection
+          ? Math.min(Math.abs(deltaY) / Math.max(learnSwipeThreshold() * SWIPE_FEEDBACK_DISTANCE_FACTOR, 1), 1)
+          : Math.min(Math.abs(deltaX) / Math.max(swipeThreshold() * SWIPE_FEEDBACK_DISTANCE_FACTOR, 1), 1);
+        var rotate = isLearnedDirection ? 0 : (dragX / width) * 9;
 
         cardButton.style.setProperty("--drag-x", dragX.toFixed(2) + "px");
+        cardButton.style.setProperty("--drag-y", dragY.toFixed(2) + "px");
         cardButton.style.setProperty("--drag-rotate", rotate.toFixed(2) + "deg");
         cardButton.style.setProperty("--drag-scale", String(1 - intensity * 0.01));
 
-        var leftOpacity = revealed && deltaX < 0 ? intensity : 0;
-        var rightOpacity = revealed && deltaX > 0 ? intensity : 0;
+        var leftOpacity = revealed && !isLearnedDirection && deltaX < 0 ? intensity : 0;
+        var rightOpacity = revealed && !isLearnedDirection && deltaX > 0 ? intensity : 0;
+        var learnedOpacity = isLearnedDirection ? intensity : 0;
         leftZone.style.setProperty("--zone-opacity", leftOpacity.toFixed(2));
         rightZone.style.setProperty("--zone-opacity", rightOpacity.toFixed(2));
+        learnedZone.style.setProperty("--zone-opacity", learnedOpacity.toFixed(2));
         cardButton.classList.toggle("is-drag-left", leftOpacity > 0.08);
         cardButton.classList.toggle("is-drag-right", rightOpacity > 0.08);
+        cardButton.classList.toggle("is-drag-up", learnedOpacity > 0.08);
         cardShell.classList.toggle("is-drag-left", leftOpacity > 0.08);
         cardShell.classList.toggle("is-drag-right", rightOpacity > 0.08);
+        cardShell.classList.toggle("is-drag-up", learnedOpacity > 0.08);
       }
 
       function resetDragFeedback() {
         cardButton.style.removeProperty("--drag-x");
+        cardButton.style.removeProperty("--drag-y");
         cardButton.style.removeProperty("--drag-rotate");
         cardButton.style.removeProperty("--drag-scale");
         leftZone.style.removeProperty("--zone-opacity");
         rightZone.style.removeProperty("--zone-opacity");
-        cardButton.classList.remove("is-dragging", "is-drag-left", "is-drag-right");
-        cardShell.classList.remove("is-drag-left", "is-drag-right");
+        learnedZone.style.removeProperty("--zone-opacity");
+        cardButton.classList.remove("is-dragging", "is-drag-left", "is-drag-right", "is-drag-up");
+        cardShell.classList.remove("is-drag-left", "is-drag-right", "is-drag-up");
       }
 
       function commitSwipeAnswer(known) {
@@ -1765,12 +2176,28 @@
         }
         swipeAnswerPending = true;
         suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_SWIPE_MS;
-        updateDragFeedback((known ? 1 : -1) * Math.max(cardShell.getBoundingClientRect().width * 1.08, 360));
+        updateDragFeedback((known ? 1 : -1) * Math.max(cardShell.getBoundingClientRect().width * 1.08, 360), 0);
         swipeTimerId = window.setTimeout(function () {
           swipeTimerId = null;
           swipeAnswerPending = false;
           resetDragFeedback();
           answerCard(known);
+          suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_NEW_CARD_MS;
+        }, SWIPE_ANSWER_ANIMATION_MS);
+      }
+
+      function commitSwipeLearned() {
+        if (swipeAnswerPending || !currentCard || !revealed) {
+          return;
+        }
+        swipeAnswerPending = true;
+        suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_SWIPE_MS;
+        updateDragFeedback(0, -Math.max(cardShell.getBoundingClientRect().height * 1.08, 360));
+        swipeTimerId = window.setTimeout(function () {
+          swipeTimerId = null;
+          swipeAnswerPending = false;
+          resetDragFeedback();
+          learnCurrentCard();
           suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_NEW_CARD_MS;
         }, SWIPE_ANSWER_ANIMATION_MS);
       }
@@ -1808,13 +2235,14 @@
         var deltaX = event.clientX - pointerStart.x;
         var deltaY = event.clientY - pointerStart.y;
         var wantsHorizontalDrag = Math.abs(deltaX) > SWIPE_DRAG_START_X && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DRAG_AXIS_DOMINANCE;
-        if (!pointerStart.dragging && !wantsHorizontalDrag) {
+        var wantsLearnedDrag = revealed && deltaY < -LEARN_DRAG_START_Y && Math.abs(deltaY) > Math.abs(deltaX) * LEARN_SWIPE_AXIS_DOMINANCE;
+        if (!pointerStart.dragging && !wantsHorizontalDrag && !wantsLearnedDrag) {
           return;
         }
         pointerStart.dragging = true;
         cardButton.classList.add("is-dragging");
         suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_DRAG_MS;
-        updateDragFeedback(deltaX);
+        updateDragFeedback(deltaX, deltaY);
         if (event.cancelable) {
           event.preventDefault();
         }
@@ -1831,7 +2259,7 @@
         if (cardButton.releasePointerCapture && (!cardButton.hasPointerCapture || cardButton.hasPointerCapture(event.pointerId))) {
           cardButton.releasePointerCapture(event.pointerId);
         }
-        if ((wasDragging || Math.abs(deltaX) >= swipeThreshold()) && handleSwipe(deltaX, deltaY)) {
+        if ((wasDragging || Math.abs(deltaX) >= swipeThreshold() || deltaY <= -learnSwipeThreshold()) && handleSwipe(deltaX, deltaY)) {
           suppressClickUntil = Date.now() + CLICK_SUPPRESS_AFTER_SWIPE_MS;
           event.preventDefault();
           return;
@@ -1862,7 +2290,7 @@
       retryButton.addEventListener("click", function () {
         body.classList.remove("is-failed", "is-finished");
         body.classList.add("is-loading");
-        loadCards().then(begin).catch(function (error) {
+        loadApplicationData().then(begin).catch(function (error) {
           if (!shouldSkipRestore() && restoreSavedGame(true)) {
             return;
           }
@@ -1879,7 +2307,16 @@
           activateCard();
           return;
         }
-        if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+        if (event.code === "ArrowUp") {
+          event.preventDefault();
+          if (revealed) {
+            learnCurrentCard();
+          } else {
+            activateCard();
+          }
+          return;
+        }
+        if (event.code === "ArrowDown") {
           event.preventDefault();
           activateCard();
           return;
@@ -1923,13 +2360,17 @@
         syncTimerActivity();
       });
 
+      window.addEventListener("online", function () {
+        flushPendingLearned();
+      });
+
       function shouldSkipRestore() {
         return new URLSearchParams(window.location.search).has("noRestore");
       }
 
       applyTheme(readThemePreference());
 
-      loadCards().then(begin).catch(function (error) {
+      loadApplicationData().then(begin).catch(function (error) {
         if (!shouldSkipRestore() && restoreSavedGame(true)) {
           return;
         }
