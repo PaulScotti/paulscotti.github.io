@@ -7,39 +7,39 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>@JournalClub Tasks</title>
-  <link rel="stylesheet" href="../style.css?v=81addacf2150c722">
+  <link rel="stylesheet" href="../style.css?v=b62b5700411c8430">
 </head>
 <body>
 <main class="screen">
   <header class="topbar">
-    <a class="mark" href="..?v=81addacf2150c722">▶▮◀</a>
+    <a class="mark" href="..?v=b62b5700411c8430">▶▮◀</a>
     <div>
       <h1 data-page-heading>@JournalClub</h1>
       <p><span data-visible-count>1</span> visible tasks · due sorted · ~/todo.txt</p>
     </div>
-    <time>v 81addacf2150</time>
+    <time>v b62b5700411c</time>
   </header>
   <p class="note" data-page-note>Quick note: (A) represents top priority tasks.</p>
   <nav class="contexts" aria-label="Task filters">
-    <a class="context" href="..?v=81addacf2150c722">All</a>
+    <a class="context" href="..?v=b62b5700411c8430">All</a>
     <a class="context" href="../work/"><span>Work</span><b>93</b></a>
-    <a class="context" href="../employees/"><span>Employees</span><b>29</b></a>
-    <a class="context" href="../c-suite/"><span>C-Suite</span><b>65</b></a>
+    <a class="context" href="../employees/"><span>Employees</span><b>30</b></a>
+    <a class="context" href="../c-suite/"><span>C-Suite</span><b>64</b></a>
     <a class="context" href="../no-context/"><span>No Context</span><b>0</b></a>
     <a class="context" href="../benjamin/"><span>@Benjamin</span><b>14</b></a>
     <a class="context" href="../chris/"><span>@Chris</span><b>5</b></a>
     <a class="context" href="../connor/"><span>@Connor</span><b>4</b></a>
-    <a class="context" href="../hassan/"><span>@Hassan</span><b>4</b></a>
+    <a class="context" href="../hassan/"><span>@Hassan</span><b>3</b></a>
     <a class="context active" href="../journalclub/"><span>@JournalClub</span><b>1</b></a>
-    <a class="context" href="../paul/"><span>@Paul</span><b>31</b></a>
+    <a class="context" href="../paul/"><span>@Paul</span><b>29</b></a>
     <a class="context" href="../reading/"><span>@Reading</span><b>1</b></a>
     <a class="context" href="../tanishq/"><span>@Tanishq</span><b>42</b></a>
     <a class="context" href="../varun/"><span>@Varun</span><b>6</b></a>
   </nav>
   <section class="task-list" aria-label="Tasks" data-task-view="public" data-generated-today="2026-07-20">
     <h2 class="bucket" data-bucket="no-due" style="--bucket-color:#6b7280"><span>(1)</span> NO DUE DATE</h2>
-    <div class="task-tree" role="group" data-tree-root="123" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="123">
-      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="0"><span class="line-no">  1</span><span class="status"> </span><span class="priority empty"></span><span class="body">PICASSO SAE applied to TCGA pathology foundation modeling <span class="context-token">@Paul</span> <span class="context-token">@JournalClub</span> <span class="context-token">@Reading</span></span></article>
+    <div class="task-tree" role="group" data-tree-root="124" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="124">
+      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="0"><span class="line-no">  1</span><span class="status"> </span><span class="priority empty"></span><span class="body">PICASSO SAE applied to TCGA pathology foundation modeling <span class="context-token">@JournalClub</span> <span class="context-token">@Reading</span></span></article>
     </div>
   </section>
   <script>
@@ -49,6 +49,7 @@
     var buckets = [
         { id: "overdue", label: "OVERDUE", color: "var(--overdue)" },
         { id: "today", label: "TODAY", color: "var(--today)" },
+        { id: "tomorrow", label: "TOMORROW", color: "var(--due)" },
         { id: "this-week", label: "THIS WEEK", color: "var(--accent)" },
         { id: "next-week", label: "NEXT WEEK", color: "var(--accent)" },
         { id: "later", label: "LATER", color: "var(--accent)" },
@@ -93,10 +94,11 @@
     function weekCutoffs(today) {
         var date = parseIsoDate(today);
         if (!date) {
-            return { thisWeek: today, nextWeek: today };
+            return { tomorrow: today, thisWeek: today, nextWeek: today };
         }
         var daysUntilSaturday = 6 - date.getDay();
         return {
+            tomorrow: isoFromDate(addDays(date, 1)),
             thisWeek: isoFromDate(addDays(date, daysUntilSaturday)),
             nextWeek: isoFromDate(addDays(date, daysUntilSaturday + 7))
         };
@@ -156,6 +158,9 @@
         }
         if (due === today) {
             return "today";
+        }
+        if (due === cutoffs.tomorrow) {
+            return "tomorrow";
         }
         if (due <= cutoffs.thisWeek) {
             return "this-week";
