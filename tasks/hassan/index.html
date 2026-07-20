@@ -7,21 +7,21 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>@Hassan Tasks</title>
-  <link rel="stylesheet" href="../style.css?v=b62b5700411c8430">
+  <link rel="stylesheet" href="../style.css?v=b5a0ef4e50343e8f">
 </head>
 <body>
 <main class="screen">
   <header class="topbar">
-    <a class="mark" href="..?v=b62b5700411c8430">▶▮◀</a>
+    <a class="mark" href="..?v=b5a0ef4e50343e8f">▶▮◀</a>
     <div>
       <h1 data-page-heading>@Hassan</h1>
       <p><span data-visible-count>3</span> visible tasks · due sorted · ~/todo.txt</p>
     </div>
-    <time>v b62b5700411c</time>
+    <time>v b5a0ef4e5034</time>
   </header>
   <p class="note" data-page-note>Quick note: (A) represents top priority tasks.</p>
   <nav class="contexts" aria-label="Task filters">
-    <a class="context" href="..?v=b62b5700411c8430">All</a>
+    <a class="context" href="..?v=b5a0ef4e50343e8f">All</a>
     <a class="context" href="../work/"><span>Work</span><b>93</b></a>
     <a class="context" href="../employees/"><span>Employees</span><b>30</b></a>
     <a class="context" href="../c-suite/"><span>C-Suite</span><b>64</b></a>
@@ -39,13 +39,13 @@
   <section class="task-list" aria-label="Tasks" data-task-view="public" data-generated-today="2026-07-20">
     <h2 class="bucket" data-bucket="no-due" style="--bucket-color:#6b7280"><span>(3)</span> NO DUE DATE</h2>
     <div class="task-tree" role="group" data-tree-root="41" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="41">
-      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="0"><span class="line-no">  1</span><span class="status"> </span><span class="priority empty"></span><span class="body">Write proposal for Joseph Day project <span class="context-token">@Hassan</span></span></article>
+      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="41"><span class="line-no">  1</span><span class="status"> </span><span class="priority empty"></span><span class="body">Write proposal for Joseph Day project <span class="context-token">@Hassan</span></span></article>
     </div>
     <div class="task-tree" role="group" data-tree-root="49" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="49">
-      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="1"><span class="line-no">  2</span><span class="status"> </span><span class="priority empty"></span><span class="body">create niches not from tcga but same dataset <span class="context-token">@Hassan</span></span></article>
+      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="49"><span class="line-no">  2</span><span class="status"> </span><span class="priority empty"></span><span class="body">create niches not from tcga but same dataset <span class="context-token">@Hassan</span></span></article>
     </div>
     <div class="task-tree" role="group" data-tree-root="157" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="157">
-      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="2"><span class="line-no">  3</span><span class="status"> </span><span class="priority empty"></span><span class="body">take a look at data from Jacob Stern (managed sid sijbrandij med ai stuff) <span class="context-token">@Hassan</span></span></article>
+      <article class="task-row" role="treeitem" aria-level="1" data-depth="0" data-row-kind="primary" data-bucket="no-due" data-due="" data-done="0" data-done-date="" data-priority="" data-order="157"><span class="line-no">  3</span><span class="status"> </span><span class="priority empty"></span><span class="body">take a look at data from Jacob Stern (managed sid sijbrandij med ai stuff) <span class="context-token">@Hassan</span></span></article>
     </div>
   </section>
   <script>
@@ -231,6 +231,101 @@
         return Number(a.dataset.order || 0) - Number(b.dataset.order || 0);
     }
 
+    function bucketRank(id) {
+        for (var i = 0; i < buckets.length; i += 1) {
+            if (buckets[i].id === id) {
+                return i;
+            }
+        }
+        return buckets.length;
+    }
+
+    function compareTaskUrgency(a, b, today, cutoffs) {
+        var bucket = bucketRank(bucketForTree(a, today, cutoffs)) -
+            bucketRank(bucketForTree(b, today, cutoffs));
+        if (bucket !== 0) {
+            return bucket;
+        }
+        var priority = priorityKey(a.dataset.priority).valueOf() -
+            priorityKey(b.dataset.priority).valueOf();
+        if (priority !== 0) {
+            return priority;
+        }
+        var dueA = a.dataset.due || "z";
+        var dueB = b.dataset.due || "z";
+        if (dueA < dueB) {
+            return -1;
+        }
+        if (dueA > dueB) {
+            return 1;
+        }
+        return Number(a.dataset.order || 0) - Number(b.dataset.order || 0);
+    }
+
+    function prepareActiveTree(tree, today, cutoffs) {
+        if (tree.dataset.rowKind === "done") {
+            return;
+        }
+        var rows = Array.prototype.slice.call(tree.querySelectorAll(".task-row"));
+        var roots = [];
+        var stack = [];
+        for (var i = 0; i < rows.length; i += 1) {
+            var node = {
+                row: rows[i],
+                depth: Number(rows[i].dataset.depth || 0),
+                children: [],
+                anchor: rows[i]
+            };
+            while (stack.length && stack[stack.length - 1].depth >= node.depth) {
+                stack.pop();
+            }
+            if (stack.length) {
+                stack[stack.length - 1].children.push(node);
+            } else {
+                roots.push(node);
+            }
+            stack.push(node);
+        }
+
+        function prepareBranch(node) {
+            for (var child = 0; child < node.children.length; child += 1) {
+                var candidate = prepareBranch(node.children[child]);
+                if (compareTaskUrgency(candidate, node.anchor, today, cutoffs) < 0) {
+                    node.anchor = candidate;
+                }
+            }
+            node.children.sort(function (a, b) {
+                return compareTaskUrgency(a.anchor, b.anchor, today, cutoffs);
+            });
+            return node.anchor;
+        }
+
+        var anchor = null;
+        for (var root = 0; root < roots.length; root += 1) {
+            var candidate = prepareBranch(roots[root]);
+            if (!anchor || compareTaskUrgency(candidate, anchor, today, cutoffs) < 0) {
+                anchor = candidate;
+            }
+        }
+        if (!anchor) {
+            return;
+        }
+        tree.dataset.due = anchor.dataset.due || "";
+        tree.dataset.done = anchor.dataset.done || "0";
+        tree.dataset.doneDate = anchor.dataset.doneDate || "";
+        tree.dataset.priority = anchor.dataset.priority || "";
+
+        function appendBranch(node) {
+            tree.appendChild(node.row);
+            for (var child = 0; child < node.children.length; child += 1) {
+                appendBranch(node.children[child]);
+            }
+        }
+        for (var orderedRoot = 0; orderedRoot < roots.length; orderedRoot += 1) {
+            appendBranch(roots[orderedRoot]);
+        }
+    }
+
     function treeRowCount(tree) {
         return tree.querySelectorAll(".task-row").length;
     }
@@ -267,6 +362,7 @@
         }
         for (var j = 0; j < trees.length; j += 1) {
             var tree = trees[j];
+            prepareActiveTree(tree, today, cutoffs);
             var bucket = bucketForTree(tree, today, cutoffs);
             tree.dataset.currentBucket = bucket;
             if (!bucket) {
