@@ -1,583 +1,1199 @@
 <!DOCTYPE html>
-<html class="no-js">
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Paul S. Scotti, Ph.D</title>
-    <meta name="description" content="Paul S. Scotti's personal website">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="https://paulscotti.github.io/favicon.png">
+    <title>Paul S. Scotti, Ph.D. | NeuroAI and open medical AI</title>
+    <meta name="description" content="Paul S. Scotti is a computational neuroscientist and co-founder of Sophont and MedARC, building open models, benchmarks, and research infrastructure for neuroscience and medicine.">
+    <meta name="theme-color" content="#0b1729">
+    <link rel="canonical" href="https://paulscotti.com/">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Paul S. Scotti, Ph.D.">
+    <meta property="og:description" content="Open models, benchmarks, and research infrastructure for neuroscience and medicine.">
+    <meta property="og:url" content="https://paulscotti.com/">
+    <meta property="og:image" content="https://paulscotti.com/favicon.png">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YJN2KMKXW"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-5YJN2KMKXW');
+        gtag("js", new Date());
+        gtag("config", "G-5YJN2KMKXW");
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Paul S. Scotti",
+        "honorificSuffix": "Ph.D.",
+        "url": "https://paulscotti.com/",
+        "image": "https://paulscotti.com/favicon.png",
+        "jobTitle": "Co-founder and CTO",
+        "affiliation": [
+            {"@type": "Organization", "name": "Sophont", "url": "https://sophont.med/"},
+            {"@type": "Organization", "name": "MedARC", "url": "https://medarc.ai/"},
+            {"@type": "Organization", "name": "Princeton Neuroscience Institute", "url": "https://pni.princeton.edu/"}
+        ],
+        "sameAs": [
+            "https://scholar.google.com/citations?user=AE-k4ukAAAAJ",
+            "https://github.com/PaulScotti",
+            "https://www.linkedin.com/in/paulscotti",
+            "https://bsky.app/profile/humanscotti.bsky.social",
+            "https://x.com/humanscotti"
+        ]
+    }
     </script>
     <style>
+        :root {
+            --ink: #0b1729;
+            --ink-soft: #41506a;
+            --paper: #f7f5f0;
+            --paper-strong: #fffdf9;
+            --line: rgba(11, 23, 41, 0.13);
+            --blue: #2e65f3;
+            --blue-dark: #1747c0;
+            --aqua: #83e1d0;
+            --orange: #ff7b4d;
+            --yellow: #f5cf58;
+            --purple: #8d78f4;
+            --shadow: 0 24px 70px rgba(23, 42, 74, 0.12);
+            --radius-lg: 28px;
+            --radius-md: 18px;
+            --max-width: 1180px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: Helvetica, Arial, sans-serif;
             margin: 0;
-            background-color: #f5f5f5;
-            color: #333;
-            background-image: url("https://paulscotti.github.io/images/leaf_desktop_bg.jpg");
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 8% 4%, rgba(131, 225, 208, 0.22), transparent 25rem),
+                radial-gradient(circle at 94% 16%, rgba(245, 207, 88, 0.18), transparent 24rem),
+                var(--paper);
+            font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 17px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
-        .container {
-            width: 20%;
-            max-width: 1500px;
-            min-width: 500px;
-            padding-bottom: 20px;
+
+        a {
+            color: inherit;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--orange);
+            outline-offset: 4px;
+        }
+
+        .shell {
+            width: min(calc(100% - 40px), var(--max-width));
             margin: 0 auto;
-            animation: fadeIn 1s;
         }
-        .main-row {
-            border: 6px solid transparent;
-            border-image: linear-gradient(to bottom right, #431358 0%, #08294d 25%, #28750a 50%, #524b14 75%, #46132e 100%);
-            border-image-slice: 1;
-            background-color: rgba(255, 255, 255);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        .skip-link {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 100;
+            padding: 10px 14px;
+            color: white;
+            background: var(--ink);
             border-radius: 10px;
+            transform: translateY(-160%);
+            transition: transform 160ms ease;
         }
-        .img-circle {
-            border-radius: 50%;
-            width: 150px; /* Adjusted size */
-            height: 150px; /* Adjusted size */
-            display: block;
-            margin: 20px auto;
-            object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        .skip-link:focus {
+            transform: translateY(0);
         }
-        .title {
-            text-align: center;
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(11, 23, 41, 0.09);
+            background: rgba(247, 245, 240, 0.88);
+            backdrop-filter: blur(16px);
         }
-        .title p {
-            font-size: 1rem;
-            font-weight: 300;
-            margin: 0;
+
+        .nav {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 28px;
         }
-        .hr-line {
-            border: none;
-            height: 1px;
-            background-color: #dbdbdb;
-            margin: 15px 0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 10px;
-            border: 1px solid #ccc; /* Add border here */
-            border-radius: 4px;
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 0.95rem;
+            font-weight: 750;
+            letter-spacing: -0.01em;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            cursor: pointer;
         }
-        .btn:hover {
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+        }
+
+        .nav-links,
+        .social-links,
+        .button-row,
+        .card-links,
+        .affiliations {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            gap: 24px;
+            font-size: 0.9rem;
+            font-weight: 650;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--blue);
+        }
+
+        .contact-pill {
+            padding: 8px 14px;
+            color: white;
+            background: var(--ink);
+            border-radius: 999px;
+        }
+
+        .hero {
+            padding: clamp(70px, 9vw, 122px) 0 72px;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+            align-items: center;
+            gap: clamp(44px, 8vw, 100px);
+        }
+
+        .eyebrow {
+            margin: 0 0 18px;
+            color: var(--blue-dark);
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 780px;
+            margin-bottom: 24px;
+            font-size: clamp(3rem, 7vw, 6.7rem);
+            line-height: 0.94;
+            letter-spacing: -0.065em;
+        }
+
+        .accent-text {
+            color: var(--blue);
+        }
+
+        .hero-copy {
+            max-width: 690px;
+            margin-bottom: 28px;
+            color: var(--ink-soft);
+            font-size: clamp(1.08rem, 2vw, 1.3rem);
+            line-height: 1.55;
+        }
+
+        .button-row {
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .button {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 17px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--paper-strong);
+            box-shadow: 0 8px 26px rgba(23, 42, 74, 0.08);
+            font-size: 0.92rem;
+            font-weight: 760;
+            line-height: 1.2;
+            text-decoration: none;
+            transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+        }
+
+        .button:hover {
+            border-color: rgba(46, 101, 243, 0.38);
+            box-shadow: 0 12px 30px rgba(23, 42, 74, 0.13);
             transform: translateY(-2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        .social-links {
-            text-align: center;
-            padding: 20px;
+
+        .button.primary {
+            color: white;
+            border-color: var(--blue);
+            background: var(--blue);
         }
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: #333;
-            font-size: 0px;
+
+        .button.primary:hover {
+            background: var(--blue-dark);
         }
-        .social-links a:hover {
-            color: #0077b5;
+
+        .button.secondary {
+            border-color: rgba(46, 101, 243, 0.26);
+            color: var(--blue-dark);
         }
-        .social-icon {
-            width: 24px;
-            height: 24px;
-            transition: transform 0.3s ease;
+
+        .button.small {
+            min-height: 38px;
+            padding: 8px 12px;
+            box-shadow: none;
+            font-size: 0.8rem;
         }
-        .social-icon:hover {
-            transform: scale(1.1);
+
+        .arrow {
+            transition: transform 160ms ease;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        .button:hover .arrow,
+        .inline-link:hover .arrow {
+            transform: translateX(3px);
         }
-        @keyframes rotateIn {
-            from {
-                transform: rotate(-360deg);
-                opacity: 0;
-            }
-            to {
-                transform: rotate(0);
-                opacity: 1;
-            }
+
+        .affiliations {
+            gap: 8px 18px;
+            color: var(--ink-soft);
+            font-size: 0.85rem;
         }
-        .zoombtn {
-            transition: transform 0.3s ease;
+
+        .affiliations a {
+            font-weight: 700;
+            text-underline-offset: 3px;
         }
-        .zoombtn:hover {
-            transform: scale(1.05);
-        }
-        #names {
-            font-size: 14px;
-            font-weight: normal;
-        }
-        .cbar {
-            text-align: center;
-            font-weight: normal;
-            font-size: 16px;
-            float: center;
-        }
-        .pub-container .cbar img {
-            width: auto;
-            max-width: 45%; 
-        }
-        @media (min-width: 1200px) { 
-            .pub-container .cbar img {
-                max-width: 25%;
-            }
-        }
-        .cbar2 {
-            text-align: center;
-            font-weight: normal;
-            font-size: 16px;
-        }
-        .pub-container .cbar2 img {
-            width: auto;
-            max-width: 70%; 
-        }
-        @media (min-width: 1200px) { 
-            .pub-container .cbar2 img {
-                max-width: 40%;
-            }
-        }
-        .crow:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .title .btn {
-            margin: 2px !important;
-            padding: 6px !important;
-            font-size: 16px !important;
-            font-size: 1rem !important;
-            font-weight: 300 !important;
-        }
-        h3 {
-            margin: 0;
-            padding: 0;
-        }
-        .btn-rainbow {
-            color: white !important;
-            background: linear-gradient(124deg, #3A2D68, #2C5182, #277A2B, #9D9340, #A36234, #963239);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
-            background-size: 1800% 1800%;
-            -webkit-animation: rainbow 18s ease infinite;
-            -z-animation: rainbow 18s ease infinite;
-            -o-animation: rainbow 18s ease infinite;
-            animation: rainbow 18s ease infinite;
-        }
-        .btn-rainboww {
-            color: white !important;
-            background: linear-gradient(124deg, #9D9340, #A36234, #963239, #3A2D68, #2C5182, #277A2B);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
-            background-size: 1800% 1800%;
-            -webkit-animation: rainbow 18s ease infinite;
-            -z-animation: rainbow 18s ease infinite;
-            -o-animation: rainbow 18s ease infinite;
-            animation: rainbow 18s ease infinite;
-        }
-        .btn-rainbowww {
-            color: white !important;
-            background: linear-gradient(124deg, #963239, #3A2D68, #2C5182, #277A2B, #9D9340, #A36234);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
-            background-size: 1800% 1800%;
-            -webkit-animation: rainbow 18s ease infinite;
-            -z-animation: rainbow 18s ease infinite;
-            -o-animation: rainbow 18s ease infinite;
-            animation: rainbow 18s ease infinite;
-        }
-        .btn-rainbowS {
-            color: white !important;
-            background: linear-gradient(124deg, #277A2B, #9D9340, #A36234, #963239, #3A2D68, #2C5182);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
-            background-size: 1800% 1800%;
-            -webkit-animation: rainbow 18s ease infinite;
-            -z-animation: rainbow 18s ease infinite;
-            -o-animation: rainbow 18s ease infinite;
-            animation: rainbow 18s ease infinite;
-        }
-        @-webkit-keyframes rainbow {
-            0%{background-position:0% 82%}
-            50%{background-position:100% 19%}
-            100%{background-position:0% 82%}
-        }
-        @-moz-keyframes rainbow {
-            0%{background-position:0% 82%}
-            50%{background-position:100% 19%}
-            100%{background-position:0% 82%}
-        }
-        @-o-keyframes rainbow {
-            0%{background-position:0% 82%}
-            50%{background-position:100% 19%}
-            100%{background-position:0% 82%}
-        }
-        @keyframes rainbow { 
-            0%{background-position:0% 82%}
-            50%{background-position:100% 19%}
-            100%{background-position:0% 82%}
-        }
-        .btn-yellow {
-            color: black !important;
-            background-color: #ffeb3b52;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.12);
-        }
-        #published {
-            width: 80%;
-            max-width: 3000px;
-            min-width: 500px;
-            padding-top: 6px;
-            padding-bottom: 6px;
+
+        .research-map {
+            position: relative;
+            width: min(100%, 430px);
+            aspect-ratio: 1;
             margin: 0 auto;
         }
-        #published .row {
-            border: 6px solid rgb(255, 255, 255);
-            background-color: rgba(0, 0, 0, 1); 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-            border-radius: 10px;
+
+        .research-map::before,
+        .research-map::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(46, 101, 243, 0.18);
+            border-radius: 50%;
+            inset: 7%;
         }
-        #published .title {
+
+        .research-map::after {
+            border-style: dashed;
+            inset: 22%;
+            animation: slow-spin 38s linear infinite;
+        }
+
+        @keyframes slow-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .map-center,
+        .map-node {
+            position: absolute;
+            display: grid;
+            place-items: center;
             text-align: center;
-            padding-top: 5px;
-            padding-bottom: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        .map-center {
+            inset: 31%;
+            z-index: 2;
+            padding: 18px;
+            color: white;
+            background: var(--ink);
+            border-radius: 50%;
+            font-size: clamp(0.85rem, 2vw, 1.05rem);
+            font-weight: 800;
+            line-height: 1.25;
+            transform: rotate(-4deg);
+        }
+
+        .map-node {
+            width: 100px;
+            height: 100px;
+            border: 7px solid var(--paper);
+            border-radius: 38% 62% 48% 52% / 50% 42% 58% 50%;
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .node-fmri {
+            top: 0;
+            left: 10%;
+            background: var(--aqua);
+            transform: rotate(-9deg);
+        }
+
+        .node-eeg {
+            top: 5%;
+            right: 4%;
+            background: var(--yellow);
+            transform: rotate(7deg);
+        }
+
+        .node-path {
+            right: 0;
+            bottom: 13%;
+            color: white;
+            background: var(--orange);
+            transform: rotate(-5deg);
+        }
+
+        .node-med {
+            bottom: 0;
+            left: 12%;
+            color: white;
+            background: #6f56d9;
+            transform: rotate(8deg);
+        }
+
+        .section {
+            padding: 92px 0;
+        }
+
+        .section.tint {
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 253, 249, 0.68);
+        }
+
+        .section-heading {
+            max-width: 760px;
+            margin-bottom: 42px;
+        }
+
+        .section-heading h2 {
+            margin-bottom: 14px;
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            line-height: 1.03;
+            letter-spacing: -0.05em;
+        }
+
+        .section-heading p:last-child {
+            margin-bottom: 0;
+            color: var(--ink-soft);
+            font-size: 1.05rem;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card,
+        .work-card,
+        .archive-card {
+            position: relative;
+            border: 1px solid var(--line);
+            background: var(--paper-strong);
+            box-shadow: 0 14px 42px rgba(23, 42, 74, 0.07);
+        }
+
+        .tool-card {
+            min-height: 310px;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .tool-card:hover {
+            box-shadow: 0 22px 54px rgba(23, 42, 74, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .tool-card::after {
+            content: "";
+            position: absolute;
+            right: -45px;
+            bottom: -55px;
+            width: 150px;
+            height: 150px;
+            border: 22px solid currentColor;
+            border-radius: 50%;
+            opacity: 0.08;
+        }
+
+        .tool-card.scaling { color: #126359; }
+        .tool-card.brainmarks { color: var(--blue-dark); }
+        .tool-card.labless { color: #765700; }
+        .tool-card.nanopath { color: #aa3d1c; }
+
+        .card-topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 36px;
+        }
+
+        .tool-index,
+        .tag,
+        .year {
+            font-size: 0.71rem;
+            font-weight: 850;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .status {
+            padding: 4px 8px;
+            color: var(--ink);
+            background: rgba(131, 225, 208, 0.6);
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 850;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .tool-card h3,
+        .work-card h3,
+        .archive-card h3 {
+            color: var(--ink);
+            letter-spacing: -0.035em;
+        }
+
+        .tool-card h3 {
+            margin-bottom: 12px;
+            font-size: 1.55rem;
+            line-height: 1.1;
+        }
+
+        .tool-card p {
+            color: var(--ink-soft);
+            font-size: 0.93rem;
+            line-height: 1.55;
+        }
+
+        .inline-link {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: auto;
+            color: currentColor;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .work-card {
+            min-height: 355px;
+            display: flex;
+            flex-direction: column;
+            padding: clamp(26px, 4vw, 40px);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .work-card.featured {
+            grid-column: span 2;
+            min-height: 390px;
+            color: white;
+            border: 0;
+            background:
+                radial-gradient(circle at 85% 15%, rgba(131, 225, 208, 0.45), transparent 27%),
+                linear-gradient(135deg, #0b1729, #173867 72%, #2e65f3);
+            box-shadow: 0 30px 75px rgba(17, 47, 95, 0.25);
+        }
+
+        .work-card.featured h3,
+        .work-card.featured p,
+        .work-card.featured .tag {
             color: white;
         }
-        .pub-container {
-            width: 80%;
-            max-width: 3000px;
-            min-width: 500px;
-            padding-top: 6px;
-            padding-bottom: 0px;
-            margin: 10px auto;
-        }
-        .pub-container .row {
-            border: 6px solid rgb(0, 0, 0);
-            background-color: rgba(255, 255, 255);
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-            border-radius: 10px;
-        }
-        .pub-container .title {
-            text-align: center;
-            padding: 0px;
-        }
-        .pub-container img {
-            width: 400px;
-            max-width: 90%;
-            display: block;
-            margin: 10px auto;
+
+        .work-card.featured .tag {
+            opacity: 0.75;
         }
 
-        .pub-container .title a {
-          color: #0077b5;
+        .work-card.warm {
+            background:
+                radial-gradient(circle at 90% 8%, rgba(255, 123, 77, 0.25), transparent 34%),
+                var(--paper-strong);
         }
+
+        .work-card.cool {
+            background:
+                radial-gradient(circle at 90% 8%, rgba(141, 120, 244, 0.22), transparent 34%),
+                var(--paper-strong);
+        }
+
+        .work-card.aqua {
+            background:
+                radial-gradient(circle at 90% 8%, rgba(131, 225, 208, 0.38), transparent 34%),
+                var(--paper-strong);
+        }
+
+        .work-card h3 {
+            max-width: 880px;
+            margin: 18px 0 15px;
+            font-size: clamp(1.65rem, 3vw, 2.65rem);
+            line-height: 1.08;
+        }
+
+        .work-card.featured h3 {
+            max-width: 900px;
+            font-size: clamp(2.3rem, 5vw, 4.3rem);
+        }
+
+        .work-card p {
+            max-width: 820px;
+            margin-bottom: 26px;
+            color: var(--ink-soft);
+        }
+
+        .card-links {
+            gap: 9px;
+            margin-top: auto;
+        }
+
+        .work-card.featured .button {
+            color: var(--ink);
+            background: white;
+        }
+
+        .work-card.featured .button.ghost {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.35);
+            background: transparent;
+        }
+
+        .publication-list {
+            border-top: 1px solid var(--line);
+        }
+
+        .publication {
+            display: grid;
+            grid-template-columns: 80px minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 24px;
+            padding: 26px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .year {
+            padding-top: 4px;
+            color: var(--blue-dark);
+        }
+
+        .publication h3 {
+            margin-bottom: 5px;
+            font-size: 1.12rem;
+            line-height: 1.35;
+            letter-spacing: -0.015em;
+        }
+
+        .publication p {
+            margin-bottom: 0;
+            color: var(--ink-soft);
+            font-size: 0.89rem;
+        }
+
+        .publication a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding-top: 2px;
+            color: var(--blue-dark);
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .publication a:hover {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .archive-card {
+            min-height: 235px;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            border-radius: var(--radius-md);
+        }
+
+        .archive-card h3 {
+            margin: 16px 0 10px;
+            font-size: 1.18rem;
+            line-height: 1.28;
+        }
+
+        .archive-card p {
+            margin-bottom: 20px;
+            color: var(--ink-soft);
+            font-size: 0.87rem;
+        }
+
+        .site-footer {
+            padding: 58px 0 68px;
+            color: rgba(255, 255, 255, 0.75);
+            background: var(--ink);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+            align-items: end;
+            gap: 40px;
+        }
+
+        .site-footer h2 {
+            max-width: 650px;
+            margin-bottom: 13px;
+            color: white;
+            font-size: clamp(2rem, 4vw, 3.7rem);
+            line-height: 1.02;
+            letter-spacing: -0.05em;
+        }
+
+        .site-footer p {
+            max-width: 620px;
+            margin-bottom: 0;
+        }
+
         .social-links {
-            text-align: center;
+            justify-content: flex-end;
+            gap: 10px 18px;
         }
 
         .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: #333; /* Default color */
-            font-size: 24px;
-            text-decoration: none; /* Remove underline */
-            transition: color 0.3s ease; /* Smooth transition for hover effect */
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 760;
+            text-underline-offset: 4px;
         }
 
-        .social-links a:hover {
-            color: #0077b5; /* Change color on hover */
+        .footer-note {
+            margin-top: 38px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, 0.14);
+            font-size: 0.75rem;
         }
-        .fa-twitter:hover { color: #1DA1F2; } /* Twitter blue */
-        .fa-linkedin-in:hover { color: #0A66C2; } /* LinkedIn blue */
-        .fa-github:hover { color: #171515; } /* GitHub dark */
-        .fa-google-scholar:hover { color: #4285F4; } /* Google Scholar blue */
-        .fa-envelope:hover { color: #DB4437; } /* Email red */
 
+        @media (max-width: 980px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .research-map {
+                width: min(78vw, 420px);
+            }
+
+            .tool-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .archive-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .shell {
+                width: min(calc(100% - 28px), var(--max-width));
+            }
+
+            .site-header {
+                position: relative;
+            }
+
+            .nav {
+                min-height: 62px;
+            }
+
+            .nav-links a:not(.contact-pill) {
+                display: none;
+            }
+
+            .brand span {
+                max-width: 170px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .hero {
+                padding: 58px 0;
+            }
+
+            h1 {
+                font-size: clamp(3.35rem, 16vw, 5.3rem);
+            }
+
+            .button-row .button {
+                width: 100%;
+            }
+
+            .section {
+                padding: 70px 0;
+            }
+
+            .tool-grid,
+            .work-grid,
+            .archive-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .work-card.featured {
+                grid-column: auto;
+            }
+
+            .publication {
+                grid-template-columns: 58px minmax(0, 1fr);
+                gap: 14px;
+            }
+
+            .publication a {
+                grid-column: 2;
+            }
+
+            .social-links {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .research-map {
+                width: 100%;
+            }
+
+            .map-node {
+                width: 82px;
+                height: 82px;
+                border-width: 5px;
+                font-size: 0.68rem;
+            }
+
+            .tool-card {
+                min-height: 280px;
+            }
+
+            .publication {
+                grid-template-columns: 1fr;
+            }
+
+            .publication a {
+                grid-column: auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
-<script data-goatcounter="https://paulscotti.goatcounter.com/count"
-async src="//gc.zgo.at/count.js"></script>
-<script>
-    function scroller(id) {
-        $('html, body').animate({
-            scrollTop: $("#"+id).offset().top
-        }, 1000);
-    }
-</script>
 <body>
-    <div class="container">
-        <div class="row main-row">
-            <a href="https://paulscotti.github.io/">
-                <img src="https://paulscotti.github.io/favicon.png" class="img-circle zoombtn animated rotateIn">
-            </a>
-            <h3 class="title">
-                <p style="font-size:1.2rem;font-weight:300">Paul S. Scotti, Ph.D</p>
-            </h3>
-            <hr class="hr-line">
-            <h3 class="title">
-                <p style="font-size:1rem;font-weight:300">
-                    CTO at Sophont Inc.
-                    <br>Visiting scientist at Princeton Neuroscience Institute
-                    <br>scottibrain[at]gmail.com
-                </p>
-            </h3>
-            <hr class="hr-line">
-            <h3 class="title">
-                <!-- <a class="btn btn-rainbow" href="http://paulscotti.github.io/medarc_lab.html">
-                    <b>Neuroimaging & AI Lab</b>
-                </a> -->
-                <a class="btn btn-rainbowS" href="https://sophontai.com">
-                    <b>Sophont</b>
-                </a>
-                <br>
-                <a class="btn btn-rainbow" href="https://paulscotti.github.io/images/Scotti_CV.pdf">
-                    <b>Curriculum vitae</b>
-                </a>
-                <br>
-                <button class="btn btn-rainboww" onclick="scroller('published')">
-                    <b>Publications / Projects</b>
-                </button>
-                <br>
-                <a class="btn btn-rainbowww" href="https://paulscotti.substack.com/">
-                    <b>Blog / Newsletter</b>
-                </a>
-            </h3>
-            <hr class="hr-line">
-            <h3 class="title">
-                <p style="font-size:1rem;font-weight:300">My Neuroscience Educational Tools:</p>
-                <!-- <br>
-                <a class="btn btn-yellow" href="https://groups.google.com/g/neuneuro">
-                    Trends in NeuroAI Mailing List
-                </a> -->
-                <br>
-                <a class="btn btn-yellow" href="https://paulscotti.github.io/educortex">
-                    EduCortex <font size="-1">(Brain visualizer)</font>
-                </a>
-                <br>
-                <a class="btn btn-yellow" href="https://www.youtube.com/channel/UCEGD13q4cWw5Lvkwo2uZKVg">
-                    OnNeuro <font size="-1">(Lecture repository)</font>
-                </a>
-                <br>
-                <a class="btn btn-yellow" href="https://pypi.org/project/inverted-encoding">
-                    Inverted Encoding <font size="-1">(Python package)</font>
-                </a>
-                <br>
-                <a class="btn btn-yellow" href="https://paulscotti.github.io/fmriplayground/">
-                    fMRI Playground <font size="-1">(Interactive textbook)</font>
-                </a>
-            </h3>
-            <div class="social-links">
-                <a href="mailto:scottibrain@gmail.com">
-                    <img src="https://paulscotti.github.io/images/emailsquare.png" class="social-icon" alt="Email">
-                </a>
-                <a href="https://scholar.google.com/citations?user=AE-k4ukAAAAJ&hl=en&oi=ao">
-                    <img src="https://paulscotti.github.io/images/google_scholar_logo.png" class="social-icon" alt="GScholar">
-                </a>
-                <a href="https://x.com/humanscotti">
-                    <img src="https://paulscotti.github.io/images/twittersquare.png" class="social-icon" alt="Twitter">
-                </a>
-                <a href="https://bsky.app/profile/humanscotti.bsky.social">
-                    <img src="https://paulscotti.github.io/images/bluesky_logo.jpeg" class="social-icon" alt="BlueSky">
-                </a>
-                <a href="https://www.linkedin.com/in/paulscotti">
-                    <img src="https://paulscotti.github.io/images/linkedin_logo.png" class="social-icon" alt="LinkedIn">
-                </a>
-            </div>
-        </div>
-    </div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <header id="published">
-        <div class="container" style="width: 100%; max-width: 3000px; min-width: 500px; padding-top: 6px; padding-bottom: 0px">
-            <div class="row" style="border: 6px solid rgb(255, 255, 255); background-color: black">
-                <h3 class="title" style="text-align: center; padding-top: 5px; color: white">
-                    CURATED WORK
-                </h3>
+    <header class="site-header">
+        <nav class="nav shell" aria-label="Primary navigation">
+            <a class="brand" href="/" aria-label="Paul S. Scotti, Ph.D., home">
+                <img src="/favicon.png" alt="">
+                <span>Paul S. Scotti, Ph.D.</span>
+            </a>
+            <div class="nav-links">
+                <a href="#tools">Open tools</a>
+                <a href="#recent-work">Recent work</a>
+                <a href="#selected-work">Selected work</a>
+                <a class="contact-pill" href="mailto:scottibrain@gmail.com">Contact</a>
             </div>
-        </div>
+        </nav>
     </header>
 
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                Trainees’ perspectives and recommendations for catalyzing the next generation of NeuroAI researchers
-                <div id="names">Andrea Luppi, Jascha Achterberg, ... Paul S. Scotti, Helena M. Gellersen</div>
-                <a class="btn zoombtn" href="https://www.nature.com/articles/s41467-024-53375-2">
-                Nature Communications (2024)
-                </a>
-                <div class="cbar">
-                    NeuroAI trainees often feel caught between AI and neuro groups, lacking dedicated programs. Our work explores this, offering survey results & resources for trainees and institutions. We provide a living list of trainee resources in <a href="https://github.com/8erberg/NeuroAI_Trainee_Resources">our GitHub: github.com/8erberg/NeuroAI_Trainee_Resources</a></a>
+    <main id="main">
+        <section class="hero">
+            <div class="hero-grid shell">
+                <div>
+                    <p class="eyebrow">Computational neuroscience · Open medical AI</p>
+                    <h1>Building open systems for <span class="accent-text">brains</span> and medicine.</h1>
+                    <p class="hero-copy">
+                        I am a computational neuroscientist and co-founder of Sophont and MedARC.
+                        My work spans brain decoding, medical foundation models, rigorous benchmarks,
+                        and research infrastructure that makes ambitious science easier to learn from and build together.
+                    </p>
+                    <div class="button-row" role="group" aria-label="Featured tools">
+                        <a class="button primary" href="https://scalingneuro.org/">
+                            Explore Scaling Neuro <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                        <a class="button secondary" href="https://github.com/MedARC-AI/Brainmarks">
+                            Open Brainmarks <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                    </div>
+                    <div class="affiliations">
+                        <span>Co-founder &amp; CTO at <a href="https://sophont.med/">Sophont</a></span>
+                        <span>Co-founder at <a href="https://medarc.ai/">MedARC</a></span>
+                        <span>Visiting scientist at <a href="https://pni.princeton.edu/">Princeton Neuroscience Institute</a></span>
+                    </div>
                 </div>
-                <div class="cbar">
-                    <img src="https://paulscotti.github.io/images/neuroai_trainee.png">
+
+                <div class="research-map" role="img" aria-label="Research areas: functional MRI, EEG, pathology, and medical AI">
+                    <div class="map-center">OPEN<br>SCIENCE<br>AT SCALE</div>
+                    <div class="map-node node-fmri">fMRI<br>NeuroAI</div>
+                    <div class="map-node node-eeg">EEG<br>BCIs</div>
+                    <div class="map-node node-path">Computational<br>pathology</div>
+                    <div class="map-node node-med">Medical<br>AI</div>
                 </div>
-            </h3>
+            </div>
+        </section>
+
+        <section class="section tint" id="tools">
+            <div class="shell">
+                <div class="section-heading">
+                    <p class="eyebrow">Start here</p>
+                    <h2>Open tools for learning and research.</h2>
+                    <p>Educational infrastructure, transparent benchmarks, and shared experiment records designed to make technical work easier to understand and extend.</p>
+                </div>
+
+                <div class="tool-grid">
+                    <article class="tool-card scaling">
+                        <div class="card-topline">
+                            <span class="tool-index">01 · Neuroimaging</span>
+                            <span class="status">New</span>
+                        </div>
+                        <h3>Scaling Neuro</h3>
+                        <p>Academic-led infrastructure for making large-scale neuroimaging projects more accessible, beginning with streamlined fMRI data workflows.</p>
+                        <a class="inline-link" href="https://scalingneuro.org/">
+                            Visit Scaling Neuro <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+
+                    <article class="tool-card brainmarks">
+                        <div class="card-topline">
+                            <span class="tool-index">02 · fMRI</span>
+                            <span class="status">New</span>
+                        </div>
+                        <h3>Brainmarks</h3>
+                        <p>An open evaluation suite for learning how fMRI foundation models transfer across brain-state decoding and clinical prediction tasks.</p>
+                        <a class="inline-link" href="https://github.com/MedARC-AI/Brainmarks">
+                            Explore the benchmark <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+
+                    <article class="tool-card labless">
+                        <div class="card-topline">
+                            <span class="tool-index">03 · Autoresearch</span>
+                            <span class="status">Live beta</span>
+                        </div>
+                        <h3>Labless</h3>
+                        <p>A public run tracker and autonomous experiment service that preserves source, metrics, authorship, and validation state in one shared research record.</p>
+                        <a class="inline-link" href="https://labless.dev/">
+                            Open Labless <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+
+                    <article class="tool-card nanopath">
+                        <div class="card-topline">
+                            <span class="tool-index">04 · Pathology</span>
+                            <span class="status">Active</span>
+                        </div>
+                        <h3>nanopath</h3>
+                        <p>A fast, fair challenge for improving pathology foundation models through one-GPU training, broad fixed evaluation, and public experiment logs.</p>
+                        <a class="inline-link" href="https://labless.dev/nano-projects/nanopath">
+                            View the live project <span class="arrow" aria-hidden="true">↗</span>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="recent-work">
+            <div class="shell">
+                <div class="section-heading">
+                    <p class="eyebrow">2025–2026</p>
+                    <h2>Recent research.</h2>
+                    <p>Selected projects across real-time brain decoding, foundation models, benchmarks, EEG, pathology, and efficient reasoning.</p>
+                </div>
+
+                <div class="work-grid">
+                    <article class="work-card featured">
+                        <span class="tag">fMRI · Brain decoding · 2026 preprint</span>
+                        <h3>Realtime MindEye reconstructs visual perception from fMRI within seconds.</h3>
+                        <p>Built with RT-Cloud and a real-time-compatible MindEye2 pipeline, this proof of concept reconstructs viewed images from single-trial 3T fMRI while a participant is still in the scanner.</p>
+                        <div class="card-links">
+                            <a class="button" href="https://arxiv.org/abs/2607.22753">Read the preprint <span class="arrow" aria-hidden="true">↗</span></a>
+                            <a class="button ghost" href="https://github.com/brainiak/rtcloud-projects/tree/main/mindeye">View the project <span class="arrow" aria-hidden="true">↗</span></a>
+                        </div>
+                    </article>
+
+                    <article class="work-card aqua">
+                        <span class="tag">fMRI foundation models · ICML 2026</span>
+                        <h3>CortexMAE + Brainmarks</h3>
+                        <p>CortexMAE scales masked autoencoding over flat-map videos of open fMRI data. Brainmarks tests what those representations transfer to across more than 30 benchmark tasks.</p>
+                        <div class="card-links">
+                            <a class="button small" href="https://sophont.med/blog/cortexmae/">Release post</a>
+                            <a class="button small" href="https://arxiv.org/abs/2510.13768">Paper</a>
+                            <a class="button small" href="https://huggingface.co/medarc/CortexMAE">Models</a>
+                        </div>
+                    </article>
+
+                    <article class="work-card warm">
+                        <span class="tag">Medical LLM evaluation · 2026</span>
+                        <h3>Medmarks</h3>
+                        <p>A fully open medical LLM evaluation suite spanning 30 benchmarks and both verifiable and open-ended clinical tasks, with results for 61 models across 71 configurations.</p>
+                        <div class="card-links">
+                            <a class="button small" href="https://medmarks.ai/">Live leaderboard</a>
+                            <a class="button small" href="https://sophont.med/blog/medmarks/">Release post</a>
+                            <a class="button small" href="https://arxiv.org/abs/2605.01417">Paper</a>
+                        </div>
+                    </article>
+
+                    <article class="work-card cool">
+                        <span class="tag">EEG-to-image · 2026 preprint</span>
+                        <h3>ENIGMA</h3>
+                        <p>A compact multi-subject EEG-to-image model that adapts to a new person with as little as 15 minutes of data and uses less than 1% of the trainable parameters of prior approaches.</p>
+                        <div class="card-links">
+                            <a class="button small" href="https://arxiv.org/abs/2602.10361">Read the preprint</a>
+                        </div>
+                    </article>
+
+                    <article class="work-card warm">
+                        <span class="tag">Pathology foundation models · 2025 report</span>
+                        <h3>OpenMidnight</h3>
+                        <p>An open pathology foundation model trained end to end on 12,000 public whole-slide images for about $1,600, with the code, training pipeline, and weights released.</p>
+                        <div class="card-links">
+                            <a class="button small" href="https://sophont.med/blog/openmidnight">Technical report</a>
+                            <a class="button small" href="https://doi.org/10.5281/zenodo.20711012">Citable archive</a>
+                        </div>
+                    </article>
+
+                    <article class="work-card aqua">
+                        <span class="tag">Pathology autoresearch · 2026 release</span>
+                        <h3>nanopath + Labless</h3>
+                        <p>A compact pathology foundation-model challenge pairs fast, fixed evaluation with a public ledger for autonomous and human-run experiments, including unsuccessful directions.</p>
+                        <div class="card-links">
+                            <a class="button small" href="https://sophont.med/blog/nanopath/">Release post</a>
+                            <a class="button small" href="https://github.com/MedARC-AI/nanopath">Code</a>
+                            <a class="button small" href="https://labless.dev/docs/overview">Labless docs</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section tint" aria-labelledby="more-recent-title">
+            <div class="shell">
+                <div class="section-heading">
+                    <p class="eyebrow">Further recent outputs</p>
+                    <h2 id="more-recent-title">More from the last year.</h2>
+                </div>
+
+                <div class="publication-list">
+                    <article class="publication">
+                        <span class="year">2026</span>
+                        <div>
+                            <h3>Compress-Distill: Reasoning Trace Compression for Efficient Knowledge Distillation</h3>
+                            <p>Maps the accuracy and efficiency trade-off when compressing long reasoning traces before distillation.</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2606.05988">arXiv <span aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="publication">
+                        <span class="year">2026</span>
+                        <div>
+                            <h3>MIRAGE: Robust Multi-Modal Architectures Translate fMRI-to-Image Models from Vision to Mental Imagery</h3>
+                            <p>Adapts perception-trained fMRI decoders to reconstruct mental imagery, evaluated on the NSD-Imagery benchmark.</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2605.17198">arXiv <span aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="publication">
+                        <span class="year">2025</span>
+                        <div>
+                            <h3>Alljoined-1.6M: A Million-Trial EEG-Image Dataset</h3>
+                            <p>A large visual EEG dataset recorded from 20 participants using an affordable 32-channel system.</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2508.18571">Paper <span aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="publication">
+                        <span class="year">2025</span>
+                        <div>
+                            <h3>Insights from the Algonauts 2025 Winners</h3>
+                            <p>Lessons from MedARC’s fourth-place solution to predicting whole-brain fMRI responses to long, naturalistic movies.</p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2508.10784">Essay <span aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="publication">
+                        <span class="year">2025</span>
+                        <div>
+                            <h3>How to Structure Open Science Collaborations Online</h3>
+                            <p>Practical guidance for organizing ambitious, Discord-based science-in-the-open projects without losing focus, transparency, or fair credit.</p>
+                        </div>
+                        <a href="https://paulscotti.substack.com/p/how-to-structure-open-science-collaborations">Essay <span aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="publication">
+                        <span class="year">2025</span>
+                        <div>
+                            <h3>NSD-Imagery: Extending fMRI Vision Decoding to Mental Imagery</h3>
+                            <p>A benchmark dataset for evaluating how perception-trained brain decoders generalize to internally generated images.</p>
+                        </div>
+                        <a href="https://openaccess.thecvf.com/content/CVPR2025/html/Kneeland_NSD-Imagery_A_Benchmark_Dataset_for_Extending_fMRI_Vision_Decoding_Methods_CVPR_2025_paper.html">CVPR Spotlight <span aria-hidden="true">↗</span></a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="selected-work">
+            <div class="shell">
+                <div class="section-heading">
+                    <p class="eyebrow">Selected earlier work</p>
+                    <h2>Foundations and educational projects.</h2>
+                    <p>Brain decoding systems, open learning tools, and cognitive neuroscience that continue to inform my current work.</p>
+                </div>
+
+                <div class="archive-grid">
+                    <article class="archive-card">
+                        <span class="tag">ICML 2024</span>
+                        <h3>MindEye2</h3>
+                        <p>Shared-subject modeling enables high-quality fMRI-to-image reconstruction after only one hour of data from a new participant.</p>
+                        <a class="inline-link" href="https://medarc-ai.github.io/mindeye2/">Project page <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">NeurIPS 2023 Spotlight</span>
+                        <h3>Reconstructing the Mind’s Eye</h3>
+                        <p>Contrastive learning and diffusion priors for retrieval and reconstruction of viewed images from fMRI.</p>
+                        <a class="inline-link" href="https://medarc-ai.github.io/mindeye/">Project page <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Nature Communications 2024</span>
+                        <h3>The next generation of NeuroAI researchers</h3>
+                        <p>Trainee perspectives, survey results, and recommendations for building a healthier interdisciplinary field.</p>
+                        <a class="inline-link" href="https://www.nature.com/articles/s41467-024-53375-2">Read the paper <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Open education</span>
+                        <h3>EduCortex</h3>
+                        <p>A browser-based 3D brain visualizer for exploring anatomy and fMRI meta-analysis maps.</p>
+                        <a class="inline-link" href="https://paulscotti.github.io/educortex">Open EduCortex <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Interactive textbook</span>
+                        <h3>fMRI Playground</h3>
+                        <p>High-level explanations, flowcharts, and simulations for learning computational neuroimaging methods.</p>
+                        <a class="inline-link" href="https://paulscotti.github.io/fmriplayground/">Start learning <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Python package</span>
+                        <h3>Inverted Encoding</h3>
+                        <p>A flexible implementation of inverted encoding models for interpretable neural stimulus reconstructions.</p>
+                        <a class="inline-link" href="https://pypi.org/project/inverted-encoding/">View on PyPI <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Lecture repository</span>
+                        <h3>OnNeuro</h3>
+                        <p>A public collection of lectures and conversations covering computational neuroscience, neuroimaging, and NeuroAI.</p>
+                        <a class="inline-link" href="https://www.youtube.com/channel/UCEGD13q4cWw5Lvkwo2uZKVg">Watch on YouTube <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+
+                    <article class="archive-card">
+                        <span class="tag">Interactive project</span>
+                        <h3>AI Alibis</h3>
+                        <p>A multi-agent LLM murder mystery built to make model instruction conflicts and the “pink elephant” problem tangible.</p>
+                        <a class="inline-link" href="https://ai-murder-mystery.onrender.com/">Play the mystery <span class="arrow" aria-hidden="true">↗</span></a>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell">
+            <div class="footer-grid">
+                <div>
+                    <h2>Science works better in the open.</h2>
+                    <p>For research, collaboration, or questions about these projects, get in touch at <a href="mailto:scottibrain@gmail.com">scottibrain@gmail.com</a>.</p>
+                </div>
+                <nav class="social-links" aria-label="External profiles">
+                    <a href="/images/Scotti_CV.pdf">CV</a>
+                    <a href="https://scholar.google.com/citations?user=AE-k4ukAAAAJ">Google Scholar</a>
+                    <a href="https://github.com/PaulScotti">GitHub</a>
+                    <a href="https://www.linkedin.com/in/paulscotti">LinkedIn</a>
+                    <a href="https://bsky.app/profile/humanscotti.bsky.social">Bluesky</a>
+                    <a href="https://paulscotti.substack.com/">Newsletter</a>
+                </nav>
+            </div>
+            <p class="footer-note">© 2026 Paul S. Scotti. Built as a lightweight, accessible static site.</p>
         </div>
-    </div>
+    </footer>
 
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                MindEye2: Shared-Subject Models Enable fMRI-To-Image With 1 Hour of Data
-                <div id="names">Paul S. Scotti, ... Thomas Naselaris, Kenneth A. Norman, Tanishq Mathew Abraham</div>
-                <a class="btn zoombtn" href="https://medarc-ai.github.io/mindeye2/">
-                ICML (2024)
-                </a>
-                <div class="cbar">
-                    SOTA in reconstructing seen images from fMRI brain activity, achieved via shared-subject modeling and fine-tuning SDXL.
-                </div>
-                <div class="cbar2">
-                    <img src="https://github.com/MedARC-AI/MindEyeV2/blob/main/figs/recon_comparison_small_alt.png?raw=true">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                Reconstructing the Mind’s Eye: fMRI-to-Image with Contrastive Learning and Diffusion Priors
-                <div id="names">Paul S. Scotti, Atmadeep Banerjee, ... Kenneth A. Norman, Tanishq Mathew Abraham</div>
-                <a class="btn zoombtn" href="https://medarc-ai.github.io/mindeye/">
-                NeurIPS (2024) (awarded as spotlight paper)
-                </a>
-                <div class="cbar">
-                    Retrieval and reconstruction of seen images from fMRI brain activity using contrastive learning and diffusion modeling.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/mindeye_crop.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                AI Alibis: Multi-Agent LLM Murder Mystery
-                <div id="names">Paul S. Scotti & Will Beddow</div>
-                <a class="btn zoombtn" href="https://ai-murder-mystery.onrender.com/">
-                Interactive website (reached #1 on Hacker News)
-                </a>
-                <div class="cbar">
-                    Violation & principles refinement can address pink elephant problem in large language models, illustrated via short interactive murder mystery game built with React.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/aialibis_crop.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                EduCortex: browser-based 3D brain visualization of fMRI meta-analysis maps
-                <div id="names">Paul S. Scotti, Arman Kulkarni, Matan Mazor, Eduard Klapwijk, Tal Yarkoni, & Alexander Huth</div>
-                <a class="btn zoombtn" href="https://paulscotti.github.io/educortex">
-                    Interactive website
-                </a>
-                <a class="btn zoombtn" href="https://jose.theoj.org/papers/10.21105/jose.00075.pdf">
-                Journal of Open Source Education (2021)
-                </a>
-                <div class="cbar">
-                    Browser visualization tool. User can visualize anatomical areas of the brain and use our meta-analysis interface to overlay functional specializations.
-                </div>
-                <div class="cbar">
-                    <img src="https://paulscotti.github.io/images/educortex.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                fMRI Playground: Simple summaries & simulations of neuroimaging methods
-                <div id="names">Paul S. Scotti, Jiageng Chen, Xiaoli Chen, & Julie D. Golomb</div>
-                <a class="btn zoombtn" href="https://paulscotti.github.io/fmriplayground/">
-                Interactive website
-                </a>
-                <div class="cbar">
-                    Interactive textbook on computational neuroimaging methods using flowcharts, high-level method summaries, and practical Python examples using simulated data.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/playground_crop.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                An enhanced inverted encoding model for neural reconstructions
-                <div id="names">Paul S. Scotti, Jiageng Chen, & Julie D. Golomb</div>
-                <a class="btn zoombtn" href="https://www.biorxiv.org/content/10.1101/2021.05.22.445245v4">
-                bioRxiv (2021)
-                </a>
-                <a class="btn zoombtn" href="https://pypi.org/project/inverted-encoding/">
-                    PyPI
-                </a>
-                <div class="cbar">
-                    Python package for inverted encoding models to improve flexibility and interpretability of stimulus reconstructions.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/iem_crop.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                Visual working memory items drift apart due to active, not passive, maintenance
-                <div id="names">Paul S. Scotti, Yoolim Hong, Andrew B. Leber, & Julie D. Golomb</div>
-                <a class="btn zoombtn" href="https://paulscotti.github.io/pubs/repulsion.pdf">
-                Journal of Experimental Psychology: General (2021)
-                </a>
-                <div class="cbar">
-                    We show how memories interact with each other to sometimes unconscious systematic repulsion biases.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/repulsion.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <div class="pub-container">
-        <div class="row">
-            <h3 class="title">
-                Attention scales according to inferred real-world object size
-                <div id="names">Andrew J. Collegio, Joseph C. Nah, Paul S. Scotti, & Sarah Shomstein</div>
-                <a class="btn zoombtn" href="https://paulscotti.github.io/pubs/collegio_nah_scotti_shomstein_2019.pdf">
-                Nature Human Behavior (2019)
-                </a>
-                <div class="cbar">
-                    We show it takes longer for attention to spread across a 10-inch picture of a car compared to a 10-inch picture of an eraser.
-                </div>
-                <div class="cbar2">
-                    <img src="https://paulscotti.github.io/images/sizematters.png">
-                </div>
-            </h3>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script data-goatcounter="https://paulscotti.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
