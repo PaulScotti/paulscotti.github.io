@@ -305,6 +305,12 @@
         .fa-github:hover { color: #171515; } /* GitHub dark */
         .fa-google-scholar:hover { color: #4285F4; } /* Google Scholar blue */
         .fa-envelope:hover { color: #DB4437; } /* Email red */
+        .pub-container .research-figure img {
+            width: 650px;
+            max-width: 85%;
+            max-height: 360px;
+            object-fit: contain;
+        }
 
     </style>
 </head>
@@ -365,19 +371,19 @@ async src="//gc.zgo.at/count.js"></script>
                 </a> -->
                 <br>
                 <a class="btn btn-yellow" href="https://scalingneuro.org/">
-                    <b>Scaling Neuro</b> <font size="-1">(Neuroimaging education & infrastructure)</font>
+                    Scaling Neuro <font size="-1">(Open fMRI data infrastructure)</font>
                 </a>
                 <br>
                 <a class="btn btn-yellow" href="https://github.com/MedARC-AI/Brainmarks">
-                    <b>Brainmarks</b> <font size="-1">(fMRI benchmark & learning tool)</font>
+                    Brainmarks <font size="-1">(fMRI foundation model evaluation)</font>
                 </a>
                 <br>
                 <a class="btn btn-yellow" href="https://labless.dev/">
-                    Labless <font size="-1">(Collaborative autoresearch)</font>
+                    Labless <font size="-1">(Collaborative autoresearch platform)</font>
                 </a>
                 <br>
-                <a class="btn btn-yellow" href="https://labless.dev/nano-projects/nanopath">
-                    nanopath <font size="-1">(Fast pathology challenge)</font>
+                <a class="btn btn-yellow" href="https://sophont.med/blog/nanopath/">
+                    nanopath <font size="-1">(1-hour pathology model challenge)</font>
                 </a>
                 <br>
                 <a class="btn btn-yellow" href="https://paulscotti.github.io/educortex">
@@ -440,6 +446,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     A real-time-compatible MindEye2 pipeline that reconstructs viewed images from single-trial 3T fMRI within seconds while a participant is still in the scanner.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2607.22753v1/x1.png" alt="Diagram of the real-time fMRI-to-image reconstruction pipeline">
+                </div>
             </h3>
         </div>
     </div>
@@ -460,6 +469,9 @@ async src="//gc.zgo.at/count.js"></script>
                 </a>
                 <div class="cbar">
                     CortexMAE is a family of fMRI foundation models trained on open fMRI data. Brainmarks is an open evaluation suite with more than 30 tasks spanning dynamic brain-state decoding and clinical prediction.
+                </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://sophont.med/blog/cortexmae/assets/fmri_spaces_wide.png" alt="CortexMAE functional MRI representation spaces">
                 </div>
             </h3>
         </div>
@@ -482,6 +494,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     A fully open medical LLM evaluation suite with 30 benchmarks, including verifiable tasks, open-ended clinical reasoning, and agentic workflows.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://sophont.med/assets/images/medmarks-card.webp" alt="Medmarks medical language model benchmark results">
+                </div>
             </h3>
         </div>
     </div>
@@ -496,6 +511,9 @@ async src="//gc.zgo.at/count.js"></script>
                 </a>
                 <div class="cbar">
                     A compact multi-subject EEG-to-image model that adapts to a new participant with as little as 15 minutes of data and works across research-grade and affordable EEG hardware.
+                </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://www.alljoined.com/_next/static/media/image5.ec31c751.png" alt="Stimulus images and ENIGMA EEG-to-image reconstructions">
                 </div>
             </h3>
         </div>
@@ -518,6 +536,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     nanopath is a fast, single-GPU pathology foundation-model challenge. Labless connects autonomous and human-run experiments to a public record of source, metrics, authorship, and validation state.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://sophont.med/assets/images/nanopath/nanopath_logo.png" alt="nanopath pathology foundation model challenge logo">
+                </div>
             </h3>
         </div>
     </div>
@@ -536,6 +557,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     An open pathology foundation model trained on 12,000 public whole-slide images for about $1,600, with the code, training pipeline, and model weights released.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://sophont.med/assets/images/openmidnight/figure1.png" alt="OpenMidnight pathology foundation model training and evaluation pipeline">
+                </div>
             </h3>
         </div>
     </div>
@@ -550,6 +574,9 @@ async src="//gc.zgo.at/count.js"></script>
                 </a>
                 <div class="cbar">
                     A large experimental study of the accuracy and efficiency trade-offs created by compressing long reasoning traces before knowledge distillation.
+                </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2606.05988v1/x1.png" alt="Reasoning trace compression ratios across domains">
                 </div>
             </h3>
         </div>
@@ -566,6 +593,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     A method that trains on visual-perception fMRI and achieves state-of-the-art mental image reconstruction on the NSD-Imagery benchmark.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2605.17198v1/figures/Header_Figure.png" alt="MIRAGE seen and imagined image reconstruction examples">
+                </div>
             </h3>
         </div>
     </div>
@@ -580,6 +610,9 @@ async src="//gc.zgo.at/count.js"></script>
                 </a>
                 <div class="cbar">
                     More than 1.6 million visual EEG trials from 20 participants, collected using an affordable 32-channel system for accessible brain-computer interface research.
+                </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2508.18571v2/figures/Paradigm_Figure.png" alt="Alljoined visual EEG experimental paradigm">
                 </div>
             </h3>
         </div>
@@ -596,6 +629,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     A benchmark dataset for measuring how perception-trained fMRI decoders generalize to internally generated visual imagery.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2506.06898v1/extracted/6522077/figures/Header_Figure.png" alt="NSD-Imagery vision and mental imagery reconstruction examples">
+                </div>
             </h3>
         </div>
     </div>
@@ -611,6 +647,9 @@ async src="//gc.zgo.at/count.js"></script>
                 <div class="cbar">
                     Lessons from MedARC's fourth-place solution to predicting whole-brain fMRI responses to long, naturalistic movies.
                 </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://arxiv.org/html/2508.10784v1/resources/leaderboard.png" alt="Algonauts 2025 out-of-distribution challenge leaderboard">
+                </div>
             </h3>
         </div>
     </div>
@@ -625,6 +664,9 @@ async src="//gc.zgo.at/count.js"></script>
                 </a>
                 <div class="cbar">
                     Practical guidance for organizing ambitious online science-in-the-open projects while preserving focus, transparency, and fair credit.
+                </div>
+                <div class="cbar2 research-figure">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/69ec3f43-a49b-43dc-a9f3-308a34ee81d1_1024x1024.png" alt="Open science collaboration structure illustration">
                 </div>
             </h3>
         </div>
