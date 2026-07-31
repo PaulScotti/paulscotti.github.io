@@ -689,22 +689,96 @@
   }
   .brainmarks-targets {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: .96fr 1.04fr;
     gap: 34px;
     margin-top: 25px;
+    align-items: start;
   }
   .brainmarks-target {
     padding: 17px 2px 0;
     border-top: 3px solid var(--c);
   }
-  .brainmarks-target h3 {
-    margin-top: 8px;
-    font-size: 27px;
+  .brainmarks-target-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+    padding-bottom: 14px;
   }
-  .brainmarks-target p:last-child {
-    margin-top: 8px;
+  .brainmarks-target-heading h4 {
+    font-size: 21px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+  .brainmarks-context {
+    margin-top: 4px;
     color: var(--muted);
-    font-size: 16px;
+    font-size: 14.5px;
+    line-height: 1.3;
+  }
+  .brainmarks-task-count {
+    flex: none;
+    margin-top: 4px;
+    color: var(--c);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .brainmarks-task-list {
+    border-top: 1px solid var(--line);
+  }
+  .brainmarks-task {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 15px 0 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brainmarks-task-index {
+    margin-top: 4px;
+    color: var(--c);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .07em;
+  }
+  .brainmarks-task h3 {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.18;
+  }
+  .brainmarks-task p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.32;
+  }
+  .brainmarks-task-list-state .brainmarks-task {
+    min-height: 93px;
+    padding-top: 17px;
+  }
+  .brainmarks-task-list-trait .brainmarks-task {
+    min-height: 46px;
+    padding-top: 9px;
+    padding-bottom: 8px;
+  }
+  .brainmarks-task-list-trait .brainmarks-task h3 {
+    font-size: 18px;
+  }
+  .brainmarks-task-list-trait .brainmarks-task p {
+    margin-top: 2px;
+    font-size: 13.5px;
+  }
+  .brainmarks-protocol {
+    margin-top: 13px;
+    padding-left: 46px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.35;
   }
 
   .norm-grid {
@@ -1679,10 +1753,9 @@
   .prior-state.none {
     color: var(--muted);
   }
-  .brainmarks-target p:last-child {
-    color: var(--copy);
-    font-size: 17px;
-  }
+  .brainmarks-context,
+  .brainmarks-task p,
+  .brainmarks-protocol { color: var(--muted); }
   .build-cap p {
     color: var(--muted);
     font-size: 18px;
@@ -2366,16 +2439,66 @@
       <!-- <p class="eyebrow" style="margin:15px 0 14px;color:var(--faint)">Brainmarks suite · 8 model families · 8 core tasks · 7 public datasets · open code and splits</p> -->
       <div class="brainmarks-targets">
         <div class="brainmarks-target" style="--c:var(--cyan)">
-          <!-- <p class="eyebrow" style="color:var(--cyan)">Dynamic states | 2 tasks</p> -->
-          <h4>State-based:</h4>
-          <h3>Task classification · Seen image decoding</h3>
-          <p>16s of fMRI activity per trial</p>
+          <div class="brainmarks-target-heading">
+            <div>
+              <h4>State-based</h4>
+              <p class="brainmarks-context">From 16 s of fMRI activity per trial</p>
+            </div>
+            <span class="brainmarks-task-count">2 tasks</span>
+          </div>
+          <div class="brainmarks-task-list brainmarks-task-list-state">
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">01</span>
+              <div>
+                <h3>HCP-YA Task21</h3>
+                <p>Cognitive state classification · 21 conditions across six task batteries</p>
+              </div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">02</span>
+              <div>
+                <h3>NSD COCO24</h3>
+                <p>Seen image category decoding · 24 COCO object categories</p>
+              </div>
+            </div>
+          </div>
+          <p class="brainmarks-protocol">held-out subjects · attentive probe</p>
         </div>
         <div class="brainmarks-target" style="--c:var(--coral)">
-          <!-- <p class="eyebrow" style="color:var(--coral)">Traits | 6 tasks</p> -->
-          <h4>Trait-based:</h4>
-          <h3>Age · Sex · Clinical diagnoses</h3>
-          <p>One resting-state scan per person</p> <!-- · logistic probe · 100 randomized splits -->
+          <div class="brainmarks-target-heading">
+            <div>
+              <h4>Trait-based</h4>
+              <p class="brainmarks-context">From one resting-state scan per person</p>
+            </div>
+            <span class="brainmarks-task-count">6 tasks</span>
+          </div>
+          <div class="brainmarks-task-list brainmarks-task-list-trait">
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">03</span>
+              <div><h3>Age</h3><p>HCP-A · age quartile classification</p></div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">04</span>
+              <div><h3>Sex</h3><p>HCP-A · binary classification</p></div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">05</span>
+              <div><h3>Autism</h3><p>ABIDE · clinical diagnosis</p></div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">06</span>
+              <div><h3>ADHD</h3><p>ADHD200 · clinical diagnosis</p></div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">07</span>
+              <div><h3>Alzheimer's</h3><p>ADNI · clinical diagnosis</p></div>
+            </div>
+            <div class="brainmarks-task">
+              <span class="brainmarks-task-index">08</span>
+              <div><h3>Parkinson's</h3><p>PPMI · clinical diagnosis</p></div>
+            </div>
+          </div>
+          <p class="brainmarks-protocol">100 randomized splits · logistic probe</p>
         </div>
       </div>
       <!-- <p class="center lead" style="margin-top:25px;font-size:23px">Established trait benchmarks, plus under-studied dynamic cognitive state decoding.</p> -->
