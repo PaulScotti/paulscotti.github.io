@@ -69,6 +69,10 @@
     align-items: center;
     justify-content: center;
     background: #000;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   #deck {
     position: relative;
@@ -1048,6 +1052,11 @@
     color: var(--faint);
     font-family: var(--font-mono);
     font-size: 11px;
+  }
+  #hint .touch-hint { display: none; }
+  @media (hover: none) and (pointer: coarse) {
+    #hint .keyboard-hint { display: none; }
+    #hint .touch-hint { display: inline; }
   }
   kbd {
     padding: 0 4px;
@@ -2944,12 +2953,17 @@
 
 <div id="hud"><div id="bar"></div></div>
 <div id="meta"><span id="timer" class="idle">00:00</span><span id="counter">1 / 18</span></div>
-<div id="hint"><kbd>→</kbd> next · <kbd>O</kbd> overview · <kbd>T</kbd> timer · <kbd>H</kbd> help</div>
+<div id="hint">
+  <span class="keyboard-hint"><kbd>→</kbd> next · <kbd>O</kbd> overview · <kbd>T</kbd> timer · <kbd>H</kbd> help</span>
+  <span class="touch-hint">tap next · double tap back</span>
+</div>
 <div id="blackout" aria-hidden="true"></div>
 <div id="help" aria-hidden="true">
   <div class="help-card">
     <h3>Conference controls</h3>
     <div class="help-grid">
+      <div><kbd>Tap</kbd></div><div>Reveal or advance on touchscreens</div>
+      <div><kbd>Double tap</kbd></div><div>Return or hide the latest reveal on touchscreens</div>
       <div><kbd>→</kbd> <kbd>Space</kbd></div><div>Reveal or advance</div>
       <div><kbd>←</kbd></div><div>Return or hide the latest reveal</div>
       <div><kbd>O</kbd></div><div>Toggle slide overview</div>
@@ -2969,6 +2983,7 @@
   const slides = [...document.querySelectorAll(".slide")];
   const mainSlides = slides.filter(s => !s.classList.contains("backup"));
   const backupSlides = slides.filter(s => s.classList.contains("backup"));
+  const stage = document.getElementById("stage");
   const deck = document.getElementById("deck");
   const bar = document.getElementById("bar");
   const counter = document.getElementById("counter");
@@ -3762,6 +3777,84 @@
       toggleOverview(false);
     });
   });
+
+  /* Touch navigation waits briefly before advancing so a second tap can
+     unambiguously mean "back" without first moving the deck forward. */
+  const doubleTapWindow = 320;
+  const tapMoveTolerance = 24;
+  const doubleTapDistance = 56;
+  const activeTouchPointers = new Set();
+  let touchStarted = null;
+  let touchGestureWasMulti = false;
+  let pendingTap = null;
+  let pendingTapTimer = null;
+
+  const isInteractiveTouchTarget = target => target instanceof Element && Boolean(target.closest(
+    "a, button, input, select, textarea, video[controls], [role='button'], [contenteditable='true']"
+  ));
+
+  const clearPendingTap = () => {
+    if (pendingTapTimer) clearTimeout(pendingTapTimer);
+    pendingTapTimer = null;
+    pendingTap = null;
+  };
+
+  const commitPendingTap = () => {
+    if (!pendingTap) return;
+    clearPendingTap();
+    next();
+  };
+
+  stage.addEventListener("pointerdown", event => {
+    if (event.pointerType !== "touch") return;
+    if (activeTouchPointers.size === 0) touchGestureWasMulti = false;
+    activeTouchPointers.add(event.pointerId);
+    if (activeTouchPointers.size > 1) touchGestureWasMulti = true;
+    if (!event.isPrimary || overview || document.body.classList.contains("help") || isInteractiveTouchTarget(event.target)) {
+      touchStarted = null;
+      return;
+    }
+    touchStarted = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now()
+    };
+  }, { passive: true });
+
+  stage.addEventListener("pointerup", event => {
+    if (event.pointerType !== "touch") return;
+    activeTouchPointers.delete(event.pointerId);
+    const started = touchStarted;
+    touchStarted = null;
+    const wasMulti = touchGestureWasMulti;
+    if (activeTouchPointers.size === 0) touchGestureWasMulti = false;
+    if (!started || started.pointerId !== event.pointerId || wasMulti || overview ||
+        document.body.classList.contains("help") || isInteractiveTouchTarget(event.target)) return;
+
+    const now = performance.now();
+    const moved = Math.hypot(event.clientX - started.x, event.clientY - started.y);
+    if (moved > tapMoveTolerance || now - started.time > 500) return;
+    event.preventDefault();
+
+    if (pendingTap && now - pendingTap.time <= doubleTapWindow &&
+        Math.hypot(event.clientX - pendingTap.x, event.clientY - pendingTap.y) <= doubleTapDistance) {
+      clearPendingTap();
+      prev();
+      return;
+    }
+
+    if (pendingTap) commitPendingTap();
+    pendingTap = { time: now, x: event.clientX, y: event.clientY };
+    pendingTapTimer = setTimeout(commitPendingTap, doubleTapWindow);
+  });
+
+  stage.addEventListener("pointercancel", event => {
+    if (event.pointerType !== "touch") return;
+    activeTouchPointers.delete(event.pointerId);
+    if (touchStarted && touchStarted.pointerId === event.pointerId) touchStarted = null;
+    if (activeTouchPointers.size === 0) touchGestureWasMulti = false;
+  }, { passive: true });
 
   document.addEventListener("keydown", event => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
