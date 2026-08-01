@@ -146,19 +146,33 @@
     font-weight: 760;
   }
   .title-presenter-role {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 11px;
     margin-top: 4px;
     color: var(--muted);
     font-size: 17px;
     font-weight: 540;
   }
-  .title-presenter-role a {
-    margin-left: 12px;
+  .title-presenter-role .title-sophont-logo {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 2px;
+  }
+  .title-presenter-role .title-sophont-logo img {
+    display: block;
+    width: 96px;
+    height: auto;
+    opacity: .9;
+  }
+  .title-brand-url {
     color: var(--cyan);
     font-family: var(--font-mono);
     font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
+    font-weight: 650;
+    text-decoration: underline;
+    text-decoration-color: rgba(34,51,187,.45);
+    text-underline-offset: 3px;
   }
   .title-attribution {
     margin-top: 24px;
@@ -170,7 +184,7 @@
     border-top: 1px solid var(--line);
   }
   .title-research a,
-  .title-open-source a {
+  .title-open-source .brand-medarc {
     color: inherit;
     text-decoration: none;
   }
@@ -206,7 +220,7 @@
   }
   .title-open-source {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 16px;
     margin-top: 26px;
     padding-top: 14px;
@@ -214,14 +228,65 @@
     color: var(--muted);
     font-size: 17px;
   }
-  .title-open-source a {
-    color: inherit;
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 650;
-    text-decoration: underline;
-    text-decoration-color: rgba(173,180,214,.72);
-    text-underline-offset: 3px;
+  .title-brand-pair {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    flex: none;
+  }
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .brand-lockup a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand-lockup .brand-sophont img {
+    display: block;
+    width: 96px;
+    height: auto;
+    opacity: .9;
+  }
+  .title-brand-pair .brand-medarc {
+    display: inline-flex;
+    align-items: center;
+  }
+  .title-brand-pair .brand-medarc img {
+    display: block;
+    width: 96px;
+    height: auto;
+    filter: invert(1);
+    opacity: .9;
+  }
+  .thanks-brand-lockup {
+    position: absolute;
+    bottom: 72px;
+    right: 70px;
+  }
+  .thanks-brand-lockup .brand-sophont img {
+    width: 108px;
+  }
+  .thanks-medarc-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .thanks-medarc-panel-logo {
+    display: inline-flex;
+    align-items: center;
+  }
+  .thanks-medarc-panel-logo img {
+    display: block;
+    width: 108px;
+    height: auto;
+    filter: invert(1);
+    opacity: .9;
   }
   .patch-strip {
     display: grid;
@@ -912,11 +977,118 @@
     text-align: center; color: var(--muted); font-size: 17.5px; line-height: 1.4;
     opacity: 0; transition: opacity .4s ease;
   }
+  .uk-four-card {
+    padding: 9px 12px 7px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 15px 36px rgba(20,24,62,.08);
+  }
+  .uk-four-head,
+  .uk-four-plots {
+    display: grid;
+    grid-template-columns: 990fr 902fr;
+    column-gap: 14px;
+  }
+  .uk-four-head h3 {
+    margin: 0;
+    padding-bottom: 4px;
+    color: #08082a;
+    font-size: 18px;
+    font-weight: 750;
+    text-align: center;
+    transition: opacity .4s ease;
+  }
+  .uk-four-head h3[data-show],
+  .uk-four-plot[data-show] {
+    opacity: 0;
+  }
+  .uk-four-plots {
+    row-gap: 2px;
+  }
+  .uk-four-plot {
+    min-width: 0;
+    margin: 0;
+    transition: opacity .48s ease;
+  }
+  .uk-four-plot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .uk-panel-axis {
+    position: relative;
+    width: 100%;
+    height: 29px;
+    margin: var(--axis-lift, 0) 0 0;
+  }
+  .uk-panel-axis.ukb {
+    width: 100%;
+    margin-left: 0;
+  }
+  .uk-panel-axis.upper {
+    height: 15px;
+  }
+  .uk-axis-track {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 17px;
+  }
+  .uk-axis-track span {
+    position: absolute;
+    top: 1px;
+    min-width: 36px;
+    color: #58617f;
+    font-family: var(--font-mono);
+    font-size: 9.2px;
+    line-height: 1;
+    text-align: center;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .uk-plot-xlabel {
+    position: absolute;
+    inset: 16px 0 auto;
+    margin: 0;
+    color: #252b4b;
+    font-size: 11.5px;
+    font-weight: 650;
+    text-align: center;
+  }
+  .uk-panel-axis.hcp-axis .uk-plot-xlabel {
+    inset: 16px 2% auto 8.9%;
+  }
+  .uk-merge-caption {
+    height: 96px;
+    margin-top: 8px;
+  }
+  .uk-merge-caption p {
+    color: var(--ink);
+    font-size: 23px;
+    font-weight: 650;
+    line-height: 1.24;
+  }
+  .uk-merge-caption .point-number {
+    margin-right: 11px;
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    vertical-align: 3px;
+  }
+  .uk-merge-caption small {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+  }
   .ds7 [data-show],
   .fm, .fm [data-show],
   .sp,
-  .sp [data-show], .sp [data-x], .sp [data-static-x], .sp [data-yshift],
-  .sp [data-axis-before], .sp [data-axis-after],
+  .sp [data-show], .sp [data-x],
   .sp .lb-before, .sp .lb-after, .sp [data-ring-at],
   .tp [data-show], .tp [data-ring-at],
   .ds, .ds [data-show],
@@ -1250,12 +1422,9 @@
   .title-project-name {
     color: var(--ink);
   }
-  .title-presenter-role a,
+  .title-brand-url,
   .title-project-url {
     color: var(--cyan);
-  }
-  .title-open-source a {
-    text-decoration-color: rgba(34,51,187,.45);
   }
   .eyebrow {
     color: var(--cyan);
@@ -1653,7 +1822,7 @@
   .title-presenter-role {
     font-size: 18px;
   }
-  .title-presenter-role a {
+  .title-brand-url {
     font-size: 15px;
   }
   .title-project-url {
@@ -1664,9 +1833,6 @@
   }
   .title-open-source {
     font-size: 18px;
-  }
-  .title-open-source a {
-    font-size: 15px;
   }
   .source {
     font-size: 12.5px;
@@ -1856,6 +2022,317 @@
     width: 70% !important;
     height: 245px !important;
   }
+
+  /* Scaling Neuro close: pair the concrete archive with the scale opportunity. */
+  .sn-title-lockup {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 38px;
+  }
+  .sn-title-lockup img {
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+  .sn-title-lockup .sn-wordmark {
+    color: #1d2537;
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .sn-title-url {
+    margin-left: 5px;
+    padding-left: 14px;
+    border-left: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: .015em;
+    line-height: 1;
+    text-transform: none;
+  }
+  .scaling-neuro-slide .content {
+    top: 124px;
+    bottom: 50px;
+  }
+  .sn-claim {
+    color: var(--ink);
+    font-size: 28px;
+    font-weight: 650;
+    line-height: 1.19;
+    letter-spacing: -.018em;
+    text-align: right;
+    text-wrap: balance;
+  }
+  .sn-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 680px 1fr;
+    gap: 38px;
+    align-items: center;
+  }
+  .sn-stage-stack {
+    position: relative;
+    min-width: 0;
+    height: 383px;
+  }
+  .sn-stage-pane {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(9px);
+    transition: opacity .36s ease, transform .36s ease;
+  }
+  .sn-right {
+    min-width: 0;
+  }
+  .sn-process {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2px 0 2px 6px;
+  }
+  .sn-process-kicker {
+    color: #a34b53;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .11em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .sn-process h3 {
+    margin-top: 13px;
+    color: var(--ink);
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+  .sn-process-list {
+    position: relative;
+    display: grid;
+    gap: 18px;
+    margin-top: 30px;
+    padding-left: 26px;
+  }
+  .sn-process-list::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    bottom: 9px;
+    width: 1px;
+    background: rgba(163,75,83,.34);
+  }
+  .sn-process-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 11px;
+    align-items: baseline;
+  }
+  .sn-process-step::before {
+    content: "";
+    position: absolute;
+    left: -25px;
+    top: 9px;
+    width: 9px;
+    height: 9px;
+    border: 2px solid #a34b53;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .sn-process-step span {
+    color: #a34b53;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+  }
+  .sn-process-step p {
+    color: #1d2537;
+    font-size: 19px;
+    font-weight: 610;
+    line-height: 1.3;
+  }
+  .sn-terminal {
+    position: absolute;
+    top: 404px;
+    left: 0;
+    right: 0;
+    height: 140px;
+    overflow: hidden;
+    border: 1px solid rgba(8,8,42,.24);
+    border-radius: 8px;
+    background: #161927;
+    box-shadow: 0 13px 32px rgba(8,8,42,.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(9px);
+    transition: opacity .36s ease, transform .36s ease;
+  }
+  .sn-terminal-bar {
+    display: flex;
+    align-items: center;
+    height: 27px;
+    padding: 0 13px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+    background: #202436;
+  }
+  .sn-terminal-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .sn-terminal-dots i {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #a34b53;
+  }
+  .sn-terminal-dots i:nth-child(2) { background: #b87800; }
+  .sn-terminal-dots i:nth-child(3) { background: #007f73; }
+  .sn-terminal-title {
+    margin-left: 14px;
+    color: #aeb4ca;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .sn-terminal pre {
+    padding: 10px 18px 8px;
+    color: #f4f1f7;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.2;
+    white-space: pre-wrap;
+  }
+  .sn-terminal .sn-terminal-ok { color: #69c8b7; }
+  .sn-terminal .sn-terminal-comment { color: #aeb4ca; }
+  .sn-site-shot {
+    width: 680px;
+    height: 383px;
+    border-color: rgba(8,8,42,.12);
+    background: #faf9f5;
+    box-shadow: 0 16px 42px rgba(8,8,42,.13);
+  }
+  .sn-site-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sn-bars {
+    display: grid;
+    gap: 28px;
+    margin: 32px 0 0;
+  }
+  .sn-bar-row {
+    display: grid;
+    gap: 8px;
+  }
+  .sn-bar-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    color: #525a6e;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: .065em;
+    text-transform: uppercase;
+  }
+  .sn-bar-label strong {
+    color: #1d2537;
+    font-family: Georgia, serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -.01em;
+    white-space: nowrap;
+  }
+  .sn-bar-label small {
+    display: block;
+    margin-top: 4px;
+    color: #666e8e;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.35;
+    text-transform: none;
+  }
+  .sn-bar-track {
+    height: 26px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #f2f0e9;
+    box-shadow: inset 0 0 0 1px rgba(29,37,55,.07);
+  }
+  .sn-bar-fill {
+    width: 100%;
+    height: 100%;
+  }
+  .sn-bar-public {
+    display: grid;
+    grid-template-columns: 25fr 14fr 2fr 24fr 20fr;
+    width: 96.59%;
+  }
+  .sn-bar-public > i + i {
+    border-left: 1px solid rgba(250,249,245,.72);
+  }
+  .sn-openneuro { background: #1d2537; }
+  .sn-ukbb { background: #626875; }
+  .sn-hcp { background: #a34b53; }
+  .sn-abcd { background: #78434e; }
+  .sn-other { background: #8d93a4; }
+  .sn-bar-network {
+    display: grid;
+    grid-template-columns: repeat(22, 1fr);
+    background: #a34b53;
+  }
+  .sn-bar-network i {
+    border-right: 1px solid rgba(250,249,245,.48);
+  }
+  .sn-bar-network i:last-child {
+    border-right: 0;
+  }
+  .sn-bar-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    color: #666e8e;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.35;
+    letter-spacing: .015em;
+    text-transform: uppercase;
+  }
+  .sn-bar-key span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .sn-bar-key i {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 1px;
+  }
 </style>
 </head>
 <body>
@@ -1886,7 +2363,11 @@
       <h1>Scaling Foundation Models<br>for fMRI <span class="faint">&amp;</span> Fairly<br>Benchmarking Them</h1>
       <p class="title-presenter">
         <strong>Paul Scotti</strong>
-        <span class="title-presenter-role">CTO and Co-founder, Sophont <a href="https://sophont.med" target="_blank" rel="noopener">sophont.med</a></span>
+        <span class="title-presenter-role">
+          <span>CTO and Co-founder</span>
+          <a class="title-sophont-logo" href="https://sophont.med" target="_blank" rel="noopener"><img src="assets/brand/sophont.png" alt="Sophont"></a>
+          <a class="title-brand-url" href="https://sophont.med" target="_blank" rel="noopener">sophont.med</a>
+        </span>
       </p>
       <div class="title-attribution">
         <div class="title-research">
@@ -1905,7 +2386,10 @@
       </div>
       <p class="title-open-source">
         <span>Developed 100% publicly and Apache 2.0 open-sourced by the MedARC Discord</span>
-        <a href="https://medarc.ai" target="_blank" rel="noopener">medarc.ai</a>
+        <span class="title-brand-pair" aria-label="MedARC">
+          <a class="brand-medarc" href="https://medarc.ai" target="_blank" rel="noopener"><img src="assets/brand/medarc-horizontal-white.webp" alt="MedARC"></a>
+          <a class="title-brand-url" href="https://medarc.ai" target="_blank" rel="noopener">medarc.ai</a>
+        </span>
       </p>
     </div>
     <aside class="notes">1:40-2:20. Brief introduction. Credit Connor Lane, Sophont, and the MedARC open research community early. CortexMAE and Brainmarks were developed publicly in the MedARC Discord and released under Apache 2.0. The talk has two linked questions: what should the model see, and what evidence would make the comparison fair? [Sources] Lane et al., "Scaling Vision Transformers for Functional MRI with Flat Maps," ICML 2026. CortexMAE project page at sophont.med/blog/cortexmae. Brainmarks repository at github.com/MedARC-AI/Brainmarks. MedARC community at medarc.ai.</aside>
@@ -2218,7 +2702,7 @@
             <rect x="862" y="382" width="3.5" height="28" fill="#f07557"/>
             <text x="876" y="401" font-size="14" font-weight="690" fill="#f1f1fa">Age · sex</text>
             <rect x="862" y="420" width="3.5" height="28" fill="#f07557"/>
-            <text x="876" y="439" font-size="14" font-weight="690" fill="#f1f1fa">Diagnosis · 4 clinical datasets</text>
+            <text x="876" y="439" font-size="14" font-weight="690" fill="#f1f1fa">Diagnosis / cohort status · 4 datasets</text>
           </g>
         </svg>
         <div class="build-cap">
@@ -2477,34 +2961,34 @@
           <div class="brainmarks-target-heading">
             <div>
               <h4>Trait-based</h4>
-              <p class="brainmarks-context">From one resting-state scan per person</p>
+              <p class="brainmarks-context">Demographics and clinical cohort status from one resting-state scan</p>
             </div>
             <span class="brainmarks-task-count">6 tasks</span>
           </div>
           <div class="brainmarks-task-list brainmarks-task-list-trait">
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">03</span>
-              <div><h3>Age</h3><p>HCP-A · age quartile classification</p></div>
+              <div><h3>Age</h3><p>HCP-A · four age quartiles</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">04</span>
-              <div><h3>Sex</h3><p>HCP-A · binary classification</p></div>
+              <div><h3>Sex</h3><p>HCP-A · female vs male</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">05</span>
-              <div><h3>Autism</h3><p>ABIDE · clinical diagnosis</p></div>
+              <div><h3>Autism</h3><p>ABIDE · autism vs control</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">06</span>
-              <div><h3>ADHD</h3><p>ADHD200 · clinical diagnosis</p></div>
+              <div><h3>ADHD</h3><p>ADHD-200 · ADHD vs typically developing; subtypes combined</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">07</span>
-              <div><h3>Alzheimer's</h3><p>ADNI · clinical diagnosis</p></div>
+              <div><h3>Alzheimer's</h3><p>ADNI · dementia vs cognitively normal; MCI excluded</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">08</span>
-              <div><h3>Parkinson's</h3><p>PPMI · clinical diagnosis</p></div>
+              <div><h3>Parkinson's</h3><p>PPMI · PD vs prodromal cohort</p></div>
             </div>
           </div>
           <p class="brainmarks-protocol">100 randomized splits · logistic probe</p>
@@ -2512,7 +2996,7 @@
       </div>
       <!-- <p class="center lead" style="margin-top:25px;font-size:23px">Established trait benchmarks, plus under-studied dynamic cognitive state decoding.</p> -->
     </div>
-    <aside class="notes">8:15-9:30. The second problem is comparability. Prior papers often use the same source dataset names, but differ in curation, preprocessing, subject splits, normalization, probe design, tuning budget, and metrics. Brainmarks reproduces the encoders behind one interface and holds the downstream experiment fixed, so the frozen encoder is the intentional variable. It supports the eight model families currently shown in this talk and evaluates eight core tasks across seven public datasets. The suite retains the commonly reported trait benchmarks and adds two relatively under-studied dynamic state benchmarks. Traits use one resting-state sample per person over 100 randomized splits. State tasks use 16-second windows and fixed held-out-subject splits with an attentive probe. That creates the apples-to-apples comparison needed to judge whether reported improvements are actually model improvements. [Sources] Lane et al., ICML 2026, Sections 1 and 4, Appendix B.4, and datasets in Table 1. Brainmarks code, model integrations, curated data, and splits: github.com/MedARC-AI/Brainmarks. Omni-fMRI was added in a post-paper Brainmarks evaluation in July 2026.</aside>
+    <aside class="notes">8:15-9:30. The second problem is comparability. Prior papers often use the same source dataset names, but differ in curation, preprocessing, subject splits, normalization, probe design, tuning budget, and metrics. Brainmarks reproduces the encoders behind one interface and holds the downstream experiment fixed, so the frozen encoder is the intentional variable. It supports the eight model families currently shown in this talk and evaluates eight core tasks across seven public datasets. The suite retains the commonly reported trait benchmarks and adds two relatively under-studied dynamic state benchmarks. Not all six trait targets are diagnoses. HCP-A age and sex are demographic classifications. ABIDE is autism versus control. ADHD-200 collapses the combined, hyperactive/impulsive, and inattentive subtypes into ADHD versus typically developing controls. The ADNI task is cognitively normal versus dementia and explicitly excludes MCI. PPMI is Parkinson's disease versus the prodromal cohort, not Parkinson's disease versus healthy controls. I therefore describe the set as demographic and clinical cohort-label prediction. Traits use one resting-state sample per person over 100 randomized splits. State tasks use 16-second windows and fixed held-out-subject splits with an attentive probe. That creates the apples-to-apples comparison needed to judge whether reported improvements are actually model improvements. [Sources] Lane et al., ICML 2026, Sections 1 and 4, Appendix B.4, and datasets in Table 1; Brainmarks dataset definitions and curation code for HCP-A, ABIDE, ADHD-200, ADNI, and PPMI, github.com/MedARC-AI/Brainmarks. Omni-fMRI was added in a post-paper Brainmarks evaluation in July 2026.</aside>
   </section>
 
   <section class="slide" data-title="State benchmark">
@@ -2521,7 +3005,7 @@
       <h2>State-based tasks</h2>
     </div>
     <div class="content">
-      <div class="build" data-stages="6" style="position:relative">
+      <div class="build" data-stages="5" style="position:relative">
         <svg class="sp" viewBox="0 0 1160 430" style="width:1156px;display:block" role="img" aria-label="Brainmarks state-decoding benchmark, built up step by step" data-hide0></svg>
         <div class="taskcards" data-taskcards>
           <div class="tcard">
@@ -2556,12 +3040,11 @@
           <p data-cap="3">The models as originally evaluated. Six of seven prior models sit at chance; none of the seven used coordinate normalization.</p>
           <p data-cap="4">Same weights, one preprocessing fix. Shared coordinate normalization moves six models by 43 to 76 points.</p>
           <p data-cap="5">Baseline two: an off-the-shelf video foundation model, zero brain data. MAE-st beats every prior fMRI model; CortexMAE-F leads both tasks.</p>
-          <p data-cap="6">A subject-specific MLP trained directly for COCO24 reaches 64%. This is task training, not a foundation model.</p>
         </div>
-        <div class="sdot"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="sdot"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
     </div>
-    <aside class="notes">9:30-12:10. Seven steps, one keypress each. (0) The arena. Task21: from a 16 s HCP-YA clip, classify which of 21 cognitive conditions the subject is in. The 21 conditions come from 6 of the 7 HCP task batteries: emotion (fear, neutral), language (math, story), motor (left and right foot, left and right hand, tongue), relational (match, relation), social (mental, random), and working memory (0-back and 2-back across body, faces, places, tools). COCO24: from a 16 s NSD clip, classify which of 24 COCO object categories the subject is viewing. NSD stimuli are COCO photographs; categories were CLIP-labeled (confidence over 0.9, at least 600 images each). Trials are 4 s apart, so clips contain overlapping image responses. (1) Chance is always predicting the majority class: 17 percent on Task21, 7 percent on COCO24. Raw accuracy with imbalanced classes makes that the honest floor. (2) Baseline one is a linear connectome model, already 82 percent on Task21, no deep learning. (3) The models as designed: six of seven priors at chance, Omni-fMRI included. Were they really that bad? (4) One shared preprocessing fix, same weights: the dots themselves move 43 to 76 points. (5) Baseline two: MAE-st, a vanilla video foundation model with zero brain data, sits above every prior fMRI model, so the bar moved. Only fMRI-pretrained models clear that bar, and CortexMAE-F leads both tasks. (6) The COCO24 axis expands to reveal a subject-specific MLP trained directly on this task at 64 percent. It is not a foundation model and is not a frozen-representation probe. It shows how much task- and subject-specific supervision can buy relative to general-purpose representations. [Sources] Lane et al., ICML 2026, Figure 8, Tables 14 and 15, Sections 5.4 and B.4; Task21 condition list from Brainmarks HCPYA_TASK21_TRIAL_TYPES (github.com/MedARC-AI/Brainmarks); COCO24 categories from the Brainmarks NSD curation metadata. BrainLM and BrainHarmonix pre-correction values from the same CCN analysis (paper Table 15 lists three models). Omni-fMRI: post-paper Brainmarks evaluation on the same protocol, July 2026. MAE-st: unpublished follow-up by Connor Lane, July 2026, label as preliminary. Subject-specific COCO24 MLP result supplied by Paul Scotti, July 30, 2026. Example images are actual NSD stimuli (COCO train2017/val2017 photos).</aside>
+    <aside class="notes">9:30-11:50. Six steps, one keypress each. (0) The arena. Task21: from a 16 s HCP-YA clip, classify which of 21 cognitive conditions the subject is in. The 21 conditions come from 6 of the 7 HCP task batteries: emotion (fear, neutral), language (math, story), motor (left and right foot, left and right hand, tongue), relational (match, relation), social (mental, random), and working memory (0-back and 2-back across body, faces, places, tools). COCO24: from a 16 s NSD clip, classify which of 24 COCO object categories the subject is viewing. NSD stimuli are COCO photographs; categories were CLIP-labeled (confidence over 0.9, at least 600 images each). Trials are 4 s apart, so clips contain overlapping image responses. (1) Chance is always predicting the majority class: 17 percent on Task21, 7 percent on COCO24. Raw accuracy with imbalanced classes makes that the honest floor. (2) Baseline one is a linear connectome model, already 82 percent on Task21, no deep learning. (3) The models as designed: six of seven priors at chance, Omni-fMRI included. Were they really that bad? (4) One shared preprocessing fix, same weights: the dots themselves move 43 to 76 points. (5) Baseline two: MAE-st, a vanilla video foundation model with zero brain data, sits above every prior fMRI model, so the bar moved. Only fMRI-pretrained models clear that bar, and CortexMAE-F leads both tasks. [Sources] Lane et al., ICML 2026, Figure 8, Tables 14 and 15, Sections 5.4 and B.4; Task21 condition list from Brainmarks HCPYA_TASK21_TRIAL_TYPES (github.com/MedARC-AI/Brainmarks); COCO24 categories from the Brainmarks NSD curation metadata. BrainLM and BrainHarmonix pre-correction values from the same CCN analysis (paper Table 15 lists three models). Omni-fMRI: post-paper Brainmarks evaluation on the same protocol, July 2026. MAE-st: unpublished follow-up by Connor Lane, July 2026, label as preliminary. Example images are actual NSD stimuli (COCO train2017/val2017 photos).</aside>
   </section>
 
   <section class="slide" data-title="Trait benchmark">
@@ -2571,15 +3054,15 @@
     </div>
     <div class="content" style="top:125px">
       <div class="build" data-stages="1" style="position:relative">
-        <svg class="tp" viewBox="0 0 1160 495" style="width:1156px;display:block" role="img" aria-label="Brainmarks subject-trait benchmark on age, sex, and four clinical diagnosis datasets, with an MAE-st video foundation model baseline"></svg>
+        <svg class="tp" viewBox="0 0 1160 495" style="width:1156px;display:block" role="img" aria-label="Brainmarks subject-trait benchmark on age, sex, three diagnosis-status tasks, and one Parkinson's disease versus prodromal-cohort task, with an MAE-st video foundation model baseline"></svg>
         <div class="build-cap">
-          <p data-cap="0">Six subject-trait benchmarks, one protocol: logistic probe, balanced accuracy, 100 random splits. Chance is 25% for 4-way age and 50% for sex and diagnosis.</p>
-          <p data-cap="1">Age and sex spread the models apart. The video FM does not win a trait task, and most diagnosis results remain near the connectome baseline.</p>
+          <p data-cap="0">Six subject-trait benchmarks, one protocol: logistic probe, balanced accuracy, 100 random splits. Chance is 25% for 4-way age and 50% for the five binary tasks.</p>
+          <p data-cap="1">Age and sex spread the models apart. The video FM does not win a trait task, and most clinical cohort results remain near the connectome baseline.</p>
         </div>
         <div class="sdot"><i></i><i></i></div>
       </div>
     </div>
-    <aside class="notes">11:50-13:20. Two steps, one keypress each. (0) Six subject-trait benchmarks under one protocol: one resting-state scan per person, logistic probe, 100 random splits, balanced accuracy. Chance is 25 percent for age, a four-way quartile classification, and 50 percent for sex and the four diagnosis tasks. The navy line is the connectome baseline. (1) Reveal all model results together, including the same MAE-st video foundation model baseline used on the state slide. Age and sex show real separations. NeuroSTORM wins age at 56.6; its pretraining includes HCP-A subjects in the 36 to 100 age range. CortexMAE-V never saw ages beyond 35 during pretraining and still reaches 53.4, above the connectome. Both volume models may pick up age-related structural change such as cortical thinning. On sex, flat map leads at 87.4, volume 86.3, parcels only 71.2; this is where the opening representation vote lands for traits. The four diagnosis panels tell the opposite story: nearly every point sits within noise of the baseline, with the new Omni-fMRI Alzheimer's point the visible exception. MAE-st scores 43.2 on age, 77.7 on sex, 53.3 on ABIDE, 57.7 on ADHD200, 63.2 on ADNI, and 56.1 on PPMI. It trails the connectome on age, sex, autism, and Parkinson's and does not win a panel. This is the contrast with the state results, where MAE-st exceeded every prior fMRI foundation model. Every trait panel still crowns a different model, and no model beats the connectome across the board. For completeness from the representation comparison: pretraining takes 11 hours for parcels, 28 for flat maps, and 50 hours for volume, and all representation differences were robust across 8 pretraining repeats. [Sources] Lane et al., ICML 2026, Figure 8 and Tables 2 and 14, Sections 5.1 and 5.4. Subject counts: HCP-A 560 (age), 584 (sex), ABIDE 826, ADHD200 430, ADNI 410, PPMI 662. Omni-fMRI evaluated post-paper on the identical protocol (July 2026); the AABC column in the source table is the HCP-A cohort. MAE-st trait results: follow-up analysis by Connor Lane, supplied by Paul Scotti on July 30, 2026.</aside>
+    <aside class="notes">11:50-13:20. Two steps, one keypress each. (0) Six subject-trait benchmarks under one protocol: one resting-state scan per person, logistic probe, 100 random splits, balanced accuracy. Chance is 25 percent for age, a four-way quartile classification, and 50 percent for the five binary tasks. The four clinical panels are not four equivalent case-control diagnoses: ABIDE is autism versus control; ADHD-200 is any ADHD subtype versus typically developing; ADNI is dementia versus cognitively normal with MCI excluded; PPMI is Parkinson's disease versus the prodromal cohort. The navy line is the connectome baseline. (1) Reveal all model results together, including the same MAE-st video foundation model baseline used on the state slide. Age and sex show real separations. NeuroSTORM wins age at 56.6; its pretraining includes HCP-A subjects in the 36 to 100 age range. CortexMAE-V never saw ages beyond 35 during pretraining and still reaches 53.4, above the connectome. Both volume models may pick up age-related structural change such as cortical thinning. On sex, flat map leads at 87.4, volume 86.3, parcels only 71.2; this is where the opening representation vote lands for traits. The four clinical cohort panels tell the opposite story: nearly every point sits within noise of the baseline, with the new Omni-fMRI ADNI point the visible exception. MAE-st scores 43.2 on age, 77.7 on sex, 53.3 on ABIDE, 57.7 on ADHD-200, 63.2 on ADNI, and 56.1 on PPMI. It trails the connectome on age, sex, autism, and the PPMI task and does not win a panel. This is the contrast with the state results, where MAE-st exceeded every prior fMRI foundation model. Every trait panel still crowns a different model, and no model beats the connectome across the board. For completeness from the representation comparison: pretraining takes 11 hours for parcels, 28 for flat maps, and 50 hours for volume, and all representation differences were robust across 8 pretraining repeats. [Sources] Lane et al., ICML 2026, Figure 8 and Tables 2 and 14, Sections 4, 5.1, and 5.4; Brainmarks ABIDE README, ADHD-200 curation notebook, ADNI target-generation script, and PPMI README. Subject counts: HCP-A 560 (age), 584 (sex), ABIDE 826, ADHD-200 430, ADNI 410, PPMI 662. Omni-fMRI evaluated post-paper on the identical protocol (July 2026); the AABC column in the source table is the HCP-A cohort. MAE-st trait results: follow-up analysis by Connor Lane, supplied by Paul Scotti on July 30, 2026.</aside>
   </section>
 
   <section class="slide" data-title="Data scaling">
@@ -2625,18 +3108,58 @@
       <!-- <p class="eyebrow">Preliminary multi-dataset scaling</p> -->
       <h2>36M frames of UK Biobank did not beat 7M of HCP-YA.</h2>
     </div>
-    <div class="content" style="top:150px">
-      <div class="build" data-stages="2" style="position:relative">
-        <svg class="uk" viewBox="0 0 1160 448" style="width:1156px;display:block" role="img" aria-label="UK Biobank versus HCP-YA pretraining curves on two state benchmarks, built up step by step"></svg>
-        <div class="build-cap">
-          <p data-cap="0">Within HCP-YA, more frames keep helping: three runs, one recipe, probed through training. The 7.4M run climbs to 99 on Task21 and 30 on COCO24.</p>
-          <p data-cap="1">Same recipe on UK Biobank, up to 36M frames and over three times the training. Every run plateaus lower.</p>
-          <p data-cap="2">Five times the frames still does not reach the HCP-YA line. The wall is not hours; it is composition: tasks, conditions, scanners, subjects.</p>
+    <div class="content" style="top:137px;bottom:36px">
+      <div class="build uk-four-build" data-stages="1">
+        <div class="uk-four-card">
+          <div class="uk-four-head">
+            <h3>HCP-YA</h3>
+            <h3 data-show="1">UK Biobank</h3>
+          </div>
+          <div class="uk-four-plots">
+            <figure class="uk-four-plot" aria-label="HCP-YA Task21 accuracy">
+              <img src="assets/fig/pretrain_scaling_hcp_task21.png" alt="Original paper plot for HCP-YA Task21 across three HCP-YA pretraining runs">
+              <div class="uk-panel-axis hcp-axis upper" aria-label="HCP-YA pretraining steps">
+                <div class="uk-axis-track hcp">
+                  <span style="left:23.18%">100K</span><span style="left:37.78%">200K</span><span style="left:52.42%">300K</span><span style="left:67.07%">400K</span><span style="left:81.67%">500K</span><span style="left:96.26%">600K</span>
+                </div>
+              </div>
+            </figure>
+            <figure class="uk-four-plot" data-show="1" aria-label="UK Biobank Task21 accuracy">
+              <img src="assets/fig/pretrain_scaling_ukb_task21.png" alt="Original paper plot for UK Biobank Task21 across six UK Biobank pretraining runs">
+              <div class="uk-panel-axis ukb upper" aria-label="UK Biobank pretraining steps">
+                <div class="uk-axis-track">
+                  <span style="left:3.66%">0</span><span style="left:14.75%">250K</span><span style="left:25.72%">500K</span><span style="left:36.81%">750K</span><span style="left:47.89%">1M</span><span style="left:58.98%">1.25M</span><span style="left:69.96%">1.5M</span><span style="left:81.04%">1.75M</span><span style="left:92.13%">2M</span>
+                </div>
+              </div>
+            </figure>
+            <figure class="uk-four-plot" aria-label="HCP-YA NSD COCO24 accuracy">
+              <img src="assets/fig/pretrain_scaling_hcp_coco24.png" alt="Original paper plot for HCP-YA NSD COCO24 across three HCP-YA pretraining runs">
+              <div class="uk-panel-axis hcp-axis" aria-label="HCP-YA pretraining steps">
+                <div class="uk-axis-track hcp">
+                  <span style="left:23.18%">100K</span><span style="left:37.78%">200K</span><span style="left:52.42%">300K</span><span style="left:67.07%">400K</span><span style="left:81.67%">500K</span><span style="left:96.26%">600K</span>
+                </div>
+                <p class="uk-plot-xlabel">Pretraining steps</p>
+              </div>
+            </figure>
+            <figure class="uk-four-plot" data-show="1" aria-label="UK Biobank NSD COCO24 accuracy">
+              <img src="assets/fig/pretrain_scaling_ukb_coco24.png" alt="Original paper plot for UK Biobank NSD COCO24 across six UK Biobank pretraining runs">
+              <div class="uk-panel-axis ukb" aria-label="UK Biobank pretraining steps">
+                <div class="uk-axis-track">
+                  <span style="left:3.66%">0</span><span style="left:14.75%">250K</span><span style="left:25.72%">500K</span><span style="left:36.81%">750K</span><span style="left:47.89%">1M</span><span style="left:58.98%">1.25M</span><span style="left:69.96%">1.5M</span><span style="left:81.04%">1.75M</span><span style="left:92.13%">2M</span>
+                </div>
+                <p class="uk-plot-xlabel">Pretraining steps</p>
+              </div>
+            </figure>
+          </div>
         </div>
-        <div class="sdot"><i></i><i></i><i></i></div>
+        <div class="build-cap uk-merge-caption">
+          <p data-cap="0"><span class="point-number">01</span>Within HCP-YA, more frames kept helping.<small>The 7.4M run reached 99% on Task21 and about 30% on COCO24.</small></p>
+          <p data-cap="1"><span class="point-number">02</span>Five times the frames still did not catch the HCP-YA run.<small>UK Biobank reached 36M frames and over three times the training steps, but plateaued lower. Composition beat volume.</small></p>
+        </div>
+        <div class="sdot"><i></i><i></i></div>
       </div>
     </div>
-    <aside class="notes">16:00-17:15. Three steps, one keypress each. (0) Within HCP-YA, more pretraining frames keep helping: the 2.0M, 4.1M, and 7.4M runs, one recipe, state probes tracked through training. The 7.4M run climbs to 99 on Task21 and about 30 on COCO24. (1) Then the obvious escalation: the same recipe on UK Biobank, up to 36 million frames, roughly five times the HCP-YA corpus and more than three times the optimization steps. The 36M run flattens near 96.9 on Task21 and drifts down near 25.5 on COCO24; the matched 7.4M UK Biobank run sits at 95.9 and 26.6; the tiny 2.3M run is oddly competitive early. HCP-YA mixes rest, seven tasks, movies, and two field strengths; UK Biobank is larger but narrower. (2) The dashed line is the final HCP-YA 7.4M score carried across: five times the frames lands 2.1 points short on Task21 and 4.8 points short on COCO24. Treat as preliminary, but the message matches the out-of-distribution scaling result: the bottleneck is the diversity of the pretraining distribution, not frame count. [Sources] Lane et al., ICML 2026, Appendix C.2, Figure 11. Curves digitized from the paper figure (pretrain_scaling_withleg.png; no vector source exists). Three of six UK Biobank runs shown (2.3M, 7.4M, 36M); the 4.6M, 16M, and 25M runs sit between the shown curves and do not change the ordering. Smoothed curves only; per-checkpoint scatter omitted.</aside>
+    <aside class="notes">16:00-17:15. Two steps, one keypress each. (0) Start with the two HCP-YA panels from Figure 11. These are the original paper pixels, including every checkpoint and rolling median. Within HCP-YA, more pretraining frames keep helping: the 7.4M-frame run reaches 99 percent on Task21 and about 30 percent on COCO24. (1) Reveal the two UK Biobank panels at right, still on their original axes and without any overlay or coordinate remapping. UK Biobank reaches 36M frames, roughly five times the HCP-YA corpus, and runs for over three times as many steps, but still plateaus lower. The bottleneck is not hours alone; it is the composition of tasks, conditions, scanners, and subjects. Decimal-million tick labels were rewritten as actual step counts for readability; plotted coordinates are unchanged. [Sources] Lane et al., ICML 2026, Appendix C.2, Figure 11. All plotted pixels are direct crops from the original paper raster, fmri_fm_ICML_2026/figures/pretrain_scaling_withleg.png; no curves or points were regenerated.</aside>
   </section>
 
   <section class="slide" data-title="Takeaways">
@@ -2678,33 +3201,93 @@
     <aside class="notes">17:15-18:05. Top half: three conclusions. Flat maps are the strongest representation for dynamic state decoding. Brainmarks shows that preprocessing and evaluation choices can change the apparent model ranking. Scaling is not just frame count: the HCP-YA and UK Biobank comparison points to pretraining distribution, task diversity, scanner diversity, and preprocessing consistency as likely determinants of transfer. Bottom half: two active directions. First, build a structural MRI foundation model and connect it to CortexMAE so downstream tasks can combine anatomy with functional dynamics. Second, scale pretraining across carefully harmonized multi-site fMRI with broader coverage of tasks, scanners, and populations, and make out-of-distribution evaluation a design constraint. Careful preprocessing is intended to improve comparability, but generalization still has to be measured rather than assumed. [Sources] Lane et al., ICML 2026; github.com/MedARC-AI/CortexMAE and github.com/MedARC-AI/Brainmarks. Structural-functional integration and curated multi-site scaling are ongoing future directions supplied by Paul Scotti, July 30, 2026.</aside>
   </section>
 
-  <section class="slide" data-title="Scaling Neuro">
+  <section class="slide scaling-neuro-slide" data-title="Scaling Neuro">
     <div class="title-block">
-      <h2>Building a shared raw fMRI archive</h2>
-    </div>
-    <div class="content row middle" style="gap:28px;top:135px">
-      <div class="media" style="width:860px;height:484px;flex:none;background:#f8f5fa;border-color:rgba(225,228,245,.32)">
-        <img src="assets/fig/scalingneuro-site.png" alt="Scaling Neuro website landing page" style="display:block;width:100%;height:100%;object-fit:cover">
-      </div>
-      <div class="col stack" style="height:484px;align-items:center;text-align:center;padding:18px 0 4px">
-        <div>
-          <h3 style="font-size:27px;line-height:1.15">Help grow the archive.</h3>
-          <p class="muted" style="margin-top:14px;font-size:17px;line-height:1.45">Contribute approved fMRI, test the uploader, or benchmark future models.</p>
-        </div>
-        <div class="push" style="width:100%">
-          <div class="rule" style="margin:0 0 24px"></div>
-          <div class="qr" style="width:166px;margin:0 auto;padding:10px;border-radius:12px"><img src="assets/fig/qr_scalingneuro.png" alt="QR code for scalingneuro.org"></div>
-          <p class="url-text" style="margin-top:17px;font-size:24px;font-weight:800;letter-spacing:-.02em">scalingneuro.org</p>
-        </div>
+      <div class="sn-title-lockup" aria-label="Scaling Neuro">
+        <img src="assets/brand/scaling-neuro.svg" alt="">
+        <span class="sn-wordmark">Scaling Neuro</span>
+        <span class="sn-title-url">scalingneuro.org</span>
       </div>
     </div>
-    <aside class="notes">18:05-20:50. Make the concrete invitation. Scaling Neuro finds functional EPI series, removes unsafe metadata locally, supports optional local review, and syncs only approved deidentified DICOMs to a shared archive. Structural scans stay out and no BIDS conversion is required. Invite the audience to contribute a site, validate the tool, use the archive, or benchmark future models. Leave the QR visible for questions. [Sources] scalingneuro.org landing page and neuro-sync workflow, captured July 29, 2026; Sophont Discord #scaling-neuro, July 24-25, 2026.</aside>
+    <div class="content">
+      <div class="sn-grid build" data-stages="2">
+        <div class="media sn-site-shot">
+          <img src="assets/fig/scalingneuro-site-2x.png" alt="Scaling Neuro website landing page, including its header">
+        </div>
+        <div class="sn-stage-stack">
+          <div class="sn-process sn-stage-pane" data-stage-pane="0">
+            <p class="sn-process-kicker">How it works</p>
+            <h3>Easily share the fMRI your lab has already collected.</h3>
+            <div class="sn-process-list" aria-label="Scaling Neuro sharing workflow">
+              <div class="sn-process-step"><span>01</span><p>Point to a DICOM folder</p></div>
+              <div class="sn-process-step"><span>02</span><p>Find all BOLD fMRI data</p></div>
+              <div class="sn-process-step"><span>03</span><p>Remove identifying metadata locally</p></div>
+              <div class="sn-process-step"><span>04</span><p>Sync to a publicly shared archive</p></div>
+            </div>
+          </div>
+          <div class="sn-right sn-stage-pane" data-stage-from="1">
+            <p class="sn-claim">If 20 centers join our effort, we'd share more data than OpenNeuro and UKBB combined every 2 years.</p>
+            <figure class="sn-bars" aria-label="Comparison of 85,000 public fMRI hours with the contribution potential of 22 centers over four years">
+              <div class="sn-bar-row">
+                <div class="sn-bar-label">
+                  <span>All public fMRI released</span>
+                  <strong>~85,000 hours</strong>
+                </div>
+                <div class="sn-bar-track" role="img" aria-label="85,000 public fMRI hours: OpenNeuro 25,000, UK Biobank 14,000, HCP-YA 2,000, ABCD 24,000, and other sources 20,000">
+                  <div class="sn-bar-fill sn-bar-public" aria-hidden="true">
+                    <i class="sn-openneuro"></i>
+                    <i class="sn-ukbb"></i>
+                    <i class="sn-hcp"></i>
+                    <i class="sn-abcd"></i>
+                    <i class="sn-other"></i>
+                  </div>
+                </div>
+                <div class="sn-bar-key" aria-label="Public fMRI archive breakdown">
+                  <span><i class="sn-openneuro"></i>OpenNeuro 25K</span>
+                  <span><i class="sn-ukbb"></i>UKBB 14K</span>
+                  <span><i class="sn-hcp"></i>HCP-YA 2K</span>
+                  <span><i class="sn-abcd"></i>ABCD 24K</span>
+                  <span><i class="sn-other"></i>Other 20K</span>
+                </div>
+              </div>
+              <div class="sn-bar-row">
+                <div class="sn-bar-label">
+                  <span>22 centers in 4 years <small>simply sharing data that already would be collected regardless</small></span>
+                  <strong>~88,000 hours</strong>
+                </div>
+                <div class="sn-bar-track" role="img" aria-label="Twenty-two centers contributing 88,000 fMRI hours over four years">
+                  <div class="sn-bar-fill sn-bar-network" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  </div>
+                </div>
+              </div>
+            </figure>
+          </div>
+        </div>
+        <div class="sn-terminal" data-stage-from="2" aria-label="Terminal commands to install and run neuro-sync">
+          <div class="sn-terminal-bar" aria-hidden="true">
+            <span class="sn-terminal-dots"><i></i><i></i><i></i></span>
+            <span class="sn-terminal-title">neuro-sync</span>
+          </div>
+          <pre><code>$ curl -fsSL https://scalingneuro.org/install.sh | sh
+<span class="sn-terminal-ok">✓ neuro-sync 0.6.0 downloaded</span>
+
+<span class="sn-terminal-comment"># One command to find, de-identify, and sync</span>
+$ neuro-sync path_to_dicoms</code></pre>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">18:05-20:50. Three animation points, one keypress between each. (1) Introduce Scaling Neuro as a simple way for labs to share fMRI they already collected. Point it at a DICOM folder; it finds likely BOLD fMRI series, removes identifying metadata locally, and syncs approved deidentified DICOMs to a publicly shared archive. (2) Replace the workflow with the scale opportunity. The public-data bar totals roughly 85,000 hours: OpenNeuro 25K, UK Biobank 14K, HCP-YA 2K, ABCD 24K, and other sources 20K. At roughly 1,000 hours per center per year, 22 centers sharing for four years reaches roughly 88,000 hours. (3) Reveal the terminal interface to make the call to action concrete: install neuro-sync, then point one command at a DICOM folder. Invite the audience to contribute a site, validate the tool, use the archive, or benchmark future models. [Sources] scalingneuro.org landing page, install command, scale-opportunity figure, and neuro-sync workflow, verified July 31, 2026; Sophont Discord #scaling-neuro, July 24-25, 2026.</aside>
   </section>
 
   <section class="slide" data-title="Thank you">
     <div style="position:absolute;left:70px;right:70px;top:66px">
       <h1 style="font-size:58px">Thank you!</h1>
       <p class="lead" style="margin-top:14px;font-size:22px">Questions and collaborators welcome · <span class="url-text">scottibrain@gmail.com</span></p>
+    </div>
+    <div class="brand-lockup thanks-brand-lockup" aria-label="Sophont">
+      <a class="brand-sophont" href="https://sophont.med" target="_blank" rel="noopener"><img src="assets/brand/sophont.png" alt="Sophont"></a>
     </div>
     <div style="position:absolute;left:70px;right:70px;top:196px;display:grid;grid-template-columns:1fr 1fr;gap:26px 48px">
       <div style="border-top:2px solid var(--amber);padding-top:11px">
@@ -2723,9 +3306,12 @@
         <p class="url-text" style="margin-top:8px;font-size:20px">scalingneuro.org</p>
         <p class="muted" style="margin-top:5px;font-size:15px">Join the shared open fMRI archive</p>
       </div>
-      <div style="border-top:2px solid var(--blue);padding-top:11px">
+      <div class="thanks-medarc-panel" style="border-top:2px solid var(--blue);padding-top:11px">
         <p style="font-size:14px;font-weight:780;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)">MedARC</p>
-        <p class="url-text" style="margin-top:8px;font-size:20px">medarc.ai</p>
+        <div class="thanks-medarc-link">
+          <p class="url-text" style="font-size:20px">medarc.ai</p>
+          <a class="thanks-medarc-panel-logo" href="https://medarc.ai" target="_blank" rel="noopener"><img src="assets/brand/medarc-horizontal-white.webp" alt="MedARC"></a>
+        </div>
         <p class="muted" style="margin-top:5px;font-size:15px">Our open research community</p>
       </div>
     </div>
@@ -2746,7 +3332,7 @@
     </div>
     <div class="content stack" style="justify-content:center">
       <div class="paper" style="height:280px;padding:14px"><img src="assets/fig/trait_state_probe.png" alt="Full Brainmarks task overview"></div>
-      <p class="center lead" style="margin-top:26px">The benchmark spans age, sex, four diagnoses, task state, and visual semantics.</p>
+      <p class="center lead" style="margin-top:26px">The benchmark spans demographics, three case-control tasks, PD vs prodromal, task state, and visual semantics.</p>
     </div>
     <aside class="notes">Backup. Full paper result strip. [Sources] Lane et al., ICML 2026, Figure 8.</aside>
   </section>
@@ -2762,11 +3348,11 @@
         <table>
           <thead><tr><th>Source</th><th>Target</th><th>Train / val / test</th><th>Classes</th><th>Metric</th></tr></thead>
           <tbody>
-            <tr><td>ABIDE</td><td>Autism diagnosis</td><td>578 / 124 / 124</td><td>2</td><td>Balanced accuracy</td></tr>
-            <tr><td>ADHD200</td><td>ADHD diagnosis</td><td>301 / 64 / 65</td><td>2</td><td>Balanced accuracy</td></tr>
-            <tr><td>ADNI</td><td>Alzheimer's diagnosis</td><td>328 / 41 / 41</td><td>2</td><td>Balanced accuracy</td></tr>
-            <tr><td>PPMI</td><td>Parkinson's diagnosis</td><td>463 / 99 / 100</td><td>2</td><td>Balanced accuracy</td></tr>
-            <tr><td>HCP-A</td><td>Age / sex</td><td>455 / 53 / 52 and 471 / 58 / 55</td><td>binary</td><td>Balanced accuracy</td></tr>
+            <tr><td>ABIDE</td><td>Autism vs control</td><td>578 / 124 / 124</td><td>2</td><td>Balanced accuracy</td></tr>
+            <tr><td>ADHD-200</td><td>ADHD vs typically developing</td><td>301 / 64 / 65</td><td>2</td><td>Balanced accuracy</td></tr>
+            <tr><td>ADNI</td><td>Dementia vs CN; MCI excluded</td><td>328 / 41 / 41</td><td>2</td><td>Balanced accuracy</td></tr>
+            <tr><td>PPMI</td><td>PD vs prodromal cohort</td><td>463 / 99 / 100</td><td>2</td><td>Balanced accuracy</td></tr>
+            <tr><td>HCP-A</td><td>Age / sex</td><td>455 / 53 / 52 and 471 / 58 / 55</td><td>4 / 2</td><td>Balanced accuracy</td></tr>
             <tr><td>HCP-YA</td><td>Task21</td><td>19K / 4K / 5K clips</td><td>21</td><td>Raw accuracy</td></tr>
             <tr><td>NSD</td><td>COCO24</td><td>33K / 5K / 5K clips</td><td>24</td><td>Raw accuracy</td></tr>
           </tbody>
@@ -3079,7 +3665,6 @@
       { label: "MAE-st (video FM)",      color: "#14b8ad",               vals: [95.8, 24.3], show: 5 },
     ];
     const yOf = (p, v) => PB - (v - p.ymin) / (p.ymax - p.ymin) * (PB - PT);
-    const yOfExpanded = (v) => PB - v / 70 * (PB - PT);
     const el = (tag, attrs, parent) => {
       const e = document.createElementNS(NS, tag);
       for (const k in (attrs || {})) e.setAttribute(k, attrs[k]);
@@ -3111,32 +3696,17 @@
           txt(tickGroup, p.x - 8, y + 4, String(tv), { "text-anchor": "end", "font-size": 11.5, fill: "#8b91b0" });
         });
       };
-      if (pi === 1) {
-        drawTicks(p.ticks, tv => yOf(p, tv), { "data-axis-before": "", opacity: 1 });
-        drawTicks([0, 20, 40, 60], yOfExpanded, { "data-axis-after": "", opacity: 0 });
-      } else {
-        drawTicks(p.ticks, tv => yOf(p, tv));
-      }
+      drawTicks(p.ticks, tv => yOf(p, tv));
       if (p.ylabel) {
         const t = txt(SP, 24, (PT + PB) / 2, "accuracy (%)", { "text-anchor": "middle", "font-size": 12.5, fill: "#8b91b0" });
         t.setAttribute("transform", `rotate(-90 24 ${(PT + PB) / 2})`);
       }
       lines.forEach(L => {
         const y = yOf(p, L.vals[pi]);
-        if (pi === 1) {
-          const yExpanded = yOfExpanded(L.vals[pi]);
-          const g = el("g", { "data-show": L.show, "data-yshift": "", "data-y0": y, "data-y1": yExpanded, opacity: 0 }, SP);
-          g.style.transform = `translateY(${y}px)`;
-          el("line", { x1: p.x, y1: 0, x2: p.x + p.w, y2: 0, stroke: L.color, "stroke-width": L.soft ? 1.8 : 2.4, "stroke-dasharray": L.dash || "none", "stroke-opacity": L.soft ? .65 : 1 }, g);
-          if (L.label === "MAE-st (video FM)") {
-            txt(g, p.x + 4, -9, "video FM", { "text-anchor": "start", "font-size": 10.5, "font-weight": 700, fill: "#5ed8cd" });
-          }
-        } else {
-          const g = el("g", { "data-show": L.show, opacity: 0 }, SP);
-          el("line", { x1: p.x, y1: y, x2: p.x + p.w, y2: y, stroke: L.color, "stroke-width": L.soft ? 1.8 : 2.4, "stroke-dasharray": L.dash || "none", "stroke-opacity": L.soft ? .65 : 1 }, g);
-          if (L.label === "MAE-st (video FM)") {
-            txt(g, p.x + 4, y - 9, "video FM (no brain!)", { "text-anchor": "start", "font-size": 10.5, "font-weight": 700, fill: "#5ed8cd" });
-          }
+        const g = el("g", { "data-show": L.show, opacity: 0 }, SP);
+        el("line", { x1: p.x, y1: y, x2: p.x + p.w, y2: y, stroke: L.color, "stroke-width": L.soft ? 1.8 : 2.4, "stroke-dasharray": L.dash || "none", "stroke-opacity": L.soft ? .65 : 1 }, g);
+        if (L.label === "MAE-st (video FM)") {
+          txt(g, p.x + 4, y - 9, pi === 1 ? "video FM" : "video FM (no brain!)", { "text-anchor": "start", "font-size": 10.5, "font-weight": 700, fill: "#5ed8cd" });
         }
       });
       models.forEach((m, i) => {
@@ -3147,10 +3717,6 @@
           const wrap = el("g", { "data-show": 3, opacity: 0 }, SP);
           wrap.style.transitionDelay = (i * 45) + "ms";
           const pointAttrs = { "data-x": x.toFixed(1), "data-ya": yA.toFixed(1), "data-yb": yB.toFixed(1) };
-          if (pi === 1) {
-            pointAttrs["data-ya-expanded"] = yOfExpanded(m.after[pi]).toFixed(1);
-            pointAttrs["data-yb-expanded"] = yOfExpanded(m.before[pi]).toFixed(1);
-          }
           const g = el("g", pointAttrs, wrap);
           g.style.transitionDelay = (i * 45) + "ms";
           g.style.transform = `translate(${x.toFixed(1)}px, ${yB.toFixed(1)}px)`;
@@ -3160,24 +3726,11 @@
         } else {
           const wrap = el("g", { "data-show": 3, opacity: 0 }, SP);
           wrap.style.transitionDelay = (i * 35) + "ms";
-          let g;
-          if (pi === 1) {
-            g = el("g", { "data-static-x": x.toFixed(1), "data-static-y": yA.toFixed(1), "data-static-y-expanded": yOfExpanded(m.after[pi]).toFixed(1) }, wrap);
-            g.style.transform = `translate(${x.toFixed(1)}px, ${yA.toFixed(1)}px)`;
-          } else {
-            g = el("g", { transform: `translate(${x} ${yA})` }, wrap);
-          }
+          const g = el("g", { transform: `translate(${x} ${yA})` }, wrap);
           shapeEls(m.shape, m.color, g);
           txt(g, 0, -14, m.after[pi].toFixed(1), { class: "vlab", "text-anchor": "middle", "font-size": 11, fill: "#a9adc9" });
         }
       });
-      if (pi === 1) {
-        const mlpY = yOfExpanded(64);
-        const mlp = el("g", { "data-show": 6, opacity: 0 }, SP);
-        mlp.style.transitionDelay = "450ms";
-        el("line", { x1: p.x, y1: mlpY, x2: p.x + p.w, y2: mlpY, stroke: "#f4b83e", "stroke-width": 3 }, mlp);
-        txt(mlp, p.x + p.w - 4, mlpY - 9, "subject-specific MLP · 64%", { "text-anchor": "end", "font-size": 12.5, "font-weight": 700, fill: "#f4cf70" });
-      }
     });
 
     // legend
@@ -3198,7 +3751,7 @@
     });
   }
 
-  /* ---- staged trait-benchmark plot (slide 9): demographics + clinical diagnosis ---- */
+  /* ---- staged trait-benchmark plot: demographics + clinical cohort labels ---- */
   function buildTraitPlot() {
     const TP = document.querySelector(".tp");
     if (!TP) return;
@@ -3230,19 +3783,19 @@
         ymin: 45, ymax: 90, ticks: [50, 60, 70, 80, 90], chance: 50, connectome: 81.9, winner: 8,
         video: 77.7,
         vals: [74.5, 49.3, 82.7, 64.9, 58.4, 86.5, [79.2, 1.7], [71.2, 1.0], [87.4, 0.7], [86.3, 0.7]] },
-      { title: "Autism",      sub: "ABIDE · 826 subjects",               row: 0, x: 770,
+      { title: "Autism",      sub: "ABIDE · autism vs control · 826",    row: 0, x: 770,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 59.8, winner: 7,
         video: 53.3,
         vals: [53.7, 52.6, 53.5, 48.5, 50.4, 54.0, [57.3, 0.6], [62.0, 0.8], [61.4, 1.3], [60.4, 0.8]] },
-      { title: "ADHD",        sub: "ADHD200 · 430 subjects",             row: 1, x: 50,
+      { title: "ADHD",        sub: "ADHD-200 · ADHD vs typically developing · 430", row: 1, x: 50,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 57.0, winner: 2,
         video: 57.7,
         vals: [59.2, 59.1, 61.1, 60.2, 59.9, 60.2, [59.7, 0.7], [56.8, 0.6], [59.2, 1.0], [58.8, 1.1]] },
-      { title: "Alzheimer's", sub: "ADNI · 410 subjects",                row: 1, x: 410,
+      { title: "Alzheimer's", sub: "ADNI · dementia vs cognitively normal · 410", row: 1, x: 410,
         ymin: 45, ymax: 74, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 58.6, winner: 5,
         video: 63.2,
         vals: [60.7, 62.1, 66.8, 55.5, 51.6, 70.7, [57.2, 2.0], [61.6, 1.2], [62.4, 1.4], [64.3, 1.6]] },
-      { title: "Parkinson's", sub: "PPMI · 662 subjects",                row: 1, x: 770,
+      { title: "Parkinson's", sub: "PPMI · PD vs prodromal · 662",       row: 1, x: 770,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 58.0, winner: 7,
         video: 56.1,
         vals: [55.8, 56.8, 53.4, 52.7, 56.3, 56.9, [55.1, 1.4], [61.4, 1.3], [58.8, 1.1], [59.1, 1.2]] },
@@ -3553,22 +4106,9 @@
     });
     b.querySelectorAll("[data-x]").forEach(g => {
       const after = n >= 4;
-      const expanded = n >= 6;
-      const y = expanded && g.dataset.yaExpanded
-        ? (after ? g.dataset.yaExpanded : g.dataset.ybExpanded)
-        : (after ? g.dataset.ya : g.dataset.yb);
+      const y = after ? g.dataset.ya : g.dataset.yb;
       g.style.transform = `translate(${g.dataset.x}px, ${y}px)`;
     });
-    b.querySelectorAll("[data-static-x]").forEach(g => {
-      const y = n >= 6 ? g.dataset.staticYExpanded : g.dataset.staticY;
-      g.style.transform = `translate(${g.dataset.staticX}px, ${y}px)`;
-    });
-    b.querySelectorAll("[data-yshift]").forEach(g => {
-      const y = n >= 6 ? g.dataset.y1 : g.dataset.y0;
-      g.style.transform = `translateY(${y}px)`;
-    });
-    b.querySelectorAll("[data-axis-before]").forEach(g => { g.style.opacity = n >= 6 ? 0 : 1; });
-    b.querySelectorAll("[data-axis-after]").forEach(g => { g.style.opacity = n >= 6 ? 1 : 0; });
     b.querySelectorAll(".lb-before").forEach(elm => { elm.style.opacity = n === 3 ? 1 : 0; });
     b.querySelectorAll(".lb-after").forEach(elm => { elm.style.opacity = n >= 4 ? 1 : 0; });
     b.querySelectorAll("[data-dim-at]").forEach(elm => { if (n >= +elm.dataset.dimAt) elm.style.opacity = 0.3; });
@@ -3576,6 +4116,15 @@
     b.querySelectorAll("[data-taskcards]").forEach(elm => { elm.style.opacity = n === 0 ? 1 : 0; });
     b.querySelectorAll("[data-hide0]").forEach(elm => { elm.style.opacity = n === 0 ? 0 : 1; });
     b.querySelectorAll("[data-cap]").forEach(elm => { elm.style.opacity = +elm.dataset.cap === n ? 1 : 0; });
+    b.querySelectorAll("[data-stage-pane], [data-stage-from]").forEach(elm => {
+      const active = elm.dataset.stageFrom === undefined
+        ? +elm.dataset.stagePane === n
+        : n >= +elm.dataset.stageFrom;
+      elm.style.opacity = active ? 1 : 0;
+      elm.style.visibility = active ? "visible" : "hidden";
+      elm.style.transform = active ? "none" : "translateY(9px)";
+      elm.setAttribute("aria-hidden", active ? "false" : "true");
+    });
     b.querySelectorAll(".sdot i").forEach((d, i) => d.classList.toggle("on", i <= n));
   }
 
@@ -3890,7 +4439,6 @@
   buildStatePlot();
   buildTraitPlot();
   buildScalingPlots();
-  buildUKBBPlot();
 
   /* Restyle only plot scaffolding for the light theme. Series fills and
      strokes are deliberately untouched so every data-point color is stable. */
