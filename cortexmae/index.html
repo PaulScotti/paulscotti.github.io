@@ -2400,7 +2400,7 @@
   .tp text[font-size="11.5"] { font-size: 15px; }
   .tp text[font-size="12"] { font-size: 15px; }
   .tp text[font-size="17"] { font-size: 19px; }
-  .slide[data-title="Trait benchmark"] .tp .vlab { font-size: 14px; }
+  .slide[data-title="Trait benchmark"] .tp .vlab { font-size: 13px; }
 
   .ds text[font-size="11"],
   .ms text[font-size="11"] { font-size: 14.5px; }
@@ -3832,7 +3832,7 @@ $ neuro-sync path_to_dicoms</code></pre>
         const g = el("g", { "data-show": L.show, opacity: 0 }, SP);
         el("line", { x1: p.x, y1: y, x2: p.x + p.w, y2: y, stroke: L.color, "stroke-width": L.soft ? 1.8 : 2.4, "stroke-dasharray": L.dash || "none", "stroke-opacity": L.soft ? .65 : 1 }, g);
         if (L.label === "MAE-st (video FM)") {
-          txt(g, p.x + 4, y - 9, pi === 1 ? "video FM" : "video FM (no brain!)", { "text-anchor": "start", "font-size": 10.5, "font-weight": 700, fill: "#5ed8cd" });
+          txt(g, p.x + 4, y - 9, pi === 1 ? "video FM" : "video FM (no brain!)", { "text-anchor": "start", "font-size": 10.5, "font-weight": 700, fill: "#14b8ad" });
         }
       });
       models.forEach((m, i) => {
@@ -3909,19 +3909,19 @@ $ neuro-sync path_to_dicoms</code></pre>
         ymin: 45, ymax: 90, ticks: [50, 60, 70, 80, 90], chance: 50, connectome: 81.9, winner: 8,
         video: 77.7,
         vals: [74.5, 49.3, 82.7, 64.9, 58.4, 86.5, [79.2, 1.7], [71.2, 1.0], [87.4, 0.7], [86.3, 0.7]] },
-      { title: "Autism",      sub: "ABIDE · autism vs control · 826",    row: 0, x: 770,
+      { title: "Autism",      sub: "ABIDE · autism vs control",    row: 0, x: 770,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 59.8, winner: 7,
         video: 53.3,
         vals: [53.7, 52.6, 53.5, 48.5, 50.4, 54.0, [57.3, 0.6], [62.0, 0.8], [61.4, 1.3], [60.4, 0.8]] },
-      { title: "ADHD",        sub: "ADHD-200 · ADHD vs typically developing · 430", row: 1, x: 50,
+      { title: "ADHD",        sub: "ADHD-200 · ADHD vs typically developing", row: 1, x: 50,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 57.0, winner: 2,
         video: 57.7,
         vals: [59.2, 59.1, 61.1, 60.2, 59.9, 60.2, [59.7, 0.7], [56.8, 0.6], [59.2, 1.0], [58.8, 1.1]] },
-      { title: "Alzheimer's", sub: "ADNI · dementia vs cognitively normal · 410", row: 1, x: 410,
+      { title: "Alzheimer's", sub: "ADNI · dementia vs cognitively normal", row: 1, x: 410,
         ymin: 45, ymax: 74, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 58.6, winner: 5,
         video: 63.2,
         vals: [60.7, 62.1, 66.8, 55.5, 51.6, 70.7, [57.2, 2.0], [61.6, 1.2], [62.4, 1.4], [64.3, 1.6]] },
-      { title: "Parkinson's", sub: "PPMI · PD vs prodromal · 662",       row: 1, x: 770,
+      { title: "Parkinson's", sub: "PPMI · PD vs prodromal",       row: 1, x: 770,
         ymin: 45, ymax: 70, ticks: [50, 55, 60, 65, 70], chance: 50, connectome: 58.0, winner: 7,
         video: 56.1,
         vals: [55.8, 56.8, 53.4, 52.7, 56.3, 56.9, [55.1, 1.4], [61.4, 1.3], [58.8, 1.1], [59.1, 1.2]] },
@@ -4017,12 +4017,12 @@ $ neuro-sync path_to_dicoms</code></pre>
     txt(g2, 234, 491, "Chance", { "font-size": 12, fill: "#a9adc9" });
     const gv = el("g", { "data-show": 1, opacity: 0 }, TP);
     el("line", { x1: 320, y1: 487, x2: 348, y2: 487, stroke: "#14b8ad", "stroke-width": 2.4 }, gv);
-    txt(gv, 358, 491, "MAE-st", { "font-size": 12, fill: "#a9adc9" });
+    txt(gv, 358, 491, "MAE-st", { "font-size": 12, fill: "#14b8ad" });
     const g3 = el("g", { "data-show": 1, opacity: 0 }, TP);
     el("line", { x1: 500, y1: 479, x2: 500, y2: 493, stroke: "#a9adc9", "stroke-width": 2 }, g3);
     el("line", { x1: 496, y1: 479, x2: 504, y2: 479, stroke: "#a9adc9", "stroke-width": 2 }, g3);
     el("line", { x1: 496, y1: 493, x2: 504, y2: 493, stroke: "#a9adc9", "stroke-width": 2 }, g3);
-    txt(g3, 512, 491, "±2σ over pretraining repeats (CortexMAE, Brain-Semantoks)", { "font-size": 12, fill: "#a9adc9" });
+    txt(g3, 512, 491, "±2σ over pretraining repeats", { "font-size": 12, fill: "#a9adc9" });
   }
 
   /* ---- staged scaling-law plots (slides 11 and 12) ---- */
