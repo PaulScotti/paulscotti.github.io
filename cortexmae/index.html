@@ -3690,8 +3690,8 @@ $ neuro-sync path_to_dicoms</code></pre>
 <script>
 (() => {
   const scalingNeuroSlide = document.querySelector('.slide[data-title="Scaling Neuro"]');
-  const thankYouSlide = document.querySelector('.slide[data-title="Thank you"]');
-  if (scalingNeuroSlide && thankYouSlide) scalingNeuroSlide.before(thankYouSlide);
+  const takeawaysSlide = document.querySelector('.slide[data-title="Takeaways"]');
+  if (scalingNeuroSlide && takeawaysSlide) takeawaysSlide.before(scalingNeuroSlide);
   const slides = [...document.querySelectorAll(".slide")];
   const mainSlides = slides.filter(s => !s.classList.contains("backup"));
   const backupSlides = slides.filter(s => s.classList.contains("backup"));
