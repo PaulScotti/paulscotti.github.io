@@ -4115,9 +4115,6 @@ $ neuro-sync path_to_dicoms</code></pre>
           const x = xOf(p, xv), y = yOf(p, lv);
           const c = el("circle", { cx: x, cy: y, r: 7, fill: p.color, stroke: "rgba(6,6,26,.85)", "stroke-width": 1.2 }, gd);
           c.style.transitionDelay = (di * 45) + "ms";
-          if (di === 0 || di === p.dots.length - 1) {
-            txt(gd, x, y - 13, lv.toFixed(3), { class: "vlab", "text-anchor": "middle", "font-size": 11, fill: "#a9adc9" });
-          }
         });
         // gap annotation (data scaling, NSD panel)
         if (p.gapNote) {
