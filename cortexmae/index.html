@@ -265,7 +265,7 @@
   }
   .thanks-brand-lockup {
     position: absolute;
-    bottom: 72px;
+    bottom: 42px;
     right: 70px;
   }
   .thanks-brand-lockup .brand-sophont img {
@@ -638,7 +638,7 @@
   }
   .prior-eval-row {
     display: grid;
-    grid-template-columns: 218px 1fr 390px;
+      grid-template-columns: 218px 430px 1fr;
     min-height: 48px;
     align-items: center;
     border-bottom: 1px solid var(--line);
@@ -658,7 +658,7 @@
     padding: 7px 16px;
     color: var(--ink);
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: .12em;
     text-align: center;
@@ -671,7 +671,7 @@
   .prior-eval-head > div {
     color: var(--faint);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -698,10 +698,10 @@
     font-size: 15.5px;
     line-height: 1.3;
   }
-  .prior-state.none { color: var(--faint); }
+  .prior-state.none,
   .prior-state.yes {
-    color: var(--cyan);
-    font-weight: 700;
+    color: var(--faint);
+    font-weight: 400;
   }
   .state-priority {
     margin-top: 17px;
@@ -1064,10 +1064,10 @@
     margin-top: 8px;
   }
   .uk-merge-caption p {
-    color: var(--ink);
-    font-size: 23px;
-    font-weight: 650;
-    line-height: 1.24;
+    color: var(--muted);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.4;
   }
   .uk-merge-caption .point-number {
     margin-right: 11px;
@@ -1374,10 +1374,10 @@
     top: 20px;
     right: 62px;
     z-index: 2;
-    content: "SOPHONT / CCN 2026";
+    content: "SOPHONT.MED";
     color: var(--faint);
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 500;
     letter-spacing: .13em;
   }
@@ -1575,7 +1575,8 @@
     color: var(--ink);
   }
   .prior-state.yes {
-    color: var(--cyan);
+    color: var(--muted);
+    font-weight: 400;
   }
   .state-priority {
     border-left-color: var(--cyan);
@@ -1829,7 +1830,7 @@
     font-size: 14.5px;
   }
   .title-research-lead {
-    font-size: 16px;
+    font-size: 20px;
   }
   .title-open-source {
     font-size: 18px;
@@ -1914,7 +1915,7 @@
 
   .prior-eval-head > div {
     color: var(--muted);
-    font-size: 13px;
+    font-size: 15px;
   }
   .prior-model span {
     color: var(--muted);
@@ -1925,8 +1926,10 @@
     color: var(--copy);
     font-size: 16.5px;
   }
-  .prior-state.none {
+  .prior-state.none,
+  .prior-state.yes {
     color: var(--muted);
+    font-weight: 400;
   }
   .brainmarks-context,
   .brainmarks-task p,
@@ -2051,7 +2054,7 @@
     border-left: 1px solid var(--line-strong);
     color: var(--muted);
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: 25px;
     font-weight: 500;
     letter-spacing: .015em;
     line-height: 1;
@@ -2236,8 +2239,8 @@
   }
   .sn-bars {
     display: grid;
-    gap: 28px;
-    margin: 32px 0 0;
+    gap: 12px;
+    margin: 20px 0 0;
   }
   .sn-bar-row {
     display: grid;
@@ -2333,6 +2336,120 @@
     height: 8px;
     border-radius: 1px;
   }
+
+  /* Conference-venue legibility pass: enlarge substantive supporting text. */
+  .title-project-url { font-size: 17px; }
+  .modtile .mmodels { font-size: 15.5px; }
+
+  .infer-label { font-size: 16px; }
+  .ds7 .stepnum { font-size: 16px; }
+  .ds7flow text[font-size="9.5"] { font-size: 14.5px; }
+  .ds7flow text[font-size="10.5"] { font-size: 14.5px; }
+  .ds7flow text[font-size="11"] { font-size: 15px; }
+  .ds7flow text[font-size="11.5"] { font-size: 15.5px; }
+  .ds7flow g[font-size="12"] { font-size: 16px; }
+  .ds7flow text[x="205"] { font-size: 15px; }
+
+  .prior-eval-superhead .prior-eval-task-group { font-size: 17px; }
+  .prior-eval-head > div { font-size: 16.5px; }
+  .prior-model { font-size: 18px; }
+  .prior-model span { font-size: 14px; }
+  .prior-trait,
+  .prior-state { font-size: 18px; }
+
+  .slide[data-title="Brainmarks"] .content > p.muted { font-size: 19px !important; }
+  .brainmarks-target-heading h4 { font-size: 24px; }
+  .brainmarks-context { font-size: 18px; }
+  .brainmarks-task-count { font-size: 16px; }
+  .brainmarks-task-index { font-size: 15.5px; }
+  .brainmarks-task h3 { font-size: 22px; }
+  .brainmarks-task p { font-size: 17.5px; }
+  .brainmarks-task-list-trait .brainmarks-task {
+    min-height: 0;
+    padding-top: 5px;
+    padding-bottom: 4px;
+  }
+  .brainmarks-task-list-trait .brainmarks-task h3 {
+    font-size: 19.5px;
+    line-height: 1.1;
+  }
+  .brainmarks-task-list-trait .brainmarks-task p {
+    margin-top: 1px;
+    font-size: 17px;
+    line-height: 1.15;
+  }
+  .brainmarks-protocol { font-size: 17px; }
+
+  .tcard h3 { font-size: 21px; }
+  .tcard .sub { font-size: 16px; }
+  .tgroup .gname { font-size: 14px; }
+  .chip { font-size: 15px; }
+  .tfoot { font-size: 14px; }
+  .cgrid figcaption { font-size: 15px; }
+
+  .sp text[font-size="10.5"] { font-size: 15px; }
+  .sp text[font-size="11"] { font-size: 15px; }
+  .sp text[font-size="11.5"] { font-size: 15px; }
+  .sp text[font-size="12"] { font-size: 15px; }
+  .sp text[font-size="12.5"] { font-size: 15.5px; }
+  .sp text[font-size="13"] { font-size: 15px; }
+  .sp text[font-size="17"] { font-size: 19px; }
+
+  .tp text[font-size="10.5"] { font-size: 14.5px; }
+  .tp text[font-size="11"] { font-size: 14.5px; }
+  .tp text[font-size="11.5"] { font-size: 15px; }
+  .tp text[font-size="12"] { font-size: 15px; }
+  .tp text[font-size="17"] { font-size: 19px; }
+  .slide[data-title="Trait benchmark"] .tp .vlab { font-size: 14px; }
+
+  .ds text[font-size="11"],
+  .ms text[font-size="11"] { font-size: 14.5px; }
+  .ds text[font-size="11.5"],
+  .ms text[font-size="11.5"] { font-size: 15px; }
+  .ds text[font-size="12"],
+  .ms text[font-size="12"] { font-size: 15.5px; }
+  .ds text[font-size="12.5"],
+  .ms text[font-size="12.5"] { font-size: 16px; }
+  .ds text[font-size="17"],
+  .ms text[font-size="17"] { font-size: 20px; }
+  .ds tspan[font-size="9.5"],
+  .ms tspan[font-size="9.5"] { font-size: 14.5px; }
+  .slide[data-title="Data scaling"] .build-cap p,
+  .slide[data-title="Model scaling"] .build-cap p,
+  .slide[data-title="UK Biobank scaling"] .uk-merge-caption p { font-size: 20px; }
+
+  .uk-axis-track span { font-size: 14.5px; }
+  .uk-plot-xlabel { font-size: 14px; }
+
+  .slide[data-title="Takeaways"] .eyebrow { font-size: 17px; }
+  .slide[data-title="Takeaways"] .content > div:first-child h3 { font-size: 23px !important; }
+  .slide[data-title="Takeaways"] .content > div:first-child .muted {
+    font-size: 19px !important;
+    line-height: 1.38 !important;
+  }
+  .slide[data-title="Takeaways"] .content > div:last-child .muted {
+    font-size: 19px !important;
+    line-height: 1.4 !important;
+  }
+
+  .sn-process-step span { font-size: 14px; }
+  .sn-terminal { top: 396px; height: 148px; }
+  .sn-terminal-title { font-size: 14px; }
+  .sn-terminal pre { font-size: 16.5px; line-height: 1.17; }
+  .sn-bar-label { font-size: 15.5px; }
+  .sn-bar-label small { font-size: 15.5px; }
+  .sn-bar-key { font-size: 14.5px; }
+
+  .slide[data-title="Thank you"] .muted { font-size: 18px !important; }
+  .slide[data-title="Thank you"] > div[style*="top:196px"] > div > p:first-child {
+    font-size: 16px !important;
+  }
+  .slide[data-title="Thank you"] > div[style*="bottom:42px"] > p:first-child {
+    font-size: 15.5px !important;
+  }
+  .slide[data-title="Thank you"] > div[style*="bottom:42px"] > p.faint {
+    font-size: 15.5px !important;
+  }
 </style>
 </head>
 <body>
@@ -2346,7 +2463,7 @@
       </div>
       <div style="margin-top:17px">
         <p class="question center">Which representation would you choose for a<br><span class="cyan">general-purpose fMRI foundation model</span>?</p>
-        <p class="center" style="margin-top:13px;font-size:23px">
+        <p class="center" style="margin-top:18px;font-size:30px">
           <span class="parcel">parcels</span>
           <span class="faint" style="padding:0 13px">or</span>
           <span class="flat">surface</span>
@@ -2428,7 +2545,7 @@
           <p class="mmodels">UNI2 · OpenMidnight</p>
         </div>
         <div class="modtile">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5 Q 6 7.5 8.5 12 Q 11 16.5 8.5 20.5"/><path d="M15.5 3.5 Q 18 7.5 15.5 12 Q 13 16.5 15.5 20.5"/><line x1="7.4" y1="6" x2="16.6" y2="6"/><line x1="8.5" y1="12" x2="15.5" y2="12"/><line x1="7.4" y1="18" x2="16.6" y2="18"/></svg>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3 C7 7 17 8 17 12 C17 16 7 17 7 21"/><path d="M17 3 C17 7 7 8 7 12 C7 16 17 17 17 21"/><line x1="7.5" y1="4.5" x2="16.5" y2="4.5"/><line x1="10.5" y1="8" x2="13.5" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10.5" y1="16" x2="13.5" y2="16"/><line x1="7.5" y1="19.5" x2="16.5" y2="19.5"/></svg>
           <p class="mname">Protein</p>
           <p class="mmodels">AlphaFold · ESM</p>
         </div>
@@ -2489,18 +2606,18 @@
           <div class="rule" style="margin:24px 0"></div>
           <p><strong>Nearby cortical locations remain nearby in the image.</strong></p>
           <p style="margin-top:22px"><strong>Every time-series becomes ordinary video.</strong></p>
-          <p class="muted" style="margin-top:7px;font-size:18px">Simply drop in standard video SSL architectures.</p>
+          <!-- <p class="muted" style="margin-top:7px;font-size:18px">Simply drop in standard video SSL architectures.</p> -->
         </div>
         <div class="frag phaseB" style="position:absolute;top:-6px;left:0;right:0">
           <div class="stats" style="grid-template-columns:repeat(2,1fr)">
             <div class="stat"><div class="n">980</div><div class="l">HCP-YA participants</div></div>
             <div class="stat"><div class="n">2,058 h</div><div class="l">pretraining fMRI</div></div>
-            <div class="stat"><div class="n">7.4M</div><div class="l">frames</div></div>
+            <div class="stat"><div class="n">7.4M</div><div class="l">1-sec TRs / frames</div></div>
             <div class="stat"><div class="n">90%</div><div class="l">tube masking</div></div>
           </div>
-          <div class="rule" style="margin:22px 0"></div>
-          <p><strong>Self-supervised ViT-B encoder.</strong></p>
-          <p class="muted" style="margin-top:7px;font-size:18px">The encoder sees 10% of space-time patches and predicts the rest, no labels. About 28 hours on one H100.</p>
+          <!-- <div class="rule" style="margin:22px 0"></div> -->
+          <!-- <p><strong>Self-supervised ViT-B masked autoencoder.</strong></p> -->
+          <!-- <p class="muted" style="margin-top:7px;font-size:18px">The encoder sees 10% of space-time patches and predicts the rest, no labels. About 28 hours on one H100.</p> -->
         </div>
       </div>
     </div>
@@ -2517,8 +2634,8 @@
       <div class="media" style="height:392px">
         <video src="assets/video/denoising_surfaces.mp4" muted playsinline preload="auto" data-loop></video>
       </div>
-      <p class="center lead" style="margin-top:24px">Averaged over 100 random masks, predictable <strong>structure survives</strong> and noise is left behind.</p>
-      <p class="center muted" style="margin-top:8px;font-size:16px">NSD data, never seen in training. Original data (left), model reconstruction (right).</p>
+      <p class="center lead" style="margin-top:24px">Averaged over 100 random masks, predictable structure survives and noise is left behind.</p>
+      <!-- <p class="center muted" style="margin-top:8px;font-size:16px">NSD data, never seen in training. Original data (left), model reconstruction (right).</p> -->
     </div>
     <aside class="notes">5:00-6:05. FLEX: compressible to 30 seconds if behind. Let the loop play while narrating. The ground-truth values are hidden when the model predicts a patch, so only context-predictable structure survives: default-mode oscillation, traveling waves in visual cortex, sensorimotor hand activation. [Sources] Lane et al., ICML 2026, Figure 4 and Section 5. Animation from the Sophont CortexMAE blog assets.</aside>
   </section>
@@ -2727,7 +2844,7 @@
           <div class="media" style="width:460px;height:195px">
             <video src="assets/video/infer_flatmap_raised.mp4" muted playsinline preload="auto" data-loop></video>
           </div>
-          <p class="infer-label">16 s of fMRI &middot; flat map</p>
+          <p class="infer-label">16 seconds of fMRI</p>
           <svg class="ds7flow" viewBox="0 0 460 300" style="width:460px;display:block" role="img" aria-label="A sequence of fMRI flat maps enters a frozen CortexMAE encoder and becomes 364 by 768 latent features. A trainable lightweight adapter then produces a downstream prediction.">
             <g aria-label="The flat-map video enters the frozen CortexMAE encoder">
               <line x1="230" y1="0" x2="230" y2="6" stroke="var(--cyan)" stroke-width="2"/>
@@ -2806,7 +2923,7 @@
             <g data-show="2" opacity="0" aria-label="Trainable lightweight adapter and downstream prediction">
               <line x1="230" y1="176" x2="230" y2="188" stroke="#f4b83e" stroke-width="2" stroke-dasharray="4 4"/>
               <path d="M230,196 L225.5,187 L234.5,187 Z" fill="#f4b83e"/>
-              <rect class="adapter-box" x="121" y="196" width="218" height="42" rx="12"/>
+              <rect class="adapter-box" x="108" y="196" width="244" height="42" rx="12"/>
               <g class="adapter-icon">
                 <line x1="140" y1="207" x2="159" y2="217"/>
                 <line x1="140" y1="217" x2="159" y2="217"/>
@@ -2816,17 +2933,17 @@
                 <circle cx="140" cy="227" r="2.5"/>
                 <circle cx="159" cy="217" r="3.2"/>
               </g>
-              <text x="175" y="214" font-family="IBM Plex Mono" font-size="10.5" font-weight="600" fill="#f4b83e">LIGHTWEIGHT ADAPTER</text>
-              <text x="175" y="228" font-family="IBM Plex Mono" font-size="9.5" fill="#9098b8">TRAINABLE</text>
+              <text x="169" y="214" font-family="IBM Plex Mono" font-size="10.5" font-weight="600" fill="#f4b83e">LIGHTWEIGHT ADAPTER</text>
+              <text x="169" y="228" font-family="IBM Plex Mono" font-size="9.5" fill="#9098b8">TRAINABLE</text>
               <line x1="230" y1="238" x2="230" y2="245" stroke="#f4b83e" stroke-width="2"/>
               <path d="M230,252 L225.5,243 L234.5,243 Z" fill="#f4b83e"/>
-              <rect x="65" y="252" width="330" height="44" rx="12" fill="rgba(26,28,70,.55)" stroke="rgba(198,204,247,.28)"/>
-              <rect x="65" y="252" width="4" height="44" rx="2" fill="#f4b83e"/>
+              <rect x="48" y="252" width="364" height="44" rx="12" fill="rgba(26,28,70,.55)" stroke="rgba(198,204,247,.28)"/>
+              <rect x="48" y="252" width="4" height="44" rx="2" fill="#f4b83e"/>
               <text x="84" y="270" font-family="IBM Plex Mono" font-size="9.5" font-weight="600" letter-spacing=".07em" fill="#fbfaff">DOWNSTREAM</text>
               <text x="84" y="284" font-family="IBM Plex Mono" font-size="9.5" font-weight="600" letter-spacing=".07em" fill="#fbfaff">PREDICTION</text>
               <line x1="190" y1="260" x2="190" y2="288" stroke="rgba(198,204,247,.28)" stroke-width="1"/>
-              <text x="205" y="270" font-family="IBM Plex Mono" font-size="9.5" fill="#c0c4dc">clinical indicators &middot;</text>
-              <text x="205" y="286" font-family="IBM Plex Mono" font-size="9.5" fill="#c0c4dc">mental state decoding &middot; etc</text>
+              <text x="205" y="270" font-family="IBM Plex Mono" font-size="9.5" fill="#c0c4dc">clinical indicators</text>
+              <text x="205" y="286" font-family="IBM Plex Mono" font-size="9.5" fill="#c0c4dc">mental-state decoding</text>
             </g>
           </svg>
         </div>
@@ -2874,45 +2991,46 @@
         </div>
         <div class="prior-eval-row prior-eval-head" role="row">
           <div role="columnheader">Original paper</div>
-          <div role="columnheader" style="color:var(--coral)">Subject-level trait predictions</div>
           <div role="columnheader" style="color:var(--cyan)">Dynamic mental state predictions</div>
+          <div role="columnheader" style="color:var(--coral)">Subject-level trait predictions</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">SwiFT <span>2023</span></div>
-          <div class="prior-trait" role="cell">Age · sex · intelligence</div>
           <div class="prior-state none" role="cell">No state decoding</div>
+          <div class="prior-trait" role="cell">Age · sex · intelligence</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">Brain-JEPA <span>2024</span></div>
-          <div class="prior-trait" role="cell">Age · sex · neuroticism/Flanker · MCI/amyloid</div>
           <div class="prior-state none" role="cell">No state decoding</div>
+          <div class="prior-trait" role="cell">Age · sex · neuroticism/Flanker · MCI/amyloid</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">NeuroSTORM <span>2025</span></div>
-          <div class="prior-trait" role="cell">Age · sex · phenotypes · diagnoses · subject re-ID</div>
           <div class="prior-state yes" role="cell">HCP task state · DMT/placebo</div>
+          <div class="prior-trait" role="cell">Age · sex · phenotypes · diagnoses · subject re-ID</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">BrainLM <span>2024</span></div>
-          <div class="prior-trait" role="cell">Age · neuroticism · PTSD · anxiety</div>
           <div class="prior-state none" role="cell">No state decoding</div>
+          <div class="prior-trait" role="cell">Age · neuroticism · PTSD · anxiety</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">BrainHarmonix-F <span>2025</span></div>
-          <div class="prior-trait" role="cell">ASD · ADHD · Parkinson's · MCI · executive function</div>
           <div class="prior-state none" role="cell">No state decoding</div>
+          <div class="prior-trait" role="cell">ASD · ADHD · Parkinson's · MCI · executive function</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">Omni-fMRI <span>2026</span></div>
-          <div class="prior-trait" role="cell">Age · sex · education · ASD/PD/MCI/AD</div>
           <div class="prior-state yes" role="cell">HCP 23-way state · movie emotion</div>
+          <div class="prior-trait" role="cell">Age · sex · education · ASD/PD/MCI/AD</div>
         </div>
         <div class="prior-eval-row" role="row">
           <div class="prior-model" role="cell">Brain-Semantoks <span>2025</span></div>
-          <div class="prior-trait" role="cell">Demographics · diagnoses · cognition/language · mood</div>
           <div class="prior-state yes" role="cell">UKB Hariri task · faces vs shapes</div>
+          <div class="prior-trait" role="cell">Demographics · diagnoses · cognition/language · mood</div>
         </div>
       </div>
+      <p class="center" style="margin-top:18px;font-size:22px;font-weight:700;line-height:1.25">Many fMRI foundation model papers didn't actually evaluate with fMRI tasks.</p>
       <!-- <p class="faint" style="margin-top:8px;font-size:12px">Latest original-paper versions, July 2026. Reconstruction, generation, and cross-modal retrieval are not counted as state decoding.</p> -->
       <!-- <div class="state-priority frag">
         <p>Trait and identity labels stay fixed as the time series changes.</p>
@@ -2928,7 +3046,7 @@
       <h2>Brainmarks enables direct, reproducible comparisons.</h2>
     </div>
     <div class="content stack" style="top:140px">
-      <p class="muted" style="font-size:18px"><strong>Prior papers share dataset sources, but not curation, preprocessing, subject splits, or evaluation.</strong></p>
+      <p class="muted" style="font-size:18px"><strong>Prior papers shared dataset sources, but didn't disclose reproducible info on curation, preprocessing, subject splits, or evaluation.</strong></p>
       <!-- <p class="eyebrow" style="margin:15px 0 14px;color:var(--faint)">Brainmarks suite · 8 model families · 8 core tasks · 7 public datasets · open code and splits</p> -->
       <div class="brainmarks-targets">
         <div class="brainmarks-target" style="--c:var(--cyan)">
@@ -2961,7 +3079,7 @@
           <div class="brainmarks-target-heading">
             <div>
               <h4>Trait-based</h4>
-              <p class="brainmarks-context">Demographics and clinical cohort status from one resting-state scan</p>
+              <p class="brainmarks-context">Demographic and clinical status from resting-state fMRI</p>
             </div>
             <span class="brainmarks-task-count">6 tasks</span>
           </div>
@@ -2980,18 +3098,18 @@
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">06</span>
-              <div><h3>ADHD</h3><p>ADHD-200 · ADHD vs typically developing; subtypes combined</p></div>
+              <div><h3>ADHD</h3><p>ADHD-200 · ADHD vs typically developing</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">07</span>
-              <div><h3>Alzheimer's</h3><p>ADNI · dementia vs cognitively normal; MCI excluded</p></div>
+              <div><h3>Alzheimer's</h3><p>ADNI · dementia vs cognitively normal</p></div>
             </div>
             <div class="brainmarks-task">
               <span class="brainmarks-task-index">08</span>
               <div><h3>Parkinson's</h3><p>PPMI · PD vs prodromal cohort</p></div>
             </div>
           </div>
-          <p class="brainmarks-protocol">100 randomized splits · logistic probe</p>
+          <p class="brainmarks-protocol">held-out subjects · logistic probe</p>
         </div>
       </div>
       <!-- <p class="center lead" style="margin-top:25px;font-size:23px">Established trait benchmarks, plus under-studied dynamic cognitive state decoding.</p> -->
@@ -3035,11 +3153,12 @@
         </div>
         <div class="build-cap">
           <p data-cap="0"></p>
-          <p data-cap="1">Raw accuracy against held-out subjects. The dashed line is chance: always guessing the majority class, 17% on Task21 and 7% on COCO24.</p>
-          <p data-cap="2">Baseline one: a linear model on functional connectivity. No deep learning, and it already reaches 82% on Task21.</p>
-          <p data-cap="3">The models as originally evaluated. Six of seven prior models sit at chance; none of the seven used coordinate normalization.</p>
-          <p data-cap="4">Same weights, one preprocessing fix. Shared coordinate normalization moves six models by 43 to 76 points.</p>
-          <p data-cap="5">Baseline two: an off-the-shelf video foundation model, zero brain data. MAE-st beats every prior fMRI model; CortexMAE-F leads both tasks.</p>
+          <p data-cap="1">Raw accuracy against held-out subjects. Chance is 17% on Task21 and 7% on COCO24.</p>
+          <p data-cap="2">Connectome baseline: no deep learning, Schaefer-400 connectome matrices as fixed feature embeddings.</p>
+          <p data-cap="3">The models as originally evaluated. BOLD is tiny 1-2% fluctuations
+in the underlying MRI. You need to z-score across time and space.</p>
+          <p data-cap="4">After fixing these models to use proper normalization.</p>
+          <p data-cap="5">Non-brain video foundation model baseline does surprisingly well.</p>
         </div>
         <div class="sdot"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
@@ -3056,8 +3175,8 @@
       <div class="build" data-stages="1" style="position:relative">
         <svg class="tp" viewBox="0 0 1160 495" style="width:1156px;display:block" role="img" aria-label="Brainmarks subject-trait benchmark on age, sex, three diagnosis-status tasks, and one Parkinson's disease versus prodromal-cohort task, with an MAE-st video foundation model baseline"></svg>
         <div class="build-cap">
-          <p data-cap="0">Six subject-trait benchmarks, one protocol: logistic probe, balanced accuracy, 100 random splits. Chance is 25% for 4-way age and 50% for the five binary tasks.</p>
-          <p data-cap="1">Age and sex spread the models apart. The video FM does not win a trait task, and most clinical cohort results remain near the connectome baseline.</p>
+          <p data-cap="0">Six subject-trait benchmarks.</p>
+          <p data-cap="1">All results are near the connectome/video FM baselines.</p>
         </div>
         <div class="sdot"><i></i><i></i></div>
       </div>
@@ -3074,9 +3193,9 @@
       <div class="build" data-stages="2" style="position:relative">
         <svg class="ds" viewBox="0 0 1160 440" style="width:1156px;display:block" role="img" aria-label="CortexMAE data scaling laws on HCP-YA and NSD validation loss, built up step by step"></svg>
         <div class="build-cap">
-          <p data-cap="0">Five corpus sizes, 0.35M to 6.6M frames, two repeats each, one recipe. Best validation loss on held-out HCP-YA subjects.</p>
+          <p data-cap="0">Five corpus sizes, best validation loss on held-out HCP-YA subjects.</p>
           <p data-cap="1">In-distribution, loss follows a strict power law: fit on the three smallest corpus sizes (solid), extrapolated to the rest (dashed).</p>
-          <p data-cap="2">On NSD, loss improves but bends away from its own small-data law. Transfer does not ride the in-distribution trend.</p>
+          <p data-cap="2">Scaling law does not transfer to other data distribution (NSD).</p>
         </div>
         <div class="sdot"><i></i><i></i><i></i></div>
       </div>
@@ -3093,9 +3212,9 @@
       <div class="build" data-stages="2" style="position:relative">
         <svg class="ms" viewBox="0 0 1160 440" style="width:1156px;display:block" role="img" aria-label="CortexMAE model scaling laws on HCP-YA and NSD validation loss, built up step by step"></svg>
         <div class="build-cap">
-          <p data-cap="0">Five encoders, depth 3 to 15 (1.6M to 168M parameters), two repeats each, same data, same schedule. Validation loss on held-out HCP-YA.</p>
+          <p data-cap="0">Five encoders, depth 3 to 15 (1.6M to 168M parameters), val loss on held-out HCP-YA.</p>
           <p data-cap="1">A power law fit on the three smallest models (solid) promises continued gains at ten times the parameters (dashed).</p>
-          <p data-cap="2">Both validation sets flatten at depth 9, 36.8M parameters. Beyond that, parameters buy nothing on this data.</p>
+          <p data-cap="2">But both validation sets flatten at depth 9, 36.8M parameters. We hit a data wall where more parameters doesn't help.</p>
         </div>
         <div class="sdot"><i></i><i></i><i></i></div>
       </div>
@@ -3153,8 +3272,8 @@
           </div>
         </div>
         <div class="build-cap uk-merge-caption">
-          <p data-cap="0"><span class="point-number">01</span>Within HCP-YA, more frames kept helping.<small>The 7.4M run reached 99% on Task21 and about 30% on COCO24.</small></p>
-          <p data-cap="1"><span class="point-number">02</span>Five times the frames still did not catch the HCP-YA run.<small>UK Biobank reached 36M frames and over three times the training steps, but plateaued lower. Composition beat volume.</small></p>
+          <p data-cap="0"><span class="point-number"></span>Within HCP-YA, more frames kept helping according to strict power scaling law.</p>
+          <p data-cap="1"><span class="point-number"></span>Five times the data using UK Biobank did not beat HCP-YA.</p>
         </div>
         <div class="sdot"><i></i><i></i></div>
       </div>
@@ -3167,38 +3286,42 @@
       <h2>Takeaways and future directions</h2>
     </div>
     <div class="content" style="top:126px;bottom:46px">
-      <div style="height:224px">
+      <div style="height:338px">
         <p class="eyebrow" style="color:var(--amber)">Takeaways</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px;margin-top:18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:38px;row-gap:18px;margin-top:14px">
           <div style="border-top:3px solid var(--amber);padding-top:13px">
             <h3 style="font-size:21px">Representation matters.</h3>
-            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">Flat maps provide an efficient, geometry-aware input and lead dynamic state decoding.</p>
+            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">Flat maps did best at state-based evals and are a promising format because of convenience to be used just like video FMs.</p>
           </div>
           <div style="border-top:3px solid var(--cyan);padding-top:13px">
-            <h3 style="font-size:21px">Evaluation can dominate rankings.</h3>
-            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">Shared normalization moves scores by 40 to 75 points. State tasks separate models more clearly than traits.</p>
+            <h3 style="font-size:21px">Normalization is important.</h3>
+            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">Correctly doing time- and space-based normalization moves scores by 40 to 75 points.</p>
           </div>
           <div style="border-top:3px solid var(--coral);padding-top:13px">
-            <h3 style="font-size:21px">Scale is distribution-dependent.</h3>
-            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">More frames help in-distribution, but 36M UK Biobank frames do not beat 7M diverse HCP-YA frames.</p>
+            <h3 style="font-size:21px">More data is not always better.</h3>
+            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">UK Biobank has more data but was worse pretraining dataset than HCP-YA.</p>
+          </div>
+          <div style="border-top:3px solid var(--blue);padding-top:13px">
+            <h3 style="font-size:21px">Strong baselines are critical.</h3>
+            <p class="muted" style="margin-top:8px;font-size:16px;line-height:1.42">Reproducible evaluations measured against strong baselines are necessary to actually interpret the strength of these models.</p>
           </div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--line);padding-top:22px">
+      <div style="border-top:1px solid var(--line);padding-top:18px">
         <p class="eyebrow" style="color:var(--green)">Future directions</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:14px">
           <div style="border-left:3px solid var(--green);padding-left:20px">
             <h3 style="font-size:24px">Connect structure and function.</h3>
-            <p class="muted" style="margin-top:9px;font-size:17px;line-height:1.46">Build a structural MRI foundation model, then align it with CortexMAE so downstream models can use anatomy and functional dynamics together.</p>
+            <p class="muted" style="margin-top:9px;font-size:17px;line-height:1.46">Build a structural MRI foundation model and align it with our fMRI FM so downstream models can use both anatomy and functional dynamics optimally.</p>
           </div>
           <div style="border-left:3px solid var(--blue);padding-left:20px">
-            <h3 style="font-size:24px">Scale with curated diversity.</h3>
-            <p class="muted" style="margin-top:9px;font-size:17px;line-height:1.46">Pretrain on carefully harmonized multi-site fMRI spanning more tasks, scanners, and populations, with out-of-distribution generalization measured explicitly.</p>
+            <h3 style="font-size:24px">Figure out how to scale.</h3>
+            <p class="muted" style="margin-top:9px;font-size:17px;line-height:1.46">Pretrain on more data that is preprocessed identically and is diverse across more tasks, scanners, and populations.</p>
           </div>
         </div>
       </div>
     </div>
-    <aside class="notes">17:15-18:05. Top half: three conclusions. Flat maps are the strongest representation for dynamic state decoding. Brainmarks shows that preprocessing and evaluation choices can change the apparent model ranking. Scaling is not just frame count: the HCP-YA and UK Biobank comparison points to pretraining distribution, task diversity, scanner diversity, and preprocessing consistency as likely determinants of transfer. Bottom half: two active directions. First, build a structural MRI foundation model and connect it to CortexMAE so downstream tasks can combine anatomy with functional dynamics. Second, scale pretraining across carefully harmonized multi-site fMRI with broader coverage of tasks, scanners, and populations, and make out-of-distribution evaluation a design constraint. Careful preprocessing is intended to improve comparability, but generalization still has to be measured rather than assumed. [Sources] Lane et al., ICML 2026; github.com/MedARC-AI/CortexMAE and github.com/MedARC-AI/Brainmarks. Structural-functional integration and curated multi-site scaling are ongoing future directions supplied by Paul Scotti, July 30, 2026.</aside>
+    <aside class="notes">17:15-18:05. Top half: four conclusions. Flat maps are the strongest representation for dynamic state decoding. Brainmarks shows that preprocessing and evaluation choices can change the apparent model ranking. Scaling is not just frame count: the HCP-YA and UK Biobank comparison points to pretraining distribution, task diversity, scanner diversity, and preprocessing consistency as likely determinants of transfer. Strong baselines are necessary to interpret whether a model is genuinely strong. Bottom half: two active directions. First, build a structural MRI foundation model and connect it to CortexMAE so downstream tasks can combine anatomy with functional dynamics. Second, scale pretraining across carefully harmonized multi-site fMRI with broader coverage of tasks, scanners, and populations, and make out-of-distribution evaluation a design constraint. Careful preprocessing is intended to improve comparability, but generalization still has to be measured rather than assumed. [Sources] Lane et al., ICML 2026; github.com/MedARC-AI/CortexMAE and github.com/MedARC-AI/Brainmarks. Structural-functional integration and curated multi-site scaling are ongoing future directions supplied by Paul Scotti, July 30, 2026.</aside>
   </section>
 
   <section class="slide scaling-neuro-slide" data-title="Scaling Neuro">
@@ -3216,8 +3339,8 @@
         </div>
         <div class="sn-stage-stack">
           <div class="sn-process sn-stage-pane" data-stage-pane="0">
-            <p class="sn-process-kicker">How it works</p>
-            <h3>Easily share the fMRI your lab has already collected.</h3>
+            <!-- <p class="sn-process-kicker">How it works</p> -->
+            <h3>It's like OpenNeuro, but solely for raw unlabeled scans.</h3>
             <div class="sn-process-list" aria-label="Scaling Neuro sharing workflow">
               <div class="sn-process-step"><span>01</span><p>Point to a DICOM folder</p></div>
               <div class="sn-process-step"><span>02</span><p>Find all BOLD fMRI data</p></div>
@@ -3875,27 +3998,28 @@ $ neuro-sync path_to_dicoms</code></pre>
     });
 
     // legend
-    let lx = 40;
-    models.forEach(m => {
+    const traitLegendX = [40, 260, 480, 700, 920];
+    models.forEach((m, i) => {
+      const lx = traitLegendX[i % 5];
+      const ly = 442 + Math.floor(i / 5) * 24;
       const g = el("g", { "data-show": 1, opacity: 0 }, TP);
-      const marker = el("g", { transform: `translate(${lx} 450) scale(0.9)` }, g);
+      const marker = el("g", { transform: `translate(${lx} ${ly}) scale(0.9)` }, g);
       shapeEls(m.shape, m.color, marker);
-      txt(g, lx + 15, 454, m.name, { "font-size": 10.5, fill: "#c9cde0" });
-      lx += 110;
+      txt(g, lx + 15, ly + 4.5, m.name, { "font-size": 10.5, fill: "#c9cde0" });
     });
     const g2 = el("g", { "data-show": 0, opacity: 0 }, TP);
-    el("line", { x1: 50, y1: 478, x2: 78, y2: 478, stroke: "#a7b0ff", "stroke-width": 2.4 }, g2);
-    txt(g2, 88, 482, "Connectome", { "font-size": 12, fill: "#a9adc9" });
-    el("line", { x1: 196, y1: 478, x2: 224, y2: 478, stroke: "#7d8590", "stroke-width": 2.2, "stroke-dasharray": "6 5" }, g2);
-    txt(g2, 234, 482, "Chance", { "font-size": 12, fill: "#a9adc9" });
+    el("line", { x1: 50, y1: 487, x2: 78, y2: 487, stroke: "#a7b0ff", "stroke-width": 2.4 }, g2);
+    txt(g2, 88, 491, "Connectome", { "font-size": 12, fill: "#a9adc9" });
+    el("line", { x1: 196, y1: 487, x2: 224, y2: 487, stroke: "#7d8590", "stroke-width": 2.2, "stroke-dasharray": "6 5" }, g2);
+    txt(g2, 234, 491, "Chance", { "font-size": 12, fill: "#a9adc9" });
     const gv = el("g", { "data-show": 1, opacity: 0 }, TP);
-    el("line", { x1: 320, y1: 478, x2: 348, y2: 478, stroke: "#14b8ad", "stroke-width": 2.4 }, gv);
-    txt(gv, 358, 482, "MAE-st", { "font-size": 12, fill: "#a9adc9" });
+    el("line", { x1: 320, y1: 487, x2: 348, y2: 487, stroke: "#14b8ad", "stroke-width": 2.4 }, gv);
+    txt(gv, 358, 491, "MAE-st", { "font-size": 12, fill: "#a9adc9" });
     const g3 = el("g", { "data-show": 1, opacity: 0 }, TP);
-    el("line", { x1: 500, y1: 470, x2: 500, y2: 486, stroke: "#a9adc9", "stroke-width": 2 }, g3);
-    el("line", { x1: 496, y1: 470, x2: 504, y2: 470, stroke: "#a9adc9", "stroke-width": 2 }, g3);
-    el("line", { x1: 496, y1: 486, x2: 504, y2: 486, stroke: "#a9adc9", "stroke-width": 2 }, g3);
-    txt(g3, 512, 482, "±2σ over pretraining repeats (CortexMAE, Brain-Semantoks)", { "font-size": 12, fill: "#a9adc9" });
+    el("line", { x1: 500, y1: 479, x2: 500, y2: 493, stroke: "#a9adc9", "stroke-width": 2 }, g3);
+    el("line", { x1: 496, y1: 479, x2: 504, y2: 479, stroke: "#a9adc9", "stroke-width": 2 }, g3);
+    el("line", { x1: 496, y1: 493, x2: 504, y2: 493, stroke: "#a9adc9", "stroke-width": 2 }, g3);
+    txt(g3, 512, 491, "±2σ over pretraining repeats (CortexMAE, Brain-Semantoks)", { "font-size": 12, fill: "#a9adc9" });
   }
 
   /* ---- staged scaling-law plots (slides 11 and 12) ---- */
@@ -3916,7 +4040,7 @@ $ neuro-sync path_to_dicoms</code></pre>
     const configs = [
       { sel: ".ds",
         xlog: [0.3e6, 8e6], xticks: [[0.5e6, "0.5M"], [1e6, "1M"], [5e6, "5M"]],
-        xlabel: "pretraining frames (log scale)",
+          xlabel: "Pretraining frames (log)",
         panels: [
           { x: 70, title: "HCP-YA validation", tag: "in-distribution", ymin: 0.820, ymax: 0.875,
             ticks: [0.83, 0.85, 0.87], color: "#6f97c4", dotStage: 0, fitStage: 1,
@@ -3930,7 +4054,7 @@ $ neuro-sync path_to_dicoms</code></pre>
         ] },
       { sel: ".ms",
         xlog: [1.5e6, 2.2e8], xticks: [[2e6, "2M"], [1e7, "10M"], [1e8, "100M"]],
-        xlabel: "encoder parameters (log scale)",
+          xlabel: "Encoder parameters (log)",
         vline: { x: 36775872, label: "depth 9 · 36.8M", stage: 2 },
         panels: [
           { x: 70, title: "HCP-YA validation", tag: "in-distribution", ymin: 0.805, ymax: 0.868,
