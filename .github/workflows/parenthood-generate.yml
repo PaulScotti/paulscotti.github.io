@@ -1,0 +1,61 @@
+# Daily digest for /parenthood: pulls private context from Firestore, has Claude plan/research/write the day's
+# bilingual digest, validates it, and publishes it to Firestore. Logs contain status lines only (this repo is public).
+# Setup: parenthood/SETUP.md
+name: parenthood-generate
+
+on:
+  schedule:
+    - cron: '17 13 * * *'  # ~6:17am PDT / 5:17am PST
+    - cron: '17 17 * * *'  # retry ~10am PT (no-op if today's digest exists)
+    - cron: '17 22 * * *'  # retry ~3pm PT
+    - cron: '17 2 * * *'   # last retry ~7pm PT
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Pacific date to generate (YYYY-MM-DD). Default: today.'
+        required: false
+      force:
+        description: 'Regenerate even if that day already exists'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: parenthood-generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: parenthood
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pipeline dependencies
+        run: npm ci --prefix parenthood/pipeline --no-audit --no-fund
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code --no-audit --no-fund
+
+      - name: Generate and publish today's digest
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PARENTHOOD_MODEL: ${{ vars.PARENTHOOD_MODEL }}
+          INPUT_DATE: ${{ inputs.date }}
+          INPUT_FORCE: ${{ inputs.force }}
+        run: |
+          args=()
+          if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
+          if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi
+          node parenthood/pipeline/generate.mjs "${args[@]}"

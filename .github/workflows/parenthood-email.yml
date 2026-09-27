@@ -1,0 +1,71 @@
+# Nightly 9:30pm Pacific email for /parenthood: the day's one-sentence takeaway (each member in their own
+# language) and a link to the digest. GitHub cron is UTC and sometimes late, so each run starts a little early and
+# waits until 21:30 PT; runs that are too early exit, and a send is recorded so backups never double-send.
+name: parenthood-email
+
+on:
+  schedule:
+    - cron: '5 4 * * *'   # 9:05pm PDT -> waits until 9:30pm
+    - cron: '5 5 * * *'   # 9:05pm PST -> waits until 9:30pm (or a no-op backup in summer)
+    - cron: '45 5 * * *'  # backup
+    - cron: '25 6 * * *'  # late backup
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Pacific date (YYYY-MM-DD). Default: today.'
+        required: false
+      force:
+        description: 'Send even if already sent'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: write # only for the weekly keep-alive of these scheduled workflows
+
+concurrency:
+  group: parenthood-email
+  cancel-in-progress: false
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: parenthood
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pipeline dependencies
+        run: npm ci --prefix parenthood/pipeline --no-audit --no-fund
+
+      - name: Send tonight's email
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          INPUT_DATE: ${{ inputs.date }}
+          INPUT_FORCE: ${{ inputs.force }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          args=()
+          if [ "$EVENT" = "schedule" ]; then args+=(--at 21:30); fi
+          if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
+          if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi
+          node parenthood/pipeline/send-email.mjs "${args[@]}"
+
+      # GitHub pauses scheduled workflows in repos without recent activity; re-enabling weekly keeps them running.
+      - name: Keep scheduled workflows enabled
+        if: always() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(date -u +%u)" = "7" ]; then
+            gh workflow enable parenthood-generate.yml -R "$GITHUB_REPOSITORY" || true
+            gh workflow enable parenthood-email.yml -R "$GITHUB_REPOSITORY" || true
+          fi
