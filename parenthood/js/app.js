@@ -412,6 +412,7 @@ function viewNoAccess(email) {
 }
 
 function viewSetup() {
+  document.documentElement.dataset.auth = 'out';
   main.innerHTML = `<div class="gate"><h1>${esc(STR.en.setupTitle)} <span class="muted ko">· ${esc(STR.ko.setupTitle)}</span></h1>
     <p>${esc(STR.en.setupBody)}</p><p class="ko">${esc(STR.ko.setupBody)}</p></div>`;
 }
