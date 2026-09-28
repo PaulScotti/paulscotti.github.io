@@ -473,6 +473,77 @@ textarea.box { width: 100%; min-height: 96px; resize: vertical; line-height: 22p
   .bars .row, .bars .axis { grid-template-columns: minmax(0, 1.2fr) 46px minmax(70px, 1fr); gap: 8px; }
   .kmap .row, .kmap .axis { grid-template-columns: minmax(0, 1.2fr) minmax(70px, 1fr) 44px; gap: 10px; }
 }
+
+/* ---------- phone type scale: 17px reading text (the iOS body size), nothing that people read below 12px, and
+   16px form fields so iOS doesn't zoom in when one is tapped ---------- */
+@media (max-width: 760px) {
+  :root { --read-size: 17px; --read-leading: 28px; }
+  body { font-size: 16px; line-height: 26px; }
+  input, select, textarea, .search, .field input, .field select, textarea.box { font-size: 16px; }
+  .sidebar nav.primary a { font-size: 15px; }
+  .lang-toggle button { font-size: 12px; }
+  .footer { font-size: 12px; }
+  .label { font-size: 12px; line-height: 17px; }
+  html[lang="ko"] .label { font-size: 12.5px; }
+  .badge { font-size: 11.5px; }
+  .btn { font-size: 14px; }
+  .btn-mini { font-size: 12px; }
+  .gate .fine { font-size: 12.5px; line-height: 19px; }
+  .error-box { font-size: 14px; line-height: 21px; }
+  .toast { font-size: 13px; }
+  /* digest */
+  .kicker, .meta-line, .dfoot .q, .digest-nav, .feed-status { font-size: 13px; line-height: 19px; }
+  .digest h1.title { font-size: 23px; line-height: 31px; }
+  html[lang="ko"] .digest h1.title { font-size: 22px; line-height: 32px; }
+  .gist p { font-size: 18px; line-height: 28px; }
+  html[lang="ko"] .gist p { line-height: 30px; }
+  .sec h2 { font-size: 17px; line-height: 25px; }
+  a.cite { font-size: 11.5px; padding: 0 2px; }
+  .prose ol li::marker { font-size: 13px; }
+  .words dt { font-size: 16px; line-height: 23px; }
+  .words dt .sep { font-size: 13px; }
+  .words dd { font-size: 14.5px; line-height: 22px; }
+  .src li { font-size: 14.5px; line-height: 22px; }
+  .src li::marker { font-size: 12px; }
+  .src .m { font-size: 12px; line-height: 18px; }
+  /* figures and widgets */
+  .fig-title { font-size: 13px; line-height: 19px; }
+  .fig-cap { font-size: 14px; line-height: 21px; }
+  .fig-cap .srcref, .fig .credit { font-size: 12px; }
+  .bars .row { font-size: 13.5px; }
+  .bars .axis, .kmap .axis { font-size: 11.5px; }
+  .stats .l { font-size: 14px; line-height: 20px; }
+  .compare ul, .quiz .explain, .steps .t, .readout { font-size: 15px; line-height: 23px; }
+  .quiz .q { font-size: 16px; line-height: 24px; }
+  .quiz button.opt { font-size: 15px; line-height: 22px; }
+  .steps .k, .milestones li .w { font-size: 12.5px; }
+  .tbl { font-size: 14px; line-height: 20px; }
+  .tbl th { font-size: 12px; }
+  .widget .ctrl label, .legend { font-size: 12.5px; line-height: 18px; }
+  .widget .ctrl output { font-size: 14px; }
+  .milestones li { font-size: 15px; line-height: 22px; }
+  /* journey */
+  .stats-row { font-size: 13px; }
+  .kmap .row { font-size: 15px; line-height: 22px; }
+  .kmap .n { font-size: 13px; }
+  .seg button { font-size: 15px; }
+  .tl-row .m { font-size: 12.5px; line-height: 19px; }
+  .tl-row .t { font-size: 16px; line-height: 24px; }
+  .tl-row .tt { font-size: 14.5px; line-height: 22px; }
+  .theme-block h2 { font-size: 16px; line-height: 23px; }
+  .theme-block h2 .c { font-size: 12px; }
+  .gloss-row .p { font-size: 16px; line-height: 23px; }
+  .gloss-row .n { font-size: 14.5px; line-height: 21px; }
+  .gloss-row .d { font-size: 12px; line-height: 17px; }
+  .empty { font-size: 15px; }
+  /* us */
+  .block p.help, .prose-small { font-size: 15px; line-height: 23px; }
+  .stage-seg button { font-size: 15px; }
+  .field label, .kind-seg button { font-size: 13px; }
+  .stage-readout, .us-stage .mono { font-size: 13.5px; }
+  .inbox-list .t { font-size: 15px; line-height: 22px; }
+  .inbox-list .m { font-size: 12px; line-height: 17px; }
+}
 @media print {
   .sidebar, .footer, .dfoot, .digest-nav, .feed-status { display: none; }
   .layout { display: block; padding: 0; } .layout::before { display: none; }
