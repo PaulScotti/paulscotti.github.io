@@ -2,19 +2,23 @@
   "name": "parenthood-pipeline",
   "private": true,
   "type": "module",
-  "description": "Daily research digest pipeline: pull private context, generate with Claude, validate, publish to Firestore, email.",
-  "engines": { "node": ">=20" },
+  "description": "Daily research digest pipeline: encrypted data branch, Claude Code generation, validation, email.",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "generate": "node generate.mjs",
     "validate": "node validate.mjs",
     "publish": "node publish.mjs",
     "email": "node send-email.mjs",
+    "inbox": "node inbox.mjs",
     "setup": "node setup.mjs",
     "export": "node export.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "firebase-admin": "^14.5.0",
+    "imapflow": "^2.1.0",
+    "mailparser": "^3.9.29",
     "nodemailer": "^10.0.11"
   }
 }

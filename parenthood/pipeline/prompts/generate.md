@@ -10,21 +10,23 @@ experienced parents - delivered so that every single day teaches something new a
 - `{{WORK}}/context/profile.json` — PRIVATE context about the couple. Use it to personalize; never paste it wholesale.
 - `{{WORK}}/context/ledger.json` — every earlier digest: date, unit, title, takeaway, nuggets (facts already taught),
   keywords, sources. This is their knowledge so far.
-- `{{WORK}}/context/inbox.json` — their notes, topic requests, feedback votes, and user-entered items to translate.
+- `{{WORK}}/context/inbox.json` — notes they emailed to the digest (new results, appointments, worries, topic
+  requests, reactions to earlier days). `open` ones have not been answered yet.
 - `{{WORK}}/ref/curriculum.json` — the master syllabus (tracks, units, goals, weekly rhythm).
 - `{{WORK}}/ref/schema.md` — the exact output format. Follow it precisely.
 
 ## Step 1 — Plan (think big picture)
 1. Build a picture of what they already know from the ledger. The new digest must add knowledge they do not have.
 2. Choose ONE unit. Default to the top of `brief.candidates`, but you decide. Rules, in order:
-   - An open inbox **request** or a **note** that changes their situation (e.g. new test result, positive test,
-     appointment coming up) comes first, unless it's better scheduled later (say so in `planNote`).
+   - An open **note** that changes their situation (new test result, positive test, appointment coming up) or asks
+     for a topic comes first, unless it's better scheduled later (say so in `planNote`). List every note you answer
+     in `addresses`.
    - Time-sensitive before timeless (their stage, age, upcoming dates in the brief).
    - Keep the week varied: never the same track two days in a row; follow `brief.rhythm` when nothing is more urgent.
    - While trying to conceive, keep roughly half "now" topics and half "ahead" topics (pregnancy, birth, baby,
      parenting), so their picture of the whole journey grows steadily.
-   - "Go deeper" feedback on a day → you may schedule a `depth: "deeper"` follow-up on a later day. It must go beyond
-     the earlier day (new mechanisms, numbers, decisions) and list that day in `buildsOn`.
+   - A note asking to go deeper on a day → you may schedule a `depth: "deeper"` follow-up. It must go beyond the
+     earlier day (new mechanisms, numbers, decisions) and list that day in `buildsOn`.
 3. If the right topic isn't in the curriculum, invent a unit id `track.slug` and add it to `unitProposals`.
 4. Decide the ONE thing they should remember (the takeaway) before researching details.
 
@@ -67,8 +69,10 @@ formal polite Korean (합니다체), not translated word by word. Add the Englis
 use where it will help in US care. Use metric units (add a US unit only when a US threshold matters). Address them as
 "두 분"; use their names (from the profile) sparingly.
 
-Also: if `inbox.json` lists `translate` items, write `{{WORK}}/translations.json` as
-`[{ "collection": "...", "id": "...", "en": "...", "ko": "..." }]` (natural, concise translations).
+Journey changes: if an open note reports a positive pregnancy test, a birth, or a pregnancy loss, also write
+`{{WORK}}/state-update.json` as `{ "stage": "pregnant" | "born" | "ttc", "lmp": "YYYY-MM-DD", "due": "YYYY-MM-DD",
+"birth": "YYYY-MM-DD", "note": "..." }` (only the dates they gave), and let today's digest respond to it first,
+with warmth and care (after a loss: gentle, practical, no statistics unless asked).
 
 ## Step 4 — Validate and finish
 1. Write the digest to `{{WORK}}/digest.json`.

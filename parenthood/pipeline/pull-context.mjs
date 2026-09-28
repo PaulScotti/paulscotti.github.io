@@ -3,8 +3,8 @@
 // Prints only counts (workflow logs are public).
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { initDb, toPlain, getLedger } from './lib/db.mjs';
-import { loadCurriculum, writeJSON, parseArgs, log, WORK_ROOT } from './lib/env.mjs';
+import { Store } from './lib/store.mjs';
+import { loadCurriculum, writeJSON, parseArgs, log, WORK_ROOT, SITE_DIR } from './lib/env.mjs';
 import { todayPT, weekdayOf, addDays, daysBetween, ageOn, gestation } from './lib/dates.mjs';
 
 const PHASE_ORDER = ['preconception', 'pregnancy-1', 'pregnancy-2', 'pregnancy-3', 'birth', 'newborn', 'infant', 'toddler'];
@@ -66,26 +66,17 @@ export function rankCandidates({ curriculum, ledger, date, nowPhase, extraUnits 
   return { candidates: scored.slice(0, 14), trackCounts14d: counts, rhythmToday: rhythm, remaining: scored.length };
 }
 
-export async function pullContext(db, { date, workDir }) {
+export function pullContext(store, { date, workDir }) {
   const curriculum = loadCurriculum();
-  const [profileSnap, stateSnap, ledger, inboxSnap, feedbackSnap, questionsSnap, backlogSnap, digestSnap] = await Promise.all([
-    db.doc('private/profile').get(),
-    db.doc('state/couple').get(),
-    getLedger(db),
-    db.collection('inbox').get(),
-    db.collection('feedback').get(),
-    db.collection('questions').get(),
-    db.doc('meta/backlog').get(),
-    db.doc(`digests/${date}`).get(),
-  ]);
-  const profile = profileSnap.exists ? toPlain(profileSnap.data()) : {};
-  const state = stateSnap.exists ? toPlain(stateSnap.data()) : { stage: 'ttc' };
-  const priorLedger = ledger.filter((e) => e.date < date);
-  const day = digestSnap.exists ? digestSnap.data().day : priorLedger.length + 1;
-  const backlog = backlogSnap.exists ? toPlain(backlogSnap.data()).proposals || [] : [];
+  const priv = store.readPrivate();
+  const profile = priv.profile || {};
+  const state = priv.state || { stage: 'ttc' };
+  const priorLedger = (priv.ledger || []).filter((e) => e.date < date).sort((a, b) => (a.date < b.date ? -1 : 1));
+  const existing = store.hasDigest(date) ? store.readDigest(date) : null;
+  const day = existing ? existing.day : priorLedger.length + 1;
 
   const now = currentPhase(state, date);
-  const ranking = rankCandidates({ curriculum, ledger: priorLedger, date, nowPhase: now.phase, extraUnits: backlog });
+  const ranking = rankCandidates({ curriculum, ledger: priorLedger, date, nowPhase: now.phase, extraUnits: priv.backlog || [] });
 
   const people = {};
   const born = profile?.people?.yoolim?.born;
@@ -96,18 +87,9 @@ export async function pullContext(db, { date, workDir }) {
   const upcoming = (profile.calendar || [])
     .filter((c) => (c.to || c.from) >= date)
     .map((c) => ({ ...c, startsInDays: daysBetween(date, c.from), ongoing: c.from <= date }));
-
-  const inbox = inboxSnap.docs.map((d) => ({ id: d.id, ...toPlain(d.data()) }));
-  const since = addDays(date, -45);
-  const feedback = feedbackSnap.docs.map((d) => toPlain(d.data())).filter((f) => f.date >= since && f.vote);
-  const translate = [];
-  for (const d of inbox) {
-    if (!d.text_en || !d.text_ko) translate.push({ collection: 'inbox', id: d.id, lang: d.lang, text: d.text });
-  }
-  for (const d of questionsSnap.docs) {
-    const q = toPlain(d.data());
-    if (!q.text?.en || !q.text?.ko) translate.push({ collection: 'questions', id: d.id, lang: q.lang, text: q.text?.[q.lang] || q.text?.en || q.text?.ko });
-  }
+  const since = addDays(date, -60);
+  const inbox = priv.inbox || [];
+  const openNotes = inbox.filter((n) => n.status === 'open');
 
   const brief = {
     date, weekday: weekdayOf(date), day,
@@ -120,7 +102,7 @@ export async function pullContext(db, { date, workDir }) {
     rhythmToday: ranking.rhythmToday,
     candidates: ranking.candidates,
     remainingUnits: ranking.remaining,
-    openInbox: inbox.filter((d) => d.status === 'open').length,
+    openInbox: openNotes.length,
   };
 
   const ctx = path.join(workDir, 'context');
@@ -128,19 +110,19 @@ export async function pullContext(db, { date, workDir }) {
   writeJSON(path.join(ctx, 'profile.json'), profile);
   writeJSON(path.join(ctx, 'ledger.json'), priorLedger);
   writeJSON(path.join(ctx, 'inbox.json'), {
-    notesAndRequests: inbox.filter((d) => d.status === 'open').map(({ id, kind, text, lang, by, at }) => ({ id, kind, text, lang, by, at })),
-    recentlyCovered: inbox.filter((d) => d.status === 'covered').slice(-10).map(({ id, text, coveredBy }) => ({ id, text, coveredBy })),
-    feedback: feedback.map(({ date: dt, vote, by }) => ({ date: dt, vote, by })),
-    translate,
+    about: 'Emails the couple sent to the digest (replies to the nightly email or notes). "from" is paul or yoolim.',
+    open: openNotes.map(({ id, from, date: d, text }) => ({ id, from, date: d, text })),
+    recentlyCovered: inbox.filter((n) => n.status === 'covered' && (n.coveredBy || '') >= since).slice(-10)
+      .map(({ id, text, coveredBy }) => ({ id, text, coveredBy })),
   });
-  return { brief, day, ledger: priorLedger, profile, state, translate };
+  return { brief, day, ledger: priorLedger, profile, state };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = parseArgs();
   const date = args.date || todayPT();
   const workDir = path.resolve(args.out || path.join(WORK_ROOT, `${date}-manual`));
-  const db = initDb();
-  const { brief } = await pullContext(db, { date, workDir });
-  log(`Context for ${date}: day ${brief.day}, ${brief.coveredUnits.length} prior digests, ${brief.candidates.length} candidates, ${brief.openInbox} open inbox items → ${workDir}`);
+  const store = Store.open(path.resolve(args.data || path.join(SITE_DIR, '.data')), process.env.PARENTHOOD_PASSPHRASE);
+  const { brief } = pullContext(store, { date, workDir });
+  log(`Context for ${date}: day ${brief.day}, ${brief.coveredUnits.length} prior digests, ${brief.candidates.length} candidates, ${brief.openInbox} open notes → ${workDir}`);
 }

@@ -1,6 +1,6 @@
 # Nightly 9:30pm Pacific email for /parenthood: the day's one-sentence takeaway (each member in their own
 # language) and a link to the digest. GitHub cron is UTC and sometimes late, so each run starts a little early and
-# waits until 21:30 PT; runs that are too early exit, and a send is recorded so backups never double-send.
+# waits until 21:30 PT; runs that are too early exit, and a sent-marker on the data branch prevents double sends.
 name: parenthood-email
 
 on:
@@ -20,7 +20,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
   actions: write # only for the weekly keep-alive of these scheduled workflows
 
 concurrency:
@@ -31,33 +31,58 @@ jobs:
   email:
     runs-on: ubuntu-latest
     timeout-minutes: 70
+    env:
+      HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: parenthood
           fetch-depth: 1
 
+      - name: Check out encrypted data
+        if: env.HAS_PASSPHRASE == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: parenthood-data
+          path: data
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
+        if: env.HAS_PASSPHRASE == 'true'
         with:
           node-version: 22
 
       - name: Install pipeline dependencies
+        if: env.HAS_PASSPHRASE == 'true'
         run: npm ci --prefix parenthood/pipeline --no-audit --no-fund
 
       - name: Send tonight's email
+        if: env.HAS_PASSPHRASE == 'true'
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PARENTHOOD_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           INPUT_DATE: ${{ inputs.date }}
           INPUT_FORCE: ${{ inputs.force }}
           EVENT: ${{ github.event_name }}
         run: |
-          args=()
+          args=(--data data)
           if [ "$EVENT" = "schedule" ]; then args+=(--at 21:30); fi
           if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
           if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi
           node parenthood/pipeline/send-email.mjs "${args[@]}"
+
+      - name: Record what was sent
+        if: always() && env.HAS_PASSPHRASE == 'true'
+        working-directory: data
+        run: |
+          git config user.name "parenthood-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -q -m "Update parenthood data"
+          for i in 1 2 3; do git pull -q --rebase origin parenthood-data && git push -q origin HEAD:parenthood-data && exit 0; sleep 5; done
+          exit 1
 
       # GitHub pauses scheduled workflows in repos without recent activity; re-enabling weekly keeps them running.
       - name: Keep scheduled workflows enabled

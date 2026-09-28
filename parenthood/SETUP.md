@@ -1,105 +1,51 @@
-# Setting up /parenthood (about 15 minutes, once)
+# Setting up /parenthood (about 5 minutes, once)
 
-The site code is live on GitHub Pages already. What's missing are the private pieces that can't live in a
-public repo: a Firebase project (Google sign-in + the private database), and three GitHub secrets for the daily
-research job and the nightly email.
+No accounts, databases or cloud consoles. The digests are stored **encrypted** on this repo's `parenthood-data`
+branch, and the site decrypts them in your browser with a family passphrase you each enter once per device.
 
-Nothing below is shared with anyone: the Firebase project is yours, the digests live in its database, and only the
-two invited Google accounts can read them.
+## Before you start
 
----
+- **GitHub CLI signed in**: `gh auth status` (you already are on this Mac).
+- **A Gmail app password** for the account that sends the nightly emails: open
+  <https://myaccount.google.com/apppasswords>, create one named `parenthood`, keep the 16 letters handy.
+  (Requires 2-Step Verification on that Google account.)
+- **A Claude token**: in a separate terminal tab run `claude setup-token`, sign in, and keep the token it prints.
+  It uses your Claude subscription and lasts a year.
 
-## 1. Create the Firebase project (browser, ~5 min)
-
-Signed in as your personal Google account at <https://console.firebase.google.com>, create a project (e.g.
-`parenthood-py`, Google Analytics **off**). The console's left sidebar groups products into flyouts (there is no
-"Build" menu anymore), so the direct links below are the easiest route. Replace `<project-id>` with yours.
-
-1. **Google sign-in** (sidebar: **Security → Authentication**):
-   `https://console.firebase.google.com/project/<project-id>/authentication/providers`
-   → *Get started* (first time only) → **Google** → **Enable** → pick your support email → **Save**.
-2. **Authorized domains** (Authentication → **Settings** tab):
-   `https://console.firebase.google.com/project/<project-id>/authentication/settings`
-   → **Authorized domains → Add domain** → `www.paulscotti.com` (add `paulscotti.com` too).
-3. **Database** (sidebar: **Databases & Storage → Firestore**):
-   `https://console.firebase.google.com/project/<project-id>/firestore`
-   → **Create database** → *Standard* edition if asked → location **us-west1** → *Production mode* → Create.
-4. **Web app config** (gear next to Project Overview → **Project settings → General**):
-   `https://console.firebase.google.com/project/<project-id>/settings/general`
-   → **Your apps → Web `</>`** → nickname `parenthood` → Register app (skip Hosting). Copy the
-   `firebaseConfig = { … }` snippet into a text file, e.g. `~/Downloads/firebase-config.txt`.
-5. **Service-account key** (Project settings → **Service accounts** tab):
-   `https://console.firebase.google.com/project/<project-id>/settings/serviceaccounts/adminsdk`
-   → **Generate new private key** → saves a JSON key to Downloads.
-
-## 2. Make phone sign-in bulletproof (browser, ~1 min, recommended)
-
-This lets sign-in work the same way in Safari, Chrome, Gmail's in-app browser and home-screen shortcuts.
-
-<https://console.cloud.google.com/apis/credentials> → pick the Firebase project → **OAuth 2.0 Client IDs →
-"Web client (auto created by Google Service)"**:
-
-- **Authorized JavaScript origins** → add `https://www.paulscotti.com`
-- **Authorized redirect URIs** → add `https://www.paulscotti.com/__/auth/handler`
-- Save.
-
-(Skip this step and leave off `--self-host-auth` below if you'd rather not; sign-in then uses a popup window,
-which works in regular Safari/Chrome.)
-
-## 3. Connect the site (terminal, ~2 min)
-
-```bash
-cd ~/Documents/GitHub/paulscotti.github.io/parenthood/pipeline
-npm ci
-node setup.mjs --key ~/Downloads/<project>-firebase-adminsdk-<id>.json --config ~/Downloads/firebase-config.txt --self-host-auth
-```
-
-This writes `parenthood/js/config.js` (public by design), puts Firebase's sign-in helper at `/__/auth/`, deploys the
-Firestore security rules (only your two accounts can read anything), and loads the private profile and Day 1.
-
-Then publish those two changes:
+## Run one command
 
 ```bash
 cd ~/Documents/GitHub/paulscotti.github.io
-git add parenthood/js/config.js __ && git commit -m "Connect parenthood site to Firebase" && git push
+node parenthood/pipeline/setup.mjs
 ```
 
-## 4. Add the GitHub secrets (terminal, ~5 min)
+It will:
 
-```bash
-cd ~/Documents/GitHub/paulscotti.github.io
-gh secret set FIREBASE_SERVICE_ACCOUNT < ~/Downloads/<project>-firebase-adminsdk-<id>.json
-claude setup-token                 # sign in to Claude; copy the long-lived token it prints
-gh secret set CLAUDE_CODE_OAUTH_TOKEN   # paste the token
-gh secret set GMAIL_USER           # your Gmail address (the emails are sent from it)
-gh secret set GMAIL_APP_PASSWORD   # paste a 16-character app password from https://myaccount.google.com/apppasswords
-```
+1. **Ask for the family passphrase**, or press Enter to generate a strong one. Save it in your password manager
+   and share it with Yoolim privately. It can't be recovered later, and it's what keeps the digests private.
+2. **Encrypt the private profile and Days 1–2** and push them to the `parenthood-data` branch.
+3. **Save the GitHub secrets** the daily jobs need: the passphrase, the Gmail address and app password, and the
+   Claude token. It asks for each one and never prints them.
 
-- The Claude token uses your Claude subscription (valid for a year). To bill the API instead, set
-  `ANTHROPIC_API_KEY` rather than `CLAUDE_CODE_OAUTH_TOKEN`.
-- App passwords require 2-Step Verification on the Google account.
-- Afterwards, move the service-account key out of Downloads (e.g. into your password manager) and delete the file.
+## Then
 
-## 5. Check it
-
-1. Open <https://www.paulscotti.com/parenthood/> on each phone and sign in once. You stay signed in on that device.
-   Each account opens in its own language (set in the private member list); the **EN / 한** switch changes it any time.
-2. GitHub → **Actions → parenthood-email → Run workflow** sends tonight's email immediately (a good test).
-3. Tomorrow at ~6am Pacific, **parenthood-generate** writes Day 2; at 9:30pm you both get the email.
-
----
+1. Open <https://www.paulscotti.com/parenthood/> on each phone, enter the passphrase, and pick who's reading
+   (Paul → English, 유이 → Korean; the **EN / 한** switch changes it any time). Safari's password manager can save
+   the passphrase too.
+2. Test the nightly email: GitHub → **Actions → parenthood-email → Run workflow**.
+3. Every morning around 6am Pacific **parenthood-generate** writes the next day; at 9:30pm you both get the email.
 
 ## Day to day
 
 | You want to… | Do this |
 |---|---|
-| Tell the digest something (new results, appointment, worry) or request a topic | **Us → Tell the digest** on the site |
-| Mark that you're pregnant / baby arrived | **Us → Where we are** (the curriculum follows your weeks) |
-| Rate a digest | Buttons at the end of each digest (*Helpful / Go deeper / Knew this*) |
-| Bring questions to an appointment | **Doctor** page → *Copy in English* |
+| Tell the digest something (new results, an appointment, a worry, a topic) | Reply to any nightly email, or email `<your gmail>+digest@gmail.com` |
+| Say you're pregnant / the baby arrived | Same: e.g. "Positive test today, last period started Jan 5." The curriculum follows your weeks from then on |
+| Bring questions to an appointment | **Doctor** page → *Copy in English* (the list is saved per device) |
 | Re-run or redo a day | Actions → parenthood-generate → Run workflow (date, *force*) |
 | Change the model | Repo variable `PARENTHOOD_MODEL` (default `opus`) |
-| Update the private profile | Edit `pipeline/private/profile.json`, rerun `node setup.mjs --key …` |
-| Back up everything | `node pipeline/export.mjs --key …` (or *Download our data* on the Us page) |
+| Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |
+| Back up everything decrypted | **Us → Download our digests**, or `PARENTHOOD_PASSPHRASE=… node parenthood/pipeline/export.mjs` |
+| Lock a device (e.g. a shared computer) | **Us → Lock this device** |
 
 If a day's generation fails, the site owner gets an email instead of the nightly digest, and the workflow run shows why.

@@ -192,6 +192,23 @@ html[lang="ko"] .page-head h1 { font-family: var(--font-ko); font-weight: 500; }
 .gate .fine { margin-top: 26px; font: 400 11px/18px var(--mono); color: var(--faint); }
 .gsvg { width: 16px; height: 16px; background: #fff; border-radius: 2px; padding: 1px; }
 
+/* ---------- unlock / reader ---------- */
+.unlock-form { display: grid; gap: 8px; max-width: 360px; margin: 18px 0 4px; }
+.unlock-form input[type="password"] {
+  min-height: 46px; padding: 10px 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  font: 400 16px/22px var(--mono); letter-spacing: .02em;
+}
+.unlock-form .btn { margin-top: 4px; justify-self: start; }
+.who { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.who .btn { min-width: 150px; }
+.us-reader { font: 400 16px/24px var(--font); color: var(--ink); margin-right: 6px; }
+html[lang="ko"] .us-reader { font-family: var(--font-ko); }
+.us-stage { margin: 8px 0 8px; font-size: 16px; line-height: 24px; color: var(--ink); }
+.us-stage .mono { font-size: 12.5px; color: var(--green); }
+.dfoot .q { font: 400 12px/18px var(--mono); color: var(--muted); }
+html[lang="ko"] .dfoot .q { font-family: var(--mono), var(--font-ko); }
+a.btn-mini { text-decoration: none; }
+
 /* ---------- skeleton ---------- */
 .skeleton { display: grid; gap: 14px; padding-top: 6px; }
 .skeleton i { display: block; height: 12px; background: var(--track); animation: pulse 1.2s ease-in-out infinite; }

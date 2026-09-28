@@ -1,20 +1,17 @@
 #!/usr/bin/env node
-// Back up everything (digests, overview, ledger, members, state, inbox, feedback, questions, meta, private) to
-// pipeline/private/exports/<timestamp>/ as JSON. Usage: node export.mjs --key <service-account.json>
+// Decrypt everything in the data checkout into pipeline/private/exports/<timestamp>/ (a readable backup).
+// Usage: PARENTHOOD_PASSPHRASE=… node export.mjs --data ../.data
+import fs from 'node:fs';
 import path from 'node:path';
-import { initDb, useKeyFile, toPlain } from './lib/db.mjs';
-import { parseArgs, log, writeJSON, PRIVATE_DIR } from './lib/env.mjs';
+import { Store } from './lib/store.mjs';
+import { parseArgs, log, writeJSON, PRIVATE_DIR, SITE_DIR } from './lib/env.mjs';
 
 const args = parseArgs();
-if (args.key) useKeyFile(args.key);
-const db = initDb();
-const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-const dir = path.join(PRIVATE_DIR, 'exports', stamp);
-let total = 0;
-for (const name of ['digests', 'overview', 'ledger', 'members', 'state', 'inbox', 'feedback', 'questions', 'meta', 'private']) {
-  const snap = await db.collection(name).get();
-  writeJSON(path.join(dir, `${name}.json`), Object.fromEntries(snap.docs.map((d) => [d.id, toPlain(d.data())])));
-  total += snap.size;
-}
-log(`Exported ${total} documents to ${dir}`);
-process.exit(0);
+const store = Store.open(path.resolve(args.data || path.join(SITE_DIR, '.data')), process.env.PARENTHOOD_PASSPHRASE);
+const out = path.join(PRIVATE_DIR, 'exports', new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19));
+writeJSON(path.join(out, 'private.json'), store.readPrivate());
+writeJSON(path.join(out, 'index.json'), store.readIndex());
+const dDir = path.join(store.dir, 'd');
+const dates = fs.existsSync(dDir) ? fs.readdirSync(dDir).filter((f) => f.endsWith('.enc')).map((f) => f.slice(0, -4)) : [];
+for (const d of dates) writeJSON(path.join(out, 'digests', `${d}.json`), store.readDigest(d));
+log(`Exported ${dates.length} digests + index + private state to ${out}`);

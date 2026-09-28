@@ -1,5 +1,6 @@
-# Daily digest for /parenthood: pulls private context from Firestore, has Claude plan/research/write the day's
-# bilingual digest, validates it, and publishes it to Firestore. Logs contain status lines only (this repo is public).
+# Daily digest for /parenthood: reads the encrypted state from the `parenthood-data` branch (plus notes emailed to
+# the digest), has Claude plan/research/write the day's bilingual digest, validates it, and commits the encrypted
+# result back to `parenthood-data`. Master is never touched. Logs contain status lines only (this repo is public).
 # Setup: parenthood/SETUP.md
 name: parenthood-generate
 
@@ -20,7 +21,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: parenthood-generate
@@ -30,32 +31,58 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: parenthood
           fetch-depth: 1
 
+      - name: Check out encrypted data
+        if: env.HAS_PASSPHRASE == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: parenthood-data
+          path: data
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
+        if: env.HAS_PASSPHRASE == 'true'
         with:
           node-version: 22
 
-      - name: Install pipeline dependencies
-        run: npm ci --prefix parenthood/pipeline --no-audit --no-fund
+      - name: Install pipeline dependencies and Claude Code
+        if: env.HAS_PASSPHRASE == 'true'
+        run: |
+          npm ci --prefix parenthood/pipeline --no-audit --no-fund
+          npm install -g @anthropic-ai/claude-code --no-audit --no-fund
 
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code --no-audit --no-fund
-
-      - name: Generate and publish today's digest
+      - name: Generate today's digest
+        if: env.HAS_PASSPHRASE == 'true'
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PARENTHOOD_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           PARENTHOOD_MODEL: ${{ vars.PARENTHOOD_MODEL }}
           INPUT_DATE: ${{ inputs.date }}
           INPUT_FORCE: ${{ inputs.force }}
         run: |
-          args=()
+          args=(--data data)
           if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
           if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi
           node parenthood/pipeline/generate.mjs "${args[@]}"
+
+      - name: Save encrypted data
+        if: always() && env.HAS_PASSPHRASE == 'true'
+        working-directory: data
+        run: |
+          git config user.name "parenthood-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "No data changes."; exit 0; fi
+          git commit -q -m "Update parenthood data"
+          for i in 1 2 3; do git pull -q --rebase origin parenthood-data && git push -q origin HEAD:parenthood-data && exit 0; sleep 5; done
+          exit 1

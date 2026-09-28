@@ -1,17 +1,19 @@
 #!/usr/bin/env node
-// Daily orchestrator: (skip if today's digest exists) → pull private context → run Claude Code headless to plan,
-// research and write → validate (with up to 2 repair rounds) → publish. Logs are public in GitHub Actions, so this
-// prints status only - never content.
+// Daily orchestrator: (skip if today's digest exists) → fetch emailed notes → pull private context → run Claude
+// Code headless to plan, research and write → validate (up to 2 repair rounds) → publish into the encrypted data
+// checkout. The GitHub workflow commits and pushes the data branch afterwards. Logs are public in GitHub Actions,
+// so this prints status only, never content.
 //
-// Usage: node generate.mjs [--date YYYY-MM-DD] [--force] [--model opus] [--no-publish] [--timeout-min 50]
+// Usage: node generate.mjs --data <data dir> [--date YYYY-MM-DD] [--force] [--model opus] [--no-publish] [--keep]
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
-import { initDb, hasCredentials } from './lib/db.mjs';
+import { Store } from './lib/store.mjs';
 import { pullContext } from './pull-context.mjs';
+import { fetchInbox } from './inbox.mjs';
 import { validateDigest } from './lib/validate-core.mjs';
 import { checkUrls } from './validate.mjs';
-import { publishDigest } from './publish.mjs';
+import { publishDigest, cleanStateUpdate } from './publish.mjs';
 import { loadCurriculum, parseArgs, log, PIPELINE_DIR, WORK_ROOT } from './lib/env.mjs';
 import { todayPT, weekdayOf, isDateStr } from './lib/dates.mjs';
 
@@ -21,8 +23,8 @@ const model = args.model || process.env.PARENTHOOD_MODEL || 'opus';
 const timeoutMs = Number(args['timeout-min'] || 50) * 60_000;
 
 if (!isDateStr(date)) throw new Error(`bad --date ${date}`);
-if (!hasCredentials()) {
-  log('No Firebase credentials configured yet - skipping (see parenthood/SETUP.md).');
+if (!process.env.PARENTHOOD_PASSPHRASE) {
+  log('PARENTHOOD_PASSPHRASE is not set yet - skipping (see parenthood/SETUP.md).');
   process.exit(0);
 }
 if (!process.env.CLAUDE_CODE_OAUTH_TOKEN && !process.env.ANTHROPIC_API_KEY && !args.local) {
@@ -30,20 +32,26 @@ if (!process.env.CLAUDE_CODE_OAUTH_TOKEN && !process.env.ANTHROPIC_API_KEY && !a
   process.exit(0);
 }
 
-const db = initDb();
-const existing = await db.doc(`digests/${date}`).get();
-if (existing.exists && !args.force) {
-  log(`Digest for ${date} already exists (Day ${existing.data().day}); nothing to do.`);
+const store = Store.open(path.resolve(args.data || 'data'), process.env.PARENTHOOD_PASSPHRASE);
+if (store.hasDigest(date) && !args.force) {
+  log(`Digest for ${date} already exists; nothing to do.`);
   process.exit(0);
+}
+
+try {
+  const inbox = await fetchInbox(store);
+  log(inbox.skipped ? `Inbox skipped (${inbox.skipped}).` : `Inbox: ${inbox.added} new note(s).`);
+} catch (e) {
+  log(`Inbox unavailable (${e.code || e.message}); continuing without new notes.`);
 }
 
 const workDir = path.join(WORK_ROOT, `${date}-${Date.now()}`);
 fs.mkdirSync(workDir, { recursive: true });
-const { brief, ledger } = await pullContext(db, { date, workDir });
+const { brief, ledger } = pullContext(store, { date, workDir });
 // Reference files are copied in so Claude never needs access to the pipeline folder itself.
 fs.mkdirSync(path.join(workDir, 'ref'), { recursive: true });
 for (const f of ['curriculum.json', 'schema.md']) fs.copyFileSync(path.join(PIPELINE_DIR, f), path.join(workDir, 'ref', f));
-log(`Generating Day ${brief.day} for ${date} (${brief.coveredUnits.length} prior digests; stage: ${brief.stage.stage || 'ttc'})`);
+log(`Generating Day ${brief.day} for ${date} (${brief.coveredUnits.length} prior digests; stage: ${brief.stage.stage || 'ttc'}; ${brief.openInbox} open notes)`);
 
 const prompt = fs.readFileSync(path.join(PIPELINE_DIR, 'prompts', 'generate.md'), 'utf8')
   .replaceAll('{{DAY}}', String(brief.day))
@@ -52,7 +60,7 @@ const prompt = fs.readFileSync(path.join(PIPELINE_DIR, 'prompts', 'generate.md')
   .replaceAll('{{WORK}}', workDir)
   .replaceAll('{{PIPELINE}}', PIPELINE_DIR);
 
-// Only what Claude needs: no Firebase or mail credentials reach the model's environment.
+// Only what Claude needs: the passphrase and mail credentials never reach the model's environment.
 const childEnv = {};
 for (const k of ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'LC_ALL', 'TMPDIR', 'TERM',
   'CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY', 'CLAUDE_CONFIG_DIR', 'XDG_CONFIG_HOME']) {
@@ -69,7 +77,8 @@ function runClaude(promptText, { resume } = {}) {
     const cliArgs = ['-p', promptText, '--model', model, '--output-format', 'json', '--permission-mode', 'dontAsk'];
     if (resume) cliArgs.push('--resume', resume);
     cliArgs.push('--allowedTools', ...allowed); // variadic: keep last
-    const out = fs.openSync(path.join(workDir, `claude-${Date.now()}.json`), 'w');
+    const outFile = path.join(workDir, `claude-${Date.now()}.json`);
+    const out = fs.openSync(outFile, 'w');
     const child = spawn(process.env.CLAUDE_BIN || 'claude', cliArgs, { cwd: workDir, env: childEnv, stdio: ['ignore', out, out] });
     const timer = setTimeout(() => { log('Claude run timed out; stopping it.'); child.kill('SIGTERM'); }, timeoutMs);
     child.on('close', (code) => {
@@ -77,11 +86,11 @@ function runClaude(promptText, { resume } = {}) {
       fs.closeSync(out);
       let sessionId = null;
       try {
-        const files = fs.readdirSync(workDir).filter((f) => f.startsWith('claude-')).sort();
-        const raw = fs.readFileSync(path.join(workDir, files.at(-1)), 'utf8');
+        const raw = fs.readFileSync(outFile, 'utf8');
         const json = JSON.parse(raw.slice(raw.indexOf('{')));
         sessionId = json.session_id || null;
-        log(`Claude finished (exit ${code}; ${json.num_turns ?? '?'} turns; ${Math.round((json.duration_ms || 0) / 60000)} min; cost-equivalent $${(json.total_cost_usd ?? 0).toFixed(2)})`);
+        const authError = json.is_error && /authenticat|oauth|api key|401/i.test(json.result || '');
+        log(`Claude finished (exit ${code}; ${json.num_turns ?? '?'} turns; ${Math.round((json.duration_ms || 0) / 60000)} min)${authError ? ' - AUTHENTICATION FAILED: renew CLAUDE_CODE_OAUTH_TOKEN' : ''}`);
       } catch {
         log(`Claude finished (exit ${code}); no JSON result`);
       }
@@ -99,8 +108,7 @@ async function check() {
   } catch (e) {
     return { digest: null, errors: [`digest.json is not valid JSON: ${e.message}`] };
   }
-  const curriculum = loadCurriculum();
-  const res = validateDigest(digest, { ledger, curriculum });
+  const res = validateDigest(digest, { ledger, curriculum: loadCurriculum() });
   if (digest.date !== date) res.errors.push(`date: must be ${date}`);
   if (!res.errors.length) {
     const u = await checkUrls(digest);
@@ -131,9 +139,11 @@ if (args['no-publish']) {
   log(`--no-publish: left in ${workDir}`);
   process.exit(0);
 }
-const trFile = path.join(workDir, 'translations.json');
-let translations = [];
-try { translations = fs.existsSync(trFile) ? JSON.parse(fs.readFileSync(trFile, 'utf8')) : []; } catch { translations = []; }
-const pub = await publishDigest(db, result.digest, { generator: { tool: 'claude-code', model, at: new Date().toISOString() }, translations });
-log(`Published ${date} as Day ${pub.day}${pub.translated ? ` (+${pub.translated} translations)` : ''}.`);
+let stateUpdate = null;
+try {
+  const f = path.join(workDir, 'state-update.json');
+  if (fs.existsSync(f)) stateUpdate = cleanStateUpdate(JSON.parse(fs.readFileSync(f, 'utf8')));
+} catch { stateUpdate = null; }
+const pub = publishDigest(store, result.digest, { generator: { tool: 'claude-code', model, at: new Date().toISOString() }, stateUpdate });
+log(`Published ${date} as Day ${pub.day}${pub.stageUpdated ? ' (journey stage updated from a note)' : ''}.`);
 if (!args.keep) fs.rmSync(workDir, { recursive: true, force: true });

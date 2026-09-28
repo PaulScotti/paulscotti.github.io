@@ -3,7 +3,7 @@ import { md, esc, inlineOnly, plain } from './md.js';
 import { renderFigure } from './figures.js';
 import { STR, TRACKS } from './i18n.js';
 
-export function renderDigest(d, { lang, isLatest, me, members, questions, feedback, onAddQuestion, onVote, state }) {
+export function renderDigest(d, { lang, isLatest, questions, onAddQuestion, replyTo, state }) {
   const t = STR[lang];
   const e = d[lang] || d.en;
   const scope = `d${d.date}`;
@@ -49,7 +49,7 @@ export function renderDigest(d, { lang, isLatest, me, members, questions, feedba
   if (e.talk) html += `<div class="card talk"><div class="label">${esc(t.talk)}</div><div class="prose">${md(e.talk, ctx)}</div></div>`;
   if (e.askDoctor?.length) {
     html += `<div class="card ask"><div class="label">${esc(t.askDoctor)}</div><ul>${e.askDoctor.map((q, i) => {
-      const onList = questions.some((x) => x.sourceDate === d.date && (x.text?.en === d.en?.askDoctor?.[i] || x.text?.ko === d.ko?.askDoctor?.[i]));
+      const onList = questions.some((x) => x.sourceDate === d.date && (x.text?.en === plain(d.en?.askDoctor?.[i] || '') || x.text?.ko === plain(d.ko?.askDoctor?.[i] || '')));
       return `<li><span>${inlineOnly(q, ctx)}</span><button type="button" class="btn-mini" data-ask="${i}" aria-pressed="${onList}">${esc(onList ? t.added : t.addToList)}</button></li>`;
     }).join('')}</ul></div>`;
   }
@@ -71,11 +71,12 @@ export function renderDigest(d, { lang, isLatest, me, members, questions, feedba
       <span class="m">${esc([s.type, s.publisher, s.year].filter(Boolean).join(' · '))}</span></li>`).join('')}</ol></details>`;
   }
 
-  const myVote = feedback.find((f) => f.date === d.date && f.by === me)?.vote || null;
-  html += `<div class="dfoot"><div class="votes"><span class="q">${esc(t.feedbackQ)}</span>${['helpful', 'deeper', 'known'].map((v) =>
-    `<button type="button" class="btn-mini" data-vote="${v}" aria-pressed="${myVote === v}">${esc(t.vote[v])}</button>`).join('')}</div>
-    <div class="receipts">${receipts(d.date, lang, members)}</div></div>
-    <div class="end-mark"></div>`;
+  if (replyTo) {
+    const subject = `${t.day(d.day)} · ${plain(e.title)}`;
+    html += `<div class="dfoot"><span class="q">${esc(t.replyQ)}</span>
+      <a class="btn-mini" href="mailto:${esc(replyTo)}?subject=${encodeURIComponent(subject)}">${esc(t.reply)}</a></div>`;
+  }
+  html += '<div class="end-mark"></div>';
 
   art.innerHTML = html;
 
@@ -107,23 +108,6 @@ export function renderDigest(d, { lang, isLatest, me, members, questions, feedba
       onAddQuestion({ en: plain(d.en?.askDoctor?.[i] || ''), ko: plain(d.ko?.askDoctor?.[i] || '') }, d.date);
       return;
     }
-    const vb = ev.target.closest('button[data-vote]');
-    if (vb) {
-      const v = vb.dataset.vote;
-      const on = vb.getAttribute('aria-pressed') === 'true';
-      art.querySelectorAll('button[data-vote]').forEach((b) => b.setAttribute('aria-pressed', String(!on && b === vb)));
-      onVote(d.date, on ? null : v);
-    }
   });
   return art;
-}
-
-export function receipts(date, lang, members) {
-  const t = STR[lang];
-  const list = Object.values(members || {}).sort((a, b) => (a.key || '').localeCompare(b.key || ''));
-  if (!list.length) return '';
-  return `${esc(t.read.toUpperCase())} · ${list.map((m) => {
-    const on = Boolean(m.reads?.[date]);
-    return `<span class="${on ? 'on' : ''}">${esc(m.name?.[lang] || m.key || '')} ${on ? '✓' : '—'}</span>`;
-  }).join(' · ')}`;
 }

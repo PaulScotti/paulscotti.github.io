@@ -1,128 +1,183 @@
 #!/usr/bin/env node
-// One-time (re-runnable) setup for a Firebase project:
-//   1. write the public web config to ../js/config.js           (--config <file with the firebaseConfig snippet>)
-//   2. render + deploy Firestore security rules with the two member emails (from private/members.json)
-//   3. upsert members, private profile, initial journey state
-//   4. publish any seed digests in private/seed/*.json (validated first)
-// Usage:
-//   node setup.mjs --key ~/Downloads/<project>-firebase-adminsdk.json --config firebase-config.txt --self-host-auth
-//   FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node setup.mjs --emulator      (local testing)
+// One-command setup (run it in your own terminal - it asks for secrets and never prints them):
+//   node parenthood/pipeline/setup.mjs
+// 1. choose (or generate) the family passphrase
+// 2. encrypt the private profile, members and seed digests into the `parenthood-data` branch and push it
+// 3. store the GitHub secrets the daily jobs need (passphrase, Gmail, Claude token) via `gh secret set`
+// Re-runnable: with an existing data branch it verifies the passphrase and only adds what's missing.
+// Test flags: --data-dir <dir> (plain folder, no git) --passphrase-file <f> --no-push --no-secrets --reseed
 import fs from 'node:fs';
 import path from 'node:path';
-import { initDb, useKeyFile, FieldValue, getLedger } from './lib/db.mjs';
+import readline from 'node:readline';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { Store, EMPTY_PRIVATE, publicIndexFields } from './lib/store.mjs';
+import { generatePassphrase, normalizePassphrase } from './lib/crypto.mjs';
 import { validateDigest } from './lib/validate-core.mjs';
 import { publishDigest } from './publish.mjs';
-import { loadCurriculum, parseArgs, log, readJSON, PRIVATE_DIR, SITE_DIR } from './lib/env.mjs';
+import { loadCurriculum, parseArgs, readJSON, PRIVATE_DIR, SITE_DIR } from './lib/env.mjs';
 
 const args = parseArgs();
-const emulator = Boolean(args.emulator || process.env.FIRESTORE_EMULATOR_HOST);
-if (args.key) useKeyFile(args.key);
+const REPO_ROOT = path.resolve(SITE_DIR, '..');
+const BRANCH = 'parenthood-data';
+const say = (s = '') => console.log(s);
+const git = (cwd, ...a) => execFileSync('git', a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 
+function ask(question, { hidden = false } = {}) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    if (hidden) {
+      rl._writeToOutput = (s) => {
+        if (s.includes(question)) rl.output.write(question);
+        else if (s === '\r\n' || s === '\n') rl.output.write(s);
+        else rl.output.write('*'.repeat(s.length));
+      };
+    }
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+// ---- 0. preflight -------------------------------------------------------------------------------------------
 const members = readJSON(path.join(PRIVATE_DIR, 'members.json'));
 const profile = readJSON(path.join(PRIVATE_DIR, 'profile.json'));
-
-// ---- 1. web config (+ optional same-origin auth helper) --------------------------------------------------
-function parseConfig(raw) {
-  const cfg = {};
-  for (const k of ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId']) {
-    const m = raw.match(new RegExp(`["']?${k}["']?\\s*:\\s*["']([^"']+)["']`));
-    if (m) cfg[k] = m[1];
+let repoSlug = '';
+if (!args['data-dir']) {
+  const url = git(REPO_ROOT, 'remote', 'get-url', 'origin');
+  repoSlug = (url.match(/github\.com[:/](.+?)(\.git)?$/) || [])[1] || '';
+  if (!args['no-secrets'] && spawnSync('gh', ['auth', 'status'], { stdio: 'ignore' }).status !== 0) {
+    say('GitHub CLI is not signed in. Run `gh auth login` first, then rerun this script.');
+    process.exit(1);
   }
-  return cfg;
 }
-const configFile = path.join(SITE_DIR, 'js', 'config.js');
-let cfg = parseConfig(fs.readFileSync(configFile, 'utf8'));
-let configChanged = false;
-if (args.config) {
-  cfg = parseConfig(fs.readFileSync(args.config, 'utf8'));
-  if (!cfg.apiKey || !cfg.projectId || !cfg.appId) throw new Error('Could not find apiKey/projectId/appId in --config file');
-  cfg.authDomain ||= `${cfg.projectId}.firebaseapp.com`;
-  configChanged = true;
-}
-if (args['self-host-auth']) {
-  // Serve Firebase's sign-in helper from this site's own domain, so redirect sign-in is first-party and works on
-  // phones, in-app browsers and home-screen shortcuts. Needs the OAuth client redirect URI (see SETUP.md).
-  if (!cfg.projectId) throw new Error('Run with --config first (or together) so the project id is known');
-  const repoRoot = path.resolve(SITE_DIR, '..');
-  const base = `https://${cfg.projectId}.firebaseapp.com`;
-  const files = [
-    ['/__/auth/handler', '__/auth/handler.html'], ['/__/auth/handler.js', '__/auth/handler.js'],
-    ['/__/auth/experiments.js', '__/auth/experiments.js'], ['/__/auth/iframe', '__/auth/iframe.html'],
-    ['/__/auth/iframe.js', '__/auth/iframe.js'], ['/__/firebase/init.json', '__/firebase/init.json'],
-  ];
-  for (const [src, dest] of files) {
-    const res = await fetch(base + src);
-    if (!res.ok) throw new Error(`Could not download ${base + src} (${res.status})`);
-    const out = path.join(repoRoot, dest);
-    fs.mkdirSync(path.dirname(out), { recursive: true });
-    fs.writeFileSync(out, Buffer.from(await res.arrayBuffer()));
+
+say('\nParenthood setup\n================\n');
+
+// ---- 1. data checkout --------------------------------------------------------------------------------------
+const dataDir = path.resolve(args['data-dir'] || path.join(SITE_DIR, '.data'));
+if (!args['data-dir']) {
+  const remote = git(REPO_ROOT, 'remote', 'get-url', 'origin');
+  const branchExists = git(REPO_ROOT, 'ls-remote', '--heads', 'origin', BRANCH).length > 0;
+  if (fs.existsSync(path.join(dataDir, '.git'))) {
+    if (branchExists) git(dataDir, 'pull', '--ff-only', '--quiet', 'origin', BRANCH);
+  } else if (branchExists) {
+    execFileSync('git', ['clone', '--quiet', '--branch', BRANCH, '--single-branch', remote, dataDir], { stdio: 'inherit' });
+  } else {
+    fs.mkdirSync(dataDir, { recursive: true });
+    git(dataDir, 'init', '--quiet');
+    git(dataDir, 'checkout', '--quiet', '-b', BRANCH);
+    git(dataDir, 'remote', 'add', 'origin', remote);
   }
-  const siteHost = new URL(process.env.PARENTHOOD_SITE_URL || 'https://www.paulscotti.com/parenthood/').host;
-  cfg.authDomain = siteHost;
-  configChanged = true;
-  log(`Self-hosted the Firebase auth helper at https://${siteHost}/__/auth/ (commit the repo-root __/ folder).`);
-  console.log(`  → Add this Authorized redirect URI to the OAuth client "Web client (auto created by Google Service)":\n     https://${siteHost}/__/auth/handler`);
+} else {
+  fs.mkdirSync(dataDir, { recursive: true });
 }
-if (configChanged) {
-  const js = `// Firebase web config for the private site, written by pipeline/setup.mjs. These values are public by design
-// (they identify the project); access to data is enforced by Firestore security rules.
-export const firebaseConfig = ${JSON.stringify(cfg, null, 2)};
-`;
-  fs.writeFileSync(configFile, js);
-  log(`Wrote js/config.js for project ${cfg.projectId} (authDomain ${cfg.authDomain})`);
+const existing = fs.existsSync(path.join(dataDir, 'private.enc'));
+
+// ---- 2. passphrase ------------------------------------------------------------------------------------------
+let passphrase = args['passphrase-file'] ? fs.readFileSync(args['passphrase-file'], 'utf8').trim() : '';
+if (!passphrase) {
+  if (existing) {
+    passphrase = await ask('Enter your existing family passphrase: ', { hidden: true });
+  } else {
+    say('Choose the family passphrase you two will type once on each phone (Keychain can save it).');
+    passphrase = await ask('Passphrase (press Enter to generate a strong one): ', { hidden: true });
+    if (!passphrase) {
+      passphrase = generatePassphrase();
+      say(`\n  Your passphrase:   ${passphrase}\n`);
+      say('  Save it in your password manager and share it with Yoolim in person or by a private message.');
+      const again = await ask('  Type it once to confirm: ');
+      if (normalizePassphrase(again) !== normalizePassphrase(passphrase)) {
+        say('That did not match. Nothing was changed - rerun the script.');
+        process.exit(1);
+      }
+    } else if (normalizePassphrase(passphrase).length < 16) {
+      say('Please use at least 16 characters (e.g. four random words). Nothing was changed.');
+      process.exit(1);
+    } else {
+      const again = await ask('Type it again: ', { hidden: true });
+      if (normalizePassphrase(again) !== normalizePassphrase(passphrase)) {
+        say('That did not match. Nothing was changed - rerun the script.');
+        process.exit(1);
+      }
+    }
+  }
 }
 
-// ---- 2. security rules --------------------------------------------------------------------------------------
-const emails = members.map((m) => m.email.toLowerCase());
-const rules = fs.readFileSync(path.join(SITE_DIR, 'firestore.rules'), 'utf8')
-  .replaceAll('__MEMBER_EMAILS__', JSON.stringify(emails).replace(/"/g, "'"));
-fs.writeFileSync(path.join(PRIVATE_DIR, 'firestore.rules'), rules);
-const db = initDb();
-if (emulator) {
-  log('Emulator: rules written to pipeline/private/firestore.rules (the emulator loads them from firebase.json).');
-} else if (!args['skip-rules']) {
-  const { getSecurityRules } = await import('firebase-admin/security-rules');
-  await getSecurityRules().releaseFirestoreRulesetFromSource(rules);
-  log('Deployed Firestore security rules.');
+let store;
+try {
+  store = Store.open(dataDir, passphrase, { create: true });
+} catch (e) {
+  say(e.message);
+  process.exit(1);
 }
 
-// ---- 3. members, profile, state ------------------------------------------------------------------------------
-for (const m of members) {
-  await db.doc(`members/${m.email.toLowerCase()}`).set({ key: m.key, lang: m.lang, name: m.name }, { merge: true });
+// ---- 3. private state, index, seed digests ------------------------------------------------------------------
+const gmailDefault = (members.find((m) => m.key === 'paul') || members[0]).email;
+const priv = { ...EMPTY_PRIVATE(), ...store.readPrivate() };
+priv.profile = profile;
+priv.members = members.map((m) => ({ ...m, email: m.email.toLowerCase() }));
+priv.mailbox ||= gmailDefault;
+const withSecrets = !args['data-dir'] && !args['no-secrets'];
+if (withSecrets) {
+  say('\nThe nightly emails are sent from a Gmail account, and replies to them come back to it as notes.');
+  priv.mailbox = (await ask(`Gmail address to send from [${priv.mailbox}]: `)) || priv.mailbox;
 }
-await db.doc('private/profile').set(profile);
-const stateRef = db.doc('state/couple');
-if (!(await stateRef.get()).exists) {
-  await stateRef.set({ stage: 'ttc', updatedBy: 'setup', updatedAt: FieldValue.serverTimestamp() });
-}
-log(`Upserted ${members.length} members, the private profile, and the journey state.`);
+store.writePrivate(priv);
 
-// ---- 4. seed digests ------------------------------------------------------------------------------------------
+const curriculum = loadCurriculum();
 const seedDir = path.join(PRIVATE_DIR, 'seed');
 const seeds = fs.existsSync(seedDir) ? fs.readdirSync(seedDir).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort() : [];
-const curriculum = loadCurriculum();
+let published = 0;
 for (const f of seeds) {
   const digest = JSON.parse(fs.readFileSync(path.join(seedDir, f), 'utf8'));
-  const exists = (await db.doc(`digests/${digest.date}`).get()).exists;
-  if (exists && !args['reseed']) { log(`Seed ${digest.date} already published; skipping (use --reseed to overwrite).`); continue; }
-  const ledger = (await getLedger(db)).filter((e) => e.date !== digest.date);
+  if (store.hasDigest(digest.date) && !args.reseed) continue;
+  const ledger = store.readPrivate().ledger.filter((e) => e.date !== digest.date);
   const { errors } = validateDigest(digest, { ledger, curriculum });
   if (errors.length) {
-    errors.forEach((e) => console.log(`ERROR ${f}: ${e}`));
-    throw new Error(`Seed ${f} is invalid`);
+    errors.forEach((e) => say(`  ERROR ${f}: ${e}`));
+    process.exit(1);
   }
-  const res = await publishDigest(db, digest, { generator: { tool: 'seed' } });
-  log(`Published seed ${digest.date} as Day ${res.day}.`);
+  publishDigest(store, digest, { generator: { tool: 'seed' } });
+  published++;
+}
+store.writeIndex({ ...store.readIndex(), ...publicIndexFields(store.readPrivate()) });
+say(`✓ Encrypted data ready (${published} new digest${published === 1 ? '' : 's'}; ${store.readIndex().days.length} total).`);
+
+// ---- 4. push the data branch ----------------------------------------------------------------------------------
+if (!args['data-dir'] && !args['no-push']) {
+  git(dataDir, 'add', '-A');
+  const dirty = spawnSync('git', ['diff', '--cached', '--quiet'], { cwd: dataDir }).status !== 0;
+  if (dirty) {
+    git(dataDir, '-c', 'user.name=parenthood-setup', '-c', 'user.email=parenthood@users.noreply.github.com', 'commit', '--quiet', '-m', 'Update parenthood data');
+    execFileSync('git', ['push', '--quiet', '-u', 'origin', BRANCH], { cwd: dataDir, stdio: 'inherit' });
+    say(`✓ Pushed the encrypted data to the "${BRANCH}" branch.`);
+  } else {
+    say('✓ Data branch already up to date.');
+  }
 }
 
-log('Setup complete.');
-if (!emulator) {
-  console.log(`
-Next steps (see parenthood/SETUP.md):
-  gh secret set FIREBASE_SERVICE_ACCOUNT < <your key file>
-  gh secret set CLAUDE_CODE_OAUTH_TOKEN          # from: claude setup-token
-  gh secret set GMAIL_APP_PASSWORD               # from: https://myaccount.google.com/apppasswords
-  gh variable set GMAIL_USER --body <your gmail address>
-`);
+// ---- 5. GitHub secrets ------------------------------------------------------------------------------------------
+if (withSecrets) {
+  const setSecret = (name, value) => {
+    const r = spawnSync('gh', ['secret', 'set', name, '--repo', repoSlug], { input: value, stdio: ['pipe', 'ignore', 'inherit'] });
+    if (r.status !== 0) throw new Error(`gh secret set ${name} failed`);
+    say(`✓ Saved GitHub secret ${name}`);
+  };
+  say('\nNow the secrets for the daily jobs (stored encrypted in GitHub; press Enter to skip any and add it later).');
+  setSecret('PARENTHOOD_PASSPHRASE', normalizePassphrase(passphrase));
+  setSecret('GMAIL_USER', priv.mailbox);
+  say('\nGmail app password: open https://myaccount.google.com/apppasswords, create one named "parenthood",');
+  say('and paste the 16 letters here (spaces are fine).');
+  const app = (await ask('Gmail app password: ', { hidden: true })).replace(/\s+/g, '');
+  if (app) setSecret('GMAIL_APP_PASSWORD', app);
+  say('\nClaude token: in another terminal tab run `claude setup-token`, sign in, and paste the token it prints.');
+  const token = await ask('Claude token (sk-ant-oat…): ', { hidden: true });
+  if (token) setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
+}
+
+say('\nDone. Open https://www.paulscotti.com/parenthood/ on each phone, pick who is reading, and enter the passphrase.');
+if (withSecrets) {
+  say('To test the nightly email now: GitHub → Actions → parenthood-email → Run workflow.');
 }
 process.exit(0);

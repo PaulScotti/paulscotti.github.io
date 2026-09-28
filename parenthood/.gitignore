@@ -1,10 +1,7 @@
-# Never commit private data: profile, seeds, keys, pipeline work files, exports.
+# Never commit private data: profile, seeds, keys, pipeline work files, exports, the local data-branch clone.
+.data/
 pipeline/private/
 pipeline/work/
 pipeline/node_modules/
 *.key.json
 service-account*.json
-.firebase/
-firebase-debug*.log
-firestore-debug*.log
-ui-debug*.log
