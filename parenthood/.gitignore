@@ -1,5 +1,6 @@
 # Never commit private data: profile, seeds, keys, pipeline work files, exports, the local data-branch clone.
 .data/
+.testdata/
 pipeline/private/
 pipeline/work/
 pipeline/node_modules/

@@ -3,21 +3,26 @@ import { isDateStr } from './dates.mjs';
 import { plain, countWords, countHangul, hangulRatio, buildSimilarityIndex } from './text.mjs';
 
 export const LIMITS = {
-  enWords: { min: 420, max: 680, hardMin: 360, hardMax: 760 },
-  koHangul: { min: 900, max: 2400, hardMin: 650, hardMax: 3000 },
+  enWords: { min: 500, max: 660, hardMin: 440, hardMax: 740 },
+  koHangul: { min: 1000, max: 2300, hardMin: 750, hardMax: 3000 },
   takeawayWords: { warn: 32, max: 36 },
   takeawayKoChars: 130,
   titleEn: { warn: 70, max: 80 },
   titleKo: 45,
-  sections: [2, 4],
+  sections: [3, 5],
   sources: [3, 8],
   glossary: [2, 4],
-  nuggets: [4, 8],
+  nuggets: [6, 10],
   figures: 2,
   svgBytes: 12 * 1024,
   repeatError: 0.58,
   repeatWarn: 0.27,
+  internalError: 0.55, // a sentence restating an earlier sentence in the same digest
+  internalWarn: 0.42,
 };
+
+// Retired in format 2 (they read as filler); new digests must not include them.
+const RETIRED = ['dek', 'nugget', 'tryThis', 'talk', 'askDoctor'];
 
 const TRACKS = ['conceive', 'body', 'pregnancy', 'birth', 'baby', 'parenting', 'us', 'life', 'roots'];
 const EVIDENCE = ['strong', 'moderate', 'emerging', 'expert', 'tradition'];
@@ -37,7 +42,7 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
   const stats = {};
 
   if (!isObj(d)) return { errors: ['digest: not a JSON object'], warnings, stats };
-  if (d.schema !== 1) err('schema', 'must be 1');
+  if (d.schema !== 2) err('schema', 'must be 2');
   if (!isDateStr(d.date)) err('date', 'must be YYYY-MM-DD');
   if (typeof d.unit !== 'string' || !/^[a-z]+(\.[a-z0-9-]+)+$/.test(d.unit)) err('unit', 'must look like "track.slug"');
   if (!TRACKS.includes(d.track)) err('track', `must be one of ${TRACKS.join(', ')}`);
@@ -97,8 +102,8 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
     const e = d[lang];
     const p = lang;
     if (!isObj(e)) { err(p, 'edition missing'); continue; }
-    for (const k of ['title', 'dek', 'takeaway', 'forUs', 'talk']) if (!nonEmpty(e[k])) err(`${p}.${k}`, 'required');
-    if (e.tryThis !== undefined && !nonEmpty(e.tryThis)) err(`${p}.tryThis`, 'empty string; omit it instead');
+    for (const k of ['title', 'takeaway', 'forUs']) if (!nonEmpty(e[k])) err(`${p}.${k}`, 'required');
+    for (const k of RETIRED) if (e[k] !== undefined) err(`${p}.${k}`, 'no longer used; remove it and put the substance into sections');
     if (!Array.isArray(e.sections)) { err(`${p}.sections`, 'must be an array'); continue; }
     if (e.sections.length < LIMITS.sections[0] || e.sections.length > LIMITS.sections[1]) {
       err(`${p}.sections`, `need ${LIMITS.sections.join('-')} sections`);
@@ -111,11 +116,6 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
       if (s.evidence !== undefined && !EVIDENCE.includes(s.evidence)) err(sp, `evidence must be one of ${EVIDENCE.join(', ')}`);
       if (s.figure !== undefined && !figIds.has(s.figure)) err(sp, `figure "${s.figure}" not found`);
     });
-    if (!isObj(e.nugget) || !nonEmpty(e.nugget.text) || !nonEmpty(e.nugget.who)) err(`${p}.nugget`, 'needs text and who');
-    else if (!Number.isInteger(e.nugget.source) || e.nugget.source < 1 || e.nugget.source > nSources) err(`${p}.nugget.source`, 'must be a source number');
-    if (e.askDoctor !== undefined && (!Array.isArray(e.askDoctor) || e.askDoctor.length > 3 || !e.askDoctor.every(nonEmpty))) {
-      err(`${p}.askDoctor`, 'must be an array of 0-3 non-empty strings');
-    }
 
     // markup safety + citations
     const texts = editionTexts(e);
@@ -132,7 +132,6 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
         }
       }
     }
-    if (isObj(e.nugget) && Number.isInteger(e.nugget.source)) cites.add(e.nugget.source);
     citeSets[lang] = cites;
   }
   if (errors.length) return { errors, warnings, stats };
@@ -146,8 +145,6 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
     if ((s.figure || null) !== (k.figure || null)) err(`ko.sections[${i}]`, 'figure must match en');
     if ((s.evidence || null) !== (k.evidence || null)) warn(`ko.sections[${i}]`, 'evidence badge differs from en');
   });
-  if ((en.askDoctor || []).length !== (ko.askDoctor || []).length) err('ko.askDoctor', 'must have as many items as en');
-  if (!!en.tryThis !== !!ko.tryThis) err('ko.tryThis', 'present in one edition only');
   for (let n = 1; n <= nSources; n++) {
     if (!citeSets.en.has(n)) warn('sources', `source [${n}] is never cited in en`);
   }
@@ -186,7 +183,24 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
   if (en.title.length > L.titleEn.max) err('en.title', `longer than ${L.titleEn.max} chars`);
   else if (en.title.length > L.titleEn.warn) warn('en.title', `longer than ${L.titleEn.warn} chars`);
   if (ko.title.length > L.titleKo) warn('ko.title', `longer than ${L.titleKo} chars`);
-  if (en.dek.length > 240) warn('en.dek', 'longer than 240 chars');
+  const forUsSentences = sentences(plain(en.forUs)).length;
+  if (forUsSentences > 4) warn('en.forUs', `${forUsSentences} sentences; keep it to 2-3 new, specific implications`);
+
+  // ---- no repeating yourself within the digest ----------------------------------------------------------
+  const own = [];
+  en.sections.forEach((sec, i) => sentences(plain(sec.body)).forEach((text) => own.push({ text, where: `en.sections[${i}]` })));
+  sentences(plain(en.forUs)).forEach((text) => own.push({ text, where: 'en.forUs' }));
+  let maxInternal = 0;
+  for (let i = 1; i < own.length; i++) {
+    const earlier = own.slice(0, i).filter((o) => countWords(o.text) >= 5);
+    if (!earlier.length || countWords(own[i].text) < 5) continue;
+    const r = buildSimilarityIndex(earlier, own.map((o) => o.text))(own[i].text);
+    maxInternal = Math.max(maxInternal, r.score);
+    const msg = `restates an earlier point (${r.score.toFixed(2)}): "${own[i].text.slice(0, 90)}" ~ "${r.match?.text.slice(0, 90)}"`;
+    if (r.score >= L.internalError) err(own[i].where, msg);
+    else if (r.score >= L.internalWarn) warn(own[i].where, msg);
+  }
+  stats.maxInternalRepeat = Number(maxInternal.toFixed(2));
 
   // ---- glossary, nuggets, keywords ----------------------------------------------------------------------
   if (d.glossary.length < L.glossary[0] || d.glossary.length > L.glossary[1] + 1) err('glossary', `need ${L.glossary.join('-')} items`);
@@ -230,17 +244,24 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
 }
 
 function editionTexts(e) {
-  const out = [['title', e.title], ['dek', e.dek], ['takeaway', e.takeaway], ['forUs', e.forUs], ['talk', e.talk]];
-  if (e.tryThis) out.push(['tryThis', e.tryThis]);
+  const out = [['title', e.title], ['takeaway', e.takeaway], ['forUs', e.forUs]];
   (e.sections || []).forEach((s, i) => { out.push([`sections[${i}].heading`, s.heading || '']); out.push([`sections[${i}].body`, s.body || '']); });
-  if (isObj(e.nugget)) out.push(['nugget.text', e.nugget.text || '']);
-  (e.askDoctor || []).forEach((q, i) => out.push([`askDoctor[${i}]`, q]));
   return out.filter(([, t]) => typeof t === 'string');
 }
 
 export function readingText(e) {
-  const parts = [e.dek, ...(e.sections || []).flatMap((s) => [s.heading, s.body]), e.nugget?.text, e.forUs, e.tryThis, e.talk];
+  const parts = [...(e.sections || []).flatMap((s) => [s.heading, s.body]), e.forUs];
   return parts.filter(Boolean).map(plain).join('\n\n');
+}
+
+/** Split prose into sentences (keeps decimals and common abbreviations together). */
+export function sentences(s) {
+  return String(s)
+    .replace(/\b(e\.g|i\.e|vs|etc|Dr|approx|al|U\.S)\./g, '$1\u2024')
+    .replace(/(\d)\.(\d)/g, '$1\u2024$2')
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map((x) => x.replace(/\u2024/g, '.').trim())
+    .filter((x) => x.length > 0);
 }
 
 function sentenceCount(s) {

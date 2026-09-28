@@ -54,28 +54,36 @@ test('planner avoids repeating yesterday\'s track and follows the stage', () => 
   assert.ok(preg.slice(0, 5).some((c) => c.phase === 'pregnancy-1'));
 });
 
+// Deterministic filler with no repeated words, so the within-digest repetition check has nothing to flag.
+const SYL = ['ba', 'ko', 'ri', 'me', 'tu', 'sa', 'ne', 'lo', 'vi', 'da', 'pu', 'ge'];
+const word = (n) => SYL[n % 12] + SYL[Math.floor(n / 12) % 12] + SYL[Math.floor(n / 144) % 12];
+const enSentence = (i) => {
+  const w = Array.from({ length: 9 }, (_, k) => word(i * 9 + k));
+  return `${w[0][0].toUpperCase()}${w[0].slice(1)} ${w.slice(1).join(' ')} [${(i % 3) + 1}].`;
+};
+const HANGUL = '가나다라마바사아자차카타파하거너더러머버서어저처커터퍼허고노도로모보소오조초코토포호';
+const koSentence = (i) => {
+  const chunk = (k) => HANGUL[(i * 7 + k) % HANGUL.length] + HANGUL[(i * 11 + k * 3) % HANGUL.length] + HANGUL[(i * 5 + k * 7) % HANGUL.length];
+  return `${Array.from({ length: 8 }, (_, k) => chunk(k)).join(' ')}입니다 [${(i % 3) + 1}].`;
+};
+
 function minimalDigest(overrides = {}) {
-  const para = 'Evidence sentence with a number, 42 percent, and a citation [1]. '.repeat(12);
-  const ko = '근거가 있는 문장입니다. 숫자와 인용이 들어 있습니다 [1]. '.repeat(40);
   const edition = (lang) => ({
     title: lang === 'en' ? 'A test title' : '시험 제목',
-    dek: lang === 'en' ? 'A short dek.' : '짧은 소개입니다.',
     takeaway: lang === 'en' ? 'One clear sentence to remember.' : '기억할 한 문장입니다.',
-    sections: [
-      { heading: lang === 'en' ? 'One' : '하나', body: lang === 'en' ? para : ko },
-      { heading: lang === 'en' ? 'Two' : '둘', body: lang === 'en' ? para : ko },
-    ],
-    nugget: { text: lang === 'en' ? 'An expert idea.' : '전문가의 생각입니다.', who: 'Dr. Test', source: 1 },
-    forUs: lang === 'en' ? para : ko,
-    talk: lang === 'en' ? 'What do you think?' : '어떻게 생각하시나요?',
-    askDoctor: [],
+    sections: [0, 1, 2, 3].map((i) => ({
+      heading: lang === 'en' ? `Heading ${i}` : `제목 ${i}`,
+      body: Array.from({ length: 13 }, (_, k) => (lang === 'en' ? enSentence(i * 13 + k) : koSentence(i * 13 + k))).join(' '),
+    })),
+    forUs: lang === 'en' ? 'Your prenatal lists 265 mg, so an egg a day would close most of the gap [3].' : '두 분의 프리내털에는 265mg이 들어 있어 달걀 하나를 더하면 대부분 채울 수 있습니다 [3].',
   });
   return {
-    schema: 1, date: '2026-10-01', unit: 'body.choline', track: 'body', depth: 'core', buildsOn: [], addresses: [],
+    schema: 2, date: '2026-10-01', unit: 'body.choline', track: 'body', depth: 'core', buildsOn: [], addresses: [],
     en: edition('en'), ko: edition('ko'), figures: [],
     sources: [1, 2, 3].map((i) => ({ title: `S${i}`, publisher: 'P', year: 2024, url: `https://example.org/${i}`, type: 'study' })),
     glossary: [{ en: 'a', ko: '가' }, { en: 'b', ko: '나' }],
-    nuggets: ['Choline needs rise in pregnancy.', 'Eggs are a rich choline source.', 'Many prenatals lack choline.', 'An RCT linked higher choline to faster infant processing.'],
+    nuggets: ['Choline needs rise to 450 mg a day in pregnancy.', 'Two eggs supply roughly 300 mg of choline.', 'Most prenatal vitamins contain little choline.',
+      'A feeding trial linked 930 mg daily to faster infant processing.', 'Estrogen-driven choline synthesis varies with a common gene variant.', 'The adult upper limit is 3.5 grams a day.'],
     keywords: ['choline'],
     ...overrides,
   };
@@ -92,9 +100,21 @@ test('validator accepts a well-formed digest and rejects common failures', () =>
   const badCite = minimalDigest();
   badCite.en.forUs += ' [9]';
   assert.ok(validateDigest(badCite, { ledger: [] }).errors.some((e) => /citation \[9\]/.test(e)));
-  const repeat = minimalDigest({ nuggets: [nuggets[0].text, 'x one', 'y two', 'z three'] });
+  const repeat = minimalDigest({ nuggets: [nuggets[0].text, 'x one', 'y two', 'z three', 'w four', 'v five'] });
   const ledger = [{ date: '2026-09-27', day: 1, unit: 'conceive.fertile-window', track: 'conceive', nuggets: nuggets.map((n) => n.text), title: 'T', takeaway: 'T' }];
   assert.ok(validateDigest(repeat, { ledger }).errors.some((e) => /possible repeat of Day 1/.test(e)));
   const sameUnit = minimalDigest({ unit: 'conceive.fertile-window', track: 'conceive' });
   assert.ok(validateDigest(sameUnit, { ledger }).errors.some((e) => /already covered/.test(e)));
+});
+
+test('retired fields and within-digest repetition are rejected', () => {
+  const quote = minimalDigest();
+  quote.en.nugget = { text: 'A quote', who: 'Someone', source: 1 };
+  quote.en.talk = 'What do you think?';
+  const errs = validateDigest(quote, { ledger: [] }).errors;
+  assert.ok(errs.some((e) => /en\.nugget: no longer used/.test(e)));
+  assert.ok(errs.some((e) => /en\.talk: no longer used/.test(e)));
+  const echo = minimalDigest();
+  echo.en.forUs = `${echo.en.sections[1].body.split('. ')[2]}.`;
+  assert.ok(validateDigest(echo, { ledger: [] }).errors.some((e) => /restates an earlier point/.test(e)));
 });

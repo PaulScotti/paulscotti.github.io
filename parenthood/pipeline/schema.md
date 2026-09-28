@@ -1,11 +1,11 @@
-# Digest JSON schema (v1)
+# Digest JSON schema (v2)
 
 One file per day: `digest.json`. Everything a reader sees comes from this file; the site renders it and
 never executes anything in it. `L` below means a localized pair: `{ "en": "...", "ko": "..." }`.
 
 ```jsonc
 {
-  "schema": 1,
+  "schema": 2,
   "date": "2026-09-27",                 // Pacific-time date this digest is for
   "unit": "conceive.fertile-window",    // curriculum unit id, or a new "track.slug" (then add unitProposals)
   "track": "conceive",                  // conceive | body | pregnancy | birth | baby | parenting | us | life | roots
@@ -19,7 +19,7 @@ never executes anything in it. `L` below means a localized pair: `{ "en": "...",
 
   "figures": [ /* Figure objects, referenced from sections by id; 0-2 per day */ ],
   "sources": [ /* Source objects; cite in text as [1], [2], [1, 3] (1-based) */ ],
-  "glossary": [ /* 2-4 bilingual clinic words */ ],
+  "glossary": [ /* 2-4 bilingual terms (shown as "Glossary") */ ],
   "nuggets": [ /* 4-8 atomic facts taught today, English, one sentence each (for the no-repeat ledger) */ ],
   "keywords": [ /* 3-8 lowercase English keywords */ ],
   "unitProposals": [ /* optional: new backlog units: { "id", "track", "phase", "title", "why" } */ ]
@@ -31,25 +31,24 @@ never executes anything in it. `L` below means a localized pair: `{ "en": "...",
 | field | rules |
 |---|---|
 | `title` | Specific, inviting. EN ≤ 70 chars; KO ≤ 40 chars. |
-| `dek` | 1–2 sentences that set up the question. EN ≤ 220 chars. |
-| `takeaway` | ONE sentence that stands alone in an email. Concrete and memorable, not generic. EN ≤ 32 words; KO ≤ 110 chars. |
-| `sections` | 2–4 items `{ "heading", "body", "evidence"?, "figure"? }`. `evidence` ∈ `strong \| moderate \| emerging \| expert \| tradition` (optional badge). `figure` = id of a figure shown after the body. EN and KO must have the same number of sections in the same order, with the same `figure`/`evidence` values. |
-| `nugget` | `{ "text", "who", "source" }` — an expert or experienced-parent insight (paraphrase, or a quote of ≤ 25 words). `who` = name + role. `source` = source number. |
-| `forUs` | 2–4 sentences on why this matters for these two specifically, using the private profile. Markdown-lite. |
-| `tryThis` | One small, concrete action (≤ 40 words). Optional but encouraged. Not a checklist. |
-| `talk` | One question for the couple to discuss tonight. |
-| `askDoctor` | 0–3 short questions they could bring to a clinician. |
+| `takeaway` | ONE sentence that stands alone in an email ("The gist"). Concrete and memorable, not generic. EN ≤ 32 words; KO ≤ 110 chars. |
+| `sections` | 3–5 items `{ "heading", "body", "evidence"?, "figure"? }`. This is where nearly all of the reading time goes. `evidence` ∈ `strong \| moderate \| emerging \| expert \| tradition` (optional badge). `figure` = id of a figure shown after the body. EN and KO must have the same number of sections in the same order, with the same `figure`/`evidence` values. |
+| `forUs` | 2–3 sentences of NEW, specific implications for these two (never a summary of the sections). Markdown-lite. |
 
-Length: EN reading text (dek + sections + nugget + forUs + tryThis + talk) should be **420–680 words** (≈3 minutes).
-KO should carry the same content (typically 1,000–2,000 Hangul syllables).
+Retired (validation fails if present): `dek`, `nugget`, `tryThis`, `talk`, `askDoctor`. Expert practice goes into the
+sections as facts with citations, not as quotes.
 
-### Markdown-lite (for `body`, `forUs`, `tryThis`, `talk`)
+Length: EN reading text (section headings + bodies + forUs) should be **500–650 words** (≈3 minutes).
+KO should carry the same content (typically 1,000–2,300 Hangul syllables). The validator rejects sentences that
+restate an earlier sentence of the same digest.
+
+### Markdown-lite (for `body` and `forUs`)
 - Blank line = new paragraph. Lines starting with `- ` form a bullet list; `1. ` forms a numbered list.
 - `**bold**`, `*italic*`, `[text](https://link)`.
 - Citations: `[1]`, `[2, 4]` → numbered sources. Every factual number needs a citation.
 - No HTML. No headings inside bodies. No emoji.
 
-## Figures (optional, 0–2)
+## Figures (optional, 0–2; only when they add information or interactivity the text doesn't)
 
 All labels are `L`. Data must come from cited sources (`source`: number) unless it is a calculator.
 
@@ -67,7 +66,7 @@ All labels are `L`. Data must come from cited sources (`source`: number) unless 
   "series": [ { "name": L, "points": [[-5, 10], [-4, 16]] } ],
   "bands": [ { "from": -5, "to": 0, "label": L } ] }
 
-{ "id": "f4", "type": "stats", "items": [ { "value": L, "label": L } ] }          // 2-4 big numbers
+{ "id": "f4", "type": "stats", "items": [ { "value": L, "label": L } ] }          // 2-4 big numbers NOT stated in the text
 
 { "id": "f5", "type": "compare", "caption": L,
   "columns": [ { "title": L, "items": [L, L] }, { "title": L, "items": [L] } ] }  // e.g. Myth vs Fact, Korea vs US

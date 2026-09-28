@@ -1,4 +1,4 @@
-// App shell: passphrase gate → reader choice → hash routes (feed, day, journey, doctor, us).
+// App shell: password gate → reader choice → hash routes (feed, day, journey, us).
 import * as Data from './store.js';
 import { STR, TRACKS } from './i18n.js';
 import { renderDigest } from './digest.js';
@@ -14,13 +14,6 @@ const ls = {
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
 };
 const t = () => STR[S.lang];
-function toast(msg) {
-  const el = $('#toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove('show'), 1800);
-}
 const skeleton = () => '<div class="skeleton" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>';
 const todayPT = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
 function applyTheme() {
@@ -40,7 +33,7 @@ function setLang(lang, { persist = true } = {}) {
   if (persist) ls.set('ph.lang', S.lang);
   document.querySelectorAll('.lang-toggle button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   const n = t().nav;
-  $('#nav').innerHTML = [['feed', '#/'], ['journey', '#/journey'], ['doctor', '#/doctor'], ['us', '#/us']]
+  $('#nav').innerHTML = [['feed', '#/'], ['journey', '#/journey'], ['us', '#/us']]
     .map(([k, href]) => `<a href="${href}" data-nav="${k}">${esc(n[k])}</a>`).join('');
   $('#foot-note').textContent = t().footer;
   document.title = S.lang === 'ko' ? '부모 되기 · Parenthood' : 'Parenthood';
@@ -86,10 +79,8 @@ function digestEl(d) {
   return renderDigest(d, {
     lang: S.lang,
     isLatest: d.date === todayPT(),
-    questions: Data.questions.all(),
     replyTo: S.index?.replyTo || '',
     state: S.index?.stage,
-    onAddQuestion: (text, sourceDate) => { Data.questions.add({ text, lang: S.lang, sourceDate }); toast(t().added.replace('✓ ', '')); },
   });
 }
 
@@ -117,7 +108,7 @@ async function viewFeed() {
       if (shown === 0) feed.innerHTML = '';
       for (const d of docs) if (d) feed.appendChild(digestEl(d));
       shown += batch.length;
-      status.textContent = shown >= dates.length ? t().end : '';
+      status.textContent = '';
       scrollSpy();
     } catch (e) {
       status.textContent = t().offline;
@@ -217,48 +208,6 @@ function viewJourney(sub = 'timeline') {
     }
     $('#jbody').innerHTML = html || `<p class="empty">${esc(list.length ? T.noMatch : t().empty)}</p>`;
   }
-}
-
-function viewDoctor() {
-  const T = t().doctor;
-  const lang = S.lang;
-  const other = lang === 'en' ? 'ko' : 'en';
-  const qs = Data.questions.all();
-  const open = qs.filter((q) => !q.done);
-  const done = qs.filter((q) => q.done);
-  const dayOf = (date) => (S.index?.days || []).find((d) => d.date === date)?.day;
-  const item = (q) => {
-    const n = dayOf(q.sourceDate);
-    return `<li class="q-item${q.done ? ' done' : ''}" data-id="${esc(q.id)}">
-      <input type="checkbox" ${q.done ? 'checked' : ''} aria-label="done">
-      <div><div class="t">${esc(q.text?.[lang] || q.text?.[other] || '')}</div><div class="m">${q.sourceDate && n ? `<a href="#/d/${esc(q.sourceDate)}">${esc(T.fromDay(n))}</a>` : ''}</div></div>
-      <button type="button" class="x" aria-label="${esc(T.remove)}">×</button></li>`;
-  };
-  main.innerHTML = `
-    <div class="page-head"><h1>${esc(T.title)}</h1><span class="badge">${open.length}</span></div>
-    <p class="lead">${esc(T.intro)}</p>
-    <form class="q-add"><input name="q" placeholder="${esc(T.placeholder)}" maxlength="600" autocomplete="off"><button class="btn" type="submit">${esc(T.add)}</button></form>
-    <div class="q-tools"><button type="button" class="btn-mini" data-copy="en">${esc(T.copyEn)}</button><button type="button" class="btn-mini" data-copy="ko">${esc(T.copyKo)}</button></div>
-    <div class="label" style="margin-bottom:6px">${esc(T.open)}</div>
-    ${open.length ? `<ul class="q-list">${open.map(item).join('')}</ul>` : `<p class="empty">${esc(T.empty)}</p>`}
-    ${done.length ? `<details><summary class="label done-sum">${esc(T.done(done.length))}</summary><ul class="q-list">${done.map(item).join('')}</ul></details>` : ''}`;
-  main.querySelector('form').addEventListener('submit', (ev) => {
-    ev.preventDefault();
-    const v = ev.target.q.value.trim();
-    if (!v) return;
-    Data.questions.add({ text: { [lang]: v }, lang, sourceDate: null });
-    viewDoctor();
-  });
-  main.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
-    const L = b.dataset.copy;
-    const lines = open.map((q, i) => `${i + 1}. ${q.text?.[L] || q.text?.[L === 'en' ? 'ko' : 'en'] || ''}`);
-    try { await navigator.clipboard.writeText(lines.join('\n')); toast(T.copied); } catch { toast('—'); }
-  }));
-  main.querySelectorAll('.q-item').forEach((li) => {
-    const id = li.dataset.id;
-    li.querySelector('input').addEventListener('change', (e) => { Data.questions.update(id, { done: e.target.checked }); viewDoctor(); });
-    li.querySelector('.x').addEventListener('click', () => { Data.questions.remove(id); viewDoctor(); });
-  });
 }
 
 function stageLine(st) {
@@ -395,7 +344,6 @@ function rerender() {
   renderContents();
   if (page === 'd' && arg) return arg === days()[0]?.date ? viewFeed() : viewDay(arg);
   if (page === 'journey') return viewJourney(arg || 'timeline');
-  if (page === 'doctor') return viewDoctor();
   if (page === 'us') return viewUs();
   return viewFeed();
 }
@@ -407,7 +355,7 @@ window.addEventListener('hashchange', () => {
   rerender();
 });
 
-// Refresh the day list when the app comes back to the foreground (new digests arrive each morning).
+// Refresh the day list when the app comes back to the foreground (a new digest arrives each day).
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState !== 'visible' || !S.index) return;
   try {

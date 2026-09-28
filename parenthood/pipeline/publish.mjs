@@ -74,8 +74,7 @@ export function publishDigest(store, digest, { generator = {}, stateUpdate = nul
   days.sort((a, b) => (a.date < b.date ? 1 : -1));
   store.writeIndex({ ...index, ...publicIndexFields(priv), days });
 
-  const status = store.readStatus();
-  store.writeStatus({ ...status, lastPublished: date });
+  // status.json is written only by the email job, so publishing and emailing never touch the same file.
   return { day, stageUpdated: Boolean(update) };
 }
 

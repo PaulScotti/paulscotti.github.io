@@ -3,7 +3,8 @@
 import { DATA_URL } from './config.js';
 
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
-const BASE = LOCAL ? new URL('.data/', location.href).href : DATA_URL;
+// Local development reads a local checkout (or ?data=<folder>/ for throwaway test data) instead of the data branch.
+const BASE = LOCAL ? new URL(new URLSearchParams(location.search).get('data') || '.data/', location.href).href : DATA_URL;
 const te = new TextEncoder();
 const td = new TextDecoder();
 let key = null;
@@ -100,7 +101,7 @@ export async function exportAll(idx) {
   return out;
 }
 
-// ---- per-device preferences and the doctor list (localStorage) ----
+// ---- per-device preferences (localStorage) ----
 const ls = {
   get(k, fallback = null) { try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); } catch { return fallback; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
@@ -108,11 +109,4 @@ const ls = {
 export const prefs = {
   get reader() { return ls.get('ph.reader'); },
   set reader(v) { ls.set('ph.reader', v); },
-};
-export const questions = {
-  all() { return ls.get('ph.questions', []); },
-  save(list) { ls.set('ph.questions', list); },
-  add(q) { const list = this.all(); list.unshift({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, done: false, at: Date.now(), ...q }); this.save(list); return list; },
-  update(id, patch) { const list = this.all().map((x) => (x.id === id ? { ...x, ...patch } : x)); this.save(list); return list; },
-  remove(id) { const list = this.all().filter((x) => x.id !== id); this.save(list); return list; },
 };

@@ -35,7 +35,8 @@ It will:
    (Paul → English, 유이 → Korean; the **EN / 한** switch changes it any time). Safari's password manager can save
    it too.
 2. Test the nightly email: GitHub → **Actions → parenthood-email → Run workflow**.
-3. Every morning around 6am Pacific **parenthood-generate** writes the next day; at 9:30pm you both get the email.
+3. Each day **parenthood-generate** writes that day's digest (it starts around 6am Pacific and retries into the
+   afternoon); at 8:30pm you both get the email.
 
 ## Day to day
 
@@ -43,7 +44,6 @@ It will:
 |---|---|
 | Tell the digest something (new results, an appointment, a worry, a topic) | Reply to any nightly email, or email `<your gmail>+digest@gmail.com` |
 | Say you're pregnant / the baby arrived | Same: e.g. "Positive test today, last period started Jan 5." The curriculum follows your weeks from then on |
-| Bring questions to an appointment | **Doctor** page → *Copy in English* (the list is saved per device) |
 | Re-run or redo a day | Actions → parenthood-generate → Run workflow (date, *force*) |
 | Change the model | Repo variable `PARENTHOOD_MODEL` (default `opus`) |
 | Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |

@@ -13,7 +13,7 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
            decrypt private state from `parenthood-data`  ─┼─► Claude plans, researches, writes EN + KO
            validate (schema, length, citations, URLs,    ─┘   ─► encrypt ─► commit to `parenthood-data`
            no-repeat check vs. everything already taught)
- 9:30pm  parenthood-email ─► takeaway + link, each in their own language (Gmail SMTP; replies become notes)
+ 8:30pm  parenthood-email ─► takeaway + link, each in their own language (Gmail SMTP; replies become notes)
 
  Phone ─► www.paulscotti.com/parenthood (static shell on master) ─► fetches *.enc from the data branch via
           raw.githubusercontent.com ─► decrypts in the browser with the family password (remembered per device)
@@ -29,8 +29,9 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
 - **Research.** Guidelines (ACOG, ASRM, AAP, CDC, WHO, Korean bodies where relevant), reviews and landmark or recent
   studies, expert practice, and cross-checked experienced-parent wisdom, with numbered citations and evidence
   badges. Source URLs are checked, so dead or invented links fail validation.
-- **For the two of them.** A private profile personalizes a "For the two of you" note; each day also has one small
-  action, a question to talk about, questions for the doctor, and bilingual clinic vocabulary.
+- **Dense, not padded.** About 3 minutes of reading, nearly all of it in 3–5 sections of specific, sourced facts;
+  no quotes or prompts, and the validator rejects any sentence that restates an earlier one. Each day ends with a
+  short personalized note ("For the two of you") and a bilingual glossary.
 
 ## Privacy model
 
@@ -47,13 +48,13 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
 
 | Path | What |
 |---|---|
-| `index.html`, `css/`, `js/` | The site: password gate, feed (newest first), day view, Journey (timeline / themes / words + knowledge map), Doctor list, Us |
-| `js/store.js` | Fetch + WebCrypto decryption, remembered device key, local doctor list |
+| `index.html`, `css/`, `js/` | The site: password gate, feed (newest first), day view, Journey (timeline / themes / glossary + knowledge map), Us |
+| `js/store.js` | Fetch + WebCrypto decryption, remembered device key |
 | `js/figures.js` | Charts, stats, comparisons, quizzes, timelines, sanitized SVG, and widgets (fertile-window explorer, due-date timeline) |
 | `pipeline/generate.mjs` | Daily orchestrator (inbox → context → Claude Code headless → validate → publish) |
 | `pipeline/prompts/generate.md`, `pipeline/schema.md` | The editorial brief and the digest format |
 | `pipeline/validate.mjs` | Schema, length, citation, bilingual, safety and no-repeat checks |
-| `pipeline/inbox.mjs`, `pipeline/send-email.mjs` | Emailed notes in (IMAP), nightly email out (precise 9:30pm PT across DST) |
+| `pipeline/inbox.mjs`, `pipeline/send-email.mjs` | Emailed notes in (IMAP), nightly email out (precise 8:30pm PT across DST) |
 | `pipeline/setup.mjs`, `pipeline/export.mjs` | One-command setup (password, data branch, secrets) and decrypted backup |
 | `../.github/workflows/parenthood-*.yml` | Schedules |
 
