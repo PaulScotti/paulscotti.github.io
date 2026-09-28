@@ -30,7 +30,7 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     env:
       HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
     steps:

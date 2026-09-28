@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Daily orchestrator: (skip if today's digest exists) → fetch emailed notes → pull private context → run Claude
-// Code headless to plan, research and write → validate (up to 2 repair rounds) → publish into the encrypted data
-// checkout. The GitHub workflow commits and pushes the data branch afterwards. Logs are public in GitHub Actions,
-// so this prints status only, never content.
+// Code headless to plan, research and write → validate (up to 2 repair rounds) → a separate Claude session reviews
+// the Korean edition against the English → publish into the encrypted data checkout. The GitHub workflow commits
+// and pushes the data branch afterwards. Logs are public in GitHub Actions, so this prints status only, never content.
 //
 // Usage: node generate.mjs --data <data dir> [--date YYYY-MM-DD] [--force] [--model opus] [--no-publish] [--keep]
+//        [--no-ko-review]
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -12,6 +13,7 @@ import { Store } from './lib/store.mjs';
 import { pullContext } from './pull-context.mjs';
 import { fetchInbox } from './inbox.mjs';
 import { validateDigest } from './lib/validate-core.mjs';
+import { mergeKorean, withoutKorean, countKoreanEdits } from './lib/korean.mjs';
 import { checkUrls } from './validate.mjs';
 import { publishDigest, cleanStateUpdate } from './publish.mjs';
 import { loadCurriculum, parseArgs, log, PIPELINE_DIR, WORK_ROOT } from './lib/env.mjs';
@@ -50,15 +52,16 @@ fs.mkdirSync(workDir, { recursive: true });
 const { brief, ledger } = pullContext(store, { date, workDir });
 // Reference files are copied in so Claude never needs access to the pipeline folder itself.
 fs.mkdirSync(path.join(workDir, 'ref'), { recursive: true });
-for (const f of ['curriculum.json', 'schema.md']) fs.copyFileSync(path.join(PIPELINE_DIR, f), path.join(workDir, 'ref', f));
+for (const f of ['curriculum.json', 'schema.md', 'ko-style.md']) fs.copyFileSync(path.join(PIPELINE_DIR, f), path.join(workDir, 'ref', f));
 log(`Generating Day ${brief.day} for ${date} (${brief.coveredUnits.length} prior digests; stage: ${brief.stage.stage || 'ttc'}; ${brief.openInbox} open notes)`);
 
-const prompt = fs.readFileSync(path.join(PIPELINE_DIR, 'prompts', 'generate.md'), 'utf8')
+const loadPrompt = (name) => fs.readFileSync(path.join(PIPELINE_DIR, 'prompts', name), 'utf8')
   .replaceAll('{{DAY}}', String(brief.day))
   .replaceAll('{{DATE}}', date)
   .replaceAll('{{WEEKDAY}}', weekdayOf(date))
   .replaceAll('{{WORK}}', workDir)
   .replaceAll('{{PIPELINE}}', PIPELINE_DIR);
+const prompt = loadPrompt('generate.md');
 
 // Only what Claude needs: the passphrase and mail credentials never reach the model's environment.
 const childEnv = {};
@@ -72,7 +75,7 @@ childEnv.DISABLE_AUTOUPDATER = '1';
 const allowed = ['WebSearch', 'WebFetch', 'Read', 'Write', 'Edit', 'Glob', 'Grep', 'TodoWrite',
   `Bash(node ${path.join(PIPELINE_DIR, 'validate.mjs')}:*)`];
 
-function runClaude(promptText, { resume } = {}) {
+function runClaude(promptText, { resume, timeout = timeoutMs } = {}) {
   return new Promise((resolve) => {
     const cliArgs = ['-p', promptText, '--model', model, '--output-format', 'json', '--permission-mode', 'dontAsk'];
     if (resume) cliArgs.push('--resume', resume);
@@ -80,7 +83,7 @@ function runClaude(promptText, { resume } = {}) {
     const outFile = path.join(workDir, `claude-${Date.now()}.json`);
     const out = fs.openSync(outFile, 'w');
     const child = spawn(process.env.CLAUDE_BIN || 'claude', cliArgs, { cwd: workDir, env: childEnv, stdio: ['ignore', out, out] });
-    const timer = setTimeout(() => { log('Claude run timed out; stopping it.'); child.kill('SIGTERM'); }, timeoutMs);
+    const timer = setTimeout(() => { log('Claude run timed out; stopping it.'); child.kill('SIGTERM'); }, timeout);
     child.on('close', (code) => {
       clearTimeout(timer);
       fs.closeSync(out);
@@ -99,12 +102,13 @@ function runClaude(promptText, { resume } = {}) {
   });
 }
 
+const digestFile = path.join(workDir, 'digest.json');
+
 async function check() {
-  const file = path.join(workDir, 'digest.json');
-  if (!fs.existsSync(file)) return { digest: null, errors: ['digest.json was not written'] };
+  if (!fs.existsSync(digestFile)) return { digest: null, errors: ['digest.json was not written'] };
   let digest;
   try {
-    digest = JSON.parse(fs.readFileSync(file, 'utf8'));
+    digest = JSON.parse(fs.readFileSync(digestFile, 'utf8'));
   } catch (e) {
     return { digest: null, errors: [`digest.json is not valid JSON: ${e.message}`] };
   }
@@ -115,6 +119,52 @@ async function check() {
     res.errors.push(...u.errors);
   }
   return { digest, ...res };
+}
+
+/**
+ * Second opinion on the Korean: a fresh Claude session (no memory of writing it) compares the Korean with the
+ * English and edits only Korean fields. Its edits are kept only if the merged digest still validates; anything it
+ * changed outside the Korean fields is ignored. Returns the (possibly revised) result and the editor's lessons.
+ */
+async function reviewKorean(res) {
+  const original = res.digest;
+  const reviewFile = path.join(workDir, 'ko-review.json');
+  const keepOriginal = (why) => {
+    fs.writeFileSync(digestFile, JSON.stringify(original, null, 2));
+    log(`Korean review ${why}; keeping the writer's Korean.`);
+    return { result: res, lessons: [] };
+  };
+  const vetted = () => {
+    let reviewed;
+    try { reviewed = JSON.parse(fs.readFileSync(digestFile, 'utf8')); } catch { return { errors: ['digest.json is not valid JSON'] }; }
+    const merged = mergeKorean(original, reviewed);
+    const v = validateDigest(merged, { ledger, curriculum: loadCurriculum() });
+    const strayEdits = JSON.stringify(withoutKorean(reviewed)) !== JSON.stringify(withoutKorean(original));
+    return { merged, strayEdits, ...v };
+  };
+
+  let run = await runClaude(loadPrompt('review-ko.md'), { timeout: 25 * 60_000 });
+  let out = vetted();
+  if (out.errors.length && run.sessionId) {
+    log(`Korean review left ${out.errors.length} validation error(s); one repair round.`);
+    const fix = `After your edits, ${digestFile} fails validation:\n${out.errors.map((e) => `- ${e}`).join('\n')}\n\n` +
+      `Fix these in the Korean fields only, re-run \`node ${path.join(PIPELINE_DIR, 'validate.mjs')} ${digestFile}\` until it prints VALID, then reply DONE.`;
+    run = await runClaude(fix, { resume: run.sessionId, timeout: 15 * 60_000 });
+    out = vetted();
+  }
+  if (out.errors.length) return keepOriginal(`discarded (${out.errors.length} validation error(s) after its edits)`);
+
+  fs.writeFileSync(digestFile, JSON.stringify(out.merged, null, 2));
+  let review = {};
+  try { review = JSON.parse(fs.readFileSync(reviewFile, 'utf8')); } catch { /* optional */ }
+  const lessons = (Array.isArray(review.issues) ? review.issues : [])
+    .filter((i) => i && typeof i.before === 'string' && typeof i.after === 'string')
+    .slice(0, 12)
+    .map((i) => ({ type: String(i.type || '').slice(0, 20), before: i.before.slice(0, 200), after: i.after.slice(0, 200), why: String(i.why || '').slice(0, 200) }));
+  const concerns = Array.isArray(review.englishConcerns) ? review.englishConcerns.length : 0;
+  log(`Korean review: ${countKoreanEdits(original, out.merged)} Korean field(s) revised, ${lessons.length} lesson(s) noted` +
+    `${concerns ? `, ${concerns} possible issue(s) in the English flagged` : ''}${out.strayEdits ? '; edits outside the Korean fields were ignored' : ''}.`);
+  return { result: { digest: out.merged, errors: [], warnings: out.warnings, stats: out.stats }, lessons };
 }
 
 let run = await runClaude(prompt);
@@ -135,6 +185,9 @@ if (result.errors.length) {
 const stats = result.stats || {};
 log(`Valid digest: unit ${result.digest.unit}, track ${result.digest.track}, ${stats.enWords} EN words, ${stats.koHangul} KO syllables, max repeat ${stats.maxRepeat ?? 0}.`);
 
+let koLessons = [];
+if (!args['no-ko-review']) ({ result, lessons: koLessons } = await reviewKorean(result));
+
 if (args['no-publish']) {
   log(`--no-publish: left in ${workDir}`);
   process.exit(0);
@@ -144,6 +197,6 @@ try {
   const f = path.join(workDir, 'state-update.json');
   if (fs.existsSync(f)) stateUpdate = cleanStateUpdate(JSON.parse(fs.readFileSync(f, 'utf8')));
 } catch { stateUpdate = null; }
-const pub = publishDigest(store, result.digest, { generator: { tool: 'claude-code', model, at: new Date().toISOString() }, stateUpdate });
+const pub = publishDigest(store, result.digest, { generator: { tool: 'claude-code', model, at: new Date().toISOString(), koReview: !args['no-ko-review'] }, stateUpdate, koLessons });
 log(`Published ${date} as Day ${pub.day}${pub.stageUpdated ? ' (journey stage updated from a note)' : ''}.`);
 if (!args.keep) fs.rmSync(workDir, { recursive: true, force: true });

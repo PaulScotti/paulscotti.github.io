@@ -30,7 +30,7 @@ export function isAuthenticated(headers, labels) {
   return /dmarc=pass/.test(ar) || /dkim=pass[^;]*header\.(i|d)=@?gmail\.com/.test(ar);
 }
 
-export async function fetchInbox(store, { user = process.env.GMAIL_USER, pass = process.env.GMAIL_APP_PASSWORD } = {}) {
+export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').trim(), pass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '') } = {}) {
   if (!user || !pass) return { added: 0, skipped: 'no Gmail credentials' };
   const priv = store.readPrivate();
   const members = new Map((priv.members || []).map((m) => [m.email.toLowerCase(), m.key]));

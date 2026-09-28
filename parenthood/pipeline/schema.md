@@ -15,7 +15,7 @@ never executes anything in it. `L` below means a localized pair: `{ "en": "...",
   "planNote": "Why this topic today, in one sentence (internal, not shown).",
 
   "en": { /* Edition, English */ },
-  "ko": { /* Edition, Korean (합니다체) - same structure, same facts, same citations */ },
+  "ko": { /* Edition, Korean (합니다체; see ko-style.md) - same structure, same facts, same citations */ },
 
   "figures": [ /* Figure objects, referenced from sections by id; 0-2 per day */ ],
   "sources": [ /* Source objects; cite in text as [1], [2], [1, 3] (1-based) */ ],

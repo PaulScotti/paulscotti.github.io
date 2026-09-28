@@ -115,6 +115,10 @@ export function pullContext(store, { date, workDir }) {
     recentlyCovered: inbox.filter((n) => n.status === 'covered' && (n.coveredBy || '') >= since).slice(-10)
       .map(({ id, text, coveredBy }) => ({ id, text, coveredBy })),
   });
+  writeJSON(path.join(ctx, 'ko-lessons.json'), {
+    about: 'Corrections the Korean editor made to recent digests. Avoid repeating these patterns.',
+    lessons: (priv.koLessons || []).slice(-30),
+  });
   return { brief, day, ledger: priorLedger, profile, state };
 }
 

@@ -5,7 +5,9 @@
 // 2. encrypt the private profile, members and seed digests into the `parenthood-data` branch and push it
 // 3. store the GitHub secrets the daily jobs need (passphrase, Gmail, Claude token) via `gh secret set`
 // Re-runnable: with an existing data branch it verifies the passphrase and only adds what's missing.
-// Test flags: --data-dir <dir> (plain folder, no git) --passphrase-file <f> --no-push --no-secrets --reseed
+//   --reseed   republish the seed digests from pipeline/private/seed (after editing them)
+//   --gmail    only (re)enter the Gmail address and app password; the login is tested before it is saved
+// Test flags: --data-dir <dir> (plain folder, no git) --passphrase-file <f> --no-push --no-secrets
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
@@ -37,6 +39,54 @@ function ask(question, { hidden = false } = {}) {
       resolve(answer.trim());
     });
   });
+}
+
+/** Log in to Gmail's SMTP server with these credentials. Returns null if Gmail accepted them, else a reason. */
+async function checkGmail(user, pass) {
+  let nodemailer;
+  try {
+    nodemailer = (await import('nodemailer')).default;
+  } catch {
+    return { untested: 'nodemailer is not installed (run npm install in parenthood/pipeline)' };
+  }
+  const transport = nodemailer.createTransport({ service: 'gmail', auth: { user, pass } });
+  try {
+    await transport.verify();
+    return null;
+  } catch (e) {
+    if (e.code === 'EAUTH') return { rejected: true };
+    return { untested: e.code || e.message };
+  } finally {
+    transport.close();
+  }
+}
+
+async function askGmailAppPassword(user, setSecret) {
+  say(`\nGmail app password: sign in to Google as ${user}, open https://myaccount.google.com/apppasswords,`);
+  say('create one named "parenthood", and paste the 16 letters here (spaces are fine). Press Enter to skip.');
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const app = (await ask('Gmail app password: ', { hidden: true })).replace(/\s+/g, '');
+    if (!app) {
+      say('Skipped: the Gmail secrets were not changed.');
+      return;
+    }
+    if (!/^[a-z]{16}$/i.test(app)) {
+      say(`That was ${app.length} characters; a Google app password is exactly 16 letters. Try again.`);
+      continue;
+    }
+    const problem = await checkGmail(user, app);
+    if (problem?.rejected) {
+      say(`Gmail rejected ${user} with that app password. Make sure you created it while signed in as ${user}`);
+      say('(the account menu at the top right of that page) and copied all 16 letters. Try again.');
+      continue;
+    }
+    if (problem?.untested) say(`(Could not test the login from here: ${problem.untested}. Saving it anyway.)`);
+    else say('✓ Gmail accepted the login.');
+    setSecret('GMAIL_USER', user);
+    setSecret('GMAIL_APP_PASSWORD', app);
+    return;
+  }
+  say('The Gmail secrets were not changed. Rerun with --gmail once you have a new app password.');
 }
 
 // ---- 0. preflight -------------------------------------------------------------------------------------------
@@ -166,16 +216,16 @@ if (withSecrets) {
     if (r.status !== 0) throw new Error(`gh secret set ${name} failed`);
     say(`✓ Saved GitHub secret ${name}`);
   };
-  say('\nNow the secrets for the daily jobs (stored encrypted in GitHub; press Enter to skip any and add it later).');
-  setSecret('PARENTHOOD_PASSPHRASE', normalizePassphrase(passphrase));
-  setSecret('GMAIL_USER', priv.mailbox);
-  say('\nGmail app password: open https://myaccount.google.com/apppasswords, create one named "parenthood",');
-  say('and paste the 16 letters here (spaces are fine).');
-  const app = (await ask('Gmail app password: ', { hidden: true })).replace(/\s+/g, '');
-  if (app) setSecret('GMAIL_APP_PASSWORD', app);
-  say('\nClaude token: in another terminal tab run `claude setup-token`, sign in, and paste the token it prints.');
-  const token = await ask('Claude token (sk-ant-oat…): ', { hidden: true });
-  if (token) setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
+  if (!args.gmail) {
+    say('\nNow the secrets for the daily jobs (stored encrypted in GitHub; press Enter to skip any and add it later).');
+    setSecret('PARENTHOOD_PASSPHRASE', normalizePassphrase(passphrase));
+  }
+  await askGmailAppPassword(priv.mailbox, setSecret);
+  if (!args.gmail) {
+    say('\nClaude token: in another terminal tab run `claude setup-token`, sign in, and paste the token it prints.');
+    const token = await ask('Claude token (sk-ant-oat…): ', { hidden: true });
+    if (token) setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
+  }
 }
 
 say('\nDone. Open https://www.paulscotti.com/parenthood/ on each phone, enter the password, and pick who is reading.');

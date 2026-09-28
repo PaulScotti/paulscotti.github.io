@@ -16,6 +16,8 @@ decorative quotes, and anything that repeats itself.
   requests, reactions to earlier days). `open` ones have not been answered yet.
 - `{{WORK}}/ref/curriculum.json` — the master syllabus (tracks, units, goals, weekly rhythm).
 - `{{WORK}}/ref/schema.md` — the exact output format. Follow it precisely.
+- `{{WORK}}/ref/ko-style.md` — how the Korean edition must read: register, standard terms, mistakes made before.
+- `{{WORK}}/context/ko-lessons.json` — corrections the Korean editor made on recent days (may be empty).
 
 ## Step 1 — Plan (think big picture)
 1. Build a picture of what they already know from the ledger. The new digest must add knowledge they do not have.
@@ -70,10 +72,17 @@ Follow `schema.md` exactly (format 2). Quality bar:
 - **Nuggets:** 6–10 one-sentence atomic facts you taught today (English). These feed the no-repeat check forever, so
   make them specific (numbers, thresholds, named findings).
 
-Korean edition (`ko`): same facts, same citation numbers, same section order/figures — but written natively in
-formal polite Korean (합니다체), not translated word by word. Add the English clinical term in parentheses on first
-use where it will help in US care. Use metric units (add a US unit only when a US threshold matters). Address them as
-"두 분"; use their names (from the profile) sparingly.
+**Korean edition (`ko`).** Yoolim reads only the Korean, so it must be as accurate and as well written as the
+English. Write it after the English is final, following `ref/ko-style.md` and avoiding every correction in
+`context/ko-lessons.json`:
+- Same facts, numbers, units, hedges and citation markers in each section; same section order and figures. Keep who
+  found or recommends what, and the logic between clauses (never turn "and" into "so").
+- Compose each paragraph as a Korean science journalist would: Korean sentence order, no English idioms or sentence
+  frames, standard Korean medical terms with the English term in parentheses on first use where it helps in US care.
+- Every sentence of running text in 합니다체 (…습니다/…입니다; requests …해 주십시오). Headings may be noun phrases.
+- Metric units (add a US unit only when a US threshold matters). Address them as "두 분"; names sparingly.
+The validator checks sentence endings, numbers and citations section by section against the English. A separate
+Korean editor then reviews it; aim for a version that needs no edits.
 
 Journey changes: if an open note reports a positive pregnancy test, a birth, or a pregnancy loss, also write
 `{{WORK}}/state-update.json` as `{ "stage": "pregnant" | "born" | "ttc", "lmp": "YYYY-MM-DD", "due": "YYYY-MM-DD",

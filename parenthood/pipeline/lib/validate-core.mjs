@@ -1,6 +1,7 @@
 // Validation for a digest. Returns { errors, warnings, stats } - the generator must reach zero errors.
 import { isDateStr } from './dates.mjs';
 import { plain, countWords, countHangul, hangulRatio, buildSimilarityIndex } from './text.mjs';
+import { checkKorean } from './korean.mjs';
 
 export const LIMITS = {
   enWords: { min: 500, max: 660, hardMin: 440, hardMax: 740 },
@@ -148,8 +149,8 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
   for (let n = 1; n <= nSources; n++) {
     if (!citeSets.en.has(n)) warn('sources', `source [${n}] is never cited in en`);
   }
-  const missingKo = [...citeSets.en].filter((n) => !citeSets.ko.has(n));
-  if (missingKo.length) warn('ko', `citations missing vs en: ${missingKo.join(', ')}`);
+  // Korean fidelity and register: 합니다체 endings, the same numbers and citations per section, known mistranslations
+  if (en.sections.length === ko.sections.length) checkKorean(d, { err, warn });
 
   // ---- lengths & style ----------------------------------------------------------------------------------
   const enReading = readingText(en);
@@ -170,9 +171,6 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
     warn('ko', `reading text has ${stats.koHangul} Hangul syllables; expected ~${L.koHangul.min}-${L.koHangul.max}`);
   }
   if (stats.koHangulRatio < 0.6) err('ko', `too little Korean (Hangul ratio ${stats.koHangulRatio})`);
-  const politeEndings = (koReading.match(/니다[.!?]/g) || []).length;
-  const yoEndings = (koReading.match(/[요죠][.!?]/g) || []).length;
-  if (yoEndings > politeEndings) warn('ko', 'mostly 해요체 endings; the reader prefers 합니다체');
 
   const tw = countWords(en.takeaway);
   if (tw > L.takeawayWords.max) err('en.takeaway', `${tw} words; max ${L.takeawayWords.max}`);

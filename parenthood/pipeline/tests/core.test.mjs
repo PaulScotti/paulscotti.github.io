@@ -75,7 +75,7 @@ function minimalDigest(overrides = {}) {
       heading: lang === 'en' ? `Heading ${i}` : `제목 ${i}`,
       body: Array.from({ length: 13 }, (_, k) => (lang === 'en' ? enSentence(i * 13 + k) : koSentence(i * 13 + k))).join(' '),
     })),
-    forUs: lang === 'en' ? 'Your prenatal lists 265 mg, so an egg a day would close most of the gap [3].' : '두 분의 프리내털에는 265mg이 들어 있어 달걀 하나를 더하면 대부분 채울 수 있습니다 [3].',
+    forUs: lang === 'en' ? 'Your prenatal lists 265 mg, so an egg a day would close most of the gap [3].' : '두 분의 산전 영양제에는 265mg이 들어 있어 달걀 하나를 더하면 대부분 채울 수 있습니다 [3].',
   });
   return {
     schema: 2, date: '2026-10-01', unit: 'body.choline', track: 'body', depth: 'core', buildsOn: [], addresses: [],

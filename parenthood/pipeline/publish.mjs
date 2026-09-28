@@ -39,7 +39,7 @@ export function cleanStateUpdate(u) {
   return out;
 }
 
-export function publishDigest(store, digest, { generator = {}, stateUpdate = null } = {}) {
+export function publishDigest(store, digest, { generator = {}, stateUpdate = null, koLessons = [] } = {}) {
   const priv = store.readPrivate();
   const date = digest.date;
   const ledger = (priv.ledger || []).filter((e) => e.date !== date);
@@ -64,6 +64,8 @@ export function publishDigest(store, digest, { generator = {}, stateUpdate = nul
     const note = (priv.inbox || []).find((n) => n.id === id);
     if (note) Object.assign(note, { status: 'covered', coveredBy: date });
   }
+  // Corrections from the Korean review, shown to the writer on later days (context/ko-lessons.json).
+  if (koLessons.length) priv.koLessons = [...(priv.koLessons || []), ...koLessons.map((l) => ({ ...l, date }))].slice(-60);
   const update = cleanStateUpdate(stateUpdate);
   if (update) priv.state = { ...update, updatedAt: new Date().toISOString(), updatedBy: 'digest-inbox' };
   store.writePrivate(priv);

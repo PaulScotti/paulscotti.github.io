@@ -72,6 +72,13 @@ export function renderEmail({ digest, lang, link, name }) {
   return { subject, html, text, fromName: t.from };
 }
 
+function gmailRejected() {
+  log('Gmail rejected the login (username and app password not accepted), so nothing was sent.');
+  log('Fix: on your Mac run `node parenthood/pipeline/setup.mjs --gmail`. It asks for a new app password from');
+  log('https://myaccount.google.com/apppasswords, tests the login, and only then saves it.');
+  process.exit(1);
+}
+
 async function main() {
   const args = parseArgs();
   const dryRun = Boolean(args['dry-run']);
@@ -79,12 +86,24 @@ async function main() {
     log('PARENTHOOD_PASSPHRASE is not set yet - skipping.');
     process.exit(0);
   }
-  const user = process.env.GMAIL_USER;
-  if (!dryRun && (!user || !process.env.GMAIL_APP_PASSWORD)) {
+  const user = (process.env.GMAIL_USER || '').trim();
+  const pass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+  if (!dryRun && (!user || !pass)) {
     log('GMAIL_USER / GMAIL_APP_PASSWORD not configured - skipping (see parenthood/SETUP.md).');
     process.exit(0);
   }
   const date = args.date || todayPT();
+
+  // Check the Gmail login before any waiting, so bad credentials fail in the afternoon runs, not at 8:30pm.
+  const transport = dryRun ? null : nodemailer.createTransport({ service: 'gmail', auth: { user, pass } });
+  if (transport) {
+    try {
+      await transport.verify();
+    } catch (e) {
+      if (e.code === 'EAUTH') gmailRejected();
+      log(`Could not check the Gmail login now (${e.code || e.message}); will try again when sending.`);
+    }
+  }
 
   if (args.at && !dryRun) {
     const [hh, mm] = String(args.at).split(':').map(Number);
@@ -112,7 +131,6 @@ async function main() {
     process.exit(1);
   }
   const status = store.readStatus();
-  const transport = dryRun ? null : nodemailer.createTransport({ service: 'gmail', auth: { user, pass: process.env.GMAIL_APP_PASSWORD } });
   const replyTo = replyAddress(priv.mailbox || user);
 
   const send = async (to, subject, html, text, fromName) => {
@@ -125,7 +143,12 @@ async function main() {
       log(`dry-run: wrote ${base}.html`);
       return;
     }
-    await transport.sendMail({ from: `"${fromName}" <${user}>`, to, replyTo: replyTo || undefined, subject, html, text });
+    try {
+      await transport.sendMail({ from: `"${fromName}" <${user}>`, to, replyTo: replyTo || undefined, subject, html, text });
+    } catch (e) {
+      if (e.code === 'EAUTH') gmailRejected();
+      throw e;
+    }
   };
 
   if (!store.hasDigest(date)) {

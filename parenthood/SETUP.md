@@ -47,6 +47,8 @@ It will:
 | Re-run or redo a day | Actions → parenthood-generate → Run workflow (date, *force*) |
 | Change the model | Repo variable `PARENTHOOD_MODEL` (default `opus`) |
 | Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |
+| Republish edited seed digests | `node parenthood/pipeline/setup.mjs --reseed --no-secrets` |
+| Fix the nightly email ("Gmail rejected the login" in the run log) | `node parenthood/pipeline/setup.mjs --gmail`: enter a new app password; it tests the login before saving |
 | Back up everything decrypted | **Us → Download our digests**, or `PARENTHOOD_PASSPHRASE=… node parenthood/pipeline/export.mjs` |
 | Lock a device (e.g. a shared computer) | **Us → Lock this device** |
 
