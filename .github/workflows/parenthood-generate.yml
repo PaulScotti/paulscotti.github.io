@@ -8,8 +8,8 @@ on:
   schedule:
     - cron: '17 13 * * *'  # ~6:17am PDT / 5:17am PST
     - cron: '17 17 * * *'  # retry ~10am PT (no-op if today's digest exists)
-    - cron: '17 22 * * *'  # retry ~3pm PT
-    - cron: '17 2 * * *'   # last retry ~7pm PT
+    - cron: '17 21 * * *'  # retry ~2pm PT
+    - cron: '17 0 * * *'   # last retry ~5pm PT, well before the 8:30pm email
   workflow_dispatch:
     inputs:
       date:

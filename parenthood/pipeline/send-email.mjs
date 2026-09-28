@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // Nightly email: each member gets the day's one-sentence takeaway in their language + a link to read the digest.
 // Replies go to <mailbox>+digest@…, where the next morning's run picks them up as notes for the digest.
-// Usage: node send-email.mjs --data <dir> [--date D] [--at 21:30] [--dry-run] [--force] [--only <member key>]
-//   --at HH:MM  wait until this Pacific time (GitHub cron fires early/late; this makes delivery precise).
+// Usage: node send-email.mjs --data <dir> [--date D] [--at 20:30] [--dry-run] [--force] [--only <member key>]
+//   --at HH:MM  wait until this Pacific time. GitHub's scheduled runs can start hours late, so the workflow starts
+//               several runs in the afternoon; whichever starts first waits here until exactly HH:MM.
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import nodemailer from 'nodemailer';
 import { Store, replyAddress } from './lib/store.mjs';
 import { parseArgs, log, SITE_URL, WORK_ROOT } from './lib/env.mjs';
@@ -26,8 +28,8 @@ export function renderEmail({ digest, lang, link, name }) {
     ? `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${['일', '월', '화', '수', '목', '금', '토'][d.getUTCDay()]}요일`
     : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
   const t = ko
-    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', talk: '오늘 밤 함께 이야기해 보세요', foot: '매일 밤 9시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트' }
-    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', talk: 'Talk about tonight', foot: 'Sent nightly at 9:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest' };
+    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', foot: '매일 밤 8시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트' }
+    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', foot: 'Sent nightly at 8:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest' };
   const subject = `${t.day} · ${strip(e.title)}`;
   const greeting = name ? (ko ? `${name} 님, 좋은 저녁입니다` : `Good evening, ${name}`) : '';
   const font = ko
@@ -54,10 +56,6 @@ export function renderEmail({ digest, lang, link, name }) {
 <tr><td style="padding:26px 0 0;">
   <a href="${esc(link)}" style="display:inline-block;font:500 13px/20px ${mono};color:#ffffff;background:#2d593e;text-decoration:none;padding:11px 16px;">${esc(t.read)} &rarr;</a>
 </td></tr>
-${e.talk ? `<tr><td style="padding:28px 0 0;">
-  <div style="font:500 11px/16px ${mono};letter-spacing:.06em;text-transform:uppercase;color:#6c756f;">${esc(t.talk)}</div>
-  <div style="padding-top:6px;font:400 15px/25px ${font};color:#5e5e5e;">${esc(strip(e.talk))}</div>
-</td></tr>` : ''}
 <tr><td style="padding:34px 0 0;border-bottom:1px solid #e5e9e6;"></td></tr>
 <tr><td style="padding:12px 0 0;font:400 11px/18px ${mono};color:#7d8580;">${esc(t.foot)} <a href="${esc(SITE_URL)}" style="color:#7d8580;">paulscotti.com/parenthood</a></td></tr>
 </table></td></tr></table></body></html>`;
@@ -68,7 +66,6 @@ ${e.talk ? `<tr><td style="padding:28px 0 0;">
     `${t.gist}: ${strip(e.takeaway)}`,
     '',
     `${t.read}: ${link}`,
-    e.talk ? `\n${t.talk}: ${strip(e.talk)}` : '',
     '',
     t.foot,
   ].join('\n');
@@ -92,7 +89,7 @@ async function main() {
   if (args.at && !dryRun) {
     const [hh, mm] = String(args.at).split(':').map(Number);
     const wait = ptWallTimeToEpoch(date, hh, mm) - Date.now();
-    if (wait > 50 * 60_000) {
+    if (wait > 340 * 60_000) { // GitHub jobs are capped at 6 hours; a later run will pick it up
       log(`Too early for ${args.at} PT (${Math.round(wait / 60000)} min away); a later run will send.`);
       process.exit(0);
     }
@@ -102,7 +99,12 @@ async function main() {
     }
   }
 
-  const store = Store.open(path.resolve(args.data || 'data'), process.env.PARENTHOOD_PASSPHRASE);
+  const dataDir = path.resolve(args.data || 'data');
+  if (args.pull) {
+    // The checkout may be hours old after waiting; pick up a digest generated since then.
+    try { execFileSync('git', ['pull', '-q', '--ff-only'], { cwd: dataDir, stdio: 'ignore' }); } catch { log('Could not refresh the data checkout; using what we have.'); }
+  }
+  const store = Store.open(dataDir, process.env.PARENTHOOD_PASSPHRASE);
   const priv = store.readPrivate();
   const members = (priv.members || []).filter((m) => !args.only || m.key === args.only);
   if (!members.length) {

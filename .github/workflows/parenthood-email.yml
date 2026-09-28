@@ -1,18 +1,26 @@
-# Nightly 9:30pm Pacific email for /parenthood: the day's one-sentence takeaway (each member in their own
-# language) and a link to the digest. GitHub cron is UTC and sometimes late, so each run starts a little early and
-# waits until 21:30 PT; runs that are too early exit, and a sent-marker on the data branch prevents double sends.
+# Nightly 8:30pm Pacific email for /parenthood: the day's one-sentence takeaway (each member in their own
+# language) and a link to the digest. GitHub's scheduled runs can start hours late, so several runs are scheduled
+# through the afternoon: the first one to start waits until exactly 8:30pm PT (jobs may run up to 6 hours), later
+# ones see it was sent and exit. Late backups send immediately if nothing went out. All times below are UTC.
 name: parenthood-email
 
 on:
   schedule:
-    - cron: '5 4 * * *'   # 9:05pm PDT -> waits until 9:30pm
-    - cron: '5 5 * * *'   # 9:05pm PST -> waits until 9:30pm (or a no-op backup in summer)
-    - cron: '45 5 * * *'  # backup
-    - cron: '25 6 * * *'  # late backup
+    - cron: '5 22 * * *'   # 3:05pm PDT (2:05pm PST: too early, exits)
+    - cron: '5 23 * * *'   # 4:05pm PDT / 3:05pm PST
+    - cron: '5 1 * * *'    # 6:05pm PDT / 5:05pm PST
+    - cron: '35 2 * * *'   # 7:35pm PDT / 6:35pm PST
+    - cron: '10 3 * * *'   # 8:10pm PDT / 7:10pm PST
+    - cron: '10 4 * * *'   # backup: 9:10pm PDT / 8:10pm PST
+    - cron: '50 4 * * *'   # backup
+    - cron: '30 5 * * *'   # late backup
   workflow_dispatch:
     inputs:
       date:
         description: 'Pacific date (YYYY-MM-DD). Default: today.'
+        required: false
+      at:
+        description: 'Wait until this Pacific time before sending (HH:MM). Empty = send now.'
         required: false
       force:
         description: 'Send even if already sent'
@@ -30,7 +38,7 @@ concurrency:
 jobs:
   email:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 355
     env:
       HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
     steps:
@@ -63,11 +71,13 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           INPUT_DATE: ${{ inputs.date }}
+          INPUT_AT: ${{ inputs.at }}
           INPUT_FORCE: ${{ inputs.force }}
           EVENT: ${{ github.event_name }}
         run: |
-          args=(--data data)
-          if [ "$EVENT" = "schedule" ]; then args+=(--at 21:30); fi
+          args=(--data data --pull)
+          if [ "$EVENT" = "schedule" ]; then args+=(--at 20:30); fi
+          if [ -n "$INPUT_AT" ]; then args+=(--at "$INPUT_AT"); fi
           if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
           if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi
           node parenthood/pipeline/send-email.mjs "${args[@]}"
