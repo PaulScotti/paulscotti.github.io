@@ -11,15 +11,26 @@ two invited Google accounts can read them.
 
 ## 1. Create the Firebase project (browser, ~5 min)
 
-Signed in as your personal Google account at <https://console.firebase.google.com>:
+Signed in as your personal Google account at <https://console.firebase.google.com>, create a project (e.g.
+`parenthood-py`, Google Analytics **off**). The console's left sidebar groups products into flyouts (there is no
+"Build" menu anymore), so the direct links below are the easiest route. Replace `<project-id>` with yours.
 
-1. **Create a project** → name it e.g. `parenthood-py` → turn **off** Google Analytics → Create.
-2. **Build → Authentication → Get started → Sign-in method → Google → Enable** → choose your support email → Save.
-3. **Authentication → Settings → Authorized domains → Add domain** → `www.paulscotti.com` (add `paulscotti.com` too).
-4. **Build → Firestore Database → Create database** → *Production mode* → location **us-west1** → Enable.
-5. **Project settings (gear) → General → Your apps → Web `</>`** → nickname `parenthood` → Register app.
-   Copy the `firebaseConfig = { … }` snippet into a text file, e.g. `~/Downloads/firebase-config.txt`.
-6. **Project settings → Service accounts → Generate new private key** → saves a JSON key to Downloads.
+1. **Google sign-in** (sidebar: **Security → Authentication**):
+   `https://console.firebase.google.com/project/<project-id>/authentication/providers`
+   → *Get started* (first time only) → **Google** → **Enable** → pick your support email → **Save**.
+2. **Authorized domains** (Authentication → **Settings** tab):
+   `https://console.firebase.google.com/project/<project-id>/authentication/settings`
+   → **Authorized domains → Add domain** → `www.paulscotti.com` (add `paulscotti.com` too).
+3. **Database** (sidebar: **Databases & Storage → Firestore**):
+   `https://console.firebase.google.com/project/<project-id>/firestore`
+   → **Create database** → *Standard* edition if asked → location **us-west1** → *Production mode* → Create.
+4. **Web app config** (gear next to Project Overview → **Project settings → General**):
+   `https://console.firebase.google.com/project/<project-id>/settings/general`
+   → **Your apps → Web `</>`** → nickname `parenthood` → Register app (skip Hosting). Copy the
+   `firebaseConfig = { … }` snippet into a text file, e.g. `~/Downloads/firebase-config.txt`.
+5. **Service-account key** (Project settings → **Service accounts** tab):
+   `https://console.firebase.google.com/project/<project-id>/settings/serviceaccounts/adminsdk`
+   → **Generate new private key** → saves a JSON key to Downloads.
 
 ## 2. Make phone sign-in bulletproof (browser, ~1 min, recommended)
 
