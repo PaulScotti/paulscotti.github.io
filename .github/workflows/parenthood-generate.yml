@@ -19,6 +19,10 @@ on:
         description: 'Regenerate even if that day already exists'
         type: boolean
         default: false
+      inbox_only:
+        description: 'Only check for new emailed notes (no digest)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -54,9 +58,11 @@ jobs:
 
       - name: Install pipeline dependencies and Claude Code
         if: env.HAS_PASSPHRASE == 'true'
+        env:
+          INPUT_INBOX_ONLY: ${{ inputs.inbox_only }}
         run: |
           npm ci --prefix parenthood/pipeline --no-audit --no-fund
-          npm install -g @anthropic-ai/claude-code --no-audit --no-fund
+          if [ "$INPUT_INBOX_ONLY" != "true" ]; then npm install -g @anthropic-ai/claude-code --no-audit --no-fund; fi
 
       - name: Generate today's digest
         if: env.HAS_PASSPHRASE == 'true'
@@ -69,7 +75,9 @@ jobs:
           PARENTHOOD_MODEL: ${{ vars.PARENTHOOD_MODEL }}
           INPUT_DATE: ${{ inputs.date }}
           INPUT_FORCE: ${{ inputs.force }}
+          INPUT_INBOX_ONLY: ${{ inputs.inbox_only }}
         run: |
+          if [ "$INPUT_INBOX_ONLY" = "true" ]; then node parenthood/pipeline/inbox.mjs --data data; exit 0; fi
           args=(--data data)
           if [ -n "$INPUT_DATE" ]; then args+=(--date "$INPUT_DATE"); fi
           if [ "$INPUT_FORCE" = "true" ]; then args+=(--force); fi

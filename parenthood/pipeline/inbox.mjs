@@ -38,6 +38,9 @@ export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').
   const client = new ImapFlow({ host: 'imap.gmail.com', port: 993, secure: true, auth: { user, pass }, logger: false });
   await client.connect();
   let added = 0;
+  let matched = 0; // new messages sent to the digest address
+  let ignored = 0; // …of which not from the two members, not authenticated, or empty
+  let changed = false;
   try {
     const boxes = await client.list();
     const all = boxes.find((b) => b.specialUse === '\\All')?.path || 'INBOX';
@@ -48,31 +51,44 @@ export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').
       let maxUid = lastUid;
       for await (const msg of client.fetch(uids.filter((u) => u > lastUid), { source: true, labels: true, uid: true }, { uid: true })) {
         maxUid = Math.max(maxUid, msg.uid);
+        matched++;
         const mail = await simpleParser(msg.source);
         const from = (mail.from?.value?.[0]?.address || '').toLowerCase();
-        if (!members.has(from) || !isAuthenticated(mail.headers, msg.labels)) continue;
         const text = stripQuoted(mail.text || '');
         const subject = (mail.subject || '').replace(/^(re|fwd?):\s*/gi, '').trim();
-        if (!text && !subject) continue;
+        if (!members.has(from) || !isAuthenticated(mail.headers, msg.labels) || (!text && !subject)) { ignored++; continue; }
         const id = `mail-${msg.uid}`;
         if ((priv.inbox ||= []).some((n) => n.id === id)) continue;
         priv.inbox.push({ id, from: members.get(from), date: (mail.date || new Date()).toISOString().slice(0, 10), subject: subject.slice(0, 200), text, status: 'open' });
         added++;
       }
-      priv.mail = { ...(priv.mail || {}), lastUid: maxUid, checkedAt: new Date().toISOString() };
+      // Only rewrite the encrypted file when something moved, so hourly checks don't churn the data branch.
+      if (maxUid !== lastUid || added) {
+        priv.mail = { ...(priv.mail || {}), lastUid: maxUid, checkedAt: new Date().toISOString() };
+        changed = true;
+      }
     } finally {
       lock.release();
     }
   } finally {
     await client.logout().catch(() => {});
   }
-  store.writePrivate(priv);
-  return { added };
+  if (changed) store.writePrivate(priv);
+  return { added, matched, ignored };
+}
+
+/** One status line with counts only (workflow logs are public). */
+export function describeInbox(res) {
+  if (res.skipped) return `Inbox skipped (${res.skipped}).`;
+  const extra = res.ignored ? `; ${res.ignored} ignored (not from you two, not authenticated, or empty)` : '';
+  return `Inbox: ${res.added} new note(s) from ${res.matched} new message(s) to the digest address${extra}.`;
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = parseArgs();
   const store = Store.open(path.resolve(args.data || path.join(SITE_DIR, '.data')), process.env.PARENTHOOD_PASSPHRASE);
   const res = await fetchInbox(store);
-  log(res.skipped ? `Inbox skipped: ${res.skipped}` : `Inbox: ${res.added} new note(s).`);
+  log(describeInbox(res));
+  const open = (store.readPrivate().inbox || []).filter((n) => n.status === 'open').length;
+  log(`${open} note(s) waiting for the next digest.`);
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Nightly email: each member gets the day's one-sentence takeaway in their language + a link to read the digest.
+// Nightly email: each member gets the day's one-sentence takeaway in their language + a link to read the digest,
+// plus, on some days, one short question for them (digest.ask; shown only here, never on the site).
 // Replies go to <mailbox>+digest@…, where the next morning's run picks them up as notes for the digest.
 // Usage: node send-email.mjs --data <dir> [--date D] [--at 20:30] [--dry-run] [--force] [--only <member key>]
 //   --at HH:MM  wait until this Pacific time. GitHub's scheduled runs can start hours late, so the workflow starts
@@ -20,7 +21,7 @@ function strip(md = '') {
   return String(md).replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*?([^*]+)\*\*?/g, '$1').replace(/\s+/g, ' ').trim();
 }
 
-export function renderEmail({ digest, lang, link, name }) {
+export function renderEmail({ digest, lang, link, name, who }) {
   const e = digest[lang];
   const ko = lang === 'ko';
   const d = new Date(`${digest.date}T12:00:00Z`);
@@ -28,8 +29,9 @@ export function renderEmail({ digest, lang, link, name }) {
     ? `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${['일', '월', '화', '수', '목', '금', '토'][d.getUTCDay()]}요일`
     : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
   const t = ko
-    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', foot: '매일 밤 8시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트' }
-    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', foot: 'Sent nightly at 8:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest' };
+    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', foot: '매일 밤 8시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트', ask: '여쭙고 싶은 점', askHint: '이 메일에 한 줄로 답장해 주시면 됩니다.' }
+    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', foot: 'Sent nightly at 8:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest', ask: 'A quick question', askHint: 'Just reply to this email; a line is enough.' };
+  const ask = digest.ask && (digest.ask.to === 'both' || digest.ask.to === who) ? strip(digest.ask[lang] || '') : '';
   const subject = `${t.day} · ${strip(e.title)}`;
   const greeting = name ? (ko ? `${name} 님, 좋은 저녁입니다` : `Good evening, ${name}`) : '';
   const font = ko
@@ -53,7 +55,14 @@ export function renderEmail({ digest, lang, link, name }) {
     <div style="padding-top:6px;font:400 17px/27px ${font};color:#19201c;">${esc(strip(e.takeaway))}</div>
   </div>
 </td></tr>
-<tr><td style="padding:26px 0 0;">
+${ask ? `<tr><td style="padding:22px 0 0;">
+  <div style="border:1px solid #cddfeb;background:#edf4f9;padding:12px 14px 13px;">
+    <div style="font:500 11px/16px ${mono};letter-spacing:.06em;text-transform:uppercase;color:#286b98;">${esc(t.ask)}</div>
+    <div style="padding-top:6px;font:400 16px/25px ${font};color:#19201c;">${esc(ask)}</div>
+    <div style="padding-top:6px;font:400 12px/18px ${mono};color:#6c756f;">${esc(t.askHint)}</div>
+  </div>
+</td></tr>
+` : ''}<tr><td style="padding:26px 0 0;">
   <a href="${esc(link)}" style="display:inline-block;font:500 13px/20px ${mono};color:#ffffff;background:#2d593e;text-decoration:none;padding:11px 16px;">${esc(t.read)} &rarr;</a>
 </td></tr>
 <tr><td style="padding:34px 0 0;border-bottom:1px solid #e5e9e6;"></td></tr>
@@ -65,6 +74,7 @@ export function renderEmail({ digest, lang, link, name }) {
     '',
     `${t.gist}: ${strip(e.takeaway)}`,
     '',
+    ...(ask ? [`${t.ask}: ${ask}`, `(${t.askHint})`, ''] : []),
     `${t.read}: ${link}`,
     '',
     t.foot,
@@ -172,7 +182,7 @@ async function main() {
   const link = `${SITE_URL}#/d/${date}`;
   for (const m of members) {
     const lang = m.lang === 'ko' ? 'ko' : 'en';
-    const mail = renderEmail({ digest, lang, link, name: m.name?.[lang] });
+    const mail = renderEmail({ digest, lang, link, name: m.name?.[lang], who: m.key });
     await send(m.email, mail.subject, mail.html, mail.text, mail.fromName);
   }
   if (!dryRun) store.writeStatus({ ...status, emailed: { ...(status.emailed || {}), [date]: new Date().toISOString() } });

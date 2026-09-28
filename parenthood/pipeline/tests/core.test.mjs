@@ -118,3 +118,39 @@ test('retired fields and within-digest repetition are rejected', () => {
   echo.en.forUs = `${echo.en.sections[1].body.split('. ')[2]}.`;
   assert.ok(validateDigest(echo, { ledger: [] }).errors.some((e) => /restates an earlier point/.test(e)));
 });
+
+test('the emailed question: validated, never two days in a row, shown only to whom it is for', async () => {
+  const { renderEmail } = await import('../send-email.mjs');
+  const { mergeKorean } = await import('../lib/korean.mjs');
+  const ask = { to: 'yoolim', en: 'When did your last period start?', ko: '지난 생리가 시작된 날짜를 알려 주시겠습니까?' };
+  assert.deepEqual(validateDigest(minimalDigest({ ask }), { ledger: [] }).errors, []);
+
+  const errs = (a, ledger = []) => validateDigest(minimalDigest({ ask: a }), { ledger }).errors;
+  assert.ok(errs({ ...ask, en: 'Tell us your last period date.' }).some((e) => /ask\.en: must be a question/.test(e)));
+  assert.ok(errs({ ...ask, to: 'doctor' }).some((e) => /ask\.to/.test(e)));
+  assert.ok(errs({ ...ask, ko: '지난 생리가 언제 시작됐는지 알려 주실래요?' }).some((e) => /ask\.ko: 해요체/.test(e)));
+  const yesterday = [{ date: '2026-09-30', day: 3, unit: 'x.y', track: 'body', nuggets: [], ask: { to: 'paul', en: 'When is the appointment?' } }];
+  assert.ok(errs(ask, yesterday).some((e) => /never ask two days in a row/.test(e)));
+
+  const digest = { ...minimalDigest({ ask }), day: 4 };
+  const ko = renderEmail({ digest, lang: 'ko', link: 'https://x', name: '유이', who: 'yoolim' });
+  const en = renderEmail({ digest, lang: 'en', link: 'https://x', name: 'Paul', who: 'paul' });
+  assert.ok(ko.html.includes('지난 생리가 시작된 날짜를 알려 주시겠습니까?') && ko.text.includes('여쭙고 싶은 점'));
+  assert.ok(!en.html.includes('A quick question') && !en.text.includes('last period'));
+  const both = renderEmail({ digest: { ...digest, ask: { ...ask, to: 'both' } }, lang: 'en', link: 'https://x', name: 'Paul', who: 'paul' });
+  assert.ok(both.html.includes('When did your last period start?'));
+  assert.ok(!renderEmail({ digest: minimalDigest(), lang: 'en', link: 'https://x', who: 'paul' }).html.includes('A quick question'));
+
+  const reviewed = { ...digest, ask: { ...ask, ko: '지난 생리 시작일을 알려 주시겠습니까?', en: 'changed' } };
+  const merged = mergeKorean(digest, reviewed);
+  assert.equal(merged.ask.ko, '지난 생리 시작일을 알려 주시겠습니까?');
+  assert.equal(merged.ask.en, ask.en);
+});
+
+test('a reported period start gives the cycle day while trying, and is ignored once stale', async () => {
+  const { currentPhase } = await import('../pull-context.mjs');
+  assert.equal(currentPhase({ stage: 'ttc', lmp: '2026-09-22' }, '2026-09-29').cycleDay, 8);
+  assert.equal(currentPhase({ stage: 'ttc', lmp: '2026-07-01' }, '2026-09-29').cycleDay, undefined);
+  assert.equal(currentPhase({ stage: 'ttc' }, '2026-09-29').phase, 'preconception');
+  assert.equal(currentPhase({ stage: 'pregnant', lmp: '2026-09-22' }, '2026-11-17').phase, 'pregnancy-1');
+});

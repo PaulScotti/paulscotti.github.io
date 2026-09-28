@@ -44,6 +44,9 @@ It will:
 |---|---|
 | Tell the digest something (new results, an appointment, a worry, a topic) | Reply to any nightly email, or email `<your gmail>+digest@gmail.com` |
 | Say you're pregnant / the baby arrived | Same: e.g. "Positive test today, last period started Jan 5." The curriculum follows your weeks from then on |
+| Keep cycle timing current while trying | Email the date a period starts ("period started Oct 19"); later digests know the cycle day |
+| The email asks you something | Some nights the email carries one short question (never on the site); just reply with a line |
+| Check that a note arrived | Actions → parenthood-generate → Run workflow with *inbox_only*; the log shows how many new notes were stored (counts only) |
 | Re-run or redo a day | Actions → parenthood-generate → Run workflow (date, *force*) |
 | Change the model | Repo variable `PARENTHOOD_MODEL` (default `opus`) |
 | Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |

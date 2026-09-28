@@ -1,5 +1,5 @@
 // Validation for a digest. Returns { errors, warnings, stats } - the generator must reach zero errors.
-import { isDateStr } from './dates.mjs';
+import { isDateStr, addDays } from './dates.mjs';
 import { plain, countWords, countHangul, hangulRatio, buildSimilarityIndex } from './text.mjs';
 import { checkKorean } from './korean.mjs';
 
@@ -20,6 +20,8 @@ export const LIMITS = {
   repeatWarn: 0.27,
   internalError: 0.55, // a sentence restating an earlier sentence in the same digest
   internalWarn: 0.42,
+  askWords: 35,
+  askKoChars: 140,
 };
 
 // Retired in format 2 (they read as filler); new digests must not include them.
@@ -199,6 +201,29 @@ export function validateDigest(d, { ledger = [], curriculum = null } = {}) {
     else if (r.score >= L.internalWarn) warn(own[i].where, msg);
   }
   stats.maxInternalRepeat = Number(maxInternal.toFixed(2));
+
+  // ---- optional question for the nightly email (never shown on the site) -----------------------------------
+  if (d.ask !== undefined) {
+    const a = d.ask;
+    if (!isObj(a)) err('ask', 'must be an object { "to", "en", "ko" }');
+    else {
+      if (!['paul', 'yoolim', 'both'].includes(a.to)) err('ask.to', 'must be "paul", "yoolim" or "both"');
+      if (!nonEmpty(a.en) || !nonEmpty(a.ko)) err('ask', 'needs both en and ko');
+      else {
+        if (!/\?\s*$/.test(a.en)) err('ask.en', 'must be a question ending in "?"');
+        if (countWords(a.en) > L.askWords) err('ask.en', `${countWords(a.en)} words; keep it under ${L.askWords}`);
+        if (a.ko.length > L.askKoChars) err('ask.ko', `longer than ${L.askKoChars} characters`);
+        if (/\[\d|\]\(|\*|</.test(a.en + a.ko)) err('ask', 'plain text only (no citations, links or markup)');
+      }
+      const last = prior.reduce((m, e) => (!m || e.date > m.date ? e : m), null);
+      if (last?.ask) err('ask', `Day ${last.day} (${last.date}) already asked a question; never ask two days in a row`);
+      const recent = prior.filter((e) => e.ask?.en && e.date >= addDays(d.date, -21));
+      if (nonEmpty(a.en) && recent.length) {
+        const r = buildSimilarityIndex(recent.map((e) => ({ text: e.ask.en, day: e.day, date: e.date })))(a.en);
+        if (r.match && r.score >= 0.5) warn('ask', `similar to the question on Day ${r.match.day} (${r.match.date}): "${r.match.text}"; re-ask only if they haven't answered`);
+      }
+    }
+  }
 
   // ---- glossary, nuggets, keywords ----------------------------------------------------------------------
   if (d.glossary.length < L.glossary[0] || d.glossary.length > L.glossary[1] + 1) err('glossary', `need ${L.glossary.join('-')} items`);

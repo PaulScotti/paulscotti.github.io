@@ -21,6 +21,11 @@ export function currentPhase(state, date) {
     const phase = ageDays < 90 ? 'newborn' : ageDays < 365 ? 'infant' : 'toddler';
     return { phase, label: `Baby born ${state.birth}; ${Math.floor(ageDays / 7)} weeks old`, babyAgeDays: ageDays };
   }
+  // While trying: a reported period start (state.lmp) gives today's cycle day; ignore it once it's two months old.
+  const cycleDay = state?.lmp ? daysBetween(state.lmp, date) + 1 : 0;
+  if (cycleDay >= 1 && cycleDay <= 60) {
+    return { phase: 'preconception', label: `Trying to conceive; cycle day ${cycleDay} (period started ${state.lmp})`, cycleDay };
+  }
   return { phase: 'preconception', label: 'Trying to conceive' };
 }
 

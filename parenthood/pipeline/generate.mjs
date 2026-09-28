@@ -11,7 +11,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { Store } from './lib/store.mjs';
 import { pullContext } from './pull-context.mjs';
-import { fetchInbox } from './inbox.mjs';
+import { fetchInbox, describeInbox } from './inbox.mjs';
 import { validateDigest } from './lib/validate-core.mjs';
 import { mergeKorean, withoutKorean, countKoreanEdits } from './lib/korean.mjs';
 import { checkUrls } from './validate.mjs';
@@ -35,16 +35,17 @@ if (!process.env.CLAUDE_CODE_OAUTH_TOKEN && !process.env.ANTHROPIC_API_KEY && !a
 }
 
 const store = Store.open(path.resolve(args.data || 'data'), process.env.PARENTHOOD_PASSPHRASE);
+
+// Every run reads new emailed notes, even when today's digest already exists, so a reply is stored within hours.
+try {
+  log(describeInbox(await fetchInbox(store)));
+} catch (e) {
+  log(`Inbox unavailable (${e.code || e.message}); continuing without new notes.`);
+}
+
 if (store.hasDigest(date) && !args.force) {
   log(`Digest for ${date} already exists; nothing to do.`);
   process.exit(0);
-}
-
-try {
-  const inbox = await fetchInbox(store);
-  log(inbox.skipped ? `Inbox skipped (${inbox.skipped}).` : `Inbox: ${inbox.added} new note(s).`);
-} catch (e) {
-  log(`Inbox unavailable (${e.code || e.message}); continuing without new notes.`);
 }
 
 const workDir = path.join(WORK_ROOT, `${date}-${Date.now()}`);

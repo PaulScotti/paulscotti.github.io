@@ -11,7 +11,8 @@ polite Korean (합니다체), and read as if a skilled Korean science journalist
 
 ## What to review
 Only the Korean fields: `ko.title`, `ko.takeaway`, every `ko.sections[].heading` and `.body`, `ko.forUs`, every `ko`
-string inside `figures` (captions, labels, options, explanations, SVG text), and `glossary[].ko` / `glossary[].noteKo`.
+string inside `figures` (captions, labels, options, explanations, SVG text), `glossary[].ko` / `glossary[].noteKo`,
+and `ask.ko` if there is one (a question emailed to Yoolim: polite 합니다체, e.g. "…알려 주시겠습니까?").
 
 Go paragraph by paragraph, reading the English first and then the Korean:
 1. **Fidelity.** The same claims, numbers, units, ranges, hedges (about, up to, may, linked to), the same subject

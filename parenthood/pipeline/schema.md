@@ -22,9 +22,17 @@ never executes anything in it. `L` below means a localized pair: `{ "en": "...",
   "glossary": [ /* 2-4 bilingual terms (shown as "Glossary") */ ],
   "nuggets": [ /* 4-8 atomic facts taught today, English, one sentence each (for the no-repeat ledger) */ ],
   "keywords": [ /* 3-8 lowercase English keywords */ ],
-  "unitProposals": [ /* optional: new backlog units: { "id", "track", "phase", "title", "why" } */ ]
+  "unitProposals": [ /* optional: new backlog units: { "id", "track", "phase", "title", "why" } */ ],
+  "ask": { /* optional; most days omit it. One question, shown only in the nightly email (never on the site) */
+    "to": "yoolim",                     // yoolim | paul | both: whose email carries it
+    "en": "When did your last period start? Replying with the date lets the next digests place your fertile window.",
+    "ko": "지난 생리가 시작된 날짜를 알려 주시겠습니까? 날짜를 알면 다음 다이제스트에서 가임기를 짚어 드릴 수 있습니다."
+  }
 }
 ```
+`ask` rules: plain text, `en` ends with "?" and stays under 35 words, `ko` in 합니다체 and under 140 characters; `en`
+is read by Paul and `ko` by Yoolim, so phrase each for its reader. Never two days in a row. Answers come back as
+inbox notes.
 
 ## Edition (`en` / `ko`)
 

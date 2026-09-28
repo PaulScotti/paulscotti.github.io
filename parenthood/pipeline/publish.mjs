@@ -27,6 +27,7 @@ export function ledgerEntry(d) {
     title: d.en.title, takeaway: d.en.takeaway, nuggets: d.nuggets, keywords: d.keywords,
     buildsOn: d.buildsOn, sources: d.sources.map((s) => s.url),
     sections: d.en.sections.map((s) => s.heading),
+    ask: d.ask ? { to: d.ask.to, en: d.ask.en } : undefined, // so later days know what was asked by email
   };
 }
 

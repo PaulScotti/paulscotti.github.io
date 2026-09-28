@@ -7,7 +7,8 @@ mistranslations); everything else here is judgment.
 
 ## 1. Register: 합니다체 everywhere
 - Every sentence of running text (takeaway, section bodies, bullets, forUs, figure captions, glossary notes, quiz
-  text) ends in 합니다체: …습니다 / …입니다 / …ㅂ니다, questions …습니까, requests …해 주십시오 / …하시기 바랍니다.
+  text, the emailed question) ends in 합니다체: …습니다 / …입니다 / …ㅂ니다, questions …습니까 / …주시겠습니까,
+  requests …해 주십시오 / …하시기 바랍니다.
 - Never 해요체 (…해요, …있어요, …하세요, …할까요?, …죠) and never 해라체 (…한다, …이다, …했다).
 - Suggestions: …하는 것이 좋습니다 / …해 볼 만합니다 / …상의해 보십시오. Not …하세요.
 - Titles, headings, labels and glossary terms may be noun phrases (e.g. "가임력 연구 결과").

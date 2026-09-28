@@ -13,7 +13,8 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
            decrypt private state from `parenthood-data`  ─┼─► Claude plans, researches, writes EN + KO
            validate (schema, length, citations, URLs,    ─┘   ─► a second Claude session edits the Korean
            no-repeat check vs. everything already taught)       against the English ─► encrypt ─► commit
- 8:30pm  parenthood-email ─► takeaway + link, each in their own language (Gmail SMTP; replies become notes)
+ 8:30pm  parenthood-email ─► takeaway + link, each in their own language, and on some nights one question
+           for one of them (Gmail SMTP; replies become notes, read on every generate run)
 
  Phone ─► www.paulscotti.com/parenthood (static shell on master) ─► fetches *.enc from the data branch via
           raw.githubusercontent.com ─► decrypts in the browser with the family password (remembered per device)

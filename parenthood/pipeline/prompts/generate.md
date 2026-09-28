@@ -13,7 +13,8 @@ decorative quotes, and anything that repeats itself.
 - `{{WORK}}/context/ledger.json` — every earlier digest: date, unit, title, takeaway, nuggets (facts already taught),
   keywords, sources. This is their knowledge so far.
 - `{{WORK}}/context/inbox.json` — notes they emailed to the digest (new results, appointments, worries, topic
-  requests, reactions to earlier days). `open` ones have not been answered yet.
+  requests, reactions to earlier days, answers to a question you asked by email). `open` ones have not been
+  answered yet.
 - `{{WORK}}/ref/curriculum.json` — the master syllabus (tracks, units, goals, weekly rhythm).
 - `{{WORK}}/ref/schema.md` — the exact output format. Follow it precisely.
 - `{{WORK}}/ref/ko-style.md` — how the Korean edition must read: register, standard terms, mistakes made before.
@@ -71,6 +72,16 @@ Follow `schema.md` exactly (format 2). Quality bar:
 - **Glossary:** 2–4 terms they'll actually encounter, English ↔ Korean, with one-line notes.
 - **Nuggets:** 6–10 one-sentence atomic facts you taught today (English). These feed the no-repeat check forever, so
   make them specific (numbers, thresholds, named findings).
+- **Ask (optional, nightly email only).** When one specific fact you don't have would clearly change what you tell
+  them over the next days, add `ask`: one short, friendly question they can answer in a line by replying to the
+  email. Example: while they're trying and no recent period start is known (`brief.stage.cycleDay` is missing or
+  over ~35), ask Yoolim when her last period started, so later digests can place her fertile window. Other good
+  reasons: a test result they mentioned without the number, the date of an upcoming appointment. `to` is `yoolim`,
+  `paul` or `both`; `en` is what Paul sees and `ko` what Yoolim sees, each phrased for its reader (Korean in
+  합니다체, e.g. "…알려 주시겠습니까?"). It appears only in the email, never on the site. Most days have none, and
+  never two days in a row (the validator enforces this). Check the ledger's earlier `ask`s and the inbox first;
+  never ask for something they already told you. Keep it neutral and kind (e.g. never speculate about pregnancy
+  when asking about a period).
 
 **Korean edition (`ko`).** Yoolim reads only the Korean, so it must be as accurate and as well written as the
 English. Write it after the English is final, following `ref/ko-style.md` and avoiding every correction in
@@ -88,6 +99,9 @@ Journey changes: if an open note reports a positive pregnancy test, a birth, or 
 `{{WORK}}/state-update.json` as `{ "stage": "pregnant" | "born" | "ttc", "lmp": "YYYY-MM-DD", "due": "YYYY-MM-DD",
 "birth": "YYYY-MM-DD", "note": "..." }` (only the dates they gave), and let today's digest respond to it first,
 with warmth and care (after a loss: gentle, practical, no statistics unless asked).
+While they're trying, a note giving the start date of a period (a new cycle) is also a journey change: write
+`{ "stage": "ttc", "lmp": "YYYY-MM-DD" }`, so every later brief shows the cycle day (`stage.cycleDay`), and use it
+today: where she is in this cycle, and what that means for timing (her cycles run 23–31 days), belongs in `forUs`.
 
 ## Step 4 — Validate and finish
 1. Write the digest to `{{WORK}}/digest.json`.

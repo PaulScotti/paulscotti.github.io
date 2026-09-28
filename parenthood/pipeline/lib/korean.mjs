@@ -129,6 +129,7 @@ function koProse(d) {
     (f.type === 'steps' ? f.items || [] : []).forEach((it, i) => { if (it?.text?.ko) out.push([`${p}.items[${i}].text.ko`, it.text.ko]); });
   });
   (d.glossary || []).forEach((g, i) => { if (g?.noteKo) out.push([`glossary[${i}].noteKo`, g.noteKo]); });
+  if (typeof d.ask?.ko === 'string') out.push(['ask.ko', d.ask.ko]);
   return out;
 }
 
@@ -149,6 +150,7 @@ function alignedBlocks(d) {
   (d.glossary || []).forEach((g, i) => {
     if (g?.noteEn && g?.noteKo) out.push({ where: `glossary[${i}].noteKo`, en: g.noteEn, ko: g.noteKo, level: 'warn' });
   });
+  if (typeof d.ask?.en === 'string' && typeof d.ask?.ko === 'string') out.push({ where: 'ask.ko', en: d.ask.en, ko: d.ask.ko, level: 'error' });
   return out;
 }
 
@@ -224,6 +226,7 @@ export function mergeKorean(original, reviewed) {
   };
   walk(out.figures, reviewed.figures);
   walk(out.glossary, reviewed.glossary);
+  walk(out.ask, reviewed.ask);
   return out;
 }
 
