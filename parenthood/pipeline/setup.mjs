@@ -63,21 +63,21 @@ async function checkGmail(user, pass) {
 
 async function askGmailAppPassword(user, setSecret) {
   say(`\nGmail app password: sign in to Google as ${user}, open https://myaccount.google.com/apppasswords,`);
-  say('create one named "parenthood", and paste the 16 letters here (spaces are fine). Press Enter to skip.');
+  say('create one named "parenthood", and paste the 16-character code here (spaces are fine). Press Enter to skip.');
   for (let attempt = 1; attempt <= 3; attempt++) {
     const app = (await ask('Gmail app password: ', { hidden: true })).replace(/\s+/g, '');
     if (!app) {
       say('Skipped: the Gmail secrets were not changed.');
       return;
     }
-    if (!/^[a-z]{16}$/i.test(app)) {
-      say(`That was ${app.length} characters; a Google app password is exactly 16 letters. Try again.`);
+    if (!/^[a-z0-9]{16}$/i.test(app)) {
+      say(`That was ${app.length} characters; a Google app password is exactly 16 (letters or digits). Try again.`);
       continue;
     }
     const problem = await checkGmail(user, app);
     if (problem?.rejected) {
       say(`Gmail rejected ${user} with that app password. Make sure you created it while signed in as ${user}`);
-      say('(the account menu at the top right of that page) and copied all 16 letters. Try again.');
+      say('(the account menu at the top right of that page) and copied all 16 characters. Try again.');
       continue;
     }
     if (problem?.untested) say(`(Could not test the login from here: ${problem.untested}. Saving it anyway.)`);
