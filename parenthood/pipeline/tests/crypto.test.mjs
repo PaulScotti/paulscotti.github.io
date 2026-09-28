@@ -20,10 +20,11 @@ async function browserOpen(passphrase, keyinfo, name, env) {
   return JSON.parse(new TextDecoder().decode(pt));
 }
 
-test('node seal → WebCrypto open round-trips, and case/space differences in the passphrase are forgiven', async () => {
+test('node seal → WebCrypto open round-trips; surrounding spaces are ignored but case matters', async () => {
   const ki = { ...newKeyInfo(), iterations: 1000 };
-  const env = seal(deriveKey('Kovite Rasumo  pelado', ki), 'd/2026-09-27', { hello: '안녕하세요', n: 1 });
-  assert.deepEqual(await browserOpen('  kovite rasumo pelado ', ki, 'd/2026-09-27', env), { hello: '안녕하세요', n: 1 });
+  const env = seal(deriveKey('Kp7mX2q', ki), 'd/2026-09-27', { hello: '안녕하세요', n: 1 });
+  assert.deepEqual(await browserOpen('  Kp7mX2q ', ki, 'd/2026-09-27', env), { hello: '안녕하세요', n: 1 });
+  await assert.rejects(browserOpen('kp7mx2q', ki, 'd/2026-09-27', env));
 });
 
 test('wrong passphrase and swapped file names are rejected', async () => {
@@ -35,20 +36,26 @@ test('wrong passphrase and swapped file names are rejected', async () => {
   assert.deepEqual(open(key, 'index', env), { a: 1 });
 });
 
-test('generated passphrases are long and pronounceable', () => {
-  const p = generatePassphrase();
-  assert.match(p, /^([a-z]{6}-){3}[a-z]{6}$/);
-  assert.notEqual(generatePassphrase(), p);
+test('generated passwords are 7 characters mixing lower, upper and digits, without look-alikes', () => {
+  for (let i = 0; i < 200; i++) {
+    const p = generatePassphrase();
+    assert.equal(p.length, 7);
+    assert.match(p, /[a-z]/);
+    assert.match(p, /[A-Z]/);
+    assert.match(p, /[2-9]/);
+    assert.doesNotMatch(p, /[01ilIoO]/);
+  }
+  assert.notEqual(generatePassphrase(), generatePassphrase());
 });
 
 test('store verifies the passphrase on open', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ph-store-'));
   fs.writeFileSync(path.join(dir, 'keyinfo.json'), JSON.stringify({ ...newKeyInfo(), iterations: 1000 }));
-  const s = Store.open(dir, 'correct passphrase here', { create: true });
+  const s = Store.open(dir, 'Yh7kQ3w', { create: true });
   s.writePrivate({ members: [{ key: 'paul' }] });
   s.writeDigest('2026-09-27', { day: 1 });
-  assert.equal(Store.open(dir, 'Correct Passphrase Here').readDigest('2026-09-27').day, 1);
-  assert.throws(() => Store.open(dir, 'another passphrase'), /Wrong passphrase/);
+  assert.equal(Store.open(dir, ' Yh7kQ3w ').readDigest('2026-09-27').day, 1);
+  assert.throws(() => Store.open(dir, 'yh7kq3w'), /Wrong passphrase/);
   fs.rmSync(dir, { recursive: true, force: true });
 });
 

@@ -16,7 +16,7 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
  9:30pm  parenthood-email ─► takeaway + link, each in their own language (Gmail SMTP; replies become notes)
 
  Phone ─► www.paulscotti.com/parenthood (static shell on master) ─► fetches *.enc from the data branch via
-          raw.githubusercontent.com ─► decrypts in the browser with the family passphrase (remembered per device)
+          raw.githubusercontent.com ─► decrypts in the browser with the family password (remembered per device)
 ```
 
 - **Never repetitive.** Every digest records its atomic facts ("nuggets") in the encrypted ledger. Before writing,
@@ -35,32 +35,33 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
 ## Privacy model
 
 - The repo is public, so nothing personal is committed in the clear. Master holds only code and the generic
-  curriculum; the `parenthood-data` branch holds AES-256-GCM ciphertext (key from the passphrase via PBKDF2-SHA256,
-  600k iterations; each file's name is bound as associated data). `pipeline/private/` is git-ignored.
-- The passphrase lives in the family's heads/password managers and in one GitHub secret for the daily jobs.
+  curriculum; the `parenthood-data` branch holds AES-256-GCM ciphertext (key from the password via PBKDF2-SHA256,
+  5M iterations so each guess at a short password is expensive; each file's name is bound as associated data). `pipeline/private/` is git-ignored.
+- The password (7+ characters, case-sensitive) lives in the family's password managers and in one GitHub secret
+  for the daily jobs.
 - Claude runs with only its own token in the environment and file access limited to a scratch folder; the
-  passphrase and Gmail credentials never reach it. Workflow logs print status lines only.
+  password and Gmail credentials never reach it. Workflow logs print status lines only.
 - Emailed notes are accepted only from the two members' addresses, and only when Gmail authenticated them.
 
 ## Layout
 
 | Path | What |
 |---|---|
-| `index.html`, `css/`, `js/` | The site: passphrase gate, feed (newest first), day view, Journey (timeline / themes / words + knowledge map), Doctor list, Us |
+| `index.html`, `css/`, `js/` | The site: password gate, feed (newest first), day view, Journey (timeline / themes / words + knowledge map), Doctor list, Us |
 | `js/store.js` | Fetch + WebCrypto decryption, remembered device key, local doctor list |
 | `js/figures.js` | Charts, stats, comparisons, quizzes, timelines, sanitized SVG, and widgets (fertile-window explorer, due-date timeline) |
 | `pipeline/generate.mjs` | Daily orchestrator (inbox → context → Claude Code headless → validate → publish) |
 | `pipeline/prompts/generate.md`, `pipeline/schema.md` | The editorial brief and the digest format |
 | `pipeline/validate.mjs` | Schema, length, citation, bilingual, safety and no-repeat checks |
 | `pipeline/inbox.mjs`, `pipeline/send-email.mjs` | Emailed notes in (IMAP), nightly email out (precise 9:30pm PT across DST) |
-| `pipeline/setup.mjs`, `pipeline/export.mjs` | One-command setup (passphrase, data branch, secrets) and decrypted backup |
+| `pipeline/setup.mjs`, `pipeline/export.mjs` | One-command setup (password, data branch, secrets) and decrypted backup |
 | `../.github/workflows/parenthood-*.yml` | Schedules |
 
 ## Local development
 
 ```bash
 cd parenthood/pipeline && npm ci && npm test
-echo 'some local test passphrase' > /tmp/pass.txt
+echo 'Tq7mKp3' > /tmp/pass.txt   # a local test password
 node setup.mjs --data-dir ../.data --passphrase-file /tmp/pass.txt   # encrypted test data in parenthood/.data
 cd ../.. && python3 -m http.server 8765 --bind 127.0.0.1             # open http://127.0.0.1:8765/parenthood/
 ```

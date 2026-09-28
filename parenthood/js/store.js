@@ -1,4 +1,4 @@
-// Encrypted data access. The passphrase → PBKDF2-SHA256 (600k iterations) → AES-GCM key, derived once per device
+// Encrypted data access. The password → PBKDF2-SHA256 (iterations from keyinfo.json) → AES-GCM key, derived once per device
 // and remembered in IndexedDB as a non-extractable key. Matches pipeline/lib/crypto.mjs.
 import { DATA_URL } from './config.js';
 
@@ -10,7 +10,7 @@ let key = null;
 let keyinfo = null;
 
 const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
-export const normalizePassphrase = (p) => String(p).normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase();
+export const normalizePassphrase = (p) => String(p).normalize('NFKC').trim(); // case-sensitive, like the pipeline
 
 async function fetchJSON(name, { fresh = false } = {}) {
   const res = await fetch(BASE + name, { cache: fresh ? 'no-cache' : 'default' });

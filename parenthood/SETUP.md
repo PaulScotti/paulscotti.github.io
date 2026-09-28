@@ -1,7 +1,7 @@
 # Setting up /parenthood (about 5 minutes, once)
 
 No accounts, databases or cloud consoles. The digests are stored **encrypted** on this repo's `parenthood-data`
-branch, and the site decrypts them in your browser with a family passphrase you each enter once per device.
+branch, and the site decrypts them in your browser with a family password you each enter once per device.
 
 ## Before you start
 
@@ -21,17 +21,19 @@ node parenthood/pipeline/setup.mjs
 
 It will:
 
-1. **Ask for the family passphrase**, or press Enter to generate a strong one. Save it in your password manager
-   and share it with Yoolim privately. It can't be recovered later, and it's what keeps the digests private.
+1. **Ask for the family password**: at least 7 characters, case-sensitive (or press Enter to generate a random
+   7-character one). Because the encrypted files are publicly downloadable, pick something random-looking that
+   mixes upper and lower case with a number, not a name, word or date. Save it in your password manager and share
+   it with Yoolim privately; it can't be recovered later.
 2. **Encrypt the private profile and Days 1–2** and push them to the `parenthood-data` branch.
-3. **Save the GitHub secrets** the daily jobs need: the passphrase, the Gmail address and app password, and the
+3. **Save the GitHub secrets** the daily jobs need: the password, the Gmail address and app password, and the
    Claude token. It asks for each one and never prints them.
 
 ## Then
 
-1. Open <https://www.paulscotti.com/parenthood/> on each phone, enter the passphrase, and pick who's reading
+1. Open <https://www.paulscotti.com/parenthood/> on each phone, enter the password, and pick who's reading
    (Paul → English, 유이 → Korean; the **EN / 한** switch changes it any time). Safari's password manager can save
-   the passphrase too.
+   it too.
 2. Test the nightly email: GitHub → **Actions → parenthood-email → Run workflow**.
 3. Every morning around 6am Pacific **parenthood-generate** writes the next day; at 9:30pm you both get the email.
 

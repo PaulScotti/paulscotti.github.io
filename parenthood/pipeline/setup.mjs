@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // One-command setup (run it in your own terminal - it asks for secrets and never prints them):
 //   node parenthood/pipeline/setup.mjs
-// 1. choose (or generate) the family passphrase
+// 1. choose (or generate) the family password (7+ characters, case-sensitive)
 // 2. encrypt the private profile, members and seed digests into the `parenthood-data` branch and push it
 // 3. store the GitHub secrets the daily jobs need (passphrase, Gmail, Claude token) via `gh secret set`
 // Re-runnable: with an existing data branch it verifies the passphrase and only adds what's missing.
@@ -74,30 +74,32 @@ if (!args['data-dir']) {
 }
 const existing = fs.existsSync(path.join(dataDir, 'private.enc'));
 
-// ---- 2. passphrase ------------------------------------------------------------------------------------------
+// ---- 2. password -------------------------------------------------------------------------------------------
 let passphrase = args['passphrase-file'] ? fs.readFileSync(args['passphrase-file'], 'utf8').trim() : '';
 if (!passphrase) {
   if (existing) {
-    passphrase = await ask('Enter your existing family passphrase: ', { hidden: true });
+    passphrase = await ask('Enter your existing family password: ', { hidden: true });
   } else {
-    say('Choose the family passphrase you two will type once on each phone (Keychain can save it).');
-    passphrase = await ask('Passphrase (press Enter to generate a strong one): ', { hidden: true });
+    say('Choose the family password you two will type once on each phone (Keychain can save it).');
+    say('At least 7 characters and case-sensitive. Random-looking beats a word or a date, e.g. mixing');
+    say('upper and lower case with a number (the encrypted files are public, so it should be hard to guess).');
+    passphrase = await ask('Password (press Enter to generate one): ', { hidden: true });
     if (!passphrase) {
       passphrase = generatePassphrase();
-      say(`\n  Your passphrase:   ${passphrase}\n`);
+      say(`\n  Your password:   ${passphrase}\n`);
       say('  Save it in your password manager and share it with Yoolim in person or by a private message.');
       const again = await ask('  Type it once to confirm: ');
       if (normalizePassphrase(again) !== normalizePassphrase(passphrase)) {
-        say('That did not match. Nothing was changed - rerun the script.');
+        say('That did not match (it is case-sensitive). Nothing was changed - rerun the script.');
         process.exit(1);
       }
-    } else if (normalizePassphrase(passphrase).length < 16) {
-      say('Please use at least 16 characters (e.g. four random words). Nothing was changed.');
+    } else if (normalizePassphrase(passphrase).length < 7) {
+      say('Please use at least 7 characters. Nothing was changed.');
       process.exit(1);
     } else {
       const again = await ask('Type it again: ', { hidden: true });
       if (normalizePassphrase(again) !== normalizePassphrase(passphrase)) {
-        say('That did not match. Nothing was changed - rerun the script.');
+        say('That did not match (it is case-sensitive). Nothing was changed - rerun the script.');
         process.exit(1);
       }
     }
@@ -176,7 +178,7 @@ if (withSecrets) {
   if (token) setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
 }
 
-say('\nDone. Open https://www.paulscotti.com/parenthood/ on each phone, pick who is reading, and enter the passphrase.');
+say('\nDone. Open https://www.paulscotti.com/parenthood/ on each phone, enter the password, and pick who is reading.');
 if (withSecrets) {
   say('To test the nightly email now: GitHub → Actions → parenthood-email → Run workflow.');
 }
