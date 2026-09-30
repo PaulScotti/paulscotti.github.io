@@ -14,6 +14,7 @@ import { pullContext } from './pull-context.mjs';
 import { fetchInbox, describeInbox } from './inbox.mjs';
 import { validateDigest } from './lib/validate-core.mjs';
 import { mergeKorean, withoutKorean, countKoreanEdits } from './lib/korean.mjs';
+import { recordFailure, alertOnce } from './lib/alert.mjs';
 import { checkUrls } from './validate.mjs';
 import { publishDigest, cleanStateUpdate } from './publish.mjs';
 import { loadCurriculum, parseArgs, log, PIPELINE_DIR, WORK_ROOT } from './lib/env.mjs';
@@ -89,16 +90,21 @@ function runClaude(promptText, { resume, timeout = timeoutMs } = {}) {
       clearTimeout(timer);
       fs.closeSync(out);
       let sessionId = null;
+      let authError = false;
+      const raw = fs.existsSync(outFile) ? fs.readFileSync(outFile, 'utf8') : '';
       try {
-        const raw = fs.readFileSync(outFile, 'utf8');
         const json = JSON.parse(raw.slice(raw.indexOf('{')));
         sessionId = json.session_id || null;
-        const authError = json.is_error && /authenticat|oauth|api key|401/i.test(json.result || '');
+        // A login problem fails on the first request; later errors (limits, timeouts) are not about the token.
+        authError = Boolean(json.is_error) && (json.num_turns ?? 0) <= 1
+          && /authenticat|oauth|api key|invalid.{0,20}token|token.{0,20}(expired|revoked|invalid)|\b40[13]\b/i.test(json.result || '');
         log(`Claude finished (exit ${code}; ${json.num_turns ?? '?'} turns; ${Math.round((json.duration_ms || 0) / 60000)} min)${authError ? ' - AUTHENTICATION FAILED: renew CLAUDE_CODE_OAUTH_TOKEN' : ''}`);
+        // An error before any work is the CLI's own message (never digest content), so it is safe to show.
+        if (json.is_error && (json.num_turns ?? 0) <= 1) log(`Claude said: ${String(json.result || json.subtype || '').replace(/\s+/g, ' ').slice(0, 200)}`);
       } catch {
-        log(`Claude finished (exit ${code}); no JSON result`);
+        log(`Claude finished (exit ${code}); no JSON result: ${raw.replace(/\s+/g, ' ').slice(0, 200)}`);
       }
-      resolve({ code, sessionId });
+      resolve({ code, sessionId, authError });
     });
   });
 }
@@ -168,7 +174,22 @@ async function reviewKorean(res) {
   return { result: { digest: out.merged, errors: [], warnings: out.warnings, stats: out.stats }, lessons };
 }
 
+/** Claude rejected the token: retrying can't help, so say how to fix it (by email, once, for unattended runs). */
+async function tokenRejected() {
+  log('FAILED: Claude rejected CLAUDE_CODE_OAUTH_TOKEN. Fix: on your Mac run `node parenthood/pipeline/setup.mjs --claude`. Nothing published.');
+  recordFailure(store.dir, date, 'claude-token');
+  if (process.env.EVENT === 'schedule') {
+    try {
+      if (await alertOnce(store, date, 'claude-token')) log('Emailed the site owner how to fix it.');
+    } catch (e) {
+      log(`Could not email the alert (${e.code || e.message}).`);
+    }
+  }
+  process.exit(1);
+}
+
 let run = await runClaude(prompt);
+if (run.authError) await tokenRejected();
 let result = await check();
 for (let round = 1; round <= 2 && result.errors.length; round++) {
   log(`Validation failed with ${result.errors.length} error(s); repair round ${round}.`);
@@ -176,6 +197,7 @@ for (let round = 1; round <= 2 && result.errors.length; round++) {
     result.errors.map((e) => `- ${e}`).join('\n') +
     `\n\nFix every error (edit the file), re-run \`node ${path.join(PIPELINE_DIR, 'validate.mjs')} ${path.join(workDir, 'digest.json')}\` until it prints VALID, then reply DONE.`;
   run = await runClaude(run.sessionId ? fix : `${prompt}\n\n${fix}`, { resume: run.sessionId || undefined });
+  if (run.authError) await tokenRejected();
   result = await check();
 }
 

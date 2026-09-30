@@ -13,6 +13,7 @@ import nodemailer from 'nodemailer';
 import { Store, replyAddress } from './lib/store.mjs';
 import { parseArgs, log, SITE_URL, WORK_ROOT } from './lib/env.mjs';
 import { todayPT, ptWallTimeToEpoch } from './lib/dates.mjs';
+import { failureNote } from './lib/alert.mjs';
 
 function esc(s = '') {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -164,10 +165,11 @@ async function main() {
   if (!store.hasDigest(date)) {
     const admin = members.find((m) => m.key === 'paul') || members.find((m) => m.lang === 'en') || members[0];
     if (status.alertedFor !== date) {
+      // gen-status.json (written by the generate job) says why, when it knows.
+      const why = failureNote(dataDir, date) || 'Check the parenthood-generate workflow in GitHub Actions, or run it manually.';
+      const text = `The digest for ${date} was not generated, so tonight's email was skipped.\n\n${why}`;
       await send(admin.email, `Parenthood digest: no digest for ${date}`,
-        `<p>The digest for ${date} was not generated, so tonight's email was skipped.</p><p>Check the <b>parenthood-generate</b> workflow in GitHub Actions, or run it manually.</p>`,
-        `The digest for ${date} was not generated, so tonight's email was skipped. Check the parenthood-generate workflow in GitHub Actions.`,
-        'Parenthood');
+        text.split('\n\n').map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join(''), text, 'Parenthood');
       if (!dryRun) store.writeStatus({ ...status, alertedFor: date });
     }
     log(`No digest for ${date}; alerted admin.`);

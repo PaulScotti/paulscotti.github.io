@@ -76,6 +76,7 @@ jobs:
           INPUT_DATE: ${{ inputs.date }}
           INPUT_FORCE: ${{ inputs.force }}
           INPUT_INBOX_ONLY: ${{ inputs.inbox_only }}
+          EVENT: ${{ github.event_name }}
         run: |
           if [ "$INPUT_INBOX_ONLY" = "true" ]; then node parenthood/pipeline/inbox.mjs --data data; exit 0; fi
           args=(--data data)

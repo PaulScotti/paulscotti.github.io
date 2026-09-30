@@ -7,8 +7,11 @@
 // Re-runnable: with an existing data branch it verifies the passphrase and only adds what's missing.
 //   --reseed   republish the seed digests from pipeline/private/seed (after editing them)
 //   --gmail    only (re)enter the Gmail address and app password; the login is tested before it is saved
+//   --claude   only (re)enter the Claude token from `claude setup-token`; it is tested before it is saved
 // Test flags: --data-dir <dir> (plain folder, no git) --passphrase-file <f> --no-push --no-secrets
+//             --no-login (with --claude: don't run `claude setup-token`, just ask for a token)
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import readline from 'node:readline';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -89,6 +92,90 @@ async function askGmailAppPassword(user, setSecret) {
   say('The Gmail secrets were not changed. Rerun with --gmail once you have a new app password.');
 }
 
+/** Hidden input that may span lines (a long token can wrap when copied from a terminal); an empty line ends it. */
+function askPasted(question) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    rl._writeToOutput = (s) => {
+      if (s.includes(question)) rl.output.write(question);
+      else if (s === '\r\n' || s === '\n') rl.output.write(s);
+      else rl.output.write('*'.repeat(s.length));
+    };
+    const parts = [];
+    rl.setPrompt(question);
+    rl.prompt();
+    rl.on('line', (line) => {
+      if (!line.trim()) rl.close();
+      else parts.push(line.trim());
+    });
+    rl.on('close', () => resolve(parts.join('').replace(/\s+/g, '')));
+  });
+}
+
+/** Ask Claude for one word using only this token (a throwaway config dir, so this Mac's own login can't stand in). */
+function checkClaudeToken(token) {
+  const cfg = fs.mkdtempSync(path.join(os.tmpdir(), 'parenthood-claude-'));
+  const r = spawnSync('claude', ['-p', 'Reply with the single word OK.', '--model', 'opus', '--output-format', 'json', '--max-turns', '1'], {
+    // No retries: the CLI otherwise retries a rejected token 11 times with backoff, which takes minutes.
+    env: { PATH: process.env.PATH, HOME: process.env.HOME, USER: process.env.USER, TMPDIR: process.env.TMPDIR, LANG: 'en_US.UTF-8',
+      CLAUDE_CODE_OAUTH_TOKEN: token, CLAUDE_CONFIG_DIR: cfg, CLAUDE_CODE_MAX_RETRIES: '0',
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1', DISABLE_AUTOUPDATER: '1' },
+    encoding: 'utf8', timeout: 120_000,
+  });
+  fs.rmSync(cfg, { recursive: true, force: true });
+  if (r.error) return { untested: r.error.code === 'ENOENT' ? 'the claude command is not installed on this Mac' : r.error.message };
+  try {
+    const json = JSON.parse(r.stdout.slice(r.stdout.indexOf('{')));
+    return json.is_error ? { rejected: String(json.result || json.subtype || '').replace(/\s+/g, ' ').slice(0, 200) } : null;
+  } catch {
+    return { untested: (r.stderr || r.stdout || 'no output').replace(/\s+/g, ' ').trim().slice(0, 200) };
+  }
+}
+
+async function askClaudeToken(setSecret) {
+  const haveCli = spawnSync('claude', ['--version'], { stdio: 'ignore' }).status === 0;
+  if (haveCli && !args['no-login']) {
+    say('\nRunning `claude setup-token`: sign in in the browser window it opens; it then prints a long-lived token.');
+    spawnSync('claude', ['setup-token'], { stdio: 'inherit' });
+    say('\nCopy the whole token it printed (it starts with sk-ant-oat and may wrap onto two lines).');
+  } else {
+    say('\nTo get a Claude token, run `claude setup-token` in another Terminal tab, sign in, and copy the whole token it');
+    say('prints (it starts with sk-ant-oat and may wrap onto two lines).');
+  }
+  say('Paste it here, then press Enter on an empty line. Press Enter right away to skip.');
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const token = await askPasted('Claude token: ');
+    if (!token) {
+      say('Skipped: the Claude token was not changed.');
+      return;
+    }
+    if (!/^sk-ant-oat[0-9a-z]*-[A-Za-z0-9_-]{40,}$/.test(token)) {
+      say(`That doesn't look like a whole token (${token.length} characters; it should start with sk-ant-oat). Try again.`);
+      continue;
+    }
+    say(`Got ${token.length} characters; asking Claude to confirm it works…`);
+    const problem = checkClaudeToken(token);
+    if (problem?.rejected) {
+      say(`Claude rejected it: ${problem.rejected}`);
+      say('Run `claude setup-token` again and copy the entire token. Try again.');
+      continue;
+    }
+    if (problem?.untested) say(`(Could not test it here: ${problem.untested}. Saving it anyway.)`);
+    else say('✓ Claude accepted the token.');
+    setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
+    return;
+  }
+  say('The Claude token was not changed. Rerun with --claude when you have a new one.');
+}
+
+function secretSetter(repoSlug) {
+  return (name, value) => {
+    const r = spawnSync('gh', ['secret', 'set', name, '--repo', repoSlug], { input: value, stdio: ['pipe', 'ignore', 'inherit'] });
+    if (r.status !== 0) throw new Error(`gh secret set ${name} failed`);
+    say(`✓ Saved GitHub secret ${name}`);
+  };
+}
+
 // ---- 0. preflight -------------------------------------------------------------------------------------------
 const members = readJSON(path.join(PRIVATE_DIR, 'members.json'));
 const profile = readJSON(path.join(PRIVATE_DIR, 'profile.json'));
@@ -103,6 +190,17 @@ if (!args['data-dir']) {
 }
 
 say('\nParenthood setup\n================\n');
+
+// --claude needs neither the family password nor the data branch: just the token and GitHub.
+if (args.claude) {
+  if (!repoSlug) {
+    say('--claude needs the GitHub repo (it is not available with --data-dir).');
+    process.exit(1);
+  }
+  await askClaudeToken(secretSetter(repoSlug));
+  say('\nDone. Rerun today\'s digest: GitHub → Actions → parenthood-generate → Run workflow.');
+  process.exit(0);
+}
 
 // ---- 1. data checkout --------------------------------------------------------------------------------------
 const dataDir = path.resolve(args['data-dir'] || path.join(SITE_DIR, '.data'));
@@ -211,21 +309,13 @@ if (!args['data-dir'] && !args['no-push']) {
 
 // ---- 5. GitHub secrets ------------------------------------------------------------------------------------------
 if (withSecrets) {
-  const setSecret = (name, value) => {
-    const r = spawnSync('gh', ['secret', 'set', name, '--repo', repoSlug], { input: value, stdio: ['pipe', 'ignore', 'inherit'] });
-    if (r.status !== 0) throw new Error(`gh secret set ${name} failed`);
-    say(`✓ Saved GitHub secret ${name}`);
-  };
+  const setSecret = secretSetter(repoSlug);
   if (!args.gmail) {
     say('\nNow the secrets for the daily jobs (stored encrypted in GitHub; press Enter to skip any and add it later).');
     setSecret('PARENTHOOD_PASSPHRASE', normalizePassphrase(passphrase));
   }
   await askGmailAppPassword(priv.mailbox, setSecret);
-  if (!args.gmail) {
-    say('\nClaude token: in another terminal tab run `claude setup-token`, sign in, and paste the token it prints.');
-    const token = await ask('Claude token (sk-ant-oat…): ', { hidden: true });
-    if (token) setSecret('CLAUDE_CODE_OAUTH_TOKEN', token);
-  }
+  if (!args.gmail) await askClaudeToken(setSecret);
 }
 
 say('\nDone. Open https://www.paulscotti.com/parenthood/ on each phone, enter the password, and pick who is reading.');

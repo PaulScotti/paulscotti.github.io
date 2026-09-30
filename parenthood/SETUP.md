@@ -52,6 +52,7 @@ It will:
 | Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |
 | Republish edited seed digests | `node parenthood/pipeline/setup.mjs --reseed --no-secrets` |
 | Fix the nightly email ("Gmail rejected the login" in the run log) | `node parenthood/pipeline/setup.mjs --gmail`: enter a new app password; it tests the login before saving |
+| Fix digest writing ("Claude rejected CLAUDE_CODE_OAUTH_TOKEN"; you also get an email about it) | `node parenthood/pipeline/setup.mjs --claude`: it runs `claude setup-token`, then tests the token before saving |
 | Back up everything decrypted | **Us → Download our digests**, or `PARENTHOOD_PASSPHRASE=… node parenthood/pipeline/export.mjs` |
 | Lock a device (e.g. a shared computer) | **Us → Lock this device** |
 

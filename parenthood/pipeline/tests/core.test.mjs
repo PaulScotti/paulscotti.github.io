@@ -154,3 +154,16 @@ test('a reported period start gives the cycle day while trying, and is ignored o
   assert.equal(currentPhase({ stage: 'ttc' }, '2026-09-29').phase, 'preconception');
   assert.equal(currentPhase({ stage: 'pregnant', lmp: '2026-09-22' }, '2026-11-17').phase, 'pregnancy-1');
 });
+
+test('a failed generation is remembered with its fix, for the 8:30pm alert', async () => {
+  const fs = await import('node:fs');
+  const os = await import('node:os');
+  const path = await import('node:path');
+  const { recordFailure, failureNote } = await import('../lib/alert.mjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gen-status-'));
+  assert.equal(failureNote(dir, '2026-09-29'), '');
+  recordFailure(dir, '2026-09-29', 'claude-token');
+  assert.match(failureNote(dir, '2026-09-29'), /setup\.mjs --claude/);
+  assert.equal(failureNote(dir, '2026-09-30'), '');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
