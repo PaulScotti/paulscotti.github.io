@@ -283,3 +283,36 @@ h1 { font-size: 20px; line-height: 1.2; margin: 0; letter-spacing: -0.01em; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
   .grid-3 label:last-child { grid-column: 1 / -1; }
 }
+
+/* ---------- neighborhoods ---------- */
+.dot-hood { background: rgba(122, 90, 166, .22); box-shadow: inset 0 0 0 2px #7a5aa6; border-radius: 3px; }
+.sec-hoods { color: #6b4f95; }
+.sec-hoods::before { background: #7a5aa6; border-radius: 2px; }
+.leaflet-tooltip.hood-label {
+  background: none; border: 0; box-shadow: none; padding: 0;
+  font: 650 11.5px/1.2 var(--font); color: #563c7e; letter-spacing: .02em; white-space: nowrap;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 6px #fff;
+}
+.leaflet-tooltip.hood-label::before { display: none; }
+.hide-hood-labels .hood-label { display: none; }
+.hood-kicker { color: #6b4f95; }
+.hood-summary { margin-top: 6px !important; }
+.hood-places { margin-top: 12px; }
+.hood-places h4 { margin-bottom: 6px; }
+.place-chip {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 6px 0;
+  border: 1px solid #d4d0c7; background: #fff; border-radius: 999px; padding: 3px 10px 3px 8px;
+  font-size: 12.5px; cursor: pointer; text-align: left;
+}
+.place-chip:hover { border-color: var(--faint); }
+.place-chip .dot { width: 9px; height: 9px; }
+.pop-list-note li::marker { color: #7a5aa6; }
+.ess-title { margin-top: 14px !important; }
+.essentials { margin-top: 6px; }
+.muted { color: var(--faint); font-size: 12.5px; }
+.hood-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 0; border: 0; background: none;
+  color: #5b4383; font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.hood-link:hover { text-decoration: underline; }
+.hood-link .dot { width: 9px; height: 9px; }

@@ -32,6 +32,13 @@ const I18N = {
     saved: "Saved for everyone", noteAdded: "Note added", failed: "Couldn't save: {e}",
     beds_baths: "{b} bd · {ba} ba", sqftUnit: "{n} sq ft", requestedLabel: "Asked:",
     nNotes: "{n} notes", oneNote: "1 note", alsoOn: "Also listed on:",
+    hoods: "Neighborhoods", sec_hoods: "Neighborhoods", hoodKicker: "Neighborhood · {city}",
+    yourPlaces: "Your places here", noPlaces: "None of your places are in this neighborhood yet.",
+    notable: "Notable", pros: "Pros", cons: "Cons", essentials: "Everyday essentials",
+    e_groceries: "Groceries", e_transit: "Transit", e_swim: "Swim lessons", e_catholic: "Catholic parish",
+    e_movies: "Movies", e_parks: "Parks", e_market: "Farmers market", sources: "Sources:",
+    hoodGuide: "{name} neighborhood guide",
+    nPlaces: "{n} places", onePlace: "1 place", city_Seattle: "Seattle", city_Bellevue: "Bellevue",
   },
   ko: {
     title: "시애틀 집 투어",
@@ -59,6 +66,13 @@ const I18N = {
     saved: "모두에게 저장됨", noteAdded: "메모를 추가했습니다", failed: "저장하지 못했습니다: {e}",
     beds_baths: "침실 {b} · 욕실 {ba}", sqftUnit: "{n} sqft", requestedLabel: "요청:",
     nNotes: "메모 {n}개", oneNote: "메모 1개", alsoOn: "다른 매물 링크:",
+    hoods: "동네", sec_hoods: "동네 정보", hoodKicker: "동네 · {city}",
+    yourPlaces: "이 동네의 후보 집", noPlaces: "아직 이 동네에 있는 후보 집이 없습니다.",
+    notable: "주요 특징", pros: "장점", cons: "단점", essentials: "생활 편의",
+    e_groceries: "장보기", e_transit: "대중교통", e_swim: "수영 강습", e_catholic: "가톨릭 성당",
+    e_movies: "영화관", e_parks: "공원", e_market: "파머스 마켓", sources: "출처:",
+    hoodGuide: "{name} 동네 정보",
+    nPlaces: "후보 {n}곳", onePlace: "후보 1곳", city_Seattle: "시애틀", city_Bellevue: "벨뷰",
   },
 };
 const TYPE_KO = {
@@ -74,6 +88,13 @@ let map;
 const markers = new Map();
 let homeMarker;
 const filters = { booked: true, contacted: true, none: true };
+let hoodGeo = { features: [] };
+let hoodLayer;
+const hoodLayers = new Map();
+let showHoods = true;
+const HOOD_STYLE = { color: "#7a5aa6", weight: 1.5, opacity: 0.75, dashArray: "5 4", fillColor: "#7a5aa6", fillOpacity: 0.07 };
+const HOOD_HOVER = { weight: 2.5, fillOpacity: 0.16, dashArray: null };
+const HOOD_OPEN = { weight: 2.5, opacity: 1, fillOpacity: 0.2, dashArray: null };
 const editing = new Set();
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -83,8 +104,12 @@ init();
 
 async function init() {
   applyStaticText();
-  base = await fetch("places.json?v=6", { cache: "no-cache" }).then((r) => r.json());
+  [base, hoodGeo] = await Promise.all([
+    fetch("places.json?v=8", { cache: "no-cache" }).then((r) => r.json()),
+    fetch("neighborhoods.json?v=8", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
+  ]);
   setupMap();
+  setupHoods();
   renderAll();
   fitAll();
   wireUi();
@@ -124,6 +149,7 @@ async function refresh() {
     synced = true;
     setSync(t("syncOk", { t: fmtClock(new Date()) }));
     renderAll();
+    refreshOpenPopup();
   } catch {
     setSync(t("syncFail"), true);
   }
@@ -163,6 +189,9 @@ function setupMap() {
       e.popup.options.maxHeight = h;
       e.popup.update();
     }
+    e.popup._sig = popupSig(e.popup);
+    const hash = e.popup._placeId || (e.popup._hoodId && "hood-" + e.popup._hoodId);
+    if (hash) history.replaceState(null, "", "#" + hash);
   });
   // The panel resizes the map on phones (sheet open/closed, list length); keep Leaflet's size in sync.
   new ResizeObserver(() => map.invalidateSize()).observe(document.getElementById("map"));
@@ -171,6 +200,105 @@ function setupMap() {
     if (id) editing.delete(id);
     if (location.hash) history.replaceState(null, "", location.pathname + location.search);
   });
+}
+
+// ---------- neighborhoods ----------
+
+function setupHoods() {
+  map.createPane("hoods").style.zIndex = 350;
+  map.createPane("hoodLabels").style.zIndex = 450;
+  hoodLayer = L.geoJSON(hoodGeo, {
+    pane: "hoods",
+    style: () => HOOD_STYLE,
+    onEachFeature: (f, layer) => {
+      const id = f.properties.id;
+      hoodLayers.set(id, layer);
+      layer.bindTooltip(f.properties.name.split(" (")[0], {
+        permanent: true, direction: "center", className: "hood-label", pane: "hoodLabels",
+      });
+      layer.bindPopup(() => hoodPopup(id), popupOpts());
+      layer.getPopup()._hoodId = id;
+      layer.on("mouseover", () => { if (!layer.isPopupOpen()) layer.setStyle(HOOD_HOVER); });
+      layer.on("mouseout", () => { if (!layer.isPopupOpen()) layer.setStyle(HOOD_STYLE); });
+      layer.on("popupopen", () => layer.setStyle(HOOD_OPEN));
+      layer.on("popupclose", () => layer.setStyle(HOOD_STYLE));
+    },
+  }).addTo(map);
+  const labelZoom = () => map.getContainer().classList.toggle("hide-hood-labels", map.getZoom() < 12);
+  map.on("zoomend", labelZoom);
+  labelZoom();
+}
+
+function toggleHoods(on) {
+  showHoods = on;
+  if (on) hoodLayer.addTo(map);
+  else hoodLayer.remove();
+  renderAll();
+}
+
+function hoodById(id) {
+  return hoodGeo.features.find((f) => f.properties.id === id);
+}
+
+function placesInHood(id) {
+  const f = hoodById(id);
+  if (!f) return [];
+  return allPlaces().filter((p) => !p.hidden && p.lat != null && inGeom(p.lat, p.lng, f.geometry));
+}
+
+function inGeom(lat, lng, geom) {
+  const polys = geom.type === "Polygon" ? [geom.coordinates] : geom.coordinates;
+  return polys.some((rings) => {
+    let inside = false;
+    for (const ring of rings) {
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const [xi, yi] = ring[i], [xj, yj] = ring[j];
+        if ((yi > lat) !== (yj > lat) && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+      }
+    }
+    return inside;
+  });
+}
+
+function hoodPopup(id) {
+  const h = hoodById(id)?.properties || {};
+  const el = document.createElement("div");
+  el.className = "pop pop-hood";
+  const here = placesInHood(id);
+  const homeHere = hoodById(id) && inGeom(base.home.lat, base.home.lng, hoodById(id).geometry);
+  const essentials = [
+    ["e_groceries", Array.isArray(h.groceries) ? h.groceries.join("; ") : h.groceries],
+    ["e_transit", h.transit],
+    ["e_swim", h.swim],
+    ["e_catholic", h.catholic],
+    ["e_movies", h.movies],
+    ["e_parks", Array.isArray(h.parks) ? h.parks.join("; ") : h.parks],
+    ["e_market", h.farmers_market],
+  ].filter(([, v]) => v);
+  el.innerHTML = `
+    <div class="pop-body">
+      <div class="pop-kicker hood-kicker">${esc(t("hoodKicker", { city: t("city_" + h.city) }))}</div>
+      <h3>${esc(h.name || id)}</h3>
+      ${h.summary ? `<p class="hood-summary">${esc(h.summary)}</p>` : ""}
+      <div class="hood-places">
+        <h4>${esc(t("yourPlaces"))}${here.length ? ` (${here.length})` : ""}</h4>
+        ${homeHere ? `<button type="button" class="place-chip" data-home-chip="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>` : ""}
+        ${here.length
+          ? here.map((p) => `<button type="button" class="place-chip" data-place="${escAttr(p.id)}"><span class="dot dot-${p.status}"></span>${esc(p.name)}</button>`).join("")
+          : homeHere ? "" : `<p class="muted">${esc(t("noPlaces"))}</p>`}
+      </div>
+      ${listBlock(t("notable"), h.notable, "note")}
+      ${listBlock(t("pros"), h.pros, "good")}
+      ${listBlock(t("cons"), h.cons, "warn")}
+      ${essentials.length ? `<h4 class="ess-title">${esc(t("essentials"))}</h4>
+      <dl class="facts essentials">${essentials.map(([k, v]) => `<div class="wide"><dt>${esc(t(k))}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
+      ${(h.sources || []).length ? `<p class="pop-more">${esc(t("sources"))} ${h.sources.slice(0, 6).map((u) => `<a target="_blank" rel="noopener" href="${escAttr(u)}">${esc(hostOf(u))}</a>`).join(" · ")}</p>` : ""}
+      ${notesHtml()}
+    </div>`;
+  el.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("click", () => openPlace(b.dataset.place)));
+  $("[data-home-chip]", el)?.addEventListener("click", () => flyThen(homeMarker.getLatLng(), Math.max(map.getZoom(), 14), () => homeMarker.openPopup()));
+  wireNotes(el, "hood-" + id);
+  return el;
 }
 
 function stopClick(e) {
@@ -217,10 +345,6 @@ function renderMarkers() {
     if (!m) {
       m = L.marker([p.lat, p.lng], { title: p.name, riseOnHover: true }).addTo(map);
       m.bindPopup(() => placePopup(m._placeId), popupOpts());
-      m.on("popupopen", () => {
-        m.getPopup()._sig = popupSig(m._placeId);
-        history.replaceState(null, "", "#" + m._placeId);
-      });
       markers.set(p.id, m);
     }
     m._placeId = p.id;
@@ -231,10 +355,6 @@ function renderMarkers() {
     const visible = filters[p.status];
     if (visible && !map.hasLayer(m)) m.addTo(map);
     if (!visible && map.hasLayer(m)) m.remove();
-    // Refresh an open popup when its data changed, unless someone is typing in it.
-    if (m.isPopupOpen() && !editing.has(p.id) && !m.getPopup().getElement()?.contains(document.activeElement)) {
-      refreshPopup(m);
-    }
   }
   for (const [id, m] of markers) {
     if (!seen.has(id)) { m.remove(); markers.delete(id); }
@@ -253,28 +373,37 @@ function openPlace(id) {
   const p = placeById(id);
   if (p && !filters[p.status]) { filters[p.status] = true; renderAll(); }
   if (window.innerWidth < 720) setSheet(false);
-  flyAndOpen(m, 14);
+  flyThen(m.getLatLng(), Math.max(map.getZoom(), 14), () => m.openPopup());
 }
 
-// Open the popup only after this flight ends; an earlier animation's moveend would open it mid-flight and break auto-pan.
-function flyAndOpen(m, minZoom) {
-  const target = m.getLatLng();
+function openHood(id) {
+  const layer = hoodLayers.get(id);
+  if (!layer) return;
+  if (!showHoods) toggleHoods(true);
+  if (window.innerWidth < 720) setSheet(false);
+  const b = layer.getBounds();
+  flyThen(b.getCenter(), Math.min(map.getBoundsZoom(b, false, L.point(40, 40)), 15), () => layer.openPopup(layer.getCenter()));
+}
+
+// Run fn only after this flight ends; an earlier animation's moveend would fire it mid-flight and break auto-pan.
+function flyThen(center, zoom, fn) {
   let done = false;
-  const open = () => {
+  const finish = () => {
     if (done) return;
     done = true;
     map.off("moveend", onEnd);
-    m.openPopup();
+    fn();
   };
-  const onEnd = () => { if (map.getCenter().distanceTo(target) < 25) open(); };
+  const onEnd = () => { if (map.getCenter().distanceTo(center) < 25) finish(); };
   map.on("moveend", onEnd);
-  map.flyTo(target, Math.max(map.getZoom(), minZoom), { duration: 0.6 });
-  setTimeout(open, 1500);
+  map.flyTo(center, zoom, { duration: 0.6 });
+  setTimeout(finish, 1500);
 }
 
 function openFromHash() {
   const id = decodeURIComponent(location.hash.slice(1));
   if (id === "home") homeMarker.openPopup();
+  else if (id.startsWith("hood-")) openHood(id.slice(5));
   else if (id && markers.has(id)) openPlace(id);
 }
 
@@ -320,6 +449,7 @@ function placePopup(id) {
     ["f_built", p.year_built],
   ].filter(([, v]) => v != null && v !== "");
   const dist = miles(base.home, p);
+  const hood = p.lat != null ? hoodGeo.features.find((f) => inGeom(p.lat, p.lng, f.geometry)) : null;
   const dir = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(base.home.address)}&destination=${encodeURIComponent(p.address || `${p.lat},${p.lng}`)}`;
 
   el.innerHTML = `
@@ -334,6 +464,7 @@ function placePopup(id) {
       ${p.requested ? `<p class="pop-requested">${esc(p.requested)}</p>` : ""}
       <h3>${esc(p.name)}</h3>
       <p class="pop-addr">${esc(p.address || "")}${p.neighborhood ? ` · ${esc(p.neighborhood)}` : ""}${dist != null ? ` · ${esc(t("fromHome", { d: dist }))}` : ""}</p>
+      ${hood ? `<button type="button" class="hood-link" data-hood-link="${escAttr(hood.properties.id)}"><span class="dot dot-hood"></span>${esc(t("hoodGuide", { name: hood.properties.name.split(" (")[0] }))} ›</button>` : ""}
       <dl class="facts">${facts.map(([k, v]) => `<div${String(v).length > 30 ? ' class="wide"' : ""}><dt>${esc(t(k))}</dt><dd>${esc(String(v))}</dd></div>`).join("")}</dl>
       ${listBlock(t("highlights"), p.highlights, "good")}
       ${listBlock(t("watchOuts"), p.watch_outs, "warn")}
@@ -343,22 +474,34 @@ function placePopup(id) {
         <button class="btn btn-small" type="button" data-act="edit">${esc(t("edit"))}</button>
       </div>
       ${(p.other_urls || []).length ? `<p class="pop-more">${esc(t("alsoOn"))} ${p.other_urls.map((u) => `<a target="_blank" rel="noopener" href="${escAttr(u)}">${esc(hostOf(u))}</a>`).join(" · ")}</p>` : ""}
-      <section class="notes">
-        <h4>${esc(t("notes"))}</h4>
-        <ul class="note-list"></ul>
-        <form class="note-form">
-          <textarea name="body" rows="2" required placeholder="${escAttr(t("notePlaceholder"))}"></textarea>
-          <div class="note-row">
-            <input name="author" placeholder="${escAttr(t("yourName"))}" value="${escAttr(getName())}" autocomplete="name">
-            <button class="btn btn-small btn-primary" type="submit">${esc(t("addNoteBtn"))}</button>
-          </div>
-        </form>
-      </section>
+      ${notesHtml()}
     </div>`;
 
   const img = $(".pop-photo img", el);
   if (img) img.addEventListener("error", () => { img.parentElement.innerHTML = `<div class="no-photo">${esc(t("noPhoto"))}</div>`; });
 
+  wireNotes(el, id);
+  $("[data-hood-link]", el)?.addEventListener("click", (e) => openHood(e.currentTarget.dataset.hoodLink));
+  $('[data-act="edit"]', el).addEventListener("click", () => { editing.add(id); rerender(id); });
+  return el;
+}
+
+function notesHtml() {
+  return `<section class="notes">
+    <h4>${esc(t("notes"))}</h4>
+    <ul class="note-list"></ul>
+    <form class="note-form">
+      <textarea name="body" rows="2" required placeholder="${escAttr(t("notePlaceholder"))}"></textarea>
+      <div class="note-row">
+        <input name="author" placeholder="${escAttr(t("yourName"))}" value="${escAttr(getName())}" autocomplete="name">
+        <button class="btn btn-small btn-primary" type="submit">${esc(t("addNoteBtn"))}</button>
+      </div>
+    </form>
+  </section>`;
+}
+
+// id is a place id or "hood-<id>"; both live in the same notes table.
+function wireNotes(el, id) {
   const ul = $(".note-list", el);
   const notes = notesFor(id);
   if (!notes.length) ul.innerHTML = `<li class="note-empty">${esc(t("noNotes"))}</li>`;
@@ -399,9 +542,6 @@ function placePopup(id) {
       toast(t("failed", { e: err.message }), true);
     } finally { btn.disabled = false; }
   });
-
-  $('[data-act="edit"]', el).addEventListener("click", () => { editing.add(id); rerender(id); });
-  return el;
 }
 
 function editForm(p) {
@@ -478,20 +618,30 @@ async function savePlace(id, fields, by) {
   rerender(id);
 }
 
-function rerender(id) {
+function rerender() {
   renderAll();
-  const m = markers.get(id);
-  if (m && m.isPopupOpen()) refreshPopup(m, true);
+  refreshOpenPopup(true);
 }
 
-function popupSig(id) {
-  return JSON.stringify([placeById(id), notesFor(id), lang, editing.has(id)]);
+function popupSig(pop) {
+  if (pop._placeId) {
+    const id = pop._placeId;
+    return JSON.stringify([placeById(id), notesFor(id), lang, editing.has(id)]);
+  }
+  if (pop._hoodId) {
+    const id = pop._hoodId;
+    return JSON.stringify([notesFor("hood-" + id), placesInHood(id).map((p) => [p.id, p.name, p.status]), lang]);
+  }
+  return lang;
 }
 
-// Re-run the popup's content function, keeping the reader's scroll position.
-function refreshPopup(m, force = false) {
-  const pop = m.getPopup();
-  const sig = popupSig(m._placeId);
+// Re-run the open popup's content function when its data changed, keeping the reader's scroll position.
+// Background refreshes skip it while someone is editing or typing in it.
+function refreshOpenPopup(force = false) {
+  const pop = map._popup;
+  if (!pop || !pop.isOpen()) return;
+  if (!force && (editing.has(pop._placeId) || pop.getElement()?.contains(document.activeElement))) return;
+  const sig = popupSig(pop);
   if (!force && pop._sig === sig) return;
   const scroller = () => pop.getElement()?.querySelector(".leaflet-popup-content");
   const top = scroller()?.scrollTop || 0;
@@ -522,7 +672,8 @@ function renderLegend() {
     <button type="button" class="legend-chip ${filters[s] ? "on" : ""}" data-status="${s}" aria-pressed="${filters[s]}">
       <span class="dot dot-${s}"></span>${esc(t("st_" + s))}<b>${count(s)}</b>
     </button>`).join("") + `
-    <button type="button" class="legend-chip legend-home" data-home="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>`;
+    <button type="button" class="legend-chip legend-home" data-home="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>
+    ${hoodGeo.features.length ? `<button type="button" class="legend-chip ${showHoods ? "on" : ""}" data-hoods="1" aria-pressed="${showHoods}"><span class="dot dot-hood"></span>${esc(t("hoods"))}</button>` : ""}`;
 }
 
 function renderList() {
@@ -547,6 +698,20 @@ function renderList() {
     if (!group.length || !filters[s]) continue;
     parts.push(`<h2 class="sec sec-${s}">${esc(t("sec_" + s))}</h2>`);
     for (const p of group) parts.push(row(p, ""));
+  }
+  if (showHoods && hoodGeo.features.length) {
+    parts.push(`<h2 class="sec sec-hoods">${esc(t("sec_hoods"))}</h2>`);
+    for (const f of hoodGeo.features) {
+      const { id, name, city } = f.properties;
+      const n = placesInHood(id).length;
+      const notes = notesFor("hood-" + id).length;
+      parts.push(`<button type="button" class="row" data-hood="${escAttr(id)}">
+        <span class="dot dot-hood"></span>
+        <span class="row-main"><span class="row-name">${esc(name)}</span>
+          <span class="row-sub">${esc(t("city_" + city))}${n ? " · " + esc(n === 1 ? t("onePlace") : t("nPlaces", { n })) : ""}</span></span>
+        <span class="row-side">${notes ? `<span class="row-notes">${esc(notes === 1 ? t("oneNote") : t("nNotes", { n: notes }))}</span>` : ""}</span>
+      </button>`);
+    }
   }
   const hidden = places.filter((p) => p.hidden);
   if (hidden.length) {
@@ -584,7 +749,8 @@ function wireUi() {
   $("#legend").addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.home) return flyAndOpen(homeMarker, 14);
+    if (b.dataset.home) return flyThen(homeMarker.getLatLng(), Math.max(map.getZoom(), 14), () => homeMarker.openPopup());
+    if (b.dataset.hoods) return toggleHoods(!showHoods);
     const s = b.dataset.status;
     filters[s] = !filters[s];
     if (!filters.booked && !filters.contacted && !filters.none) filters[s] = true;
@@ -593,6 +759,8 @@ function wireUi() {
   $("#list").addEventListener("click", async (e) => {
     const open = e.target.closest("[data-open]");
     if (open) return openPlace(open.dataset.open);
+    const hood = e.target.closest("[data-hood]");
+    if (hood) return openHood(hood.dataset.hood);
     const restore = e.target.closest("[data-restore]");
     if (restore) await savePlace(restore.dataset.restore, { hidden: null }, getName());
   });
@@ -601,12 +769,7 @@ function wireUi() {
     try { localStorage.setItem("seattle.lang", lang); } catch {}
     applyStaticText();
     renderAll();
-    map.eachLayer((l) => {
-      if (l instanceof L.Marker && l.isPopupOpen()) {
-        if (l === homeMarker) l.getPopup().update();
-        else refreshPopup(l, true);
-      }
-    });
+    refreshOpenPopup(true);
   });
   $("#sheet-toggle").addEventListener("click", () => setSheet(!document.body.classList.contains("sheet-open")));
 
