@@ -1,0 +1,23 @@
+{
+  // Deploy from this folder: npx wrangler deploy
+  "name": "seattle-tours",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-28",
+  "account_id": "bf4d563d019ba4efff46afba844e5163",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "seattle-tours",
+      "database_id": "8bf23159-17ae-440c-83b1-55f737d905ac"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "WRITE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 40, "period": 60 }
+    }
+  ],
+  "observability": { "enabled": true }
+}

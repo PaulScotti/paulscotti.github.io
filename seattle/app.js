@@ -1,0 +1,751 @@
+// Seattle house tours map: base listings from places.json, shared notes/edits from the Worker API.
+"use strict";
+
+const API = "https://seattle-tours.scottibrain.workers.dev";
+const UTC_OFFSET_HOURS = 7; // Seattle is on PDT for the whole trip (DST ends Nov 1, 2026)
+const REFRESH_MS = 30000;
+
+const I18N = {
+  en: {
+    title: "Seattle house tours",
+    subtitle: "Oct 16–26 · home base: Green Lake Airbnb",
+    addPlace: "+ Add a place", addPlaceTitle: "Add a place", addToMap: "Add to map", adding: "Adding…",
+    showList: "Show list", hideList: "Hide list",
+    footer: "Notes and edits are shared with everyone who has this link.",
+    st_booked: "Tour booked", st_contacted: "Contacted", st_none: "Not contacted", toured: "Toured",
+    sec_booked: "Booked tours", sec_contacted: "Contacted, no tour yet", sec_none: "Not contacted yet", sec_hidden: "Removed from map",
+    home: "Our Airbnb", homeSub: "Home base for the trip",
+    address: "Address", listingUrl: "Listing link", name: "Name", status: "Status", tourTime: "Tour time",
+    requested: "Dates requested / status", rent: "Rent", sqft: "Sq ft", type: "Type", beds: "Beds", baths: "Baths",
+    yourName: "Your name", cancel: "Cancel", save: "Save", saving: "Saving…", edit: "Edit",
+    namePlaceholder: "Optional, e.g. building name", requestedPlaceholder: "e.g. asked for Oct 19 or 20",
+    addNote: "We'll find it on the map and pull a photo from the listing link when the site allows it.",
+    f_type: "Type", f_layout: "Beds / baths", f_size: "Size", f_rent: "Rent", f_fees: "Fees", f_lease: "Lease",
+    f_available: "Available", f_parking: "Parking", f_laundry: "Laundry", f_ac: "AC", f_pets: "Pets", f_built: "Built",
+    highlights: "Highlights", watchOuts: "Check on the tour",
+    openListing: "Open listing", directions: "Directions from Airbnb", fromHome: "{d} mi from Airbnb",
+    notes: "Notes", noNotes: "No notes yet.", notePlaceholder: "Add a note for everyone…", addNoteBtn: "Add note",
+    deleteNote: "Delete this note?", remove: "Remove from map", restore: "Restore",
+    removeConfirm: "Remove this place from the map for everyone? You can restore it from the list.",
+    photoUrl: "Photo link", noPhoto: "No photo",
+    syncOk: "Synced {t}", syncFail: "Can't reach the shared notes right now. Retrying…",
+    saved: "Saved for everyone", noteAdded: "Note added", failed: "Couldn't save: {e}",
+    beds_baths: "{b} bd · {ba} ba", sqftUnit: "{n} sq ft", requestedLabel: "Asked:",
+    nNotes: "{n} notes", oneNote: "1 note", alsoOn: "Also listed on:",
+  },
+  ko: {
+    title: "시애틀 집 투어",
+    subtitle: "10월 16–26일 · 숙소: 그린레이크 에어비앤비",
+    addPlace: "+ 장소 추가", addPlaceTitle: "장소 추가", addToMap: "지도에 추가", adding: "추가 중…",
+    showList: "목록 보기", hideList: "목록 숨기기",
+    footer: "메모와 수정 내용은 이 링크를 가진 모든 사람에게 공유됩니다.",
+    st_booked: "투어 확정", st_contacted: "연락함", st_none: "아직 연락 안 함", toured: "투어 완료",
+    sec_booked: "확정된 투어", sec_contacted: "연락함 · 투어 미정", sec_none: "아직 연락 안 함", sec_hidden: "지도에서 뺀 곳",
+    home: "우리 숙소 (에어비앤비)", homeSub: "여행 기간 숙소",
+    address: "주소", listingUrl: "매물 링크", name: "이름", status: "상태", tourTime: "투어 일시",
+    requested: "요청한 날짜 / 진행 상황", rent: "월세", sqft: "면적 (sqft)", type: "유형", beds: "침실", baths: "욕실",
+    yourName: "이름", cancel: "취소", save: "저장", saving: "저장 중…", edit: "수정",
+    namePlaceholder: "선택 사항 (예: 건물 이름)", requestedPlaceholder: "예: 10/19 또는 10/20 요청",
+    addNote: "주소로 지도 위치를 찾고, 가능하면 매물 링크에서 사진을 가져옵니다.",
+    f_type: "유형", f_layout: "침실 / 욕실", f_size: "면적", f_rent: "월세", f_fees: "추가 비용", f_lease: "계약 조건",
+    f_available: "입주 가능일", f_parking: "주차", f_laundry: "세탁", f_ac: "에어컨", f_pets: "반려동물", f_built: "준공",
+    highlights: "장점", watchOuts: "투어 때 확인할 점",
+    openListing: "매물 보기", directions: "숙소에서 길찾기", fromHome: "숙소에서 {d}마일",
+    notes: "메모", noNotes: "아직 메모가 없습니다.", notePlaceholder: "모두가 볼 수 있는 메모를 남겨 주세요…", addNoteBtn: "메모 추가",
+    deleteNote: "이 메모를 삭제할까요?", remove: "지도에서 빼기", restore: "되돌리기",
+    removeConfirm: "모든 사람의 지도에서 이 장소를 뺄까요? 목록에서 다시 되돌릴 수 있습니다.",
+    photoUrl: "사진 링크", noPhoto: "사진 없음",
+    syncOk: "{t} 동기화됨", syncFail: "공유 메모에 연결할 수 없습니다. 다시 시도하는 중…",
+    saved: "모두에게 저장됨", noteAdded: "메모를 추가했습니다", failed: "저장하지 못했습니다: {e}",
+    beds_baths: "침실 {b} · 욕실 {ba}", sqftUnit: "{n} sqft", requestedLabel: "요청:",
+    nNotes: "메모 {n}개", oneNote: "메모 1개", alsoOn: "다른 매물 링크:",
+  },
+};
+const TYPE_KO = {
+  "Apartment": "아파트", "Townhouse": "타운하우스", "Single-family house": "단독주택",
+  "Duplex / multiplex unit": "다세대 주택 유닛", "Upper unit of house": "주택 위층 유닛", "Condo": "콘도",
+};
+
+let lang = pickLang();
+let base = { home: null, places: [] };
+let shared = { notes: [], edits: {} };
+let synced = false;
+let map;
+const markers = new Map();
+let homeMarker;
+const filters = { booked: true, contacted: true, none: true };
+const editing = new Set();
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const t = (key, vars = {}) => (I18N[lang][key] ?? I18N.en[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+
+init();
+
+async function init() {
+  applyStaticText();
+  base = await fetch("places.json?v=6", { cache: "no-cache" }).then((r) => r.json());
+  setupMap();
+  renderAll();
+  fitAll();
+  wireUi();
+  await refresh();
+  openFromHash();
+  setInterval(refresh, REFRESH_MS);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+  window.addEventListener("hashchange", openFromHash);
+}
+
+// ---------- data ----------
+
+function allPlaces() {
+  const list = base.places.map((p) => ({ ...p, ...stripMeta(shared.edits[p.id]) }));
+  for (const [id, e] of Object.entries(shared.edits)) {
+    if (e.added && !base.places.some((p) => p.id === id)) list.push({ id, ...stripMeta(e) });
+  }
+  return list.map((p) => ({ ...p, status: p.status || "none" }));
+}
+function stripMeta(e) {
+  if (!e) return {};
+  const { _updated_at, _updated_by, ...rest } = e;
+  return rest;
+}
+function placeById(id) {
+  return allPlaces().find((p) => p.id === id);
+}
+function notesFor(id) {
+  return shared.notes.filter((n) => n.place_id === id);
+}
+
+async function refresh() {
+  try {
+    const r = await fetch(API + "/api/state", { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    shared = await r.json();
+    synced = true;
+    setSync(t("syncOk", { t: fmtClock(new Date()) }));
+    renderAll();
+  } catch {
+    setSync(t("syncFail"), true);
+  }
+}
+
+async function api(path, method, body) {
+  const r = await fetch(API + path, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || "HTTP " + r.status);
+  return data;
+}
+
+// ---------- map ----------
+
+function setupMap() {
+  map = L.map("map", { zoomControl: false, tap: true }).setView([47.64, -122.3], 11);
+  L.control.zoom({ position: "topright" }).addTo(map);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  const h = base.home;
+  homeMarker = L.marker([h.lat, h.lng], { icon: homeIcon(), zIndexOffset: 1000, title: t("home") })
+    .addTo(map)
+    .bindPopup(() => homePopup(), popupOpts());
+  // Popup buttons re-render the popup; without this, Leaflet sees the detached button's click as a map click and closes it.
+  map.on("popupopen", (e) => {
+    e.popup.getElement().addEventListener("click", stopClick);
+    // Fit the popup inside the visible map (the list panel takes part of the screen on phones).
+    const h = Math.max(220, map.getSize().y - 90);
+    if (e.popup.options.maxHeight !== h) {
+      e.popup.options.maxHeight = h;
+      e.popup.update();
+    }
+  });
+  // The panel resizes the map on phones (sheet open/closed, list length); keep Leaflet's size in sync.
+  new ResizeObserver(() => map.invalidateSize()).observe(document.getElementById("map"));
+  map.on("popupclose", (e) => {
+    const id = e.popup._placeId;
+    if (id) editing.delete(id);
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  });
+}
+
+function stopClick(e) {
+  e.stopPropagation();
+}
+
+function popupOpts() {
+  const w = Math.min(340, window.innerWidth - 40);
+  return {
+    maxWidth: w, minWidth: Math.min(300, w),
+    autoPanPaddingTopLeft: L.point(16, 16), autoPanPaddingBottomRight: L.point(16, 16),
+    className: "place-popup", closeButton: true,
+  };
+}
+
+function pinIcon(p) {
+  const done = isToured(p);
+  const label = done ? "✓" : p.status === "booked" && p.tour_at ? String(Number(p.tour_at.slice(8, 10))) : "";
+  const n = notesFor(p.id).length;
+  return L.divIcon({
+    className: "pin-wrap",
+    html: `<div class="pin pin-${p.status}${done ? " pin-done" : ""}">
+      <svg viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39s13-13.5 13-24A13 13 0 0 0 2 15c0 10.5 13 24 13 24z"/></svg>
+      <span class="pin-label">${esc(label)}</span>${n ? `<span class="pin-badge">${n}</span>` : ""}</div>`,
+    iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34],
+  });
+}
+
+function homeIcon() {
+  return L.divIcon({
+    className: "pin-wrap",
+    html: `<div class="home-pin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 11h2.7v9h5.3v-6h3v6h5.3v-9h2.7z"/></svg></div>`,
+    iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -18],
+  });
+}
+
+function renderMarkers() {
+  const places = allPlaces();
+  const seen = new Set();
+  for (const p of places) {
+    if (p.hidden || p.lat == null) continue;
+    seen.add(p.id);
+    let m = markers.get(p.id);
+    if (!m) {
+      m = L.marker([p.lat, p.lng], { title: p.name, riseOnHover: true }).addTo(map);
+      m.bindPopup(() => placePopup(m._placeId), popupOpts());
+      m.on("popupopen", () => {
+        m.getPopup()._sig = popupSig(m._placeId);
+        history.replaceState(null, "", "#" + m._placeId);
+      });
+      markers.set(p.id, m);
+    }
+    m._placeId = p.id;
+    m.getPopup()._placeId = p.id;
+    m.setLatLng([p.lat, p.lng]);
+    m.setIcon(pinIcon(p));
+    m.setZIndexOffset(p.status === "booked" ? 300 : p.status === "contacted" ? 200 : 0);
+    const visible = filters[p.status];
+    if (visible && !map.hasLayer(m)) m.addTo(map);
+    if (!visible && map.hasLayer(m)) m.remove();
+    // Refresh an open popup when its data changed, unless someone is typing in it.
+    if (m.isPopupOpen() && !editing.has(p.id) && !m.getPopup().getElement()?.contains(document.activeElement)) {
+      refreshPopup(m);
+    }
+  }
+  for (const [id, m] of markers) {
+    if (!seen.has(id)) { m.remove(); markers.delete(id); }
+  }
+}
+
+function fitAll() {
+  const pts = allPlaces().filter((p) => !p.hidden && p.lat != null).map((p) => [p.lat, p.lng]);
+  pts.push([base.home.lat, base.home.lng]);
+  map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], animate: false });
+}
+
+function openPlace(id) {
+  const m = markers.get(id);
+  if (!m) return;
+  const p = placeById(id);
+  if (p && !filters[p.status]) { filters[p.status] = true; renderAll(); }
+  if (window.innerWidth < 720) setSheet(false);
+  flyAndOpen(m, 14);
+}
+
+// Open the popup only after this flight ends; an earlier animation's moveend would open it mid-flight and break auto-pan.
+function flyAndOpen(m, minZoom) {
+  const target = m.getLatLng();
+  let done = false;
+  const open = () => {
+    if (done) return;
+    done = true;
+    map.off("moveend", onEnd);
+    m.openPopup();
+  };
+  const onEnd = () => { if (map.getCenter().distanceTo(target) < 25) open(); };
+  map.on("moveend", onEnd);
+  map.flyTo(target, Math.max(map.getZoom(), minZoom), { duration: 0.6 });
+  setTimeout(open, 1500);
+}
+
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id === "home") homeMarker.openPopup();
+  else if (id && markers.has(id)) openPlace(id);
+}
+
+// ---------- popups ----------
+
+function homePopup() {
+  const h = base.home;
+  const el = document.createElement("div");
+  el.className = "pop pop-home";
+  el.innerHTML = `
+    <div class="pop-body">
+      <div class="pop-kicker">${esc(t("homeSub"))}</div>
+      <h3>${esc(t("home"))}</h3>
+      <p class="pop-addr">${esc(h.address)}</p>
+      ${h.description ? `<p class="pop-desc">${esc(h.description)}</p>` : ""}
+      <div class="pop-links"><a class="btn btn-small" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.address)}">Google Maps ↗</a></div>
+    </div>`;
+  return el;
+}
+
+function placePopup(id) {
+  const p = placeById(id);
+  const el = document.createElement("div");
+  el.className = "pop";
+  if (!p) return el;
+  if (editing.has(id)) {
+    el.append(editForm(p));
+    return el;
+  }
+  const done = isToured(p);
+  const facts = [
+    ["f_type", p.type ? (lang === "ko" ? TYPE_KO[p.type] || p.type : p.type) : null],
+    ["f_layout", p.beds != null || p.baths != null ? t("beds_baths", { b: p.beds ?? "?", ba: p.baths ?? "?" }) : null],
+    ["f_size", p.sqft ? t("sqftUnit", { n: fmtSqft(p.sqft) }) + (String(p.sqft).includes(" (") ? " (" + String(p.sqft).split(" (")[1] : "") : null],
+    ["f_rent", p.rent],
+    ["f_fees", p.fees],
+    ["f_lease", p.lease],
+    ["f_available", p.available],
+    ["f_parking", p.parking],
+    ["f_laundry", p.laundry],
+    ["f_ac", p.ac],
+    ["f_pets", p.pets],
+    ["f_built", p.year_built],
+  ].filter(([, v]) => v != null && v !== "");
+  const dist = miles(base.home, p);
+  const dir = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(base.home.address)}&destination=${encodeURIComponent(p.address || `${p.lat},${p.lng}`)}`;
+
+  el.innerHTML = `
+    <div class="pop-photo">${p.photo_url
+      ? `<img src="${escAttr(p.photo_url)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+      : `<div class="no-photo">${esc(t("noPhoto"))}</div>`}</div>
+    <div class="pop-body">
+      <div class="pop-status">
+        <span class="chip chip-${p.status}${done ? " chip-done" : ""}">${esc(done ? t("toured") : t("st_" + p.status))}</span>
+        ${p.status === "booked" && p.tour_at ? `<span class="pop-when">${esc(fmtTour(p.tour_at))}</span>` : ""}
+      </div>
+      ${p.requested ? `<p class="pop-requested">${esc(p.requested)}</p>` : ""}
+      <h3>${esc(p.name)}</h3>
+      <p class="pop-addr">${esc(p.address || "")}${p.neighborhood ? ` · ${esc(p.neighborhood)}` : ""}${dist != null ? ` · ${esc(t("fromHome", { d: dist }))}` : ""}</p>
+      <dl class="facts">${facts.map(([k, v]) => `<div${String(v).length > 30 ? ' class="wide"' : ""}><dt>${esc(t(k))}</dt><dd>${esc(String(v))}</dd></div>`).join("")}</dl>
+      ${listBlock(t("highlights"), p.highlights, "good")}
+      ${listBlock(t("watchOuts"), p.watch_outs, "warn")}
+      <div class="pop-links">
+        ${p.listing_url ? `<a class="btn btn-small btn-primary" target="_blank" rel="noopener" href="${escAttr(p.listing_url)}">${esc(t("openListing"))} ↗</a>` : ""}
+        <a class="btn btn-small" target="_blank" rel="noopener" href="${escAttr(dir)}">${esc(t("directions"))} ↗</a>
+        <button class="btn btn-small" type="button" data-act="edit">${esc(t("edit"))}</button>
+      </div>
+      ${(p.other_urls || []).length ? `<p class="pop-more">${esc(t("alsoOn"))} ${p.other_urls.map((u) => `<a target="_blank" rel="noopener" href="${escAttr(u)}">${esc(hostOf(u))}</a>`).join(" · ")}</p>` : ""}
+      <section class="notes">
+        <h4>${esc(t("notes"))}</h4>
+        <ul class="note-list"></ul>
+        <form class="note-form">
+          <textarea name="body" rows="2" required placeholder="${escAttr(t("notePlaceholder"))}"></textarea>
+          <div class="note-row">
+            <input name="author" placeholder="${escAttr(t("yourName"))}" value="${escAttr(getName())}" autocomplete="name">
+            <button class="btn btn-small btn-primary" type="submit">${esc(t("addNoteBtn"))}</button>
+          </div>
+        </form>
+      </section>
+    </div>`;
+
+  const img = $(".pop-photo img", el);
+  if (img) img.addEventListener("error", () => { img.parentElement.innerHTML = `<div class="no-photo">${esc(t("noPhoto"))}</div>`; });
+
+  const ul = $(".note-list", el);
+  const notes = notesFor(id);
+  if (!notes.length) ul.innerHTML = `<li class="note-empty">${esc(t("noNotes"))}</li>`;
+  for (const n of notes) {
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="note-meta"><b></b><span></span><button type="button" class="note-del" aria-label="Delete">×</button></div><p></p>`;
+    $("b", li).textContent = n.author || "—";
+    $("span", li).textContent = fmtStamp(n.created_at);
+    $("p", li).textContent = n.body;
+    $(".note-del", li).addEventListener("click", async () => {
+      if (!confirm(t("deleteNote"))) return;
+      try {
+        await api("/api/notes/" + n.id, "DELETE");
+        shared.notes = shared.notes.filter((x) => x.id !== n.id);
+        rerender(id);
+      } catch (err) { toast(t("failed", { e: err.message }), true); }
+    });
+    ul.append(li);
+  }
+
+  $(".note-form", el).addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget;
+    const body = f.body.value.trim();
+    if (!body) return;
+    const author = f.author.value.trim();
+    setName(author);
+    const btn = $("button[type=submit]", f);
+    btn.disabled = true;
+    try {
+      const { note } = await api("/api/notes", "POST", { place_id: id, author, body });
+      shared.notes.push(note);
+      toast(t("noteAdded"));
+      f.body.value = "";
+      document.activeElement?.blur();
+      rerender(id);
+    } catch (err) {
+      toast(t("failed", { e: err.message }), true);
+    } finally { btn.disabled = false; }
+  });
+
+  $('[data-act="edit"]', el).addEventListener("click", () => { editing.add(id); rerender(id); });
+  return el;
+}
+
+function editForm(p) {
+  const form = document.createElement("form");
+  form.className = "edit-form";
+  const typeOpts = ["", ...Object.keys(TYPE_KO)];
+  form.innerHTML = `
+    <div class="pop-body">
+      <h3>${esc(p.name)}</h3>
+      <fieldset class="seg">
+        <legend>${esc(t("status"))}</legend>
+        ${["booked", "contacted", "none"].map((s) => `
+          <label class="seg-${s}"><input type="radio" name="status" value="${s}" ${p.status === s ? "checked" : ""}><span>${esc(t("st_" + s))}</span></label>`).join("")}
+      </fieldset>
+      <label>${esc(t("tourTime"))}<input type="datetime-local" name="tour_at" min="2026-10-16T00:00" max="2026-10-26T23:59" value="${escAttr(p.tour_at || "")}"></label>
+      <label>${esc(t("requested"))}<input name="requested" value="${escAttr(p.requested || "")}" placeholder="${escAttr(t("requestedPlaceholder"))}"></label>
+      <div class="grid-2">
+        <label>${esc(t("rent"))}<input name="rent" value="${escAttr(p.rent || "")}"></label>
+        <label>${esc(t("sqft"))}<input name="sqft" value="${escAttr(p.sqft ?? "")}"></label>
+      </div>
+      <div class="grid-3">
+        <label>${esc(t("beds"))}<input name="beds" value="${escAttr(p.beds ?? "")}" inputmode="decimal"></label>
+        <label>${esc(t("baths"))}<input name="baths" value="${escAttr(p.baths ?? "")}" inputmode="decimal"></label>
+        <label>${esc(t("type"))}<select name="type">${typeOpts.map((o) => `<option value="${escAttr(o)}" ${o === (p.type || "") ? "selected" : ""}>${esc(o ? (lang === "ko" ? TYPE_KO[o] : o) : "—")}</option>`).join("")}</select></label>
+      </div>
+      <label>${esc(t("listingUrl"))}<input type="url" name="listing_url" value="${escAttr(p.listing_url || "")}"></label>
+      <label>${esc(t("photoUrl"))}<input type="url" name="photo_url" value="${escAttr(p.photo_url || "")}"></label>
+      <label>${esc(t("yourName"))}<input name="by" value="${escAttr(getName())}" autocomplete="name"></label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-small btn-ghost-danger" data-act="remove">${esc(t("remove"))}</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-small" data-act="cancel">${esc(t("cancel"))}</button>
+        <button type="submit" class="btn btn-small btn-primary">${esc(t("save"))}</button>
+      </div>
+    </div>`;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const keys = ["status", "tour_at", "requested", "rent", "sqft", "beds", "baths", "type", "listing_url", "photo_url"];
+    const fields = {};
+    for (const k of keys) {
+      const v = (fd.get(k) ?? "").toString().trim();
+      const old = p[k] == null ? "" : String(p[k]);
+      if (v !== old) fields[k] = v === "" ? null : v;
+    }
+    // A booked status without a time is allowed; a time implies booked.
+    if (fields.tour_at && !("status" in fields) && p.status !== "booked") fields.status = "booked";
+    const by = (fd.get("by") || "").toString().trim();
+    setName(by);
+    editing.delete(p.id);
+    if (!Object.keys(fields).length) return rerender(p.id);
+    await savePlace(p.id, fields, by);
+  });
+  $('[data-act="cancel"]', form).addEventListener("click", () => { editing.delete(p.id); rerender(p.id); });
+  $('[data-act="remove"]', form).addEventListener("click", async () => {
+    if (!confirm(t("removeConfirm"))) return;
+    editing.delete(p.id);
+    map.closePopup();
+    await savePlace(p.id, { hidden: true }, getName());
+  });
+  return form;
+}
+
+async function savePlace(id, fields, by) {
+  try {
+    const { data } = await api("/api/places/" + id, "PATCH", { fields, by });
+    shared.edits[id] = { ...(shared.edits[id] || {}), ...data };
+    for (const [k, v] of Object.entries(fields)) if (v === null) delete shared.edits[id][k];
+    toast(t("saved"));
+  } catch (err) {
+    toast(t("failed", { e: err.message }), true);
+  }
+  rerender(id);
+}
+
+function rerender(id) {
+  renderAll();
+  const m = markers.get(id);
+  if (m && m.isPopupOpen()) refreshPopup(m, true);
+}
+
+function popupSig(id) {
+  return JSON.stringify([placeById(id), notesFor(id), lang, editing.has(id)]);
+}
+
+// Re-run the popup's content function, keeping the reader's scroll position.
+function refreshPopup(m, force = false) {
+  const pop = m.getPopup();
+  const sig = popupSig(m._placeId);
+  if (!force && pop._sig === sig) return;
+  const scroller = () => pop.getElement()?.querySelector(".leaflet-popup-content");
+  const top = scroller()?.scrollTop || 0;
+  pop.update();
+  pop._sig = sig;
+  const sc = scroller();
+  if (sc) sc.scrollTop = top;
+}
+
+function listBlock(title, items, kind) {
+  if (!items || !items.length) return "";
+  return `<div class="pop-list pop-list-${kind}"><h4>${esc(title)}</h4><ul>${items.map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div>`;
+}
+
+// ---------- side panel ----------
+
+function renderAll() {
+  renderMarkers();
+  renderLegend();
+  renderList();
+}
+
+function renderLegend() {
+  const places = allPlaces().filter((p) => !p.hidden);
+  const count = (s) => places.filter((p) => p.status === s).length;
+  const el = $("#legend");
+  el.innerHTML = ["booked", "contacted", "none"].map((s) => `
+    <button type="button" class="legend-chip ${filters[s] ? "on" : ""}" data-status="${s}" aria-pressed="${filters[s]}">
+      <span class="dot dot-${s}"></span>${esc(t("st_" + s))}<b>${count(s)}</b>
+    </button>`).join("") + `
+    <button type="button" class="legend-chip legend-home" data-home="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>`;
+}
+
+function renderList() {
+  const places = allPlaces();
+  const visible = places.filter((p) => !p.hidden);
+  const list = $("#list");
+  const parts = [];
+
+  const booked = visible.filter((p) => p.status === "booked")
+    .sort((a, b) => (a.tour_at || "9").localeCompare(b.tour_at || "9"));
+  if (booked.length && filters.booked) {
+    parts.push(`<h2 class="sec sec-booked">${esc(t("sec_booked"))}</h2>`);
+    let day = null;
+    for (const p of booked) {
+      const d = p.tour_at ? p.tour_at.slice(0, 10) : "";
+      if (d !== day) { day = d; parts.push(`<h3 class="day">${esc(d ? fmtDay(d) : "—")}</h3>`); }
+      parts.push(row(p, p.tour_at ? fmtTime(p.tour_at) : ""));
+    }
+  }
+  for (const s of ["contacted", "none"]) {
+    const group = visible.filter((p) => p.status === s).sort((a, b) => a.name.localeCompare(b.name));
+    if (!group.length || !filters[s]) continue;
+    parts.push(`<h2 class="sec sec-${s}">${esc(t("sec_" + s))}</h2>`);
+    for (const p of group) parts.push(row(p, ""));
+  }
+  const hidden = places.filter((p) => p.hidden);
+  if (hidden.length) {
+    parts.push(`<details class="hidden-sec"><summary>${esc(t("sec_hidden"))} (${hidden.length})</summary>`);
+    for (const p of hidden) {
+      parts.push(`<div class="row row-hidden"><span class="row-name">${esc(p.name)}</span>
+        <button type="button" class="btn btn-small" data-restore="${escAttr(p.id)}">${esc(t("restore"))}</button></div>`);
+    }
+    parts.push(`</details>`);
+  }
+  list.innerHTML = parts.join("");
+}
+
+function row(p, when) {
+  const n = notesFor(p.id).length;
+  const bits = [p.neighborhood, p.beds != null ? t("beds_baths", { b: p.beds, ba: p.baths ?? "?" }) : null, p.sqft ? t("sqftUnit", { n: fmtSqft(p.sqft) }) : null]
+    .filter(Boolean).join(" · ");
+  const done = isToured(p);
+  return `<button type="button" class="row" data-open="${escAttr(p.id)}">
+    <span class="dot dot-${p.status}${done ? " dot-done" : ""}"></span>
+    <span class="row-main">
+      <span class="row-name">${esc(p.name)}</span>
+      <span class="row-sub">${esc(bits)}</span>
+      ${p.requested && p.status !== "booked" ? `<span class="row-req">${esc(p.requested)}</span>` : ""}
+    </span>
+    <span class="row-side">
+      ${when ? `<span class="row-when">${esc(when)}</span>` : ""}
+      ${shortRent(p.rent || "") ? `<span class="row-rent">${esc(shortRent(p.rent))}</span>` : ""}
+      ${n ? `<span class="row-notes">${esc(n === 1 ? t("oneNote") : t("nNotes", { n }))}</span>` : ""}
+    </span>
+  </button>`;
+}
+
+function wireUi() {
+  $("#legend").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.home) return flyAndOpen(homeMarker, 14);
+    const s = b.dataset.status;
+    filters[s] = !filters[s];
+    if (!filters.booked && !filters.contacted && !filters.none) filters[s] = true;
+    renderAll();
+  });
+  $("#list").addEventListener("click", async (e) => {
+    const open = e.target.closest("[data-open]");
+    if (open) return openPlace(open.dataset.open);
+    const restore = e.target.closest("[data-restore]");
+    if (restore) await savePlace(restore.dataset.restore, { hidden: null }, getName());
+  });
+  $("#lang").addEventListener("click", () => {
+    lang = lang === "en" ? "ko" : "en";
+    try { localStorage.setItem("seattle.lang", lang); } catch {}
+    applyStaticText();
+    renderAll();
+    map.eachLayer((l) => {
+      if (l instanceof L.Marker && l.isPopupOpen()) {
+        if (l === homeMarker) l.getPopup().update();
+        else refreshPopup(l, true);
+      }
+    });
+  });
+  $("#sheet-toggle").addEventListener("click", () => setSheet(!document.body.classList.contains("sheet-open")));
+
+  const dlg = $("#add-dialog");
+  const form = $("#add-form");
+  $("#add-place").addEventListener("click", () => {
+    form.reset();
+    form.by.value = getName();
+    $("#add-error").textContent = "";
+    dlg.showModal();
+  });
+  form.addEventListener("submit", async (e) => {
+    if (e.submitter?.value !== "ok") return; // Cancel closes the dialog
+    e.preventDefault();
+    const fd = new FormData(form);
+    const fields = {};
+    for (const k of ["address", "listing_url", "name", "status", "tour_at", "requested", "rent", "sqft", "type", "beds", "baths"]) {
+      const v = (fd.get(k) || "").toString().trim();
+      if (v) fields[k] = v;
+    }
+    if (fields.tour_at && fields.status === "none") fields.status = "booked";
+    const by = (fd.get("by") || "").toString().trim();
+    setName(by);
+    const btn = $("#add-submit");
+    btn.disabled = true;
+    btn.textContent = t("adding");
+    $("#add-error").textContent = "";
+    try {
+      const { place_id, data } = await api("/api/places", "POST", { fields, by });
+      shared.edits[place_id] = data;
+      dlg.close();
+      renderAll();
+      toast(t("saved"));
+      openPlace(place_id);
+    } catch (err) {
+      $("#add-error").textContent = err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = t("addToMap");
+    }
+  });
+}
+
+function setSheet(open) {
+  document.body.classList.toggle("sheet-open", open);
+  const b = $("#sheet-toggle");
+  b.setAttribute("aria-expanded", String(open));
+  b.textContent = open ? t("hideList") : t("showList");
+}
+
+function applyStaticText() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = t(el.dataset.t); });
+  document.querySelectorAll("[data-tp]").forEach((el) => { el.placeholder = t(el.dataset.tp); });
+  $("#lang").textContent = lang === "en" ? "한국어" : "English";
+  $("#sheet-toggle").textContent = document.body.classList.contains("sheet-open") ? t("hideList") : t("showList");
+  if (synced) setSync(t("syncOk", { t: fmtClock(new Date()) }));
+}
+
+// ---------- helpers ----------
+
+function pickLang() {
+  try {
+    const saved = localStorage.getItem("seattle.lang");
+    if (saved === "en" || saved === "ko") return saved;
+  } catch {}
+  return (navigator.language || "").toLowerCase().startsWith("ko") ? "ko" : "en";
+}
+function getName() {
+  try { return localStorage.getItem("seattle.name") || ""; } catch { return ""; }
+}
+function setName(n) {
+  if (!n) return;
+  try { localStorage.setItem("seattle.name", n); } catch {}
+}
+
+// tour_at is Seattle wall-clock time ("2026-10-17T09:30"); format it without timezone shifts.
+function wallClock(s) {
+  const [d, tm] = s.split("T");
+  const [y, mo, da] = d.split("-").map(Number);
+  const [h, mi] = (tm || "00:00").split(":").map(Number);
+  return new Date(Date.UTC(y, mo - 1, da, h, mi));
+}
+function locale() { return lang === "ko" ? "ko-KR" : "en-US"; }
+function fmtTour(s) {
+  return new Intl.DateTimeFormat(locale(), { timeZone: "UTC", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(wallClock(s));
+}
+function fmtDay(d) {
+  return new Intl.DateTimeFormat(locale(), { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" }).format(wallClock(d + "T00:00"));
+}
+function fmtTime(s) {
+  return new Intl.DateTimeFormat(locale(), { timeZone: "UTC", hour: "numeric", minute: "2-digit" }).format(wallClock(s));
+}
+function fmtStamp(iso) {
+  return new Intl.DateTimeFormat(locale(), { timeZone: "America/Los_Angeles", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+}
+function fmtClock(d) {
+  return new Intl.DateTimeFormat(locale(), { hour: "numeric", minute: "2-digit" }).format(d);
+}
+function isToured(p) {
+  if (p.status !== "booked" || !p.tour_at) return false;
+  return wallClock(p.tour_at).getTime() + UTC_OFFSET_HOURS * 3600e3 + 3600e3 < Date.now();
+}
+function hostOf(u) {
+  try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; }
+}
+function fmtSqft(v) {
+  return typeof v === "number" ? v.toLocaleString("en-US") : String(v).split(" (")[0];
+}
+function shortRent(r) {
+  const m = String(r).match(/\$[\d,]+(?:\s*[–-]\s*\$?[\d,]+)?/);
+  return m ? (/from/i.test(r) && !m[0].includes("–") ? m[0] + "+" : m[0].replace(/\s+/g, "")) : "";
+}
+function miles(a, b) {
+  if (a?.lat == null || b?.lat == null) return null;
+  const R = 3958.8, rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return (2 * R * Math.asin(Math.sqrt(x))).toFixed(1);
+}
+function setSync(msg, bad = false) {
+  const el = $("#sync");
+  el.textContent = msg;
+  el.classList.toggle("bad", bad);
+}
+let toastTimer;
+function toast(msg, bad = false) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.toggle("bad", bad);
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function escAttr(s) {
+  const v = String(s ?? "");
+  if (/^\s*javascript:/i.test(v)) return "";
+  return esc(v);
+}
