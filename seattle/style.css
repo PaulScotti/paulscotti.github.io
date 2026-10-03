@@ -262,10 +262,16 @@ h1 { font-size: 20px; line-height: 1.2; margin: 0; letter-spacing: -0.01em; }
 /* ---------- phones: map on top, list as a bottom sheet ---------- */
 @media (max-width: 719px) {
   body { font-size: 15px; }
-  .app { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  /* minmax(0, …) stops the scrolling legend row from widening the page past the phone screen. */
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .panel, .panel-head, .legend { min-width: 0; }
   .map { grid-row: 1; }
-  .panel { grid-row: 2; border-right: 0; border-top: 1px solid var(--line); max-height: 34dvh; transition: max-height .25s ease; box-shadow: 0 -6px 20px rgba(20,25,35,.08); }
-  .sheet-open .panel { max-height: 72dvh; }
+  .panel { grid-row: 2; border-right: 0; border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(20,25,35,.08); }
+  /* Collapsed: just the header, so the map gets the screen. "Show list" opens the full list. */
+  .panel .list, .panel .panel-foot { display: none; }
+  .sheet-open .panel { height: 72vh; height: 72dvh; }
+  .sheet-open .panel .list { display: block; }
+  .sheet-open .panel .panel-foot { display: block; }
   .panel-head { padding: 10px 16px 8px; }
   h1 { font-size: 18px; }
   .sub { margin: 2px 0 8px; font-size: 13px; }

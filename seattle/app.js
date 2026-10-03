@@ -33,12 +33,14 @@ const I18N = {
     beds_baths: "{b} bd · {ba} ba", sqftUnit: "{n} sq ft", requestedLabel: "Asked:",
     nNotes: "{n} notes", oneNote: "1 note", alsoOn: "Also listed on:",
     hoods: "Neighborhoods", sec_hoods: "Neighborhoods", hoodKicker: "Neighborhood · {city}",
-    yourPlaces: "Your places here", noPlaces: "None of your places are in this neighborhood yet.",
+    yourPlaces: "Your places here", noPlaces: "None of your places are here yet.",
+    cityKicker: "City on the Eastside", moreAreas: "More areas to explore",
     notable: "Notable", pros: "Pros", cons: "Cons", essentials: "Everyday essentials",
     e_groceries: "Groceries", e_transit: "Transit", e_swim: "Swim lessons", e_catholic: "Catholic parish",
     e_movies: "Movies", e_parks: "Parks", e_market: "Farmers market", sources: "Sources:",
     hoodGuide: "{name} neighborhood guide",
     nPlaces: "{n} places", onePlace: "1 place", city_Seattle: "Seattle", city_Bellevue: "Bellevue",
+    city_Kirkland: "Kirkland", city_Redmond: "Redmond", "city_Mercer Island": "Mercer Island", city_Issaquah: "Issaquah",
   },
   ko: {
     title: "시애틀 집 투어",
@@ -67,12 +69,14 @@ const I18N = {
     beds_baths: "침실 {b} · 욕실 {ba}", sqftUnit: "{n} sqft", requestedLabel: "요청:",
     nNotes: "메모 {n}개", oneNote: "메모 1개", alsoOn: "다른 매물 링크:",
     hoods: "동네", sec_hoods: "동네 정보", hoodKicker: "동네 · {city}",
-    yourPlaces: "이 동네의 후보 집", noPlaces: "아직 이 동네에 있는 후보 집이 없습니다.",
+    yourPlaces: "이 동네의 후보 집", noPlaces: "아직 이곳에 있는 후보 집이 없습니다.",
+    cityKicker: "이스트사이드 도시", moreAreas: "더 둘러볼 지역",
     notable: "주요 특징", pros: "장점", cons: "단점", essentials: "생활 편의",
     e_groceries: "장보기", e_transit: "대중교통", e_swim: "수영 강습", e_catholic: "가톨릭 성당",
     e_movies: "영화관", e_parks: "공원", e_market: "파머스 마켓", sources: "출처:",
     hoodGuide: "{name} 동네 정보",
     nPlaces: "후보 {n}곳", onePlace: "후보 1곳", city_Seattle: "시애틀", city_Bellevue: "벨뷰",
+    city_Kirkland: "커클랜드", city_Redmond: "레드먼드", "city_Mercer Island": "머서 아일랜드", city_Issaquah: "이사콰",
   },
 };
 const TYPE_KO = {
@@ -92,7 +96,9 @@ let hoodGeo = { features: [] };
 let hoodLayer;
 const hoodLayers = new Map();
 let showHoods = true;
-const HOOD_STYLE = { color: "#7a5aa6", weight: 1.5, opacity: 0.75, dashArray: "5 4", fillColor: "#7a5aa6", fillOpacity: 0.07 };
+// Areas with candidate places are drawn a little stronger than the ones kept for future tours.
+const HOOD_STYLE = { color: "#7a5aa6", weight: 1.5, opacity: 0.8, dashArray: "5 4", fillColor: "#7a5aa6", fillOpacity: 0.08 };
+const HOOD_STYLE_EMPTY = { ...HOOD_STYLE, opacity: 0.45, fillOpacity: 0.03 };
 const HOOD_HOVER = { weight: 2.5, fillOpacity: 0.16, dashArray: null };
 const HOOD_OPEN = { weight: 2.5, opacity: 1, fillOpacity: 0.2, dashArray: null };
 const editing = new Set();
@@ -105,8 +111,8 @@ init();
 async function init() {
   applyStaticText();
   [base, hoodGeo] = await Promise.all([
-    fetch("places.json?v=8", { cache: "no-cache" }).then((r) => r.json()),
-    fetch("neighborhoods.json?v=8", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
+    fetch("places.json?v=9", { cache: "no-cache" }).then((r) => r.json()),
+    fetch("neighborhoods.json?v=9", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
   ]);
   setupMap();
   setupHoods();
@@ -209,7 +215,7 @@ function setupHoods() {
   map.createPane("hoodLabels").style.zIndex = 450;
   hoodLayer = L.geoJSON(hoodGeo, {
     pane: "hoods",
-    style: () => HOOD_STYLE,
+    style: (f) => hoodStyle(f.properties.id),
     onEachFeature: (f, layer) => {
       const id = f.properties.id;
       hoodLayers.set(id, layer);
@@ -219,14 +225,22 @@ function setupHoods() {
       layer.bindPopup(() => hoodPopup(id), popupOpts());
       layer.getPopup()._hoodId = id;
       layer.on("mouseover", () => { if (!layer.isPopupOpen()) layer.setStyle(HOOD_HOVER); });
-      layer.on("mouseout", () => { if (!layer.isPopupOpen()) layer.setStyle(HOOD_STYLE); });
+      layer.on("mouseout", () => { if (!layer.isPopupOpen()) layer.setStyle(hoodStyle(id)); });
       layer.on("popupopen", () => layer.setStyle(HOOD_OPEN));
-      layer.on("popupclose", () => layer.setStyle(HOOD_STYLE));
+      layer.on("popupclose", () => layer.setStyle(hoodStyle(id)));
     },
   }).addTo(map);
   const labelZoom = () => map.getContainer().classList.toggle("hide-hood-labels", map.getZoom() < 12);
   map.on("zoomend", labelZoom);
   labelZoom();
+}
+
+function hoodStyle(id) {
+  return placesInHood(id).length ? HOOD_STYLE : HOOD_STYLE_EMPTY;
+}
+
+function restyleHoods() {
+  for (const [id, layer] of hoodLayers) if (!layer.isPopupOpen()) layer.setStyle(hoodStyle(id));
 }
 
 function toggleHoods(on) {
@@ -277,7 +291,7 @@ function hoodPopup(id) {
   ].filter(([, v]) => v);
   el.innerHTML = `
     <div class="pop-body">
-      <div class="pop-kicker hood-kicker">${esc(t("hoodKicker", { city: t("city_" + h.city) }))}</div>
+      <div class="pop-kicker hood-kicker">${esc(h.city === h.name ? t("cityKicker") : t("hoodKicker", { city: t("city_" + h.city) }))}</div>
       <h3>${esc(h.name || id)}</h3>
       ${h.summary ? `<p class="hood-summary">${esc(h.summary)}</p>` : ""}
       <div class="hood-places">
@@ -660,6 +674,7 @@ function listBlock(title, items, kind) {
 
 function renderAll() {
   renderMarkers();
+  if (hoodLayer) restyleHoods();
   renderLegend();
   renderList();
 }
@@ -700,15 +715,21 @@ function renderList() {
     for (const p of group) parts.push(row(p, ""));
   }
   if (showHoods && hoodGeo.features.length) {
+    const withPlaces = hoodGeo.features.filter((f) => placesInHood(f.properties.id).length);
+    const others = hoodGeo.features.filter((f) => !placesInHood(f.properties.id).length);
     parts.push(`<h2 class="sec sec-hoods">${esc(t("sec_hoods"))}</h2>`);
-    for (const f of hoodGeo.features) {
+    for (const f of [...withPlaces, { divider: true }, ...others]) {
+      if (f.divider) {
+        if (others.length) parts.push(`<h3 class="day">${esc(t("moreAreas"))}</h3>`);
+        continue;
+      }
       const { id, name, city } = f.properties;
       const n = placesInHood(id).length;
       const notes = notesFor("hood-" + id).length;
       parts.push(`<button type="button" class="row" data-hood="${escAttr(id)}">
         <span class="dot dot-hood"></span>
         <span class="row-main"><span class="row-name">${esc(name)}</span>
-          <span class="row-sub">${esc(t("city_" + city))}${n ? " · " + esc(n === 1 ? t("onePlace") : t("nPlaces", { n })) : ""}</span></span>
+          <span class="row-sub">${esc(city === name ? t("cityKicker") : t("city_" + city))}${n ? " · " + esc(n === 1 ? t("onePlace") : t("nPlaces", { n })) : ""}</span></span>
         <span class="row-side">${notes ? `<span class="row-notes">${esc(notes === 1 ? t("oneNote") : t("nNotes", { n: notes }))}</span>` : ""}</span>
       </button>`);
     }
@@ -815,6 +836,7 @@ function wireUi() {
 
 function setSheet(open) {
   document.body.classList.toggle("sheet-open", open);
+  if (open) $("#list").scrollTop = 0;
   const b = $("#sheet-toggle");
   b.setAttribute("aria-expanded", String(open));
   b.textContent = open ? t("hideList") : t("showList");
