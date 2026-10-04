@@ -1,7 +1,7 @@
 // Keeps ebis on the device so it opens without a connection, and receives what Android
 // shares to it. Change VERSION whenever the app's files change.
 
-const VERSION = 'ebis-1';
+const VERSION = 'ebis-2';
 const APP = [
   './', 'ebis.css', 'manifest.webmanifest', 'icons/ibis.svg', 'icons/icon-192.png',
   'js/app.js', 'js/reader.js', 'js/store.js', 'js/convert.js', 'js/sources.js', 'js/pdf.js', 'js/settings.js', 'js/ui.js',

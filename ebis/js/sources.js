@@ -23,7 +23,7 @@ export async function importFile(file, opts) {
     return finish(await ebookSource(file, ext), ext === 'azw' || ext === 'prc' ? 'mobi' : ext, name, opts);
   }
   const text = decode(new Uint8Array(await file.arrayBuffer()));
-  const source = /^html?$/.test(ext) ? webSource(text, `file:///${name}`) : textSource(text);
+  const source = /^html?$/.test(ext) ? webSource(parse(text), `file:///${name}`) : textSource(text);
   return finish(source, ext, name, opts);
 }
 
@@ -36,9 +36,14 @@ export async function importURL(url, opts) {
     out.record.source = final;
     return out;
   }
-  const source = webSource(decode(new Uint8Array(await blob.arrayBuffer()), blob.type), final);
-  return finish(source, 'web', final, opts);
+  const doc = parse(decode(new Uint8Array(await blob.arrayBuffer()), blob.type));
+  // A scholarly page names its paper in citation_pdf_url (arXiv, bioRxiv, journals); ebis reads the paper itself.
+  const paper = doc.querySelector('meta[name="citation_pdf_url"]')?.content;
+  if (paper) return importURL(new URL(paper, final).href, opts);
+  return finish(webSource(doc, final), 'web', final, opts);
 }
+
+const parse = html => new DOMParser().parseFromString(html, 'text/html');
 
 async function finish(source, format, origin, { fetcher, progress }) {
   const { book, zip } = await build(source, { fetcher, progress });
@@ -135,8 +140,8 @@ function comicBook(zip, name) {
 }
 
 // Web pages and saved HTML: the article itself, found by Readability.
-function webSource(html, url) {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
+function webSource(doc, url) {
+  for (const font of doc.querySelectorAll('font')) font.replaceWith(...font.childNodes); // obsolete markup Readability would split paragraphs at
   const base = doc.createElement('base');
   base.href = url;
   doc.head.prepend(base);
