@@ -25,18 +25,11 @@ export async function importFile(file, opts) {
   const html = /^x?html?$/.test(ext) || file.type === 'text/html';
   if (!html && !/^(txt|text|md)$/.test(ext) && !file.type.startsWith('text/')) throw new Error(`ebis can’t read .${ext} files.`);
   const text = decode(new Uint8Array(await file.arrayBuffer()));
-  return finish(html ? webSource(parse(text), `file:///${name}`) : textSource(text), html ? 'html' : 'txt', name, opts);
+  return finish(html ? webSource(parse(text), `file:///${name}`, opts.fetcher) : textSource(text), html ? 'html' : 'txt', name, opts);
 }
 
 export async function importURL(url, opts) {
-  let blob, final;
-  try {
-    ({ blob, url: final } = await opts.fetchPage(url));
-  } catch (e) {
-    // A site can refuse the fetch outright — Forbes and friends answer every non-browser 402/403/429/451.
-    const code = e.message.match(/answered (\d{3})/)?.[1];
-    throw /^(402|403|429|451)$/.test(code) ? new Error(`The site only shows its pages to a real browser (it answered ${code}).`) : e;
-  }
+  const { blob, url: final } = await opts.fetchPage(url);
   const type = blob.type.split(';')[0];
   if (!/html|xml/.test(type)) {
     const file = new File([blob], decodeURIComponent(new URL(final).pathname.split('/').pop() || 'download'), { type });
@@ -44,25 +37,18 @@ export async function importURL(url, opts) {
     out.record.source = final;
     return out;
   }
-  const html = decode(new Uint8Array(await blob.arrayBuffer()), blob.type);
-  // Or it answers 200 with a bot wall's challenge page instead of the article.
-  if (botWall(html)) throw new Error('The site only shows its pages to a real browser.');
-  const doc = parse(html);
+  const doc = parse(decode(new Uint8Array(await blob.arrayBuffer()), blob.type));
   // A scholarly page names its paper in citation_pdf_url (arXiv, bioRxiv, journals); ebis reads the paper itself.
   const paper = doc.querySelector('meta[name="citation_pdf_url"]')?.content;
   if (paper) return importURL(new URL(paper, final).href, opts);
-  return finish(webSource(doc, final), 'web', final, opts);
+  return finish(webSource(doc, final, opts.fetcher), 'web', final, opts);
 }
-
-// The signature of a challenge page (DataDome, Cloudflare, PerimeterX, Incapsula): its vendor's
-// script or token in the markup, or its stock title — never something a real article carries.
-const botWall = html => /captcha-delivery\.com|cf-chl-|challenge-platform|px-captcha|_incapsula_|distil_ron|<title[^>]*>\s*(just a moment|attention required|please wait|checking your browser)/i.test(html);
 
 const parse = html => new DOMParser().parseFromString(html, 'text/html');
 
 async function finish(source, format, origin, { fetcher, progress }) {
   const { book, zip } = await build(source, { fetcher, progress });
-  const cover = source.cover && await thumbnail(await source.cover);
+  const cover = await Promise.resolve(source.cover).then(thumbnail).catch(() => ''); // without one, the shelf sets a cover
   const words = Math.round(book.sizes.reduce((a, b) => a + b, 0) / 6);
   const record = {
     title: book.title || origin.replace(/\.\w+$/, ''), author: book.author || '', site: book.site || '',
@@ -161,14 +147,19 @@ function comicBook(zip, name) {
 }
 
 // Web pages and saved HTML: the article itself, found by Readability.
-function webSource(doc, url) {
-  // Two patterns Readability mistakes for clutter: old <font> tags, which split its paragraphs,
-  // and headings wrapped with link chrome ("[edit]", "#" anchors), which it deletes as links.
+function webSource(doc, url, fetcher) {
+  // Patterns Readability mistakes for clutter: old <font> tags, which split its paragraphs;
+  // headings wrapped with link chrome ("[edit]", "#" anchors), which it deletes as links; and
+  // figures set in the margin (an <aside> holding nothing but figures), which it drops as asides.
   for (const font of doc.querySelectorAll('font')) font.replaceWith(...font.childNodes);
   for (const head of doc.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
     const wrap = head.parentElement;
     const rest = wrap.textContent.replace(head.textContent, '').trim();
     if (wrap.localName === 'div' && rest.length <= 12 && [...wrap.querySelectorAll('a')].some(a => !head.contains(a))) wrap.replaceWith(head);
+  }
+  for (const aside of doc.querySelectorAll('aside')) {
+    const figures = [...aside.querySelectorAll('figure')];
+    if (figures.length && !figures.reduce((text, f) => text.replace(f.textContent, ''), aside.textContent).trim()) aside.replaceWith(...figures);
   }
   const base = doc.createElement('base');
   base.href = url;
@@ -176,24 +167,25 @@ function webSource(doc, url) {
   const metaOf = (...names) => names.map(n => doc.querySelector(`meta[property="${n}"], meta[name="${n}"]`)?.content).find(Boolean) || '';
   const lang = doc.documentElement.lang || metaOf('og:locale').replace('_', '-');
   const published = metaOf('article:published_time', 'citation_publication_date', 'date');
-  const source = { meta: {}, cover: null, toc: null, sections: [{ load }], resolve };
+  const image = metaOf('og:image', 'twitter:image'); // the picture the page shares itself with becomes its cover
+  const source = { meta: {}, cover: image && fetcher(new URL(image, url).href).catch(() => null), toc: null, sections: [{ load }], resolve };
 
   async function load() {
-    // A paywall is mostly theater for anything reading raw HTML: the whole article still
-    // ships in the page, in a schema.org block or the app's own JSON state. Read it
-    // before Readability rearranges the document.
+    // Many pages also carry their whole article for machines (schema.org's articleBody, or the
+    // JSON state their app boots from); when that holds clearly more than the page shows, it is read
+    // instead. It has to be found before Readability rearranges the document.
     const embedded = embeddedArticle(doc);
     const { Readability } = await import('../vendor/readability.js');
-    const article = new Readability(doc, { charThreshold: 200 }).parse();
-    if (!article?.content) throw new Error('No article found on that page.');
-    if (embedded.length > article.textContent.length * 1.25 + 500) {
-      article.content = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
-    }
+    const article = new Readability(doc).parse() ?? { textContent: '' };
+    const fuller = embedded.length > article.textContent.length * 1.25 + 500;
+    if ((fuller ? embedded : article.textContent).trim().length < 500) throw new Error('That page has no article ebis can find.');
+    if (fuller) article.content = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
     const when = new Date(article.publishedTime || published);
+    const site = tidy(article.siteName) || new URL(url).hostname.replace(/^www\./, '');
     const meta = source.meta = {
-      title: article.title || doc.title || url, author: article.byline?.replace(/^by\s+/i, '') || '',
-      site: article.siteName || new URL(url).hostname.replace(/^www\./, ''), lang: article.lang || lang,
-      published: isNaN(when) ? '' : when.toISOString(),
+      title: withoutSite(tidy(article.title || doc.title) || url, site),
+      author: withoutDate(tidy(article.byline).replace(/^by\s+/i, ''), when),
+      site, lang: article.lang || lang, published: isNaN(when) ? '' : when.toISOString(),
     };
     const date = isNaN(when) ? '' : when.toLocaleDateString(meta.lang || undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const line = (text, style) => text ? `<p style="text-align:center;${style}">${escape(text)}</p>` : '';
@@ -209,6 +201,24 @@ function webSource(doc, url) {
     return target.hash && target.href.split('#')[0] === url.split('#')[0] ? `s0-${decodeURIComponent(target.hash.slice(1))}` : null;
   }
   return source;
+}
+
+const tidy = s => (s || '').replace(/\s+/g, ' ').trim();
+
+// A page's title often carries its site's name ("Headline | Site"), which ebis sets on a line of its own.
+function withoutSite(title, site) {
+  const name = site.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return title.replace(new RegExp(`^${name}\\s+[|–—·•:-]\\s+|\\s+[|–—·•:-]\\s+${name}$`, 'i'), '') || title;
+}
+
+// A byline that ends with the article's own date (as many print it beside the name) gives it up,
+// since the date has its line too. Give or take a time zone, the dates must agree.
+function withoutDate(byline, when) {
+  const words = byline.split(' ');
+  for (let k = 1; k < words.length; k++) {
+    if (Math.abs(new Date(words.slice(-k).join(' ')) - when) < 2 * 864e5) return words.slice(0, -k).join(' ').replace(/[\s,·|–—-]+$/, '');
+  }
+  return byline;
 }
 
 // The full article where a page embeds it for machines: schema.org's articleBody, or a long
@@ -237,20 +247,14 @@ function embeddedArticle(doc) {
 const prose = s => s.length > 600 && (looksLikeMarkup(s) ? /<p[\s>]/.test(s) : /[.!?] /.test(s));
 const looksLikeMarkup = s => /^\s*</.test(s) && /<\/(p|div|h[1-6]|section|article)>/.test(s);
 
-// Plain text becomes paragraphs the way textSource cuts them.
-const asParagraphs = text => {
-  const paras = text.replace(/\r\n?/g, '\n').split(/\n\s*\n/.test(text) ? /\n\s*\n/ : '\n').map(p => p.trim()).filter(Boolean);
-  return paras.map(p => `<p>${escape(p).replace(/\n/g, ' ')}</p>`).join('');
-};
-
 // Plain text: blank lines separate paragraphs and single line breaks are wrapping,
 // unless there are no blank lines at all, in which case each line is a paragraph.
-function textSource(text) {
+const asParagraphs = text => {
   text = text.replace(/\r\n?/g, '\n');
   const paras = text.split(/\n\s*\n/.test(text) ? /\n\s*\n/ : '\n').map(p => p.trim()).filter(Boolean);
-  const html = paras.map(p => `<p>${escape(p).replace(/\n/g, ' ')}</p>`).join('');
-  return { meta: {}, cover: null, toc: null, sections: [{ load: () => ({ html }) }], resolve: () => null };
-}
+  return paras.map(p => `<p>${escape(p).replace(/\n/g, ' ')}</p>`).join('');
+};
+const textSource = text => ({ meta: {}, cover: null, toc: null, sections: [{ load: () => ({ html: asParagraphs(text) }) }], resolve: () => null });
 
 // Text in the encoding its byte-order mark, server or <meta> names; otherwise UTF-8, or
 // Windows-1252 for older text that isn't valid UTF-8 (as browsers decide for web pages).

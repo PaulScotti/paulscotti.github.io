@@ -24,7 +24,6 @@ const h = (tag, attrs = {}) => {
   return el;
 };
 const textOf = el => el.textContent.replace(/\s+/g, ' ').trim();
-const setIn = new WeakMap(); // leaf → [characters, characters × type size]: the size its text is set in
 
 // Leaf blocks in reading order; reading positions count characters within these.
 export const blocks = root => [...root.querySelectorAll(`${TEXT_BLOCKS},hr,img`)].filter(el =>
@@ -51,6 +50,7 @@ class Writer {
   startLeaf(tag, look) {
     this.close();
     this.leaf = this.inline = this.place(h(tag, { 'data-fs': look.fs }));
+    this.chars = this.weight = 0; // for the size its text is set in, averaged over its characters
     if (look.cls) this.leaf.className = look.cls;
     this.box.append(this.leaf);
   }
@@ -59,8 +59,7 @@ class Writer {
     this.leaf = this.inline = null;
     if (!leaf) return;
     trim(leaf);
-    const [chars, mass] = setIn.get(leaf) || [];
-    if (chars) leaf.dataset.fs = Math.round(mass / chars * 2) / 2;
+    if (this.chars) leaf.dataset.fs = Math.round(this.weight / this.chars * 2) / 2;
     if (!leaf.textContent.trim() && !leaf.querySelector('img,math,a[id]')) leaf.remove();
   }
   text(s, look) {
@@ -82,8 +81,9 @@ class Writer {
     if (!this.leaf) this.startLeaf('p', look);
     this.inline.append(el);
     if (typeof el === 'string') {
-      const [chars = 0, mass = 0] = setIn.get(this.leaf) || [], n = el.trim().length;
-      setIn.set(this.leaf, [chars + n, mass + n * look.fs]);
+      const n = el.trim().length;
+      this.chars += n;
+      this.weight += n * look.fs;
     }
   }
 

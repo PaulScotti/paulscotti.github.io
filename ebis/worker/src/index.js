@@ -76,7 +76,8 @@ async function sync({ since = 0, records = [] }, env) {
     headers: { 'content-type': 'application/json' },
   });
 }
-// The address arrives in the body, so what people read stays out of request logs.
+
+// The address arrives in the body, so what Paul reads stays out of request logs.
 async function proxy(target) {
   let url;
   try {
@@ -87,7 +88,7 @@ async function proxy(target) {
   if (!/^https?:$/.test(url.protocol)) return new Response('Only web links can be added.', { status: 400 });
   const res = await fetch(url, { headers: BROWSER }).catch(() => null);
   if (!res) return new Response('That page can’t be reached.', { status: 502 });
-  if (!res.ok) return new Response(`The site answered ${res.status}.`, { status: 502 });
+  if (!res.ok) return new Response(`The site ${res.status < 500 ? 'wouldn’t give ebis that page' : 'isn’t working right now'} (it answered ${res.status}).`, { status: 502 });
   return new Response(res.body, {
     headers: { 'content-type': res.headers.get('content-type') || 'application/octet-stream', 'x-final-url': res.url },
   });

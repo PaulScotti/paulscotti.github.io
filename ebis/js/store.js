@@ -79,6 +79,7 @@ export async function open(id, progress) {
     if (get('book', id).bytes > LARGEST) throw new Error('This book is too large to sync, so it’s only on the device it was added on.');
     zip = await download(id, progress);
     await idb('packages', 'readwrite', s => s.put(zip, id));
+    await onServer(id);
   }
   const files = unzipSync(new Uint8Array(await zip.arrayBuffer()));
   const book = JSON.parse(strFromU8(files['book.json']));
@@ -151,14 +152,19 @@ async function run() {
 }
 
 // A package goes up once, from the device its book was added on; one too large stays there.
+// A package downloaded from the server is already on it.
+const uploaded = async () => new Set((await idb('meta', 'readonly', s => s.get('uploaded'))) || []);
+async function onServer(id) {
+  const ids = await uploaded();
+  await idb('meta', 'readwrite', s => s.put([...ids.add(id)], 'uploaded'));
+}
 async function uploadPackages() {
-  const sent = new Set((await idb('meta', 'readonly', s => s.get('uploaded'))) || []);
+  const sent = await uploaded();
   for (const { id } of all('book')) {
     if (sent.has(id)) continue;
     const zip = await idb('packages', 'readonly', s => s.get(id));
     if (zip && zip.size <= LARGEST) await api(`/files/${id}`, { method: 'PUT', body: zip });
-    sent.add(id);
-    await idb('meta', 'readwrite', s => s.put([...sent], 'uploaded'));
+    await onServer(id);
   }
 }
 
