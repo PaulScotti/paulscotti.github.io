@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f5ef">
+<meta name="description" content="ebis, a quiet reader for books, papers and articles.">
+<title>ebis</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/ibis.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="preload" href="fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="ebis.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+
+<main id="library" class="library">
+  <header class="lib-head">
+    <h1 class="brand"><svg class="mark" aria-hidden="true"><use href="#ibis"/></svg><span class="wordmark">eb<span class="tittle">ı</span>s</span></h1>
+    <button class="account" id="account" aria-label="Sync"><span class="dot"></span><span class="sign">Sign in</span></button>
+    <button class="add" id="add"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add</button>
+  </header>
+  <nav class="filters" aria-label="Filter">
+    <button data-filter="all" aria-pressed="true">All</button>
+    <button data-filter="book" aria-pressed="false">Books</button>
+    <button data-filter="article" aria-pressed="false">Articles</button>
+    <input type="search" id="find" placeholder="Search" aria-label="Search your library">
+  </nav>
+  <ol class="shelf" id="shelf"></ol>
+  <div class="empty" id="empty" hidden>
+    <svg class="mark" aria-hidden="true"><use href="#ibis"/></svg>
+    <p>Your library is empty.</p>
+    <p class="quiet">Add an EPUB, PDF, Kindle or text file, or paste a link to an article.</p>
+  </div>
+</main>
+
+<section id="reader" class="reader" hidden>
+  <div class="page" id="page"><article class="flow" id="flow"></article></div>
+  <div class="running" aria-hidden="true"><span id="run-l"></span><span id="run-r"></span></div>
+  <div class="folio" id="folio"><span id="folio-l"></span><span id="folio-r"></span></div>
+  <div class="chrome" id="chrome">
+    <header class="bar top">
+      <button class="icon" id="r-back" aria-label="Library"><svg><use href="#i-back"/></svg></button>
+      <nav class="tabs" id="tabs" aria-label="Open books"></nav>
+      <button class="icon count" id="r-tabs" aria-label="Open books"><span id="tab-count"></span></button>
+      <button class="icon" id="r-toc" aria-label="Contents"><svg><use href="#i-toc"/></svg></button>
+      <button class="icon" id="r-find" aria-label="Search in book"><svg><use href="#i-search"/></svg></button>
+      <button class="icon aa" id="r-type" aria-label="Type and theme">Aa</button>
+    </header>
+    <footer class="bar bottom">
+      <input type="range" id="scrub" min="0" max="1000" step="1" aria-label="Position in book">
+      <output id="scrub-label"></output>
+    </footer>
+  </div>
+</section>
+
+<div class="backdrop" id="backdrop" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <header><h2 id="sheet-title"></h2><button class="icon" id="sheet-close" aria-label="Close"><svg><use href="#i-close"/></svg></button></header>
+  <div class="sheet-body" id="sheet-body"></div>
+</section>
+
+<div class="selbar" id="selbar" hidden>
+  <button data-color="ochre" aria-label="Highlight"></button>
+  <button data-color="rubric" aria-label="Highlight in red"></button>
+  <button data-color="lapis" aria-label="Highlight in blue"></button>
+  <button id="sel-note">Note</button>
+  <button id="sel-copy">Copy</button>
+</div>
+<aside class="pop" id="pop" hidden></aside>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+<div class="drop" id="drop" hidden><p>Drop to add to your library</p></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<template id="t-add">
+  <label class="pick">
+    <input type="file" id="add-file" multiple accept=".epub,.pdf,.mobi,.azw,.azw3,.kf8,.prc,.fb2,.fbz,.cbz,.txt,.html,.htm,application/epub+zip,application/pdf">
+    <span>Choose files</span>
+  </label>
+  <p class="quiet center">EPUB, PDF, Kindle, FB2, comics or text. You can also drop files onto the page.</p>
+  <form id="add-url" class="url">
+    <input type="url" name="url" placeholder="https://" aria-label="Link to an article or file" required>
+    <button>Add link</button>
+  </form>
+</template>
+
+<template id="t-type">
+  <div class="size">
+    <button class="step small" data-step="-1" aria-label="Smaller text">A</button>
+    <input type="range" name="size" min="14" max="32" step="1" aria-label="Text size">
+    <button class="step large" data-step="1" aria-label="Larger text">A</button>
+  </div>
+  <div class="swatches" role="radiogroup" aria-label="Theme">
+    <button data-theme="auto"><i></i>Auto</button>
+    <button data-theme="paper"><i>Aa</i>Paper</button>
+    <button data-theme="sepia"><i>Aa</i>Sepia</button>
+    <button data-theme="dusk"><i>Aa</i>Dusk</button>
+    <button data-theme="night"><i>Aa</i>Night</button>
+  </div>
+  <div class="seg" data-name="leading" role="radiogroup" aria-label="Line spacing">
+    <button value="1.4" aria-label="Tight"><svg><use href="#i-lead1"/></svg></button>
+    <button value="1.55" aria-label="Normal"><svg><use href="#i-lead2"/></svg></button>
+    <button value="1.7" aria-label="Loose"><svg><use href="#i-lead3"/></svg></button>
+  </div>
+  <div class="seg" data-name="margin" role="radiogroup" aria-label="Margins">
+    <button value="0.6" aria-label="Narrow"><svg><use href="#i-margin1"/></svg></button>
+    <button value="1" aria-label="Normal"><svg><use href="#i-margin2"/></svg></button>
+    <button value="1.6" aria-label="Wide"><svg><use href="#i-margin3"/></svg></button>
+  </div>
+  <label class="toggle"><span>Justify</span><input type="checkbox" name="justify"></label>
+  <label class="toggle"><span>Indent paragraphs</span><input type="checkbox" name="indent"></label>
+  <label class="toggle wide-only"><span>Two pages side by side</span><input type="checkbox" name="spread"></label>
+  <label class="toggle"><span>Slide pages</span><input type="checkbox" name="slide"></label>
+</template>
+
+<template id="t-account">
+  <div class="signed-out">
+    <p>Sign in with your library key to keep books, places and highlights in step between your devices.</p>
+    <form id="sign-in" class="url">
+      <input name="key" type="password" autocomplete="current-password" placeholder="Library key" aria-label="Library key" required>
+      <button>Sign in</button>
+    </form>
+  </div>
+  <div class="signed-in">
+    <p id="sync-status"></p>
+    <div class="actions"><button id="sync-now">Sync now</button><button id="sign-out">Sign out</button></div>
+  </div>
+  <p class="colophon">ebis takes its name from the ibis of Thoth, the Egyptian god of writing and scribe of the gods. Set in Libron by Nico Verbruggen.</p>
+</template>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ibis" viewBox="0 0 100 100"><path fill="currentColor" stroke="none" d="M40 100C38 84 47 72 48 60c1-9-4-15-4-23 0-10 7-18 16-18 3 0 5.5 1.5 7.5 4C80 33.5 89 50 92.5 73c.4 3-1.8 4-2.6 1.5C84.5 56.5 76 42.5 65 33.5c-3.5 4-5.5 9.5-5.5 17C59.5 66.5 51 83 52 100Z"/><circle cx="55" cy="27" r="2.6" stroke="none" style="fill:var(--rubric)"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11"/></symbol>
+  <symbol id="i-toc" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></symbol>
+  <symbol id="i-lead1" viewBox="0 0 24 24"><path d="M5 8h14M5 11h14M5 14h14M5 17h9"/></symbol>
+  <symbol id="i-lead2" viewBox="0 0 24 24"><path d="M5 6.5h14M5 10.5h14M5 14.5h14M5 18.5h9"/></symbol>
+  <symbol id="i-lead3" viewBox="0 0 24 24"><path d="M5 5h14M5 10h14M5 15h14M5 20h9"/></symbol>
+  <symbol id="i-margin1" viewBox="0 0 24 24"><path d="M5 7h14M5 11h14M5 15h14"/><path d="M3 4v16M21 4v16" opacity=".45"/></symbol>
+  <symbol id="i-margin2" viewBox="0 0 24 24"><path d="M7 7h10M7 11h10M7 15h10"/><path d="M3 4v16M21 4v16" opacity=".45"/></symbol>
+  <symbol id="i-margin3" viewBox="0 0 24 24"><path d="M9 7h6M9 11h6M9 15h6"/><path d="M3 4v16M21 4v16" opacity=".45"/></symbol>
+</svg>
+</body>
+</html>

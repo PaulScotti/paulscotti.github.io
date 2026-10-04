@@ -1,0 +1,11 @@
+{
+  // Deploy from this folder: npx wrangler deploy. The library key is the KEY secret.
+  "name": "ebis",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-28",
+  "account_id": "bf4d563d019ba4efff46afba844e5163",
+  "workers_dev": true,
+  "d1_databases": [{ "binding": "DB", "database_name": "ebis", "database_id": "728f1f49-a8c0-4a7e-a95b-5e37c226be74" }],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "ebis-library" }],
+  "observability": { "enabled": true }
+}

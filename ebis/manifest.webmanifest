@@ -1,0 +1,27 @@
+{
+  "name": "ebis",
+  "short_name": "ebis",
+  "description": "A quiet reader for books, papers and articles.",
+  "id": "/ebis/",
+  "start_url": "/ebis/",
+  "scope": "/ebis/",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#f7f5ef",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "/ebis/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [{ "name": "file", "accept": [".epub", ".pdf", ".mobi", ".azw3", ".fb2", ".cbz", ".txt", ".html", "application/epub+zip", "application/pdf", "text/plain", "text/html"] }]
+    }
+  }
+}
