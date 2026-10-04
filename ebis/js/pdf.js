@@ -9,6 +9,7 @@ const BASE = new URL('../vendor/pdfjs/', import.meta.url).href;
 GlobalWorkerOptions.workerSrc = `${BASE}pdf.worker.min.mjs`;
 const PAINT = new Set([OPS.paintImageXObject, OPS.paintInlineImageXObject, OPS.paintImageMaskXObject]);
 const escape = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const small = (size, stats) => size < stats.body * 0.92; // notes are set smaller than the text they annotate
 const mode = values => {
   const n = new Map();
   for (const [v, w = 1] of values) n.set(v, (n.get(v) || 0) + w);
@@ -19,63 +20,81 @@ export async function pdfSource(file) {
   const pdf = await getDocument({
     data: new Uint8Array(await file.arrayBuffer()), cMapUrl: `${BASE}cmaps/`, standardFontDataUrl: `${BASE}standard_fonts/`,
     wasmUrl: `${BASE}wasm/`, iccUrl: `${BASE}iccs/`, isEvalSupported: false, fontExtraProperties: true,
-  }).promise;
+  }).promise.catch(e => { throw new Error(e.name === 'PasswordException' ? 'This PDF is locked with a password.' : 'This PDF looks damaged.'); });
   const pages = [];
   for (let n = 1; n <= pdf.numPages; n++) pages.push(await readPage(await pdf.getPage(n)));
 
   // What the book is set in, and which lines are furniture rather than text.
-  const body = mode(pages.flatMap(p => p.lines.map(l => [l.size, l.text.length]))) || 10;
-  const leading = mode(pages.flatMap(p => p.lines.slice(1).map((l, i) => [Math.round(l.y - p.lines[i].y), +(l.size === body)])).filter(([d]) => d > 0)) || body * 1.2;
+  const body = mode(pages.flatMap(p => p.lines.map(l => [l.size, l.text.length])));
+  const leading = mode(pages.flatMap(p => p.lines.slice(1).map((l, i) => [Math.round(l.y - p.lines[i].y), +(l.size === body)])).filter(([d]) => d > 0));
   const key = l => l.text.replace(/\d+/g, '#').trim();
   const banded = pages.flatMap(p => p.lines.filter(l => l.y < p.height * 0.09 || l.y > p.height * 0.91));
   const seen = new Map();
   for (const l of banded) seen.set(key(l), (seen.get(key(l)) || 0) + 1);
   const furniture = new Set(banded.filter(l => seen.get(key(l)) >= 3 || /^(page )?[\divxlc]+$/i.test(l.text.trim())));
 
-  // Chapters follow the PDF's own outline when it has one.
-  const { info } = await pdf.getMetadata().catch(() => ({ info: {} }));
-  const pageOf = async dest => {
-    const d = typeof dest === 'string' ? await pdf.getDestination(dest) : dest;
-    return !d ? null : typeof d[0] === 'number' ? d[0] : pdf.getPageIndex(d[0]).catch(() => null);
-  };
-  const toc = [];
-  const walk = async (items, into) => {
-    for (const item of items || []) {
-      const page = await pageOf(item.dest);
-      const entry = { label: item.title, href: page == null ? null : `p${page}`, subitems: [] };
-      into.push(entry);
-      await walk(item.items, entry.subitems);
+  // The PDF's own outline gives the contents. Each entry points at a place on a page, and
+  // chapters begin at the entries of the outline's first level that has more than one.
+  const { info } = await pdf.getMetadata();
+  const places = new Map(); // outline id → { page, x, y }
+  const walk = async items => {
+    const out = [];
+    for (const item of items) {
+      const place = await placeOf(pdf, item.dest);
+      const id = place && `o${places.size}`;
+      if (place) places.set(id, place);
+      out.push({ label: item.title, href: id, subitems: await walk(item.items) });
     }
+    return out;
   };
-  await walk(await pdf.getOutline(), toc);
-  const starts = [...new Set([0, ...toc.map(t => t.href && +t.href.slice(1)).filter(p => p > 0)])].sort((a, b) => a - b);
-  const ranges = starts.map((s, i) => [s, starts[i + 1] ?? pages.length]);
+  const toc = await walk(await pdf.getOutline() || []);
+  let level = toc;
+  while (level.length === 1 && level[0].subitems.length) level = level[0].subitems;
+  // The first chapter holds whatever precedes the first entry: a title page, an abstract.
+  const bounds = [null, ...level.map(t => t.href).filter(Boolean).sort((a, b) => places.get(a).page - places.get(b).page)];
 
   // Words this document hyphenates itself, so a line break at "single-subject" keeps its hyphen.
   const compounds = new Set(pages.flatMap(p => p.lines.flatMap(l => l.text.toLowerCase().match(/\p{L}+-\p{L}+/gu) || [])));
   const stats = { body, leading, compounds };
+  const arranged = new Map(); // page → its lines, figures and outline places in reading order, worked out once
+  const itemsOf = n => arranged.get(n) || arranged.set(n, arrange(pdf, n, pages[n], furniture, stats, places)).get(n);
+  const sectionOf = new Map(); // outline id → the chapter it landed in
   const first = pages[0]?.lines || [];
   const biggest = Math.max(...first.map(l => l.size));
   return { // without a title in its metadata, a PDF's title is the largest type on its first page
-    meta: { title: info?.Title?.trim() || first.filter(l => l.size === biggest).map(l => l.text.trim()).join(' '), author: info?.Author?.trim() || '' },
+    meta: { title: info.Title?.trim() || first.filter(l => l.size === biggest).map(l => l.text.trim()).join(' '), author: info.Author?.trim() || '' },
     cover: renderPage(await pdf.getPage(1), 420).then(c => c.convertToBlob({ type: 'image/webp', quality: 0.86 })),
     toc,
-    sections: ranges.map(([from, to]) => ({
-      async load() {
-        const flow = new Flow(stats);
-        for (let n = from; n < to; n++) {
-          flow.anchor(`p${n}`);
-          await layoutPage(await pdf.getPage(n + 1), pages[n], furniture, flow);
+    sections: bounds.map((from, k) => ({
+      async load() { // everything from this chapter's place to the next one's
+        const to = bounds[k + 1], flow = new Flow(stats);
+        let on = !from;
+        pages: for (let n = from ? places.get(from).page : 0; n < (to ? places.get(to).page + 1 : pages.length); n++) {
+          for (const item of await itemsOf(n)) {
+            if (item.anchor && item.anchor === to) break pages;
+            on ||= item.anchor === from;
+            if (!on) continue;
+            if (item.anchor) sectionOf.set(item.anchor, k);
+            flow.add(item);
+          }
         }
         return { html: `<!doctype html><html><body>${flow.end()}</body></html>` };
       },
     })),
-    resolve(href) {
-      const n = +href.replace(/^#?p/, '');
-      const i = ranges.findIndex(([from, to]) => n >= from && n < to);
-      return i < 0 ? null : `s${i}-p${n}`;
-    },
+    resolve: href => sectionOf.has(href) ? `s${sectionOf.get(href)}-${href}` : null,
   };
+}
+
+// Where an outline entry points: its page, and the point on that page (from its top), when it says.
+async function placeOf(pdf, dest) {
+  const d = typeof dest === 'string' ? await pdf.getDestination(dest) : dest;
+  if (!d) return null;
+  const page = typeof d[0] === 'number' ? d[0] : await pdf.getPageIndex(d[0]).catch(() => null);
+  if (page == null) return null;
+  const [left, top] = { XYZ: [d[2], d[3]], FitH: [null, d[2]], FitBH: [null, d[2]], FitR: [d[2], d[5]] }[d[1]?.name] || [];
+  if (top == null) return { page, x: null, y: null };
+  const [x, y] = (await pdf.getPage(page + 1)).getViewport({ scale: 1 }).convertToViewportPoint(left ?? 0, top);
+  return { page, x: left == null ? null : x, y };
 }
 
 // The text of a page as lines, in the order the PDF draws them (which is reading order).
@@ -89,7 +108,8 @@ async function readPage(page) {
     const [a, b, c, d, x, y] = Util.transform(vp.transform, it.transform);
     if (Math.abs(b) > Math.abs(a) * 0.2) continue; // rotated: margin notes, watermarks
     const run = { str: it.str.replace(/[ﬀ-ﬆ]/g, ch => ch.normalize('NFKC')), x, y, w: it.width, size: Math.round(Math.hypot(c, d) * 2) / 2, font: it.fontName };
-    const same = line && Math.abs(run.y - line.y) < line.size * 0.6 && run.x > line.x1 - line.size && run.x - line.x1 < line.size * 3;
+    const s = Math.max(line?.size ?? 0, run.size); // the larger type decides, so a raised mark that starts a line stays on it
+    const same = line && Math.abs(run.y - line.y) < s * 0.6 && run.x > line.x1 - s && run.x - line.x1 < s * 3;
     if (!same) lines.push(line = { runs: [], x0: run.x, x1: run.x, y: run.y, size: run.size, page: page.pageNumber - 1 });
     line.runs.push(run);
     line.x1 = Math.max(line.x1, run.x + run.w);
@@ -157,7 +177,9 @@ function merge(boxes, gap = 8) {
   return regions;
 }
 
-async function layoutPage(page, data, furniture, flow) {
+// A page's lines of text, its figures and the outline's places on it, in reading order.
+async function arrange(pdf, n, data, furniture, stats, places) {
+  const page = await pdf.getPage(n + 1);
   const text = data.lines.filter(l => !furniture.has(l));
   const figures = merge([...await drawings(page, data), ...loose(text, data.width)])
     .filter(([x0, y0, x1, y1]) => x1 - x0 > 40 && y1 - y0 > 20 && (x1 - x0) * (y1 - y0) > data.width * data.height * 0.008);
@@ -167,17 +189,38 @@ async function layoutPage(page, data, furniture, flow) {
     f.splice(0, 4, Math.min(f[0], l.x0), Math.min(f[1], l.y - l.size * 0.85), Math.max(f[2], l.x1), Math.max(f[3], l.y + l.size * 0.25));
   }
   const lines = text.filter(l => !figures.some(f => inside(l, f)));
-  measure(lines, flow.stats.body);
-
+  measure(lines, stats.body);
   const images = figures.length ? await crop(page, figures) : [];
-  const placed = new Set();
-  for (const l of lines) {
-    for (const [i, f] of figures.entries()) { // a figure goes where the text below it begins
-      if (!placed.has(i) && l.y - l.size > f[3] - 2 && l.x1 > f[0] && l.x0 < f[2]) placed.add(i), flow.figure(images[i]);
-    }
-    flow.line(l, lineHTML(l, fonts));
-  }
-  figures.forEach((f, i) => placed.has(i) || flow.figure(images[i]));
+
+  // The page's columns: left edges at which at least a quarter of its lines start. A line is in
+  // the nearest column at or before it; an outline place, in the nearest column.
+  const starts = new Map();
+  for (const l of lines) starts.set(Math.round(l.x0), (starts.get(Math.round(l.x0)) || 0) + 1);
+  const columns = [...starts].filter(([, k]) => k >= lines.length / 4).map(([x]) => x).sort((a, b) => a - b);
+  const columnOf = l => columns.filter(c => c <= l.x0 + 2).at(-1) ?? columns[0];
+  const nearest = x => columns.reduce((a, c) => Math.abs(c - x) < Math.abs(a - x) ? c : a, columns[0]);
+  // A figure goes where the text below it begins. An outline place marks where the text before
+  // its entry ends, so it goes after the last line above it in its column, or before the
+  // column's first line when none is above; when only notes follow in the column, they belong
+  // to the text before it. Figures and places go in the order they sit down the page.
+  const before = test => { const k = lines.findIndex(test); return k < 0 ? lines.length : k; };
+  const placeAt = ({ x, y }) => {
+    if (y == null) return 0;
+    const own = l => x == null || columnOf(l) === nearest(x);
+    const k = lines.findLastIndex(l => own(l) && l.y < y) + 1 || Math.max(0, lines.findIndex(own));
+    return lines.slice(k).every(l => !own(l) || small(l.size, stats)) ? lines.findLastIndex(own) + 1 : k;
+  };
+  const floats = [
+    ...figures.map((f, i) => ({ k: before(l => l.y - l.size > f[3] - 2 && l.x1 > f[0] && l.x0 < f[2]), y: f[1], item: { figure: images[i] } })),
+    ...[...places].filter(([, p]) => p.page === n).map(([id, p]) => ({ k: placeAt(p), y: p.y ?? -Infinity, item: { anchor: id } })),
+  ].sort((a, b) => a.k - b.k || a.y - b.y);
+  const items = [];
+  let f = 0;
+  lines.forEach((l, k) => {
+    while (floats[f]?.k === k) items.push(floats[f++].item);
+    items.push({ line: l, html: lineHTML(l, fonts) });
+  });
+  return items.concat(floats.slice(f).map(x => x.item));
 }
 
 // Where each line sits in its column: indent, short (ends early), centered. A column's
@@ -241,11 +284,15 @@ async function crop(page, regions) {
 // Figures, and notes in smaller type below the text, float to the end of the paragraph
 // they interrupt, as in a printed book.
 class Flow {
-  constructor(stats) { this.stats = stats; this.out = []; this.para = null; this.floats = []; this.notes = null; }
+  constructor(stats) { this.stats = stats; this.out = []; this.para = null; this.floats = []; this.notes = null; this.ids = []; }
+  add(item) {
+    if (item.anchor) return this.ids.push(item.anchor); // an outline place goes with the line after it
+    if (item.figure) return this.figure(item.figure);
+    this.line(item.line, this.ids.splice(0).map(id => `<a id="${id}"></a>`).join('') + item.html);
+  }
   line(l, html) {
     const p = this.para, a = p?.last;
-    const small = size => size < this.stats.body * 0.92; // notes are set smaller than the text they annotate
-    if (p && !p.pre && small(l.size) && !small(a.size) && l.page === a.page && l.y > a.y) return (this.notes ||= new Flow(this.stats)).line(l, html);
+    if (p && !p.pre && small(l.size, this.stats) && !small(a.size, this.stats) && l.page === a.page && l.y > a.y) return (this.notes ||= new Flow(this.stats)).line(l, html);
     if (l.mono) return this.code(l, html);
     if (p && !p.pre && this.continues(a, l)) {
       const word = `${a.text.trimEnd().match(/(\p{L}+)-$/u)?.[1]}-${l.text.trimStart().match(/^\p{Ll}+/u)?.[0]}`.toLowerCase();
@@ -283,6 +330,5 @@ class Flow {
     this.floats.push(`<p><img src="${src}"></p>`);
     if (!this.para) this.close();
   }
-  anchor(id) { (this.para ? (this.para.html += `<a id="${id}"></a>`) : this.out.push(`<a id="${id}"></a>`)); }
-  end() { this.close(); return this.out.join('\n'); }
+  end() { this.close(); return this.out.concat(this.ids.map(id => `<a id="${id}"></a>`)).join('\n'); }
 }

@@ -13,22 +13,30 @@ const startsWith = async (blob, offset, text) =>
   new TextDecoder('latin1').decode(await blob.slice(offset, offset + text.length).arrayBuffer()) === text;
 
 export async function importFile(file, opts) {
-  const name = file.name || 'Untitled';
+  const { name } = file;
   const ext = name.toLowerCase().split('.').pop();
-  if (await startsWith(file, 0, '%PDF-')) {
+  if (ext === 'pdf' || await startsWith(file, 0, '%PDF-')) {
     const { pdfSource } = await import('./pdf.js');
     return finish(await pdfSource(file), 'pdf', name, opts);
   }
-  if (await startsWith(file, 0, 'PK\x03\x04') || await startsWith(file, 60, 'BOOKMOBI') || ext === 'fb2') {
-    return finish(await ebookSource(file, ext), ext === 'azw' || ext === 'prc' ? 'mobi' : ext, name, opts);
+  if (/^(epub|mobi|azw3?|kf8|prc|fb2|fbz|cbz)$/.test(ext) || await startsWith(file, 0, 'PK\x03\x04') || await startsWith(file, 60, 'BOOKMOBI')) {
+    return finish(await ebookSource(file, ext), /^(azw|prc|kf8)$/.test(ext) ? 'mobi' : ext, name, opts);
   }
+  const html = /^x?html?$/.test(ext) || file.type === 'text/html';
+  if (!html && !/^(txt|text|md)$/.test(ext) && !file.type.startsWith('text/')) throw new Error(`ebis can’t read .${ext} files.`);
   const text = decode(new Uint8Array(await file.arrayBuffer()));
-  const source = /^html?$/.test(ext) ? webSource(parse(text), `file:///${name}`) : textSource(text);
-  return finish(source, ext, name, opts);
+  return finish(html ? webSource(parse(text), `file:///${name}`) : textSource(text), html ? 'html' : 'txt', name, opts);
 }
 
 export async function importURL(url, opts) {
-  const { blob, url: final } = await opts.fetchPage(url);
+  let blob, final;
+  try {
+    ({ blob, url: final } = await opts.fetchPage(url));
+  } catch (e) {
+    // A site can refuse the fetch outright — Forbes and friends answer every non-browser 402/403/429/451.
+    const code = e.message.match(/answered (\d{3})/)?.[1];
+    throw /^(402|403|429|451)$/.test(code) ? new Error(`The site only shows its pages to a real browser (it answered ${code}).`) : e;
+  }
   const type = blob.type.split(';')[0];
   if (!/html|xml/.test(type)) {
     const file = new File([blob], decodeURIComponent(new URL(final).pathname.split('/').pop() || 'download'), { type });
@@ -36,12 +44,19 @@ export async function importURL(url, opts) {
     out.record.source = final;
     return out;
   }
-  const doc = parse(decode(new Uint8Array(await blob.arrayBuffer()), blob.type));
+  const html = decode(new Uint8Array(await blob.arrayBuffer()), blob.type);
+  // Or it answers 200 with a bot wall's challenge page instead of the article.
+  if (botWall(html)) throw new Error('The site only shows its pages to a real browser.');
+  const doc = parse(html);
   // A scholarly page names its paper in citation_pdf_url (arXiv, bioRxiv, journals); ebis reads the paper itself.
   const paper = doc.querySelector('meta[name="citation_pdf_url"]')?.content;
   if (paper) return importURL(new URL(paper, final).href, opts);
   return finish(webSource(doc, final), 'web', final, opts);
 }
+
+// The signature of a challenge page (DataDome, Cloudflare, PerimeterX, Incapsula): its vendor's
+// script or token in the markup, or its stock title — never something a real article carries.
+const botWall = html => /captcha-delivery\.com|cf-chl-|challenge-platform|px-captcha|_incapsula_|distil_ron|<title[^>]*>\s*(just a moment|attention required|please wait|checking your browser)/i.test(html);
 
 const parse = html => new DOMParser().parseFromString(html, 'text/html');
 
@@ -52,7 +67,7 @@ async function finish(source, format, origin, { fetcher, progress }) {
   const record = {
     title: book.title || origin.replace(/\.\w+$/, ''), author: book.author || '', site: book.site || '',
     kind: format === 'web' ? 'article' : 'book', format, source: origin, lang: book.lang || '',
-    words, cover, added: Date.now(),
+    words, bytes: zip.size, cover, added: Date.now(),
   };
   return { record, zip, book };
 }
@@ -68,20 +83,26 @@ export async function thumbnail(blob) {
 }
 
 // Ebooks, read by foliate-js.
-async function ebookSource(file, ext) {
-  let book;
+async function openEbook(file, ext) {
   if (await startsWith(file, 60, 'BOOKMOBI')) {
     const [{ MOBI }, { unzlibSync }] = await Promise.all([import('../vendor/foliate/mobi.js'), import('../vendor/fflate.js')]);
-    book = await new MOBI({ unzlib: unzlibSync }).open(file);
-  } else if (ext === 'fb2') {
-    book = await (await import('../vendor/foliate/fb2.js')).makeFB2(file);
-  } else {
-    const zip = await unzip(file);
-    const fb2 = zip.entries.find(e => e.filename.endsWith('.fb2'));
-    if (fb2) book = await (await import('../vendor/foliate/fb2.js')).makeFB2(zip.loadBlob(fb2.filename));
-    else if (zip.entries.some(e => e.filename === 'META-INF/container.xml')) book = await new (await import('../vendor/foliate/epub.js')).EPUB(zip).init();
-    else book = comicBook(zip, file.name);
+    const book = await new MOBI({ unzlib: unzlibSync }).open(file);
+    return { book, locked: book.mobi.headers.palmdoc.encryption > 0 };
   }
+  if (ext === 'fb2') return { book: await (await import('../vendor/foliate/fb2.js')).makeFB2(file) };
+  const zip = await unzip(file);
+  const fb2 = zip.entries.find(e => e.filename.endsWith('.fb2'));
+  if (fb2) return { book: await (await import('../vendor/foliate/fb2.js')).makeFB2(zip.loadBlob(fb2.filename)) };
+  if (!zip.entries.some(e => e.filename === 'META-INF/container.xml')) return { book: comicBook(zip, file.name) };
+  // Content encrypted with anything but the standard font obfuscation is DRM.
+  const locked = !!zip.loadText('META-INF/rights.xml') ||
+    /Algorithm="(?!http:\/\/www\.idpf\.org\/2008\/embedding|http:\/\/ns\.adobe\.com\/pdf\/enc#RC)/.test(zip.loadText('META-INF/encryption.xml') ?? '');
+  return { book: await new (await import('../vendor/foliate/epub.js')).EPUB(zip).init(), locked };
+}
+
+async function ebookSource(file, ext) {
+  const { book, locked } = await openEbook(file, ext).catch(() => { throw new Error('This file looks damaged.'); });
+  if (locked) throw new Error('This book is locked with DRM, which ebis can’t open.');
 
   const kept = book.sections.map((s, i) => [s, i]).filter(([s]) => s.load);
   const index = new Map(kept.map(([, i], k) => [i, k]));
@@ -141,7 +162,14 @@ function comicBook(zip, name) {
 
 // Web pages and saved HTML: the article itself, found by Readability.
 function webSource(doc, url) {
-  for (const font of doc.querySelectorAll('font')) font.replaceWith(...font.childNodes); // obsolete markup Readability would split paragraphs at
+  // Two patterns Readability mistakes for clutter: old <font> tags, which split its paragraphs,
+  // and headings wrapped with link chrome ("[edit]", "#" anchors), which it deletes as links.
+  for (const font of doc.querySelectorAll('font')) font.replaceWith(...font.childNodes);
+  for (const head of doc.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+    const wrap = head.parentElement;
+    const rest = wrap.textContent.replace(head.textContent, '').trim();
+    if (wrap.localName === 'div' && rest.length <= 12 && [...wrap.querySelectorAll('a')].some(a => !head.contains(a))) wrap.replaceWith(head);
+  }
   const base = doc.createElement('base');
   base.href = url;
   doc.head.prepend(base);
@@ -151,9 +179,16 @@ function webSource(doc, url) {
   const source = { meta: {}, cover: null, toc: null, sections: [{ load }], resolve };
 
   async function load() {
+    // A paywall is mostly theater for anything reading raw HTML: the whole article still
+    // ships in the page, in a schema.org block or the app's own JSON state. Read it
+    // before Readability rearranges the document.
+    const embedded = embeddedArticle(doc);
     const { Readability } = await import('../vendor/readability.js');
     const article = new Readability(doc, { charThreshold: 200 }).parse();
     if (!article?.content) throw new Error('No article found on that page.');
+    if (embedded.length > article.textContent.length * 1.25 + 500) {
+      article.content = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
+    }
     const when = new Date(article.publishedTime || published);
     const meta = source.meta = {
       title: article.title || doc.title || url, author: article.byline?.replace(/^by\s+/i, '') || '',
@@ -176,20 +211,56 @@ function webSource(doc, url) {
   return source;
 }
 
-// Plain text: blank lines separate paragraphs; single line breaks are just wrapping.
+// The full article where a page embeds it for machines: schema.org's articleBody, or a long
+// prose value in the JSON state its app boots from (__NEXT_DATA__, window.__STATE__, …).
+function embeddedArticle(doc) {
+  let best = '';
+  const KEYS = /^(articlebody|body(text|html)?|content|fullcontent|fulltext|text|html|markup)$/i;
+  const walk = node => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) return node.forEach(walk);
+    for (const [key, value] of Object.entries(node)) {
+      if (typeof value === 'string' && KEYS.test(key) && value.length > best.length && prose(value)) best = value;
+      else walk(value);
+    }
+  };
+  for (const script of doc.querySelectorAll('script:not([src])')) {
+    const text = script.textContent.trim();
+    // Pure JSON (ld+json, application/json) or one assignment of a JSON object.
+    const json = /^\{/.test(text) ? text : /^(?:window\.|var |let |const )[\w$]+(?:\.\w+)?\s*=\s*(\{[\s\S]*\})\s*;?$/.exec(text)?.[1];
+    if (json) try { walk(JSON.parse(json)); } catch { /* not JSON */ }
+  }
+  return best;
+}
+
+// Article prose is long and sentence-shaped; markup is only prose when it holds paragraphs.
+const prose = s => s.length > 600 && (looksLikeMarkup(s) ? /<p[\s>]/.test(s) : /[.!?] /.test(s));
+const looksLikeMarkup = s => /^\s*</.test(s) && /<\/(p|div|h[1-6]|section|article)>/.test(s);
+
+// Plain text becomes paragraphs the way textSource cuts them.
+const asParagraphs = text => {
+  const paras = text.replace(/\r\n?/g, '\n').split(/\n\s*\n/.test(text) ? /\n\s*\n/ : '\n').map(p => p.trim()).filter(Boolean);
+  return paras.map(p => `<p>${escape(p).replace(/\n/g, ' ')}</p>`).join('');
+};
+
+// Plain text: blank lines separate paragraphs and single line breaks are wrapping,
+// unless there are no blank lines at all, in which case each line is a paragraph.
 function textSource(text) {
-  const paras = text.replace(/\r\n?/g, '\n').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  text = text.replace(/\r\n?/g, '\n');
+  const paras = text.split(/\n\s*\n/.test(text) ? /\n\s*\n/ : '\n').map(p => p.trim()).filter(Boolean);
   const html = paras.map(p => `<p>${escape(p).replace(/\n/g, ' ')}</p>`).join('');
   return { meta: {}, cover: null, toc: null, sections: [{ load: () => ({ html }) }], resolve: () => null };
 }
 
+// Text in the encoding its byte-order mark, server or <meta> names; otherwise UTF-8, or
+// Windows-1252 for older text that isn't valid UTF-8 (as browsers decide for web pages).
 function decode(bytes, type = '') {
-  const declared = type.match(/charset=([\w-]+)/i)?.[1]
-    || new TextDecoder('latin1').decode(bytes.slice(0, 4096)).match(/<meta[^>]+charset=["']?([\w-]+)/i)?.[1];
-  try {
-    return new TextDecoder(declared || 'utf-8').decode(bytes);
-  } catch {
-    return new TextDecoder().decode(bytes);
+  const named = (bytes[0] === 0xff && bytes[1] === 0xfe && 'utf-16le') || (bytes[0] === 0xfe && bytes[1] === 0xff && 'utf-16be')
+    || type.match(/charset=([\w-]+)/i)?.[1] || new TextDecoder('latin1').decode(bytes.slice(0, 4096)).match(/<meta[^>]+charset=["']?([\w-]+)/i)?.[1];
+  for (const [encoding, fatal] of [[named, false], ['utf-8', true], ['windows-1252', false]]) {
+    try {
+      if (encoding) return new TextDecoder(encoding, { fatal }).decode(bytes);
+    } catch {} // an encoding no browser knows, or bytes that aren't UTF-8
   }
 }
 

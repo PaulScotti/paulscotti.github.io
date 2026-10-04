@@ -5,7 +5,7 @@
 import * as store from './store.js';
 import { blocks as leafBlocks, blockSizes } from './convert.js';
 import { settings, update, onUpdate } from './settings.js';
-import { $, template, escape, openSheet, popover, closeLayers, layerOpen, toast } from './ui.js';
+import { $, template, escape, openSheet, popover, lightbox, closeLayers, layerOpen, toast } from './ui.js';
 
 const view = $('reader'), page = $('page'), flow = $('flow');
 const COLORS = ['ochre', 'rubric', 'lapis'];
@@ -15,34 +15,40 @@ navigator.userAgentData?.getHighEntropyValues(['model']).then(d => { if (d.model
 
 let book = null;            // { id, record, data: book.json, urls, starts: first character of each chapter }
 let chapter = 0, at = 0;    // chapter index and page within it
+let anchor = [0, 0];        // the reader's place: what a new layout must keep on screen
 let geo = null;             // the page geometry
 let blocks = [], offsets = [];
-let heads = [];             // contents entries in this chapter: { b, title }
+let heads = [];             // contents entries in this chapter, with the block each starts at
 let cpm = +localStorage.getItem('ebis.cpm') || 1100; // reading speed, characters per minute
 let lastTurn = { at: 0, char: 0 }, wake = null, wakeTimer = 0;
 const parsed = new Map();   // chapter index → parsed section, for search and link previews
 
+let opening = 0; // only the latest open (or leaving) counts when loads finish out of order
+
 export async function open(id) {
   const record = store.get('book', id);
   if (!record) throw new Error('That book is no longer in your library.');
+  const ticket = ++opening;
   view.hidden = false;
   if (book?.id !== id) {
     flow.replaceChildren();
     const { book: data, urls } = await store.open(id, p => { $('folio-r').textContent = `${Math.round(p * 100)}%`; });
+    if (ticket !== opening) return;
     const starts = data.sizes.reduce((a, n) => [...a, a.at(-1) + n], [0]);
     book = { id, record, data, urls, starts, total: starts.at(-1) };
     parsed.clear();
     flow.lang = data.lang || 'en';
-    flow.dir = data.dir || 'auto';
   }
   addTab(id);
   await Promise.all(FACES.map(f => document.fonts.load(f)));
+  if (ticket !== opening) return;
   const pos = store.get('pos', id);
   render(pos?.c ?? 0, pos ? { loc: [pos.b, pos.o] } : 'start');
   showUI(!pos);
 }
 
 export function hide() {
+  opening++;
   view.hidden = true;
   closeLayers(true);
   releaseWake();
@@ -60,13 +66,13 @@ function render(c, target, fade) {
   measure();
   heads = book.data.toc.filter(t => book.data.ids[t.id] === chapter).map(t => {
     const el = flow.querySelector(`[id="${CSS.escape(t.id)}"]`);
-    return { title: t.title, b: el ? blockAt(el) : 0 };
+    return { entry: t, b: el ? blockAt(el) : 0 };
   });
   const p = target === 'end' ? geo.pages - 1
     : target === 'start' ? 0
     : target.id ? pageOfElement(flow.querySelector(`[id="${CSS.escape(target.id)}"]`))
     : pageOf(target.loc);
-  go(p);
+  go(p, false, target.loc);
   paintMarks();
   if (fade) flow.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
 }
@@ -150,16 +156,20 @@ function locator() {
 }
 
 const fraction = ([b, o]) => (book.starts[chapter] + (offsets[b] || 0) + o) / book.total;
+// The contents entry the reader is in: the last one at or before the place.
+const entry = () => heads.filter(h => h.b <= anchor[0]).at(-1)?.entry ?? book.data.toc.filter(t => book.data.ids[t.id] < chapter).at(-1);
 
 // Turning pages.
 
-function go(p, animate) {
+// Show page p. The place it records is the exact one being shown when known (a search
+// result, a synced position), otherwise the page's first character.
+function go(p, animate, place) {
   at = Math.max(0, Math.min(p, geo.pages - 1));
   flow.classList.toggle('turning', !!animate && settings.slide);
   flow.style.transform = `translateX(${-at * geo.stride}px)`;
-  const loc = locator();
-  refresh(loc);
-  remember(loc);
+  anchor = place ?? locator();
+  refresh();
+  remember(anchor);
 }
 
 function next() {
@@ -188,21 +198,20 @@ function remember([b, o]) {
   keepAwake();
 }
 
-function refresh(loc) {
-  const pct = fraction(loc);
+function refresh() {
+  const [b, o] = anchor, pct = fraction(anchor);
   const left = geo.pages - 1 - at;
-  const charsLeft = book.data.sizes[chapter] - (offsets[loc[0]] || 0) - loc[1];
+  const charsLeft = book.data.sizes[chapter] - (offsets[b] || 0) - o;
   const minutes = Math.max(1, Math.round(charsLeft / cpm));
   $('folio-l').textContent = settings.folio === 'time'
     ? `${minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`} left in chapter`
     : left ? `${left} ${left > 1 ? 'pages' : 'page'} left in chapter` : 'Last page in chapter';
   $('folio-r').textContent = `${Math.floor(pct * 100)}%`;
-  const head = heads.filter(h => h.b <= loc[0]).at(-1)?.title
-    || book.data.toc.filter(t => book.data.ids[t.id] < chapter).at(-1)?.title || '';
+  const head = entry()?.title || book.record.title;
   $('run-l').textContent = book.record.title;
-  $('run-r').textContent = head || book.record.title;
+  $('run-r').textContent = head;
   $('scrub').value = Math.round(pct * 1000);
-  $('scrub-label').textContent = head || book.record.title;
+  $('scrub-label').textContent = head;
 }
 
 // Touch, mouse, keys and wheel.
@@ -245,7 +254,7 @@ function tap(e) {
   if (link) return follow(link);
   const mark = markAt(e.clientX, e.clientY);
   if (mark) return editMark(mark);
-  if (e.target.localName === 'img') return lightbox(e.target);
+  if (e.target.localName === 'img') return lightbox(e.target.src);
   if (view.classList.contains('ui')) return showUI(false);
   const x = e.clientX / innerWidth;
   if (x < 0.3) prev();
@@ -278,14 +287,13 @@ addEventListener('keydown', e => {
 
 new ResizeObserver(() => relayout()).observe(page);
 document.fonts.addEventListener('loadingdone', () => relayout());
-onUpdate(changes => 'folio' in changes ? book && refresh(locator()) : relayout());
+onUpdate(changes => 'folio' in changes ? book && refresh() : relayout());
 
-// Lay the chapter out again (new size or settings) without losing the place.
+// Lay the chapter out again (new size or settings) keeping the reader's place on screen.
 function relayout() {
   if (!book || view.hidden || !geo) return;
-  const loc = locator();
   measure();
-  go(pageOf(loc));
+  go(pageOf(anchor), false, anchor);
 }
 
 // Keep the screen awake while reading, for a few minutes after each page.
@@ -298,9 +306,6 @@ async function keepAwake() {
   }
 }
 function releaseWake() { wake?.release(); wake = null; }
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') store.sync();
-});
 
 // Positions from the other device.
 store.onChange(({ kind, id, remote }) => {
@@ -309,7 +314,7 @@ store.onChange(({ kind, id, remote }) => {
   if (kind === 'tabs') drawTabs();
   if (kind !== 'pos' || id !== book.id) return;
   const pos = store.get('pos', id);
-  const back = { c: chapter, loc: locator() };
+  const back = { c: chapter, loc: anchor };
   if (pos.c === chapter && pos.b === back.loc[0] && Math.abs(pos.o - back.loc[1]) < 50) return;
   render(pos.c, { loc: [pos.b, pos.o] }, true);
   toast(`Moved to where you left off${pos.device ? ` on your ${pos.device}` : ''}.`, ['Stay here', () => render(back.c, { loc: back.loc }, true)]);
@@ -335,27 +340,24 @@ $('scrub').onchange = e => {
   const { c, loc } = spot(e.target.value / 1000);
   render(c, { loc }, c !== chapter);
 };
-// The chapter and block at a fraction of the whole book.
+// The chapter, block and character at a fraction of the whole book.
 function spot(f) {
   const target = f * book.total;
   const c = Math.max(0, book.starts.findLastIndex(s => s <= target && s < book.total));
+  const sizes = blockSizes(section(c));
   let within = target - book.starts[c], b = 0;
-  for (const size of blockSizes(section(c))) {
-    if (within < size) break;
-    within -= size;
-    b++;
-  }
-  return { c, loc: [b, 0] };
+  while (b < sizes.length - 1 && within >= sizes[b]) within -= sizes[b++];
+  return { c, loc: [b, Math.min(Math.floor(within), sizes[b] - 1)] };
 }
 
 $('r-toc').onclick = () => {
   const list = document.createElement('ol');
   list.className = 'list';
-  const here = heads.filter(h => h.b <= locator()[0]).at(-1)?.title;
+  const here = entry();
   for (const t of book.data.toc) {
     const li = document.createElement('li');
     li.innerHTML = `<button class="lvl${Math.min(t.level + 1, 3)}">${escape(t.title)}</button>`;
-    if (book.data.ids[t.id] === chapter && t.title === here) li.firstChild.setAttribute('aria-current', 'true');
+    if (t === here) li.firstChild.setAttribute('aria-current', 'true');
     li.firstChild.onclick = () => { closeLayers(); showUI(false); jump(t.id); };
     list.append(li);
   }
@@ -383,7 +385,7 @@ $('r-toc').onclick = () => {
 function jump(id, from) {
   const c = book.data.ids[id];
   if (c == null) return;
-  const back = { c: chapter, loc: locator() };
+  const back = { c: chapter, loc: anchor };
   render(c, { id }, c !== chapter);
   if (from) toast('', ['Return to your place', () => render(back.c, { loc: back.loc }, true)]);
 }
@@ -462,13 +464,13 @@ function addTab(id) {
 }
 export function closeTab(id) {
   const ids = tabs();
-  const i = ids.indexOf(id);
   const rest = ids.filter(x => x !== id);
   store.put('tabs', 'open', { ids: rest });
   store.close(id);
-  if (book?.id !== id) return drawTabs();
-  book = null;
-  location.replace(rest.length ? `#/read/${rest[Math.min(i, rest.length - 1)]}` : '#/');
+  const reading = !view.hidden && book?.id === id;
+  if (book?.id === id) book = null;
+  if (reading) location.replace(rest.length ? `#/read/${rest[Math.min(ids.indexOf(id), rest.length - 1)]}` : '#/');
+  else drawTabs();
 }
 function switchTab(i) {
   const id = tabs()[i];
@@ -491,8 +493,15 @@ $('r-tabs').onclick = () => {
   for (const id of tabs()) {
     const r = store.get('book', id), pos = store.get('pos', id);
     const li = document.createElement('li');
-    li.innerHTML = `<button${id === book?.id ? ' aria-current="true"' : ''}><span>${escape(r.title)}</span><span class="n">${Math.floor((pos?.pct || 0) * 100)}%</span></button>`;
-    li.firstChild.onclick = () => { closeLayers(); switchTab(tabs().indexOf(id)); };
+    li.innerHTML = `<button${id === book?.id ? ' aria-current="true"' : ''}><span>${escape(r.title)}</span><span class="n">${Math.floor((pos?.pct || 0) * 100)}%</span>` +
+      '<span class="x" role="button" aria-label="Close"><svg><use href="#i-close"/></svg></span></button>';
+    li.firstChild.onclick = e => {
+      if (!e.target.closest('.x')) return closeLayers(), switchTab(tabs().indexOf(id));
+      const reading = id === book?.id;
+      closeTab(id);
+      if (reading) closeLayers(true); // closing the open book has already moved the reader on
+      else li.remove();
+    };
     list.append(li);
   }
   const li = document.createElement('li');
@@ -526,32 +535,18 @@ function follow(a) {
   popover(note, [['Go to', () => jump(id, true)]]);
 }
 
-function lightbox(img) {
-  const box = $('lightbox');
-  box.firstChild.src = img.src;
-  box.hidden = false;
-  box.onclick = () => { box.hidden = true; };
+// Highlights are ranges painted with the CSS Custom Highlight API; the text itself is untouched.
+const marks = () => store.all('mark').filter(m => m.book === book.id && m.c === chapter && blocks[m.b] && blocks[m.b2]);
+function rangeOf(m) {
+  const r = document.createRange();
+  r.setStart(...caret(blocks[m.b], m.o));
+  r.setEnd(...caret(blocks[m.b2], m.o2));
+  return r;
 }
-
 function paintMarks() {
-  const ranges = Object.fromEntries(COLORS.map(c => [c, []]));
-  for (const m of store.all('mark')) {
-    if (m.book !== book.id || m.c !== chapter || !blocks[m.b] || !blocks[m.b2]) continue;
-    const r = document.createRange();
-    r.setStart(...caret(blocks[m.b], m.o));
-    r.setEnd(...caret(blocks[m.b2], m.o2));
-    ranges[m.color]?.push(r);
-  }
-  for (const c of COLORS) CSS.highlights.set(c, new Highlight(...ranges[c]));
+  for (const color of COLORS) CSS.highlights.set(color, new Highlight(...marks().filter(m => m.color === color).map(rangeOf)));
 }
-
-function markAt(x, y) {
-  const p = document.caretPositionFromPoint?.(x, y);
-  const point = p ? pointOf(p.offsetNode, p.offset) : null;
-  if (!point) return null;
-  const le = (a, b) => a[0] < b[0] || (a[0] === b[0] && a[1] <= b[1]);
-  return store.all('mark').find(m => m.book === book.id && m.c === chapter && le([m.b, m.o], point) && le(point, [m.b2, m.o2]));
-}
+const markAt = (x, y) => marks().find(m => [...rangeOf(m).getClientRects()].some(r => x >= r.left && x <= r.right && y >= r.top && y <= r.bottom));
 
 function editMark(m) {
   const box = document.createElement('div');
@@ -575,8 +570,9 @@ document.addEventListener('selectionchange', () => {
   selbar.style.left = `${Math.min(Math.max(last.right - last.width / 2, 120), innerWidth - 120)}px`;
   selbar.style.top = below ? `${Math.min(last.bottom + 44, innerHeight - 60)}px` : `${Math.max(rects[0].top - 52, 8)}px`;
 });
-selbar.onpointerdown = e => e.preventDefault(); // keep the selection while tapping the bar
-selbar.onclick = e => {
+// The bar acts as soon as it is touched, while the selection still exists.
+selbar.onpointerdown = e => {
+  e.preventDefault();
   const button = e.target.closest('button');
   const sel = getSelection();
   if (!button || sel.isCollapsed) return;

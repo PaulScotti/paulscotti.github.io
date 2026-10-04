@@ -1,5 +1,5 @@
 {
-  // Deploy from this folder: npx wrangler deploy. The library key is the KEY secret.
+  // Deploy from this folder: npx wrangler deploy. The password is the KEY secret; the table is in schema.sql.
   "name": "ebis",
   "main": "src/index.js",
   "compatibility_date": "2026-09-28",

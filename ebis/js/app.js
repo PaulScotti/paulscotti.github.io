@@ -12,11 +12,14 @@ const PAINTS = [['#2f4a6d', '#efe6d2'], ['#2f5a4c', '#efe6d2'], ['#8e3b28', '#f6
 let filter = 'all', query = '', queue = Promise.resolve();
 
 async function route() {
-  const hash = location.hash;
-  if (hash.startsWith('#key=') || hash === '#/shared') { // a sign-in link, or something shared from Android
+  $('lock').hidden = store.unlocked();
+  if (!store.unlocked()) { // ebis opens once its password has been typed on this device
+    $('library').hidden = true;
+    return reader.hide();
+  }
+  if (location.hash === '#/shared') { // something shared from another app on Android
     history.replaceState(null, '', location.pathname);
-    if (hash === '#/shared') receiveShared();
-    else store.signIn(decodeURIComponent(hash.slice(5))).then(() => toast('Signed in. Your library will stay in step.'), e => toast(e.message));
+    receiveShared();
   }
   const id = location.hash.match(/^#\/read\/(.+)$/)?.[1];
   if (id) {
@@ -53,7 +56,7 @@ function item(b, busy) {
   const pct = busy ? b.busy : store.get('pos', b.id)?.pct || 0;
   const [paint, ink] = PAINTS[[...b.title].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % PAINTS.length];
   li.innerHTML = `<div class="cover" style="--paint:${paint};--paint-ink:${ink}">${b.cover ? `<img src="${b.cover}" alt="">`
-    : `<div class="typeset">${b.site ? `<span class="site">${escape(b.site)}</span>` : ''}<span class="name">${escape(b.title)}</span><span class="author">${escape(b.author)}</span><svg aria-hidden="true"><use href="#ibis"/></svg></div>`}
+    : `<div class="typeset">${b.site ? `<span class="site">${escape(b.site)}</span>` : ''}<span class="name">${escape(b.title)}</span><span class="author">${escape(b.author || '')}</span><svg aria-hidden="true"><use href="#ibis"/></svg></div>`}
     ${pct ? `<div class="progress"><i style="width:${(pct * 100).toFixed(1)}%"></i></div>` : ''}</div>
     <div class="meta"><span class="title">${escape(b.title)}</span><span class="by">${escape(busy ? 'Adding…' : b.author || b.site)}</span></div>`;
   if (!busy) {
@@ -114,7 +117,6 @@ function add(title, run) {
       const id = await store.addBook(record, zip);
       toast(`Added “${record.title}”.`, ['Read', () => { location.hash = `#/read/${id}`; }]);
     } catch (e) {
-      console.error(e);
       toast(`Couldn’t add ${title}. ${e.message}`);
     } finally {
       pending.delete(key);
@@ -162,42 +164,54 @@ async function receiveShared() {
   }
 }
 
-// Signing in to sync with Cloudflare.
+// The password, typed once on each device.
 
-$('account').onclick = () => {
-  openSheet('Library sync', template('t-account'));
-  const sheet = $('sheet');
-  const show = () => {
-    sheet.dataset.auth = store.signedIn() ? 'in' : 'out';
-    $('sync-status').textContent = `Signed in. ${store.all('book').length} books, kept in step through your Cloudflare.`;
-  };
-  show();
-  $('sign-in').onsubmit = async e => {
-    e.preventDefault();
-    try {
-      await store.signIn(new FormData(e.target).get('key'));
-      show();
-      toast('Signed in.');
-    } catch (err) {
-      toast(err.message);
-    }
-  };
-  $('sync-now').onclick = () => store.sync().then(() => toast('Up to date.'), err => toast(err.message));
-  $('sign-out').onclick = () => { store.signOut(); show(); };
+$('lock').onsubmit = async e => {
+  e.preventDefault();
+  e.target.inert = true;
+  try {
+    await store.unlock(new FormData(e.target).get('password'));
+    e.target.reset();
+    route();
+    store.sync();
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    e.target.inert = false;
+  }
 };
+
+// The sync dot says whether this device is in step with the others, and opens the details.
+
+$('sync').onclick = () => {
+  openSheet('Library sync', template('t-sync'));
+  showSync();
+  $('sync-now').onclick = () => store.sync();
+};
+
+function showSync() {
+  const { at, error } = store.syncStatus();
+  $('sync').className = `sync${error ? ' stale' : at ? ' synced' : ''}`;
+  const status = $('sync-status'); // there while the sync sheet is open
+  if (status) status.textContent = error ? `Not synced: ${error}`
+    : at ? `Synced at ${new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.` : 'Syncing…';
+}
 
 // Start.
 
 await store.ready;
 addEventListener('hashchange', route);
 route();
-store.sync().catch(e => toast(e.message));
+store.sync();
 store.onChange(change => {
-  $('account').classList.toggle('synced', store.signedIn());
-  if ('syncing' in change) $('account').classList.toggle('busy', change.syncing);
-  if (!$('library').hidden && (change.kind === 'book' || change.kind === 'pos' || change.auth)) draw();
+  if (change.locked) route();
+  if ('syncing' in change) {
+    showSync();
+    $('sync').classList.toggle('busy', change.syncing);
+  }
+  if (!$('library').hidden && (change.kind === 'book' || change.kind === 'pos')) draw();
 });
-$('account').classList.toggle('synced', store.signedIn());
+showSync();
 // A new version installs in the background and waits; ebis offers to restart into it.
 if (location.protocol === 'https:') navigator.serviceWorker?.register('sw.js').then(reg => {
   const offer = worker => worker && navigator.serviceWorker.controller && toast('ebis has been updated.', ['Restart', () => worker.postMessage('update')]);

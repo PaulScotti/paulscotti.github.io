@@ -9,28 +9,30 @@ Everything you add becomes the same thing: a package of chapters in a small, sem
 that ebis typesets itself.
 
 - `js/sources.js` reads a file or a link. Ebooks (EPUB, MOBI/AZW3, FB2, CBZ) go through
-  [foliate-js](https://github.com/johnfactotum/foliate-js); web pages through Mozilla's Readability;
-  PDFs through `js/pdf.js`, which rebuilds paragraphs from PDF.js's positioned text and cuts
-  figures (and text set like a figure: tables, equations) from the rendered page.
+  [foliate-js](https://github.com/johnfactotum/foliate-js); web pages through Mozilla's Readability —
+  and a paywalled page usually still ships its whole article in the raw HTML (a schema.org
+  `articleBody` block, or the JSON state its app boots from), in which case that is read
+  instead of the taste the page shows; PDFs through `js/pdf.js`, which rebuilds paragraphs
+  from PDF.js's positioned text and cuts figures (and text set like a figure: tables,
+  equations) from the rendered page.
 - `js/convert.js` mounts each document in a hidden frame so the browser resolves its CSS, then keeps
   only what a reader notices: structure, emphasis, alignment, images, links.
 - `js/reader.js` lays out one chapter at a time in CSS columns. A position is
   `[chapter, block, character]`, so it survives any device, type size or theme.
-- `js/store.js` keeps the library in IndexedDB and, when signed in, syncs it with the worker.
+- `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
 ## Sync (Cloudflare, personal account)
 
-`worker/` is the `ebis` Worker at `ebis.scottibrain.workers.dev`: one D1 table of records
-(books, positions, highlights, open tabs) replicated last-write-wins, book packages in the R2
-bucket `ebis-library`, and `/fetch`, which reads web pages for the reader.
+ebis is Paul's alone. It opens once its password has been typed on a device, and every request
+to the worker carries it. `worker/` is the `ebis` Worker at `ebis.scottibrain.workers.dev`:
+records replicate last-write-wins through D1, book packages live in R2, and
+`/fetch` reads web pages for the reader.
 
 ```
 cd worker
 npx wrangler deploy              # after changing src/index.js
-npx wrangler secret put KEY      # to change the library key
+npx wrangler secret put KEY      # to change the password
 ```
-
-The key is in `worker/LIBRARY-KEY.txt` (not committed). Opening `/ebis/#key=…` once signs a device in.
 
 ## Changing the app
 

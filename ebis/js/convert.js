@@ -16,6 +16,7 @@ const SKIP = new Set(['head', 'script', 'style', 'noscript', 'template', 'iframe
 const MONO = /mono|courier|consol/i;
 const TEXT_BLOCKS = 'p,h2,h3,h4,pre,li,dt,dd,th,td,caption,figcaption';
 const CHAPTER_LIMIT = 90000; // characters; longer chapters are split at a heading near the middle
+const PARAGRAPH_LIMIT = 6000; // a text run longer than any real paragraph (a file with no line breaks) is cut into these
 
 const h = (tag, attrs = {}) => {
   const el = document.createElement(tag);
@@ -23,6 +24,7 @@ const h = (tag, attrs = {}) => {
   return el;
 };
 const textOf = el => el.textContent.replace(/\s+/g, ' ').trim();
+const setIn = new WeakMap(); // leaf → [characters, characters × type size]: the size its text is set in
 
 // Leaf blocks in reading order; reading positions count characters within these.
 export const blocks = root => [...root.querySelectorAll(`${TEXT_BLOCKS},hr,img`)].filter(el =>
@@ -57,10 +59,16 @@ class Writer {
     this.leaf = this.inline = null;
     if (!leaf) return;
     trim(leaf);
+    const [chars, mass] = setIn.get(leaf) || [];
+    if (chars) leaf.dataset.fs = Math.round(mass / chars * 2) / 2;
     if (!leaf.textContent.trim() && !leaf.querySelector('img,math,a[id]')) leaf.remove();
   }
   text(s, look) {
     if (look.pre) return this.add(s, look);
+    if (s.length > PARAGRAPH_LIMIT * 2) {
+      for (const part of s.match(new RegExp(`[\\s\\S]{1,${PARAGRAPH_LIMIT}}\\S*`, 'g'))) this.close(), this.text(part, look);
+      return;
+    }
     const lines = look.lines ? s.split('\n') : [s];
     lines.forEach((line, i) => {
       if (i && this.leaf) this.inline.append(h('br'));
@@ -73,6 +81,10 @@ class Writer {
   add(el, look) {
     if (!this.leaf) this.startLeaf('p', look);
     this.inline.append(el);
+    if (typeof el === 'string') {
+      const [chars = 0, mass = 0] = setIn.get(this.leaf) || [], n = el.trim().length;
+      setIn.set(this.leaf, [chars + n, mass + n * look.fs]);
+    }
   }
 
   walk(node, look, cs) {
@@ -125,6 +137,7 @@ class Writer {
   }
 
   span(el, cs, look, parent) {
+    look = { ...look, fs: parseFloat(cs.fontSize) };
     const wraps = [];
     if (el.localName === 'a' && el.hasAttribute('href')) wraps.push(h('a', { 'data-href': el.getAttribute('href') }));
     if ((cs.fontStyle === 'italic') !== (parent.fontStyle === 'italic')) wraps.push(h('em'));
@@ -154,8 +167,9 @@ class Writer {
 // How a block looks, in the few terms ebis keeps.
 function lookOf(cs, parent, pre) {
   const cls = [];
-  if (cs.textAlign === 'center') cls.push('c');
-  else if (cs.textAlign === 'right' || (cs.textAlign === 'end' && cs.direction === 'ltr')) cls.push('r');
+  const align = cs.textAlign.replace('-webkit-', ''); // HTML's align attribute and <center> compute to -webkit-center
+  if (align === 'center') cls.push('c');
+  else if (align === 'right' || (align === 'end' && cs.direction === 'ltr')) cls.push('r');
   if (cs.fontStyle === 'italic') cls.push('i');
   if (cs.fontVariantCaps === 'small-caps') cls.push('sc');
   return { cls: cls.join(' '), fs: parseFloat(cs.fontSize), pre: pre || parent.pre, lines: /^pre/.test(cs.whiteSpace) };
@@ -196,7 +210,7 @@ function finish(sections) {
   for (const el of sections.flatMap(s => [...s.querySelectorAll('[data-fs]')])) {
     weight.set(+el.dataset.fs, (weight.get(+el.dataset.fs) || 0) + el.textContent.length);
   }
-  const body = [...weight].sort((a, b) => b[1] - a[1])[0]?.[0] || 16;
+  const body = [...weight].sort((a, b) => b[1] - a[1])[0]?.[0];
 
   for (const section of sections) {
     // Headings: real ones, short lines set clearly larger than the text, and short lines set all in bold.
@@ -301,7 +315,12 @@ async function storeImages(sections, fetcher) {
   for (const { dataset: { src } } of imgs) if (!byURL.has(src)) byURL.set(src, load(src, `i${byURL.size}`).catch(() => null));
   await Promise.all(imgs.map(async img => {
     const name = await byURL.get(img.dataset.src);
-    if (!name) return img.remove();
+    if (!name) { // a picture that can't be fetched leaves nothing behind, not even its empty frame
+      const figure = img.closest('figure');
+      img.remove();
+      if (figure && !figure.textContent.trim() && !figure.querySelector('img')) figure.remove();
+      return;
+    }
     img.removeAttribute('data-src');
     img.dataset.k = name;
     [img.width, img.height] = sizes[name];

@@ -1,15 +1,17 @@
-// The library on this device (IndexedDB), kept in step with Cloudflare when signed in.
+// The library on this device (IndexedDB), kept in step with Paul's Cloudflare worker.
 // Everything small (books, reading positions, highlights, open tabs) is a record that
 // replicates last-write-wins; each book's content is a zip package stored beside it.
 
 import { unzipSync, strFromU8 } from '../vendor/fflate.js';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8787' : 'https://ebis.scottibrain.workers.dev';
+const LARGEST = 100e6; // the largest upload a worker accepts; a larger book stays on the device it was added on
 const records = new Map(); // "kind/id" → { kind, id, data, updated, dirty }
 const listeners = new Set();
 const opened = new Map(); // id → unpacked package, for books open in tabs
-let key = localStorage.getItem('ebis.key');
+let password = localStorage.getItem('ebis.password'); // typed once on each device
 let syncing = null, timer = 0;
+let last = { at: 0, error: '' }; // the last sync: when it finished, or why it didn't
 
 const db = new Promise((resolve, reject) => {
   const req = indexedDB.open('ebis', 1);
@@ -34,7 +36,8 @@ export const ready = idb('records', 'readonly', s => s.getAll()).then(all => {
   for (const r of all) records.set(`${r.kind}/${r.id}`, r);
 });
 
-export const signedIn = () => !!key;
+export const unlocked = () => !!password;
+export const syncStatus = () => last;
 export const onChange = fn => listeners.add(fn);
 const emit = change => listeners.forEach(fn => fn(change));
 
@@ -72,7 +75,8 @@ export async function removeBook(id) {
 export async function open(id, progress) {
   if (opened.has(id)) return opened.get(id);
   let zip = await idb('packages', 'readonly', s => s.get(id));
-  if (!zip) {
+  if (!zip) { // added on another device
+    if (get('book', id).bytes > LARGEST) throw new Error('This book is too large to sync, so it’s only on the device it was added on.');
     zip = await download(id, progress);
     await idb('packages', 'readwrite', s => s.put(zip, id));
   }
@@ -89,94 +93,78 @@ export function close(id) {
   opened.delete(id);
 }
 
-// Cloudflare.
-async function api(path, init = {}) {
-  const res = await fetch(API + path, { ...init, headers: { authorization: `Bearer ${key}`, ...init.headers } });
-  if (res.status === 401) {
-    signOut();
-    throw new Error('Your library key was not accepted.');
-  }
-  if (!res.ok) throw new Error((await res.text()) || res.statusText);
-  return res;
+// ebis is Paul's alone: its password is typed once on each device, and the worker checks it on
+// every request. If the worker stops accepting it (the password changed), the device asks again.
+export async function unlock(typed) {
+  await api('/sync', { method: 'POST', body: '{"since":0,"records":[]}' }, typed);
+  // The device joins the library afresh: all it holds goes up once, and all the library holds comes down.
+  await idb('meta', 'readwrite', s => s.clear());
+  await idb('records', 'readwrite', s => { for (const r of records.values()) r.dirty = true, s.put(r, `${r.kind}/${r.id}`); });
+  password = typed;
+  localStorage.setItem('ebis.password', password);
+}
+function lock() {
+  password = null;
+  localStorage.removeItem('ebis.password');
+  emit({ locked: true });
 }
 
-export async function signIn(newKey) {
-  key = newKey.trim();
-  try {
-    await api('/sync', { method: 'POST', body: JSON.stringify({ since: 0, records: [] }) });
-  } catch (e) {
-    key = null;
-    throw e;
-  }
-  localStorage.setItem('ebis.key', key);
-  await idb('meta', 'readwrite', s => s.delete('cursor'));
-  return sync();
-}
-export function signOut() {
-  key = null;
-  localStorage.removeItem('ebis.key');
-  emit({ auth: true });
-}
-
+// Syncing never interrupts reading: a failure is remembered and retried at the next chance.
 function schedule(ms) {
   clearTimeout(timer);
-  if (key) timer = setTimeout(sync, ms);
+  timer = setTimeout(sync, ms);
 }
 
 export function sync() {
-  if (!key) return Promise.resolve();
-  syncing ||= run().finally(() => { syncing = null; });
+  if (!password) return Promise.resolve();
+  syncing ||= run().then(() => { last = { at: Date.now(), error: '' }; }, e => { last = { ...last, error: e.message }; })
+    .finally(() => { syncing = null; emit({ syncing: false }); });
   return syncing;
 }
+addEventListener('online', sync);
+document.addEventListener('visibilitychange', sync); // leaving pushes what changed; returning pulls what's new
 
 async function run() {
   emit({ syncing: true });
-  try {
-    let since = (await idb('meta', 'readonly', s => s.get('cursor'))) || 0, more = true;
-    while (more) { // a page at a time, both ways
-      const sent = [...records.values()].filter(r => r.dirty).slice(0, 40);
-      const res = await (await api('/sync', {
-        method: 'POST',
-        body: JSON.stringify({ since, records: sent.map(({ kind, id, data, updated }) => ({ kind, id, data, updated })) }),
-      })).json();
-      for (const r of sent) {
-        const now = records.get(`${r.kind}/${r.id}`);
-        if (now.updated === r.updated) now.dirty = false, idb('records', 'readwrite', s => s.put(now, `${r.kind}/${r.id}`));
-      }
-      for (const r of res.records) {
-        const k = `${r.kind}/${r.id}`;
-        if (records.get(k)?.updated >= r.updated) continue;
-        records.set(k, { ...r, dirty: false });
-        await idb('records', 'readwrite', s => s.put({ ...r, dirty: false }, k));
-        if (r.kind === 'book' && r.data.deleted) await idb('packages', 'readwrite', s => s.delete(r.id));
-        emit({ kind: r.kind, id: r.id, remote: true });
-      }
-      since = res.cursor;
-      await idb('meta', 'readwrite', s => s.put(since, 'cursor'));
-      more = res.more || [...records.values()].some(r => r.dirty);
+  let since = (await idb('meta', 'readonly', s => s.get('cursor'))) || 0, more = true;
+  while (more) { // a page at a time, both ways
+    const sent = [...records.values()].filter(r => r.dirty).slice(0, 20);
+    const body = JSON.stringify({ since, records: sent.map(({ kind, id, data, updated }) => ({ kind, id, data, updated })) });
+    const res = await (await api('/sync', { method: 'POST', body })).json();
+    for (const r of sent) {
+      const now = records.get(`${r.kind}/${r.id}`);
+      if (now.updated === r.updated) now.dirty = false, idb('records', 'readwrite', s => s.put(now, `${r.kind}/${r.id}`));
     }
-    await uploadPackages();
-  } finally {
-    emit({ syncing: false });
+    for (const r of res.records) {
+      const k = `${r.kind}/${r.id}`;
+      if (records.get(k)?.updated >= r.updated) continue;
+      records.set(k, { ...r, dirty: false });
+      await idb('records', 'readwrite', s => s.put({ ...r, dirty: false }, k));
+      if (r.kind === 'book' && r.data.deleted) await idb('packages', 'readwrite', s => s.delete(r.id));
+      emit({ kind: r.kind, id: r.id, remote: true });
+    }
+    since = res.cursor;
+    await idb('meta', 'readwrite', s => s.put(since, 'cursor'));
+    more = res.more || [...records.values()].some(r => r.dirty);
   }
+  await uploadPackages();
 }
 
+// A package goes up once, from the device its book was added on; one too large stays there.
 async function uploadPackages() {
   const sent = new Set((await idb('meta', 'readonly', s => s.get('uploaded'))) || []);
   for (const { id } of all('book')) {
     if (sent.has(id)) continue;
     const zip = await idb('packages', 'readonly', s => s.get(id));
-    if (!zip) { sent.add(id); continue; } // made on another device, which uploads it
-    await api(`/files/${id}`, { method: 'PUT', body: zip, headers: { 'content-type': 'application/zip' } });
+    if (zip && zip.size <= LARGEST) await api(`/files/${id}`, { method: 'PUT', body: zip });
     sent.add(id);
     await idb('meta', 'readwrite', s => s.put([...sent], 'uploaded'));
   }
 }
 
-async function download(id, progress = () => {}) {
-  if (!key) throw new Error('This book is in your library on another device. Sign in to bring it here.');
+async function download(id, progress) {
   const res = await api(`/files/${id}`);
-  const total = +res.headers.get('content-length') || 0;
+  const total = +res.headers.get('content-length');
   const reader = res.body.getReader();
   const chunks = [];
   let got = 0;
@@ -187,10 +175,18 @@ async function download(id, progress = () => {}) {
   return new Blob(chunks, { type: 'application/zip' });
 }
 
-// Pages and images from other sites, fetched through the worker (browsers block direct reads).
+// Pages and images from other sites come through the worker, since browsers won't read them across sites.
 export async function fetchPage(url) {
-  if (!key) throw new Error('Sign in to add links: ebis fetches pages through your Cloudflare worker.');
-  const res = await api(`/fetch?url=${encodeURIComponent(url)}`);
-  return { blob: await res.blob(), url: res.headers.get('x-final-url') || url };
+  const res = await api('/fetch', { method: 'POST', body: url });
+  return { blob: await res.blob(), url: res.headers.get('x-final-url') };
 }
 export const fetchBlob = async url => (await fetchPage(url)).blob;
+
+// The worker answers in words a reader can be shown.
+async function api(path, init = {}, key = password) {
+  const res = await fetch(API + path, { ...init, headers: { authorization: `Bearer ${key}` } })
+    .catch(() => { throw new Error('ebis can’t reach your library right now.'); });
+  if (res.status === 401) lock();
+  if (!res.ok) throw new Error(await res.text());
+  return res;
+}

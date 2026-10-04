@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f7f5ef">
 <meta name="description" content="ebis, a quiet reader for books, papers and articles.">
@@ -16,10 +16,19 @@
 </head>
 <body>
 
-<main id="library" class="library">
+<form id="lock" class="lock" hidden>
+  <svg class="mark" aria-hidden="true"><use href="#ibis"/></svg>
+  <h1 class="wordmark">eb<span class="tittle">ı</span>s</h1>
+  <div class="url">
+    <input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required>
+    <button>Open</button>
+  </div>
+</form>
+
+<main id="library" class="library" hidden>
   <header class="lib-head">
     <h1 class="brand"><svg class="mark" aria-hidden="true"><use href="#ibis"/></svg><span class="wordmark">eb<span class="tittle">ı</span>s</span></h1>
-    <button class="account" id="account" aria-label="Sync"><span class="dot"></span><span class="sign">Sign in</span></button>
+    <button class="sync" id="sync" aria-label="Library sync"><span class="dot"></span></button>
     <button class="add" id="add"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add</button>
   </header>
   <nav class="filters" aria-label="Filter">
@@ -76,7 +85,7 @@
 
 <template id="t-add">
   <label class="pick">
-    <input type="file" id="add-file" multiple accept=".epub,.pdf,.mobi,.azw,.azw3,.kf8,.prc,.fb2,.fbz,.cbz,.txt,.html,.htm,application/epub+zip,application/pdf">
+    <input type="file" id="add-file" multiple>
     <span>Choose files</span>
   </label>
   <p class="quiet center">EPUB, PDF, Kindle, FB2, comics or text. You can also drop files onto the page.</p>
@@ -115,18 +124,9 @@
   <label class="toggle"><span>Slide pages</span><input type="checkbox" name="slide"></label>
 </template>
 
-<template id="t-account">
-  <div class="signed-out">
-    <p>Sign in with your library key to keep books, places and highlights in step between your devices.</p>
-    <form id="sign-in" class="url">
-      <input name="key" type="password" autocomplete="current-password" placeholder="Library key" aria-label="Library key" required>
-      <button>Sign in</button>
-    </form>
-  </div>
-  <div class="signed-in">
-    <p id="sync-status"></p>
-    <div class="actions"><button id="sync-now">Sync now</button><button id="sign-out">Sign out</button></div>
-  </div>
+<template id="t-sync">
+  <p id="sync-status"></p>
+  <div class="actions"><button id="sync-now">Sync now</button></div>
   <p class="colophon">ebis takes its name from the ibis of Thoth, the Egyptian god of writing and scribe of the gods. Set in Libron by Nico Verbruggen.</p>
 </template>
 

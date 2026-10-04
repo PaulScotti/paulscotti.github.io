@@ -2,4 +2,3 @@
 worker/.wrangler/
 worker/node_modules/
 worker/.dev.vars
-worker/LIBRARY-KEY.txt
