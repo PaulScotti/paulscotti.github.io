@@ -29,7 +29,14 @@ export async function importFile(file, opts) {
 }
 
 export async function importURL(url, opts) {
-  const { blob, url: final } = await opts.fetchPage(url);
+  let blob, final;
+  try {
+    ({ blob, url: final } = await opts.fetchPage(url));
+  } catch (e) {
+    // A site can refuse the fetch outright — Forbes and friends answer every non-browser 402/403/429/451.
+    const code = e.message.match(/answered (\d{3})/)?.[1];
+    throw /^(402|403|429|451)$/.test(code) ? new Error(`The site only shows its pages to a real browser (it answered ${code}).`) : e;
+  }
   const type = blob.type.split(';')[0];
   if (!/html|xml/.test(type)) {
     const file = new File([blob], decodeURIComponent(new URL(final).pathname.split('/').pop() || 'download'), { type });
@@ -148,9 +155,12 @@ function comicBook(zip, name) {
 
 // Web pages and saved HTML: the article itself, found by Readability.
 function webSource(doc, url, fetcher) {
-  // Patterns Readability mistakes for clutter: old <font> tags, which split its paragraphs;
-  // headings wrapped with link chrome ("[edit]", "#" anchors), which it deletes as links; and
-  // figures set in the margin (an <aside> holding nothing but figures), which it drops as asides.
+  // Before Readability looks: dialogs go, being the page's interface (consent prompts, menus,
+  // popovers) rather than its text; and patterns Readability mistakes for clutter are put right: old
+  // <font> tags, which split its paragraphs; headings wrapped with link chrome ("[edit]", "#" anchors),
+  // which it deletes as links; and figures set in the margin (an <aside> holding nothing but figures),
+  // which it drops as asides.
+  for (const el of doc.querySelectorAll('dialog')) el.remove();
   for (const font of doc.querySelectorAll('font')) font.replaceWith(...font.childNodes);
   for (const head of doc.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
     const wrap = head.parentElement;
@@ -161,6 +171,22 @@ function webSource(doc, url, fetcher) {
     const figures = [...aside.querySelectorAll('figure')];
     if (figures.length && !figures.reduce((text, f) => text.replace(f.textContent, ''), aside.textContent).trim()) aside.replaceWith(...figures);
   }
+  // An article that ads break into parts comes as blocks of the same kind within its <article>,
+  // with nothing to read between them; Readability keeps one block and its siblings, so such
+  // parts are gathered into one.
+  for (const article of doc.querySelectorAll('article')) {
+    const holders = new Set([...article.querySelectorAll('p')].map(p => p.parentElement));
+    const kinds = Map.groupBy([...holders].filter(h => h.className && h.querySelectorAll(':scope > p').length > 1), h => h.className);
+    for (const parts of kinds.values()) parts.reduce((head, part) => {
+      const gap = doc.createRange();
+      gap.setStartAfter(head);
+      gap.setEndBefore(part);
+      if (gap.toString().trim() || gap.cloneContents().querySelector('img, picture, svg, video, figure')) return part;
+      head.append(...part.childNodes);
+      part.remove();
+      return head;
+    });
+  }
   const base = doc.createElement('base');
   base.href = url;
   doc.head.prepend(base);
@@ -168,18 +194,23 @@ function webSource(doc, url, fetcher) {
   const lang = doc.documentElement.lang || metaOf('og:locale').replace('_', '-');
   const published = metaOf('article:published_time', 'citation_publication_date', 'date');
   const image = metaOf('og:image', 'twitter:image'); // the picture the page shares itself with becomes its cover
+  const declaresArticle = /article/i.test(metaOf('og:type')) ||
+    /"\w*(Article|BlogPosting)"/.test([...doc.querySelectorAll('script[type="application/ld+json"]')].map(s => s.textContent).join());
   const source = { meta: {}, cover: image && fetcher(new URL(image, url).href).catch(() => null), toc: null, sections: [{ load }], resolve };
 
   async function load() {
-    // Many pages also carry their whole article for machines (schema.org's articleBody, or the
-    // JSON state their app boots from); when that holds clearly more than the page shows, it is read
-    // instead. It has to be found before Readability rearranges the document.
-    const embedded = embeddedArticle(doc);
+    // A page that says it is an article may carry the whole of it for machines too (schema.org's
+    // articleBody, or the JSON state its app boots from); when that holds clearly more than the page
+    // shows, it is read instead. It has to be found before Readability rearranges the document.
+    const embedded = declaresArticle ? embeddedArticle(doc) : '';
+    const walled = botWall(doc);
     const { Readability } = await import('../vendor/readability.js');
-    const article = new Readability(doc).parse() ?? { textContent: '' };
-    const fuller = embedded.length > article.textContent.length * 1.25 + 500;
-    if ((fuller ? embedded : article.textContent).trim().length < 500) throw new Error('That page has no article ebis can find.');
-    if (fuller) article.content = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
+    const article = new Readability(doc, { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
+    const fuller = embedded.length > article.textContent.length * 1.25 + 500 && sameText(embedded, article.textContent, metaOf('og:description', 'description'));
+    if ((fuller ? embedded : article.textContent).trim().length < 500) {
+      throw new Error(walled ? 'The site only shows its pages to a real browser.' : 'That page has no article ebis can find.');
+    }
+    if (fuller) article.content.innerHTML = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
     const when = new Date(article.publishedTime || published);
     const site = tidy(article.siteName) || new URL(url).hostname.replace(/^www\./, '');
     const meta = source.meta = {
@@ -187,13 +218,14 @@ function webSource(doc, url, fetcher) {
       author: withoutDate(tidy(article.byline).replace(/^by\s+/i, ''), when),
       site, lang: article.lang || lang, published: isNaN(when) ? '' : when.toISOString(),
     };
+    prune(article.content, meta, when, url);
     const date = isNaN(when) ? '' : when.toLocaleDateString(meta.lang || undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const line = (text, style) => text ? `<p style="text-align:center;${style}">${escape(text)}</p>` : '';
     return {
       html: '<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src blob: data:; style-src \'unsafe-inline\'">' +
         `<base href="${escape(url)}"></head><body><h1>${escape(meta.title)}</h1>` +
         line(meta.author, 'font-variant-caps:small-caps') + line([meta.site, date].filter(Boolean).join(' · '), 'font-style:italic') +
-        `${article.content}</body></html>`,
+        `${article.content.innerHTML}</body></html>`,
     };
   }
   function resolve(href) {
@@ -211,14 +243,67 @@ function withoutSite(title, site) {
   return title.replace(new RegExp(`^${name}\\s+[|–—·•:-]\\s+|\\s+[|–—·•:-]\\s+${name}$`, 'i'), '') || title;
 }
 
+// Whether text names the article's own date, give or take a time zone.
+const onDay = (text, when) => Math.abs(new Date(text) - when) < 2 * 864e5;
+
 // A byline that ends with the article's own date (as many print it beside the name) gives it up,
-// since the date has its line too. Give or take a time zone, the dates must agree.
+// since the date has its line too.
 function withoutDate(byline, when) {
   const words = byline.split(' ');
   for (let k = 1; k < words.length; k++) {
-    if (Math.abs(new Date(words.slice(-k).join(' ')) - when) < 2 * 864e5) return words.slice(0, -k).join(' ').replace(/[\s,·|–—-]+$/, '');
+    if (onDay(words.slice(-k).join(' '), when)) return words.slice(0, -k).join(' ').replace(/[\s,·|–—-]+$/, '');
   }
   return byline;
+}
+
+// Text only screen readers are meant to hear, by its conventional classes: it never shows on the page.
+const HIDDEN = ['sr-only', 'visually-hidden', 'screen-reader-text'];
+
+// What Readability keeps that a reader of the article doesn't need: the title, byline and date, which
+// ebis sets itself; blocks laid out twice in a row (once for phones, once for desktops); text only
+// screen readers hear; pictures of people beside their names (the author's portrait, avatars); lists
+// of links that lead to other pages (related stories) with the heading over them, and headings left
+// with nothing under them; and a link that skips to the article itself.
+function prune(root, { title, author }, when, url) {
+  const text = el => tidy(el.textContent);
+  const is = (s, what) => !!what && s.toLowerCase() === what.toLowerCase();
+  const here = a => a.href.split('#')[0] === url.split('#')[0]; // Readability makes every link absolute
+  let previous = '';
+  for (const el of root.querySelectorAll('p, h1, h2, h3, h4, h5, h6')) {
+    const t = text(el);
+    if (t && (t === previous || is(t, title) || (/^by\s*/i.test(t) && is(t.replace(/^by\s*/i, ''), author)) || (t.length < 40 && onDay(t, when)))) el.remove();
+    else if (t) previous = t;
+  }
+  for (const el of root.querySelectorAll(HIDDEN.map(c => `.${c}`).join())) el.remove();
+  for (const img of root.querySelectorAll('img')) if (/\bavatar\b/i.test(img.alt) || is(tidy(img.alt), author)) img.remove();
+  const away = li => {
+    const linked = [...li.querySelectorAll('a[href]')].filter(a => !here(a)).reduce((n, a) => n + text(a).length, 0);
+    return linked > 0 && linked >= text(li).length * 0.8;
+  };
+  for (const list of root.querySelectorAll('ul, ol')) {
+    if (list.children.length < 2 || ![...list.children].every(away)) continue;
+    let box = list;
+    while (box.parentElement !== root && [...box.parentElement.children].every(el => el === box || /^h\d$/.test(el.localName))) box = box.parentElement;
+    box.remove();
+  }
+  for (const a of [...root.querySelectorAll('a[href*="#"]')].filter(here)) {
+    const target = root.querySelector(`[id="${CSS.escape(decodeURIComponent(a.hash.slice(1)))}"]`);
+    const block = a.closest('p, li, div');
+    if (target && block && text(target).length > text(root).length / 2 && text(block) === text(a)) block.remove();
+  }
+  const between = (a, b) => { const r = root.ownerDocument.createRange(); r.setStartAfter(a); r.setEndBefore(b); return tidy(r.toString()); };
+  let kept = null;
+  for (const img of root.querySelectorAll('img')) {
+    if (kept && img.alt && img.alt === kept.alt && !between(kept, img)) img.remove();
+    else kept = img;
+  }
+  for (const figure of root.querySelectorAll('figure')) if (!figure.querySelector('img, svg, picture') && !text(figure)) figure.remove();
+  const blocks = [...root.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, figure, img, table, pre, blockquote, dl')];
+  blocks.reduceRight((next, el) => { // a heading must have something under it before the next heading of its rank
+    const heading = /^h\d$/.test(el.localName);
+    if (heading && (!next || (/^h\d$/.test(next.localName) && next.localName[1] <= el.localName[1]))) return el.remove(), next;
+    return el;
+  }, null);
 }
 
 // The full article where a page embeds it for machines: schema.org's articleBody, or a long
@@ -243,9 +328,33 @@ function embeddedArticle(doc) {
   return best;
 }
 
-// Article prose is long and sentence-shaped; markup is only prose when it holds paragraphs.
-const prose = s => s.length > 600 && (looksLikeMarkup(s) ? /<p[\s>]/.test(s) : /[.!?] /.test(s));
+// Article prose is long and sentence-shaped (in any script); markup is only prose when it holds paragraphs.
+const prose = s => s.length > 600 && (looksLikeMarkup(s) ? /<p[\s>]/.test(s) : /[.!?]\s|[。！？]/.test(s));
 const looksLikeMarkup = s => /^\s*</.test(s) && /<\/(p|div|h[1-6]|section|article)>/.test(s);
+
+// The signature of a bot wall's challenge page (DataDome, Cloudflare, PerimeterX, Incapsula):
+// its vendor's script or stock title. Ordinary pages can carry the same scripts, so this only
+// ever gets consulted when no article could be found.
+const botWall = doc => /captcha-delivery\.com|challenge-platform|px-captcha|_incapsula_|distil_ron|cf-chl-|<title[^>]*>\s*(just a moment|attention required|please wait|checking your browser)/i
+  .test(doc.documentElement.innerHTML);
+
+// An embedded candidate is the article only if some of what the page showed is part of it:
+// a few samples from the visible text must appear in it too. When the page showed almost
+// nothing, its description (written from the article) samples for it instead.
+const sameText = (embedded, shown, description = '') => {
+  const norm = s => textOf(s).replace(/\s+/g, ' ').toLowerCase();
+  const full = norm(embedded), seen = norm(`${shown} ${description}`);
+  if (seen.length < 60) return true;
+  return [0.1, 0.4, 0.7].some(at => full.includes(seen.slice(Math.floor(seen.length * at), Math.floor(seen.length * at) + 60)));
+};
+
+// Markup becomes its text (tags and entities resolved); anything else is text already.
+const textOf = s => {
+  if (!looksLikeMarkup(s)) return s;
+  const div = document.createElement('div');
+  div.innerHTML = s;
+  return div.textContent;
+};
 
 // Plain text: blank lines separate paragraphs and single line breaks are wrapping,
 // unless there are no blank lines at all, in which case each line is a paragraph.

@@ -156,6 +156,7 @@ class Writer {
   }
 
   picture(el, look) {
+    if (el.closest('[aria-hidden="true"]') || /^(presentation|none)$/.test(el.getAttribute('role'))) return; // decoration: icons, flourishes
     const href = node => node?.getAttribute('href') || node?.getAttribute('xlink:href');
     const src = el.localName === 'img' ? el.currentSrc || el.getAttribute('src')
       : el.localName === 'image' ? href(el)
@@ -213,8 +214,10 @@ function finish(sections) {
   const body = [...weight].sort((a, b) => b[1] - a[1])[0]?.[0];
 
   for (const section of sections) {
-    // Headings: real ones, short lines set clearly larger than the text, and short lines set all in bold.
+    // Headings: real ones, and in the running text (not a list, table, caption or quotation), short
+    // lines set clearly larger than the text, and short lines set all in bold.
     const heads = [...section.querySelectorAll('[data-fs]')].filter(el => el.dataset.h || (el.localName === 'p' && !el.querySelector('img') &&
+      !el.closest('li, td, th, dd, figcaption, caption, blockquote') &&
       ((el.dataset.fs >= body * 1.2 && textOf(el).length < 120) || (textOf(el).length < 90 && !/[.:,;]$/.test(textOf(el)) && boldOnly(el)))));
     const sizes = [...new Set(heads.map(el => +el.dataset.fs))].sort((a, b) => b - a);
     for (const el of heads) {
@@ -315,7 +318,9 @@ async function storeImages(sections, fetcher) {
   for (const { dataset: { src } } of imgs) if (!byURL.has(src)) byURL.set(src, load(src, `i${byURL.size}`).catch(() => null));
   await Promise.all(imgs.map(async img => {
     const name = await byURL.get(img.dataset.src);
-    if (!name) { // a picture that can't be fetched leaves nothing behind, not even its empty frame
+    // A picture that can't be fetched, or a small one with no description (an icon, a tracking
+    // pixel), leaves nothing behind, not even its empty frame.
+    if (!name || (!img.alt && Math.max(...sizes[name]) < 48)) {
       const figure = img.closest('figure');
       img.remove();
       if (figure && !figure.textContent.trim() && !figure.querySelector('img')) figure.remove();

@@ -84,7 +84,9 @@ export async function open(id, progress) {
   const files = unzipSync(new Uint8Array(await zip.arrayBuffer()));
   const book = JSON.parse(strFromU8(files['book.json']));
   const urls = {};
-  for (const name of Object.keys(book.images)) urls[name] = URL.createObjectURL(new Blob([files[`img/${name}`]]));
+  for (const name of Object.keys(book.images)) { // a browser knows other pictures by their bytes, but an SVG only by its type
+    urls[name] = URL.createObjectURL(new Blob([files[`img/${name}`]], name.endsWith('.svg') ? { type: 'image/svg+xml' } : {}));
+  }
   const pkg = { book, urls };
   opened.set(id, pkg);
   return pkg;

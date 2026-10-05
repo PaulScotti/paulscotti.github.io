@@ -228,7 +228,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow figure img { display: block; margin: 0 auto; }
 .flow section > figure:only-child { height: var(--page-h); margin: 0; display: grid; align-content: center; } /* a page that is only a picture */
 .flow section > figure:only-child img { max-height: var(--page-h); }
-.flow figcaption { margin-top: .6em; font-size: .84em; line-height: 1.4; color: var(--ink-2); text-align: center; hyphens: manual; text-wrap: balance; }
+.flow :is(figcaption, figure > p) { margin-top: .6em; font-size: .84em; line-height: 1.4; color: var(--ink-2); text-align: center; text-indent: 0; hyphens: manual; text-wrap: balance; } /* a figure's words are its caption and credit */
 .flow table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 1em 0; font-size: .82em; line-height: 1.35; text-align: left; hyphens: manual; }
 .flow :is(td, th) { padding: .3em .55em; border-bottom: 1px solid var(--rule); vertical-align: top; overflow-wrap: anywhere; }
 .flow th { font-weight: 700; }

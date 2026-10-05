@@ -86,7 +86,10 @@ async function proxy(target) {
     return new Response('That isn’t a web address.', { status: 400 });
   }
   if (!/^https?:$/.test(url.protocol)) return new Response('Only web links can be added.', { status: 400 });
-  const res = await fetch(url, { headers: BROWSER }).catch(() => null);
+  const silent = new AbortController(); // a site that never answers can't hold up what's waiting behind it
+  const timer = setTimeout(() => silent.abort(), 20000);
+  const res = await fetch(url, { headers: BROWSER, signal: silent.signal }).catch(() => null);
+  clearTimeout(timer);
   if (!res) return new Response('That page can’t be reached.', { status: 502 });
   if (!res.ok) return new Response(`The site ${res.status < 500 ? 'wouldn’t give ebis that page' : 'isn’t working right now'} (it answered ${res.status}).`, { status: 502 });
   return new Response(res.body, {
