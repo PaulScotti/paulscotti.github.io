@@ -7,10 +7,12 @@ Named for the myna, the bird that learns to talk by copying what it hears.
 
 - Each day gets the cards that are due, plus 1 to 10 new words: 10 when nothing is due, one fewer
   for every 10 reviews. OpenAI picks new words that come up most in everyday conversation, one per
-  meaning, against everything already in the deck. Words you add join that day's session.
-- A card is asked Korean first or English first, chosen at random for each card each day. Its
-  answer is said after a moment to think. → or volume up is correct, ← or volume down is incorrect.
-  Answering early says the answer, then moves on.
+  meaning, against everything already in the deck. Words you add join that day's session. Once the
+  day is done, the next session can be started early: the next day's due cards and new words for them.
+- A session opens with its new words, stepped through with ← and → (Previous and Next). Then each
+  card is asked Korean first or English first, chosen at random for each card each day. Its answer is
+  said after a moment to think, or at once on any key; then → or volume up is correct, ← or volume
+  down is incorrect. It ends with an overview: time, cards, first-try accuracy, levels gained.
 - Scheduling is FSRS-6 with its default parameters and two grades. A card's level (0 to 9) follows
   its stability: it climbs a level each time the days it can be remembered double, and at 256 days
   (level 9) it is mastered and never asked again. As it climbs it is asked as the word, then in

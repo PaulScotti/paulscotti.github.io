@@ -59,6 +59,7 @@ h1 { margin: 0; font-weight: 400; letter-spacing: .01em; }
   transition: transform .2s var(--ease);
 }
 .begin:active { transform: scale(.97); }
+.early { height: 44px; padding: 0 20px; border: 1px solid var(--rule); border-radius: 22px; color: var(--ink-2); }
 
 .levels { margin: 0 0 28px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; align-items: end; }
 .levels div { display: grid; justify-items: center; gap: 5px; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
@@ -74,6 +75,7 @@ h1 { margin: 0; font-weight: 400; letter-spacing: .01em; }
   position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--bg);
   padding: env(safe-area-inset-top) 20px calc(env(safe-area-inset-bottom) + 20px);
 }
+.session { flex: 1; display: flex; flex-direction: column; }
 .progress { height: 2px; margin: 0 -20px; background: var(--rule); }
 .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s var(--ease); }
 .left { margin: 12px 0 0; text-align: right; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
@@ -93,12 +95,24 @@ h1 { margin: 0; font-weight: 400; letter-spacing: .01em; }
 .card.shown .answer { animation: rise .3s var(--ease); }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 
-.grade { display: flex; gap: 12px; max-width: 560px; width: 100%; margin: 0 auto; }
-.grade button {
+.controls { display: flex; gap: 12px; max-width: 560px; width: 100%; margin: 0 auto; }
+.controls button {
   flex: 1; height: 56px; border: 1px solid var(--rule); border-radius: 14px; font-size: 18px; color: var(--ink-2);
   transition: background .15s, color .15s;
 }
-.grade button:active, .grade button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.controls button:active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* The end of a session */
+
+.summary { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 560px; width: 100%; margin: 0 auto; padding: 24px 4px; overflow-y: auto; }
+.summary h2 { margin: 0 0 14px; font-weight: 400; font-size: clamp(34px, 9vw, 46px); line-height: 1.15; }
+.summary p { margin: 0 0 8px; font-size: 18px; color: var(--ink-2); text-wrap: balance; }
+.summary p:empty { display: none; }
+.summary h3 { margin: 26px 0 8px; font-weight: 400; font-size: 15px; color: var(--accent); font-variant-caps: all-small-caps; letter-spacing: .1em; }
+.summary ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.summary li { display: flex; gap: 14px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); font-style: italic; }
+.summary li span { font-size: 21px; color: var(--ink); font-style: normal; }
+.summary .begin { align-self: flex-start; margin-top: 32px; }
 
 /* Adding words */
 
@@ -121,7 +135,7 @@ textarea { display: block; width: 100%; height: 120px; padding: 10px 14px; resiz
 
 @media (hover: hover) {
   .quiet:hover { color: var(--ink); }
-  .grade button:hover { color: var(--ink); background: var(--shade); }
+  :is(.controls button, .early):hover { color: var(--ink); background: var(--shade); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }

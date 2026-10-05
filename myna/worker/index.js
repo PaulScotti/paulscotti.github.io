@@ -38,20 +38,23 @@ async function route(request, env, ctx) {
   if (!given || !crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY))) return new Response('Wrong password.', { status: 401 });
   const body = await request.json();
   const path = new URL(request.url).pathname;
-  if (path === '/today') return Response.json(await today(env, ctx, body.day));
+  if (path === '/today') return Response.json(await today(env, ctx, body.day, body.early));
   if (path === '/grade') return Response.json(await grade(env, ctx, body));
   if (path === '/add') return Response.json(await add(env, body));
   if (path === '/speak') return speak(env, body);
   return new Response('Not found.', { status: 404 });
 }
 
-// The day's cards: those due, and new words. The fewer reviews a day holds, the more new words it gets.
-async function today(env, ctx, day) {
+// A session's cards: those due, and new words, the more of them the fewer reviews it holds. The day's own
+// session counts what was already answered and met that day, so it holds steady as the day goes on; a session
+// started early takes the cards of the next day that has any due, and counts only itself.
+async function today(env, ctx, day, early) {
   const db = env.DB;
+  const until = early ? (await db.prepare('SELECT min(due) AS due FROM cards WHERE level BETWEEN 1 AND 8 AND due > ?').bind(day).first()).due || day : day;
   const { load, met, pool } = await db.prepare(`SELECT
-    count(CASE WHEN level BETWEEN 1 AND 8 AND (due <= ?1 OR last = ?1) AND intro != ?1 THEN 1 END) AS load,
-    count(CASE WHEN intro = ?1 OR (s IS NULL AND intro < ?1) THEN 1 END) AS met,
-    count(CASE WHEN intro IS NULL THEN 1 END) AS pool FROM cards`).bind(day).first();
+    count(CASE WHEN level BETWEEN 1 AND 8 AND ${early ? 'due <= ?2' : '(due <= ?2 OR last = ?1) AND intro != ?1'} THEN 1 END) AS load,
+    count(CASE WHEN ${early ? 's IS NULL AND intro <= ?1' : 'intro = ?1 OR (s IS NULL AND intro < ?1)'} THEN 1 END) AS met,
+    count(CASE WHEN intro IS NULL THEN 1 END) AS pool FROM cards`).bind(day, until).first();
   const { most, least, reviewsEach } = config.newWords;
   const want = Math.max(least, most - Math.floor(load / reviewsEach)) - met;
   let ready = pool;
@@ -59,10 +62,10 @@ async function today(env, ctx, day) {
   if (want > 0) await db.prepare('UPDATE cards SET intro = ?1 WHERE id IN (SELECT id FROM cards WHERE intro IS NULL ORDER BY id LIMIT ?2)').bind(day, want).run();
   if (ready - Math.max(want, 0) < POOL) ctx.waitUntil(invent(env, POOL - ready + Math.max(want, 0)));
 
-  const asked = 'SELECT * FROM cards WHERE ((level BETWEEN 1 AND 8 AND due <= ?1) OR (s IS NULL AND intro <= ?1))';
-  const { results: unwritten } = await db.prepare(`${asked} AND ask_ko IS NULL`).bind(day).all(); // a variation that failed to be written
+  const asked = 'SELECT * FROM cards WHERE ((level BETWEEN 1 AND 8 AND due <= ?2) OR (s IS NULL AND intro <= ?1))';
+  const { results: unwritten } = await db.prepare(`${asked} AND ask_ko IS NULL`).bind(day, until).all(); // a variation that failed to be written
   await Promise.all(unwritten.map(c => vary(env, c)));
-  const { results: cards } = await db.prepare(asked).bind(day).all();
+  const { results: cards } = await db.prepare(asked).bind(day, until).all();
   const { results: counts } = await db.prepare('SELECT level, count(*) AS n FROM cards GROUP BY level').all();
   const levels = Array(10).fill(0);
   for (const { level, n } of counts) levels[level] = n;
@@ -71,7 +74,7 @@ async function today(env, ctx, day) {
 
 // A card as the app asks it. Which language comes first is random, but fixed for the card all day.
 const shape = (c, day) => ({
-  id: c.id, ko: c.ask_ko, en: c.ask_en, word: c.ko, gloss: c.en, fresh: c.s === null,
+  id: c.id, ko: c.ask_ko, en: c.ask_en, word: c.ko, gloss: c.en, level: c.level, fresh: c.s === null,
   front: [...`${c.id}/${day}`].reduce((h, ch) => Math.imul(h ^ ch.charCodeAt(0), 16777619), 2166136261) < 0 ? 'en' : 'ko',
 });
 

@@ -31,6 +31,7 @@
   <section class="today">
     <p id="plan" class="plan"></p>
     <button id="begin" class="begin">Begin<span aria-hidden="true"> →</span></button>
+    <button id="early" class="early">Start the next session early</button>
   </section>
   <figure id="levels" class="levels" aria-label="Words by level"></figure>
   <footer>
@@ -40,21 +41,34 @@
 </main>
 
 <section id="study" class="study" hidden>
-  <div class="progress"><i id="progress"></i></div>
-  <p id="left" class="left"></p>
-  <div id="card" class="card">
-    <p id="tag" class="tag">New word</p>
-    <p id="front" class="front"></p>
-    <div id="answer" class="answer">
-      <p id="back" class="back"></p>
-      <p id="base" class="base"></p>
+  <div id="session" class="session">
+    <div class="progress"><i id="progress"></i></div>
+    <p id="left" class="left"></p>
+    <div id="card" class="card">
+      <p id="tag" class="tag"></p>
+      <p id="front" class="front"></p>
+      <div id="answer" class="answer">
+        <p id="back" class="back"></p>
+        <p id="base" class="base"></p>
+      </div>
+    </div>
+    <div id="meet" class="controls">
+      <button data-good="false"><span aria-hidden="true">← </span>Previous</button>
+      <button data-good="true">Next<span aria-hidden="true"> →</span></button>
+    </div>
+    <div id="ask" class="controls"><button data-good="true">Show answer</button></div>
+    <div id="grade" class="controls">
+      <button data-good="false"><span aria-hidden="true">← </span>Incorrect</button>
+      <button data-good="true">Correct<span aria-hidden="true"> →</span></button>
     </div>
   </div>
-  <div id="grade" class="grade">
-    <button data-good="false"><span aria-hidden="true">← </span>Incorrect</button>
-    <button data-good="true">Correct<span aria-hidden="true"> →</span></button>
+  <div id="summary" class="summary" hidden>
+    <h2>Good job.</h2>
+    <p id="stats"></p>
+    <p id="climbed"></p>
+    <div id="learned"><h3>New words</h3><ul></ul></div>
+    <button id="home" class="begin">Home<span aria-hidden="true"> →</span></button>
   </div>
-  <div id="next" class="grade"><button>Next<span aria-hidden="true"> →</span></button></div>
 </section>
 
 <dialog id="sheet" class="sheet">

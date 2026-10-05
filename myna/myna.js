@@ -1,20 +1,23 @@
-// Myna: Korean flashcards, said aloud. A card is asked one way, Korean or English first; after a moment
-// to think its answer is said too, and it is marked correct or incorrect with → and ←, the buttons, or
-// the volume keys in the Android app. Marking it before the answer comes says the answer, then moves on.
+// Myna: Korean flashcards, said aloud. A session first shows its new words, stepped through with ← and →, then
+// asks each card one way, Korean or English first. The answer comes after a moment to think, or at once on any
+// key, and then the card is marked: → correct, ← incorrect. In the Android app the volume keys do the same.
 
 import config from './config.js';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8788' : 'https://myna.scottibrain.workers.dev';
-const GAP = 4; // cards between meeting a word and being asked it, or between missing a card and its next asking
+const GAP = 4; // cards between missing a card and its next asking; new words are first asked among this many reviews
+const GRACE = 600; // ms after an answer comes by itself in which a key still only meant "show it"
 const android = window.MynaAndroid; // the Android app's bridge; a browser has none
 const $ = id => document.getElementById(id);
 const audio = new AudioContext();
 const clips = new Map(); // "lang:text" → that line's mp3, fetched once
 let password = localStorage.getItem('myna.password'); // typed once on each device
-let day, levels, queue = [], done = 0, card = null, run = 0, shown = false, verdict = null, timer = 0, saving = false, sound = null, toasting = 0;
+let day, levels, words = [], queue = [], at = 0, card = null, run = 0, shown = false, grace = 0, timer = 0, saving = false, sound = null, toasting = 0;
+let tally; // the session so far: when it began, its new words, and each card's first answer and its level before and after
 
 // The day turns at 4 am, so a late session counts for the day it began.
 const today = () => new Date(Date.now() - 4 * 3600e3).toLocaleDateString('sv');
+const shuffle = list => list.map(c => [Math.random(), c]).sort((a, b) => a[0] - b[0]).map(([, c]) => c);
 
 async function api(path, body) {
   const res = await fetch(API + path, {
@@ -29,22 +32,25 @@ async function api(path, body) {
   return res;
 }
 
-async function load() {
+// Today's session, or with early, the next one. New words are first asked among the first few reviews.
+async function load(early) {
   day = today();
-  $('plan').textContent = 'Getting today’s cards…';
-  $('begin').hidden = true;
-  const res = await (await api('/today', { day })).json();
-  queue = res.cards.map(c => [Math.random(), c]).sort((a, b) => a[0] - b[0]).map(([, c]) => c);
+  $('plan').textContent = early ? 'Getting the next session…' : 'Getting today’s cards…';
+  $('begin').hidden = $('early').hidden = true;
+  const res = await (await api('/today', { day, early })).json();
+  words = res.cards.filter(c => c.fresh);
+  const due = shuffle(res.cards.filter(c => !c.fresh));
+  queue = [...shuffle([...words.map(c => ({ ...c, fresh: false })), ...due.slice(0, GAP)]), ...due.slice(GAP)];
   levels = res.levels;
-  done = 0;
-  for (const c of queue.slice(0, 2)) clip(c.ko, 'ko'), clip(c.en, 'en');
+  soon([...words, ...queue]);
   desk();
 }
 
 function desk() {
-  const fresh = queue.filter(c => c.fresh).length, due = queue.length - fresh;
+  const fresh = words.length, due = queue.length - fresh;
   $('plan').textContent = queue.length ? `${[due && `${due} to review`, fresh && `${fresh} new word${fresh > 1 ? 's' : ''}`].filter(Boolean).join(' and ')}.` : 'Done for today.';
   $('begin').hidden = !queue.length;
+  $('early').hidden = !!queue.length;
   const most = Math.max(...levels);
   $('levels').innerHTML = levels.map((n, l) => `<div style="--h:${n / most}"><span>${n}</span><i></i><b>${l}</b></div>`).join('')
     + '<figcaption>Words by level, from new to mastered</figcaption>';
@@ -53,7 +59,7 @@ function desk() {
 // Where the app is: the desk, a session (#study), or adding words (#add). Back leaves each.
 function route() {
   const studying = location.hash === '#study';
-  if (!studying && card) { // left in the middle of a session
+  if (!studying && !$('study').hidden) { // back from a session, finished or not
     silence();
     card = null;
     load();
@@ -71,65 +77,98 @@ function route() {
 function begin() {
   audio.resume();
   location.hash = 'study';
-  next();
+  tally = { start: Date.now(), met: words, cards: new Map() };
+  $('session').hidden = false;
+  $('summary').hidden = true;
+  at = 0;
+  if (words.length) meet();
+  else next();
+}
+
+// The new words, one at a time: Korean, English, Korean again.
+function meet() {
+  silence();
+  card = words[at];
+  show(['ko', 'en'], words.length > 1 ? `New word · ${at + 1} of ${words.length}` : 'New word', 'meet', at, words.length - at + queue.length);
+  soon([...words.slice(at + 1), ...queue]);
+  say(run, [[card.ko, 'ko'], [card.en, 'en'], [card.ko, 'ko']]);
 }
 
 function next() {
   silence();
   card = queue.shift();
-  if (!card) return history.back(), load();
-  shown = false;
-  verdict = null;
-  const mine = run, [q, a] = card.fresh || card.front === 'ko' ? ['ko', 'en'] : ['en', 'ko'];
+  if (!card) return summary();
+  const mine = run, [q] = show(card.front === 'ko' ? ['ko', 'en'] : ['en', 'ko'], '', 'ask', words.length + tally.cards.size, queue.length + 1);
+  soon(queue);
+  say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, length * config.think * 1000, true); });
+}
+
+// Fills in the card, its controls and the progress so far; returns the card's two sides in the order asked.
+function show([q, a], tag, controls, done, left) {
   $('front').textContent = card[q];
   $('front').lang = q;
   $('back').textContent = card[a];
   $('back').lang = a;
   $('base').textContent = card.ko === card.word ? '' : `${card.word} · ${card.gloss}`;
-  $('tag').hidden = !card.fresh;
-  $('grade').hidden = card.fresh;
-  $('next').hidden = !card.fresh;
-  $('card').classList.toggle('shown', card.fresh);
-  for (const b of $('grade').children) b.classList.remove('on');
-  $('left').textContent = `${queue.length + 1} left`;
-  $('progress').style.width = `${done / (done + queue.length + 1) * 100}%`;
-  for (const c of queue.slice(0, 2)) clip(c.ko, 'ko'), clip(c.en, 'en');
-  if (card.fresh) say(mine, [[card.ko, 'ko'], [card.en, 'en'], [card.ko, 'ko']]);
-  else say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, length * config.think * 1000); });
+  $('tag').textContent = tag;
+  shown = controls === 'meet';
+  $('card').classList.toggle('shown', shown);
+  for (const id of ['meet', 'ask', 'grade']) $(id).hidden = id !== controls;
+  $('left').textContent = `${left} left`;
+  $('progress').style.width = `${done / (done + left) * 100}%`;
+  return [q, a];
 }
 
-function reveal() {
+function reveal(auto) {
   if (shown) return;
   shown = true;
+  grace = auto ? performance.now() + GRACE : 0;
   silence();
   $('card').classList.add('shown');
-  const mine = run, a = card.front === 'ko' ? 'en' : 'ko';
-  say(mine, [[card[a], a]]).then(() => { if (mine === run && verdict !== null) answer(verdict); });
+  $('ask').hidden = true;
+  $('grade').hidden = false;
+  const a = card.front === 'ko' ? 'en' : 'ko';
+  say(run, [[card[a], a]]);
 }
 
 function press(good) {
   if (!card || saving) return;
   audio.resume();
-  if (card.fresh) {
-    queue.splice(GAP, 0, { ...card, fresh: false });
-    done++;
-    return next();
+  if (card.fresh) { // stepping through the new words; past the last one, the cards begin
+    at = Math.max(at + (good ? 1 : -1), 0);
+    return at < words.length ? meet() : next();
   }
-  if (shown) return answer(good);
-  verdict = good;
-  $('grade').children[good ? 1 : 0].classList.add('on');
-  reveal();
+  if (!shown) return reveal();
+  if (performance.now() < grace) return;
+  answer(good);
 }
 
 async function answer(good) {
   const answered = card;
   silence();
   saving = true;
-  await api('/grade', { id: answered.id, good, day }).finally(() => { saving = false; });
+  const res = await api('/grade', { id: answered.id, good, day }).finally(() => { saving = false; });
+  const { level } = await res.json();
   if (card !== answered) return; // the session was left while saving
+  tally.cards.set(answered.id, { good, from: answered.level, ...tally.cards.get(answered.id), to: level });
   if (!good) queue.splice(GAP, 0, answered);
-  done++;
   next();
+}
+
+function summary() {
+  const cards = [...tally.cards.values()], right = cards.filter(c => c.good).length;
+  const minutes = Math.max(1, Math.round((Date.now() - tally.start) / 6e4));
+  const up = cards.filter(c => c.to > c.from).length, mastered = cards.filter(c => c.to === 9).length;
+  $('stats').textContent = `${minutes} minute${minutes > 1 ? 's' : ''} · ${cards.length} card${cards.length > 1 ? 's' : ''} · ${Math.round(right / cards.length * 100)}% right the first time`;
+  $('climbed').textContent = up ? `${up} went up a level${mastered ? `, and ${mastered} ${mastered > 1 ? 'are' : 'is'} now mastered` : ''}.` : '';
+  $('learned').hidden = !tally.met.length;
+  $('learned').querySelector('ul').replaceChildren(...tally.met.map(c => {
+    const li = document.createElement('li');
+    li.append(Object.assign(document.createElement('span'), { lang: 'ko', textContent: c.word }), c.gloss);
+    return li;
+  }));
+  $('session').hidden = true;
+  $('summary').hidden = false;
 }
 
 // Says each [text, lang] in turn, resolving with the last one's length in seconds. A newer turn
@@ -161,6 +200,9 @@ function clip(text, lang) {
   return clips.get(key);
 }
 
+// The next two cards' lines are fetched ahead, so they play at once.
+const soon = cards => { for (const c of cards.slice(0, 2)) clip(c.ko, 'ko'), clip(c.en, 'en'); };
+
 // Adding words: they join today's session as new words.
 
 $('add').onclick = () => { location.hash = 'add'; };
@@ -174,23 +216,28 @@ $('words').onsubmit = async e => {
   const { cards, had } = await res.json();
   form.reset();
   $('sheet').close();
-  queue.push(...cards);
-  desk();
+  load();
   toast([cards.length && `Added ${cards.map(c => c.word).join(', ')}.`, had.length && `Already had ${had.join(', ')}.`].filter(Boolean).join(' '));
 };
 
-// Keys: → correct, ← incorrect (the Android app turns its volume keys into these), Esc back to the desk.
+// Keys: → and ← (the Android app turns its volume keys into these), Esc back to the desk.
 
 addEventListener('keydown', e => {
   if (e.repeat || $('sheet').open) return;
   if (e.key === 'Escape' && location.hash === '#study') history.back();
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-  if (location.hash === '#study') press(e.key === 'ArrowRight');
-  else if (e.key === 'ArrowRight' && !$('desk').hidden && !$('begin').hidden) begin();
+  if (location.hash !== '#study') {
+    if (e.key === 'ArrowRight' && !$('desk').hidden && !$('begin').hidden) begin();
+  } else if (!$('summary').hidden) history.back();
+  else press(e.key === 'ArrowRight');
 });
-for (const b of $('grade').children) b.onclick = () => press(b.dataset.good === 'true');
-$('next').onclick = () => press(true);
+for (const b of document.querySelectorAll('.controls button')) b.onclick = () => press(b.dataset.good === 'true');
 $('begin').onclick = begin;
+$('early').onclick = async () => {
+  await load(true);
+  if (queue.length) begin();
+};
+$('home').onclick = () => history.back();
 
 $('lock').onsubmit = e => {
   e.preventDefault();
