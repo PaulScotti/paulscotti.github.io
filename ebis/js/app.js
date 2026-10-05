@@ -2,7 +2,7 @@
 
 import * as store from './store.js';
 import * as reader from './reader.js';
-import { importFile, importURL } from './sources.js';
+import { importFile, importPage, importURL } from './sources.js';
 import { $, template, escape, openSheet, closeLayers, toast } from './ui.js';
 
 const shelf = $('shelf');
@@ -20,6 +20,10 @@ async function route() {
   if (location.hash === '#/shared') { // something shared from another app on Android
     history.replaceState(null, '', location.pathname);
     receiveShared();
+  }
+  if (location.hash === '#/clip') { // the "Save to Ebis" bookmarklet has a page for the library
+    history.replaceState(null, '', location.pathname);
+    receiveClip();
   }
   const id = location.hash.match(/^#\/read\/(.+)$/)?.[1];
   if (id) {
@@ -102,6 +106,8 @@ $('add').onclick = () => {
     closeLayers();
     addURL(new FormData(e.target).get('url'));
   };
+  $('clip').href = bookmarklet;
+  $('clip').onclick = e => { e.preventDefault(); toast('Drag it to your bookmarks bar.'); }; // clicked here, it would save ebis
 };
 
 function add(title, run) {
@@ -161,6 +167,39 @@ async function receiveShared() {
       if (url) addURL(url);
     }
     await cache.delete(req);
+  }
+}
+
+// The "Save to Ebis" bookmarklet, dragged from the Add sheet, runs on the page being read (one a
+// paywall shows to a subscriber): it opens ebis at #/clip and, once ebis says it's ready, hands
+// it the page as the browser shows it, to ebis's own address alone. It is made from this function,
+// pointed at wherever this copy of ebis is served.
+const clip = (app, origin) => {
+  const ebis = open(`${app}#/clip`, 'ebis-clip');
+  addEventListener('message', function ready(e) {
+    if (e.source !== ebis || e.origin !== origin || e.data?.type !== 'ebis-clip-ready') return;
+    removeEventListener('message', ready);
+    ebis.postMessage({ type: 'ebis-clip', url: location.href, html: document.documentElement.outerHTML }, origin);
+  });
+};
+const bookmarklet = `javascript:${encodeURIComponent(`(${clip})(${JSON.stringify(location.origin + location.pathname)}, ${JSON.stringify(location.origin)})`)}`;
+
+// The page that opened ebis at #/clip can be anywhere, so the ready word goes to any origin;
+// the page itself comes from that window alone.
+function receiveClip() {
+  const page = window.opener;
+  const lost = () => toast('The page didn’t arrive. Drag “Save to Ebis” to your bookmarks bar again.');
+  if (!page) return lost();
+  toast('Waiting for the page…');
+  const giveUp = setTimeout(() => { removeEventListener('message', hear); lost(); }, 15000);
+  addEventListener('message', hear);
+  page.postMessage({ type: 'ebis-clip-ready' }, '*');
+  function hear(e) {
+    const { type, html, url } = e.data ?? {};
+    if (e.source !== page || type !== 'ebis-clip' || typeof html !== 'string' || typeof url !== 'string') return;
+    clearTimeout(giveUp);
+    removeEventListener('message', hear);
+    add(url.replace(/^https?:\/\/(www\.)?/, ''), progress => importPage(html, url, { fetcher: store.fetchBlob, progress }));
   }
 }
 

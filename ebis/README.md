@@ -12,14 +12,23 @@ that ebis typesets itself.
   [foliate-js](https://github.com/johnfactotum/foliate-js); web pages through Mozilla's Readability —
   and a paywalled page usually still ships its whole article in the raw HTML (a schema.org
   `articleBody` block, or the JSON state its app boots from), in which case that is read
-  instead of the taste the page shows; PDFs through `js/pdf.js`, which rebuilds paragraphs
-  from PDF.js's positioned text and cuts figures (and text set like a figure: tables,
-  equations) from the rendered page.
+  instead of the taste the page shows. An arXiv link opens the paper's HTML edition, which
+  LaTeXML made from its LaTeX, so its tables are tables and its formulas MathML. PDFs go
+  through `js/pdf.js`, which rebuilds paragraphs from PDF.js's positioned text and cuts
+  figures, tables and displayed equations from the rendered page, each with its caption or
+  number; line art cut in gray is drawn as ink, so it follows the theme.
+- Formulas are MathML, set in [Latin Modern Math](https://www.gust.org.pl/projects/e-foundry/lm-math).
+  TeX that a page leaves for MathJax or KaTeX to typeset in the browser is typeset as it is
+  read, by [Temml](https://temml.org).
 - `js/convert.js` mounts each document in a hidden frame so the browser resolves its CSS, then keeps
   only what a reader notices: structure, emphasis, alignment, images, links.
 - `js/reader.js` lays out one chapter at a time as a single page you scroll. A position is
   `[chapter, block, character]`, so it survives any device, type size or theme.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
+
+To keep a page you are reading — one a paywall shows only to a logged-in browser — drag the
+"Save to Ebis" bookmarklet from the Add sheet to your bookmarks bar. Clicked on an article,
+it opens ebis at `#/clip` and posts it the page's rendered HTML, which is read like any other page.
 
 ## Sync (Cloudflare, personal account)
 

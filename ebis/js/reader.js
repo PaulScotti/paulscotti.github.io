@@ -58,7 +58,7 @@ export function hide() {
 function render(c, target, fade) {
   chapter = Math.max(0, Math.min(c, book.data.chapters.length - 1));
   flow.innerHTML = book.data.chapters[chapter];
-  for (const img of flow.querySelectorAll('img[data-k]')) img.src = book.urls[img.dataset.k];
+  flow.querySelectorAll('img[data-k]').forEach(picture);
   // Doorways to the chapters before and after. They hold buttons, never paragraphs, so they
   // don't count as reading blocks and positions stay put.
   if (chapter > 0) flow.prepend(chapterLink(chapter - 1, 'Previous'));
@@ -67,6 +67,7 @@ function render(c, target, fade) {
   offsets = [];
   blocks.reduce((sum, el) => (offsets.push(sum), sum + (el.textContent.length || 1)), 0);
   measure();
+  fitFormulas();
   heads = book.data.toc.filter(t => book.data.ids[t.id] === chapter).map(t => {
     const el = flow.querySelector(`[id="${CSS.escape(t.id)}"]`);
     return { entry: t, b: el ? blockAt(el) : 0 };
@@ -81,6 +82,12 @@ function render(c, target, fade) {
   remember(anchor);
   paintMarks();
   if (fade) flow.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
+}
+
+// A picture cut from a PDF page is as wide as it was beside the page's text.
+function picture(img) {
+  img.src = book.urls[img.dataset.k];
+  if (img.dataset.em) img.style.setProperty('--w', `${img.dataset.em}em`);
 }
 
 function chapterLink(c, dir) {
@@ -278,7 +285,17 @@ onUpdate(changes => 'folio' in changes ? book && refresh() : relayout());
 function relayout() {
   if (!book || view.hidden) return;
   measure();
+  fitFormulas();
   scrollLoc(anchor);
+}
+
+// A displayed formula wider than the page is set smaller to fit, down to three quarters of the
+// text's size; past that it scrolls sideways. (All are measured first, then all are set.)
+function fitFormulas() {
+  const maths = [...flow.querySelectorAll('.eq > math')];
+  for (const m of maths) m.style.fontSize = '';
+  const sizes = maths.map(m => [m.clientWidth / m.scrollWidth, parseFloat(getComputedStyle(m).fontSize)]);
+  maths.forEach((m, i) => { const [fit, size] = sizes[i]; if (fit < 1) m.style.fontSize = `${Math.max(0.75, fit) * size}px`; });
 }
 
 // Keep the screen awake while reading, for a few minutes after each rest.
@@ -530,7 +547,7 @@ function noteFor(id, c) {
   for (let el = block.nextElementSibling; el && note.textContent.trim().length < 12 && !markerOnly(el); el = el.nextElementSibling) {
     note.append(el.cloneNode(true));
   }
-  for (const img of note.querySelectorAll('img[data-k]')) img.src = book.urls[img.dataset.k];
+  note.querySelectorAll('img[data-k]').forEach(picture);
   return note.textContent.trim() || note.querySelector('img') ? note : null;
 }
 

@@ -12,7 +12,9 @@ const ROLE = {
   p: 'leaf', dt: 'leaf', pre: 'leaf',
   h1: 'head', h2: 'head', h3: 'head', h4: 'head', h5: 'head', h6: 'head',
 };
-const SKIP = new Set(['head', 'script', 'style', 'noscript', 'template', 'iframe', 'object', 'embed', 'video', 'audio', 'canvas', 'form', 'input', 'button', 'select', 'textarea', 'nav']);
+const SKIP = new Set(['head', 'script', 'style', 'noscript', 'template', 'iframe', 'embed', 'video', 'audio', 'canvas', 'form', 'input', 'button', 'select', 'textarea', 'nav']);
+const MATHML = 'http://www.w3.org/1998/Math/MathML';
+const EQNO = /^\([\w.\-′']{1,8}\)$/; // an equation's number: (3), (2.1), (4a)
 const MONO = /mono|courier|consol/i;
 const TEXT_BLOCKS = 'p,h2,h3,h4,pre,li,dt,dd,th,td,caption,figcaption';
 const CHAPTER_LIMIT = 90000; // characters; longer chapters are split at a heading near the middle
@@ -63,6 +65,11 @@ class Writer {
     if (!leaf.textContent.trim() && !leaf.querySelector('img,math,a[id]')) leaf.remove();
   }
   text(s, look) {
+    // After a displayed formula, its number (1) sits at the margin; anything else goes on below it.
+    if (this.leaf?.classList.contains('eq') && /\S/.test(s)) {
+      if (EQNO.test(s.trim()) && !this.leaf.querySelector('.n')) return void this.leaf.append(Object.assign(h('span', { class: 'n' }), { textContent: s.trim() }));
+      this.close();
+    }
     if (look.pre) return this.add(s, look);
     if (s.length > PARAGRAPH_LIMIT * 2) {
       for (const part of s.match(new RegExp(`[\\s\\S]{1,${PARAGRAPH_LIMIT}}\\S*`, 'g'))) this.close(), this.text(part, look);
@@ -78,6 +85,7 @@ class Writer {
     });
   }
   add(el, look) {
+    if (this.leaf?.classList.contains('eq')) this.close();
     if (!this.leaf) this.startLeaf('p', look);
     this.inline.append(el);
     if (typeof el === 'string') {
@@ -106,8 +114,10 @@ class Writer {
       else this.ids.push(this.prefix + id);
     }
 
+    if (tag === 'svg' && framesText(el)) return this.textBox(el, look, cs);
     if (tag === 'img' || tag === 'image' || tag === 'svg') return this.picture(el, look);
-    if (tag === 'math') return this.add(cloneMath(el), look);
+    if (tag === 'object') return (/^image\//.test(el.type) || /\.(svg|png|jpe?g|gif|webp)$/i.test(el.data)) && this.picture(el, look); // an embedded picture, or nothing ebis can show
+    if (tag === 'math') return this.math(el, cs, look);
     if (tag === 'br') return this.leaf && this.inline.append(h('br'));
     if (tag === 'hr') return this.close(), this.box.append(this.place(h('hr')));
     if (inline) return this.span(el, cs, look, parent);
@@ -158,12 +168,46 @@ class Writer {
   picture(el, look) {
     if (el.closest('[aria-hidden="true"]') || /^(presentation|none)$/.test(el.getAttribute('role'))) return; // decoration: icons, flourishes
     const href = node => node?.getAttribute('href') || node?.getAttribute('xlink:href');
-    const src = el.localName === 'img' ? el.currentSrc || el.getAttribute('src')
+    const link = el.localName === 'img' ? el.currentSrc || el.getAttribute('src')
+      : el.localName === 'object' ? el.getAttribute('data')
       : el.localName === 'image' ? href(el)
-      : href(el.querySelector('image')) || svgURL(el);
-    if (src) this.add(h('img', { alt: el.getAttribute('alt') || '', 'data-src': src }), look);
+      : href(el.querySelector('image'));
+    const src = link ? URL.parse(link, el.baseURI)?.href ?? link : el.localName === 'svg' && svgURL(el);
+    // A picture cut from a PDF page says its width in the text's ems; one of set type (a formula,
+    // a table) is ink, and takes the theme's colors. A displayed formula, drawn, is a paragraph of
+    // its own, as one set in MathML is.
+    if (!src) return;
+    const img = h('img', { alt: el.getAttribute('alt') || '', 'data-src': src, ...el.dataset?.em && { 'data-em': el.dataset.em }, ...el.classList?.contains('ink') && { class: 'ink' } });
+    if (!el.classList?.contains('formula')) return this.add(img, look);
+    this.startLeaf('p', { ...look, cls: 'eq' });
+    this.inline.append(img);
+  }
+
+  // A displayed formula is a paragraph of its own; an inline one runs with its sentence.
+  math(el, cs, look) {
+    const math = cloneMath(el);
+    if (!/^block/.test(cs.display) && el.getAttribute('display') !== 'block') return this.add(math, look);
+    math.setAttribute('display', 'block');
+    const no = this.leaf?.textContent.trim().match(EQNO)?.[0]; // a number set before its formula, as Sphinx does
+    if (no) this.leaf.remove(), this.leaf = this.inline = null;
+    this.startLeaf('p', { ...look, cls: 'eq' });
+    this.inline.append(math);
+    if (no) this.leaf.append(Object.assign(h('span', { class: 'n' }), { textContent: no }));
+  }
+
+  // An SVG that only frames a passage or two of HTML (a tinted box around an example) is text.
+  textBox(svg, look, cs) {
+    this.open('aside');
+    for (const fo of svg.querySelectorAll('foreignObject')) this.walk(fo, look, cs);
+    this.end();
   }
 }
+
+const framesText = svg => {
+  const fo = svg.querySelectorAll('foreignObject');
+  const shapes = svg.querySelectorAll('path, rect, circle, ellipse, line, polyline, polygon, image').length;
+  return fo.length && fo.length <= 3 && shapes <= fo.length * 2 + 2 && [...fo].reduce((n, f) => n + f.textContent.trim().length, 0) > 60;
+};
 
 // How a block looks, in the few terms ebis keeps.
 function lookOf(cs, parent, pre) {
@@ -187,15 +231,56 @@ function trim(leaf) {
   texts.at(-1).data = texts.at(-1).data.trimEnd();
 }
 
-function cloneMath(node) {
-  if (node.nodeType === 3) return document.createTextNode(node.data);
-  const out = document.createElementNS('http://www.w3.org/1998/Math/MathML', node.localName);
-  for (const { name, value } of node.attributes) if (!/^on|href|style|src/i.test(name)) out.setAttribute(name, value);
+// MathML keeps its structure and attributes, but not its colors (the theme gives those); of its
+// inline styles, only the layout ones that converters write (a column's width, a cell's padding).
+// Of its semantics, only what is shown: an annotation (the formula's TeX, or its meaning in
+// content markup) is neither shown nor read.
+// A letter's style (bold, script, double-struck…) is its own character in MathML Core, one of
+// Unicode's mathematical alphanumerics; the mathvariant that sets it, inherited as it once was,
+// becomes those characters, as only "normal" (an upright mi) is still read.
+const MATH_STYLE = /^(width|padding(-\w+)?|math-depth|math-style|text-align)$/;
+function cloneMath(node, variant) {
+  const out = document.createElementNS(MATHML, node.localName);
+  variant = node.getAttribute('mathvariant') || variant;
+  if (variant === 'normal' && node.localName === 'mi') out.setAttribute('mathvariant', 'normal');
+  for (const { name, value } of node.attributes) {
+    if (name === 'style') {
+      const kept = value.split(';').filter(d => MATH_STYLE.test(d.split(':')[0].trim())).join(';');
+      if (kept) out.setAttribute('style', kept);
+    } else if (!/^(on|xmlns|xlink:)|^(href|src|id|mathcolor|mathbackground|color|background|mathvariant)$/i.test(name)) out.setAttribute(name, value);
+  }
   for (const child of node.childNodes) {
-    if (child.nodeType === 3 || child.namespaceURI === out.namespaceURI) out.append(cloneMath(child));
+    if (child.nodeType === 3 && TOKEN.test(node.localName)) out.append(styled(child.data.replace(/\s+/g, ' ').trim(), variant));
+    else if (child.localName === 'semantics') child.firstElementChild && out.append(cloneMath(child.firstElementChild, variant));
+    else if (child.namespaceURI === MATHML && !/^annotation/.test(child.localName)) out.append(cloneMath(child, variant));
   }
   return out;
 }
+const TOKEN = /^(mi|mn|mo|mtext|ms)$/; // only these hold text; elsewhere it is the markup's indentation
+
+// Where each style's capitals, Greek and digits start in Unicode's mathematical alphanumerics;
+// its small letters follow the capitals, and some letters were in Unicode before the rest (ℝ, ℱ).
+const VARIANTS = {
+  bold: [0x1d400, 0x1d6a8, 0x1d7ce], italic: [0x1d434, 0x1d6e2], 'bold-italic': [0x1d468, 0x1d71c],
+  script: [0x1d49c], 'bold-script': [0x1d4d0], fraktur: [0x1d504], 'bold-fraktur': [0x1d56c],
+  'double-struck': [0x1d538, 0, 0x1d7d8], 'sans-serif': [0x1d5a0, 0, 0x1d7e2], 'bold-sans-serif': [0x1d5d4, 0x1d756, 0x1d7ec],
+  'sans-serif-italic': [0x1d608], 'sans-serif-bold-italic': [0x1d63c, 0x1d790], monospace: [0x1d670, 0, 0x1d7f6],
+};
+const GREEK = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡϴΣΤΥΦΧΨΩ∇αβγδεζηθικλμνξοπρςστυφχψω∂ϵϑϰϕϱϖ';
+const EARLIER = {
+  0x1d455: 0x210e, 0x1d49d: 0x212c, 0x1d4a0: 0x2130, 0x1d4a1: 0x2131, 0x1d4a3: 0x210b, 0x1d4a4: 0x2110, 0x1d4a7: 0x2112,
+  0x1d4a8: 0x2133, 0x1d4ad: 0x211b, 0x1d4ba: 0x212f, 0x1d4bc: 0x210a, 0x1d4c4: 0x2134, 0x1d506: 0x212d, 0x1d50b: 0x210c,
+  0x1d50c: 0x2111, 0x1d515: 0x211c, 0x1d51d: 0x2128, 0x1d53a: 0x2102, 0x1d53f: 0x210d, 0x1d545: 0x2115, 0x1d547: 0x2119,
+  0x1d548: 0x211a, 0x1d549: 0x211d, 0x1d551: 0x2124,
+};
+const styled = (text, variant) => {
+  const [latin, greek, digits] = VARIANTS[variant] || [];
+  return latin ? text.replace(/[A-Za-z0-9]|[Α-ϵ∇∂]/g, ch => {
+    const at = /[A-Z]/.test(ch) ? latin + ch.charCodeAt(0) - 65 : /[a-z]/.test(ch) ? latin + 26 + ch.charCodeAt(0) - 97
+      : /\d/.test(ch) ? digits && digits + +ch : greek && GREEK.includes(ch) && greek + GREEK.indexOf(ch);
+    return at ? String.fromCodePoint(EARLIER[at] || at) : ch;
+  }) : text;
+};
 
 function svgURL(svg) {
   const copy = svg.cloneNode(true);
@@ -216,7 +301,7 @@ function finish(sections) {
   for (const section of sections) {
     // Headings: real ones, and in the running text (not a list, table, caption or quotation), short
     // lines set clearly larger than the text, and short lines set all in bold.
-    const heads = [...section.querySelectorAll('[data-fs]')].filter(el => el.dataset.h || (el.localName === 'p' && !el.querySelector('img') &&
+    const heads = [...section.querySelectorAll('[data-fs]')].filter(el => el.dataset.h || (el.localName === 'p' && !el.querySelector('img') && !el.classList.contains('eq') &&
       !el.closest('li, td, th, dd, figcaption, caption, blockquote') &&
       ((el.dataset.fs >= body * 1.2 && textOf(el).length < 120) || (textOf(el).length < 90 && !/[.:,;]$/.test(textOf(el)) && boldOnly(el)))));
     const sizes = [...new Set(heads.map(el => +el.dataset.fs))].sort((a, b) => b - a);
@@ -228,8 +313,8 @@ function finish(sections) {
     for (const p of section.querySelectorAll('p')) {
       const text = textOf(p);
       const media = p.querySelectorAll('img');
-      if (!media.length && /^[*∗⁂·•.\-–—~#❦❧✻✽○◦ ]{1,24}$/u.test(text)) p.replaceWith(h('hr')); // a dinkus: * * *
-      else if (media.length && !text) { // a paragraph holding only images is a figure
+      if (!media.length && !p.querySelector('math') && /^[*∗⁂·•.\-–—~#❦❧✻✽○◦ ]{1,24}$/u.test(text)) p.replaceWith(h('hr')); // a dinkus: * * *
+      else if (media.length && !text && !p.classList.contains('eq')) { // a paragraph holding only images is a figure
         const keep = [...p.querySelectorAll('img, a[id]')];
         if (p.parentElement.localName === 'figure') p.replaceWith(...keep);
         else rename(p, 'figure').replaceChildren(...keep);
@@ -237,10 +322,20 @@ function finish(sections) {
     }
     for (const el of section.querySelectorAll('li, dd, td, th, figcaption, caption')) {
       const only = el.firstElementChild;
-      if (el.childElementCount === 1 && only.localName === 'p' && textOf(only) === textOf(el)) {
+      if (el.childElementCount === 1 && only.localName === 'p' && !only.classList.contains('eq') && textOf(only) === textOf(el)) {
         if (only.id && !el.id) el.id = only.id;
+        const align = ['c', 'r'].find(c => only.classList.contains(c)); // a table's cells keep their alignment (numbers to the right)
+        if (align && /^t[dh]$/.test(el.localName)) el.classList.add(align);
         only.replaceWith(...only.childNodes);
       }
+    }
+    // A table, or a picture of one (or of a formula), keeps its size and scrolls sideways when wider
+    // than the page; a figure's caption stays put beneath it.
+    for (const el of section.querySelectorAll('table, img.ink, .eq > img')) {
+      if (el.parentElement.closest('table') || el.parentElement.classList.contains('wide')) continue;
+      const wide = h(el.parentElement.closest('p') ? 'span' : 'div', { class: 'wide' }); // (a paragraph holds no div)
+      el.replaceWith(wide);
+      wide.append(el);
     }
     for (const el of section.querySelectorAll('[data-fs]')) el.removeAttribute('data-fs'), el.removeAttribute('data-h');
   }
@@ -301,7 +396,8 @@ export async function fitImage(blob, max = 1800) {
 function svgSize(text) {
   const svg = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement;
   const box = svg.getAttribute('viewBox')?.split(/[\s,]+/).map(Number) || [];
-  return { w: parseFloat(svg.getAttribute('width')) || box[2] || 300, h: parseFloat(svg.getAttribute('height')) || box[3] || 150 };
+  const px = v => parseFloat(v) * ({ pt: 4 / 3, pc: 16, in: 96, cm: 96 / 2.54, mm: 96 / 25.4 }[v?.match(/[a-z]+$/)?.[0]] || 1);
+  return { w: px(svg.getAttribute('width')) || box[2] || 300, h: px(svg.getAttribute('height')) || box[3] || 150 };
 }
 
 async function storeImages(sections, fetcher) {
@@ -319,11 +415,12 @@ async function storeImages(sections, fetcher) {
   await Promise.all(imgs.map(async img => {
     const name = await byURL.get(img.dataset.src);
     // A picture that can't be fetched, or a small one with no description (an icon, a tracking
-    // pixel), leaves nothing behind, not even its empty frame.
-    if (!name || (!img.alt && Math.max(...sizes[name]) < 48)) {
-      const figure = img.closest('figure');
+    // pixel), leaves nothing behind, not even its empty frame. (One cut from a PDF page, however
+    // small, is a formula or a figure.)
+    if (!name || (!img.alt && !img.dataset.em && Math.max(...sizes[name]) < 48)) {
+      const frame = img.closest('figure, p.eq');
       img.remove();
-      if (figure && !figure.textContent.trim() && !figure.querySelector('img')) figure.remove();
+      if (frame && !frame.textContent.trim() && !frame.querySelector('img')) frame.remove();
       return;
     }
     img.removeAttribute('data-src');

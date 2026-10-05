@@ -4,6 +4,7 @@
 @font-face { font-family: Libron; font-weight: 400; font-style: italic; font-display: block; src: url(fonts/Libron-Italic.woff2) format("woff2"); }
 @font-face { font-family: Libron; font-weight: 700; font-style: normal; font-display: block; src: url(fonts/Libron-Bold.woff2) format("woff2"); }
 @font-face { font-family: Libron; font-weight: 700; font-style: italic; font-display: block; src: url(fonts/Libron-BoldItalic.woff2) format("woff2"); }
+@font-face { font-family: "Latin Modern Math"; font-display: block; src: url(fonts/LatinModernMath.woff2) format("woff2"); }
 
 :root {
   --serif: Libron, Georgia, serif;
@@ -196,7 +197,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow :is(p, h2, h3, h4, li, dt, dd, th, td, figcaption, pre) { unicode-bidi: plaintext; } /* each paragraph runs in its own script's direction */
 .flow p { margin: 0; text-indent: var(--indent); text-wrap: pretty; }
 .flow p + p { margin-top: var(--para-gap); }
-.flow :is(h2, h3, h4, hr, figure, blockquote, ul, ol, dl, table, pre, aside, .c, .r) + p,
+.flow :is(h2, h3, h4, hr, figure, blockquote, ul, ol, dl, table, .wide, pre, aside, .c, .r, .eq) + p,
 .flow p:first-child, .flow p.c, .flow p.r, .flow li p, .flow figcaption p { text-indent: 0; }
 .flow :is(h2, h3, h4) { font-weight: 400; line-height: 1.22; text-align: center; hyphens: manual; text-wrap: balance; break-after: avoid; break-inside: avoid; }
 .flow h2 { font-size: 1.5em; margin: 1.6em 0 1em; }
@@ -224,19 +225,64 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow figure { margin: 1.2em 0; text-align: center; break-inside: avoid; }
 .flow img { max-width: 100%; height: auto; max-height: calc(var(--page-h) * .86); vertical-align: middle; cursor: zoom-in; }
 .flow figure img { display: block; margin: 0 auto; }
+.flow figure img[data-k$=".svg"] { width: 100%; } /* a drawing scales without loss, so it takes the figure's width */
+/* A picture cut from a PDF page keeps the size it had beside the page's text: a figure fits the
+   page; type (a formula, a table) stays readable, shrinking a little to fit and otherwise
+   scrolling sideways. */
+.flow img[style*="--w"] { width: min(var(--w), 100%); }
+.flow img.ink { width: clamp(calc(var(--w) * .75), 100%, var(--w)); max-width: none; max-height: none; }
+/* (Its edges shade while there is more to scroll to, as a page curls where it turns.) */
+.flow .wide {
+  overflow-x: auto; overflow-y: hidden; margin: 1em 0; --edge: color-mix(in srgb, var(--ink) 14%, transparent);
+  background: linear-gradient(to right, var(--bg) 40%, transparent) left / 1.5em 100% no-repeat local,
+    linear-gradient(to left, var(--bg) 40%, transparent) right / 1.5em 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, var(--edge), transparent) left / .6em 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, var(--edge), transparent) right / .6em 100% no-repeat scroll;
+}
+.flow figure > .wide { margin: 0; }
 .flow section > figure:only-child { height: var(--page-h); margin: 0; display: grid; align-content: center; } /* a page that is only a picture */
 .flow section > figure:only-child img { max-height: var(--page-h); }
 .flow :is(figcaption, figure > p) { margin-top: .6em; font-size: .84em; line-height: 1.4; color: var(--ink-2); text-align: center; text-indent: 0; hyphens: manual; text-wrap: balance; } /* a figure's words are its caption and credit */
-.flow table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 1em 0; font-size: .82em; line-height: 1.35; text-align: left; hyphens: manual; }
-.flow :is(td, th) { padding: .3em .55em; border-bottom: 1px solid var(--rule); vertical-align: top; overflow-wrap: anywhere; }
+.flow figure:has(> figure) { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: .4em 1.2em; } /* a figure's panels sit side by side where there is room */
+.flow figure > figure { flex: 1 1 13em; max-width: 100%; margin: 0; }
+.flow figure:has(> figure) > :not(figure) { flex-basis: 100%; }
+.flow figure :is(ol, ul) { text-align: left; font-size: .9em; } /* an algorithm's lines */
+/* A table is as wide as its cells, which wrap only past a reading measure of their own; one wider
+   than the page scrolls sideways in its frame. (Tables converted before they had frames fit the page.) */
+.flow table { display: block; width: fit-content; max-width: 100%; overflow-x: auto; margin: 1em auto; border-collapse: collapse; font-size: .82em; line-height: 1.35; text-align: left; hyphens: manual; font-variant-numeric: lining-nums tabular-nums; }
+.flow .wide > table { display: table; width: max-content; max-width: none; overflow: visible; margin: 0 auto; }
+.flow :is(td, th) { padding: .3em .55em; border-bottom: 1px solid var(--rule); vertical-align: top; overflow-wrap: break-word; }
+.flow .wide :is(td, th) { max-width: 13em; }
+.flow :is(td, th).c { text-align: center; }
+.flow :is(td, th).r { text-align: right; }
 .flow th { font-weight: 700; }
 .flow pre, .flow code { font-family: var(--mono); font-size: .8em; }
 .flow pre { margin: 1em 0; padding: .9em 1em; border-radius: 4px; background: var(--shade); line-height: 1.5; text-align: left; white-space: pre-wrap; hyphens: none; tab-size: 4; }
 .flow pre code { font-size: 1em; }
 .flow aside { margin: 1em 0; font-size: .86em; line-height: 1.45; color: var(--ink-2); }
-.flow math { font-size: 1.05em; }
-.flow math[display="block"] { margin: .8em 0; }
+/* Formulas. One too wide for the page scrolls sideways (MathML doesn't break across lines). A
+   displayed one is a paragraph of its own, its number at the margin; an aligned group is a table
+   of cells, and when several of its lines are numbered, each number stays on its line. */
+.flow math { font-family: "Latin Modern Math", math; font-size: 1.1em; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.flow p.eq { display: flex; align-items: center; gap: .6em; margin: .7em 0; text-indent: 0; hyphens: manual; }
+.flow p.eq > :is(math, .wide) { flex: 1; min-width: 0; padding: .1em 0; }
+.flow p.eq > .wide { display: block; margin: 0; text-align: center; } /* a formula drawn from a PDF page */
+.flow p.eq > .n { flex: none; min-width: 2.4em; font-size: .91em; text-align: right; }
+@media (min-width: 600px) { .flow p.eq:has(> .n)::before { content: ""; flex: none; width: 2.4em; font-size: .91em; } } /* balances the number, so the formula centers on the page */
+/* Columns in a formula (an aligned derivation, cases), aligned as its converter asked; MathML
+   Core leaves columnalign to style sheets. */
+.flow :is(mtd.tml-right, mtd[columnalign="right"]) { text-align: right; }
+.flow :is(mtd.tml-left, mtd[columnalign="left"]) { text-align: left; }
+.flow mtable.tml-jot > mtr > mtd { padding-block: .2em; }
+.flow mtable.eqs > mtr > mtd { padding: .25em 0; }
+.flow mtable.eqs > mtr > .r { text-align: right; }
+.flow mtable.eqs > mtr > .l { text-align: left; }
+.flow mtable.numbered { width: 100%; }
+.flow mtable.numbered > mtr > :is(.s, .n) { width: 50%; }
+.flow mtable.numbered > mtr > .n { text-align: right; vertical-align: middle; padding-left: 1em; }
+.flow mtable.numbered > mtr > .n mtext { font-family: var(--serif); font-size: .83em; }
 :root[data-theme="dusk"] .flow img, :root[data-theme="night"] .flow img { filter: brightness(.85); background: #e9e4d8; } /* line art drawn on transparency stays legible */
+:root[data-theme="dusk"] .flow img.ink, :root[data-theme="night"] .flow img.ink { filter: invert(1) brightness(.82); background: none; } /* type cut from a page is ink, in the theme's own */
 
 ::highlight(ochre) { background-color: var(--hl-ochre); }
 ::highlight(rubric) { background-color: var(--hl-rubric); }

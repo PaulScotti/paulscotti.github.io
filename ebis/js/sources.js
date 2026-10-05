@@ -1,6 +1,6 @@
-// Every way into the library: a file (EPUB, Kindle, FB2, comic, PDF, text, HTML) or a link.
-// Each becomes a "source" (sections of HTML, a table of contents, a way to resolve links)
-// that convert.js turns into a package.
+// Every way into the library: a file (EPUB, Kindle, FB2, comic, PDF, text, HTML), a link,
+// or the page a browser is showing. Each becomes a "source" (sections of HTML, a table of
+// contents, a way to resolve links) that convert.js turns into a package.
 
 import { build, fitImage } from './convert.js';
 
@@ -29,6 +29,12 @@ export async function importFile(file, opts) {
 }
 
 export async function importURL(url, opts) {
+  // An arXiv paper's HTML edition keeps its tables, formulas and figures as real
+  // markup, where the PDF keeps only glyphs; read the page, falling back to the PDF.
+  const edition = arxivHTML(url);
+  if (edition) {
+    try { return await importURL(edition, opts); } catch { /* this paper has no HTML edition */ }
+  }
   let blob, final;
   try {
     ({ blob, url: final } = await opts.fetchPage(url));
@@ -45,13 +51,32 @@ export async function importURL(url, opts) {
     return out;
   }
   const doc = parse(decode(new Uint8Array(await blob.arrayBuffer()), blob.type));
-  // A scholarly page names its paper in citation_pdf_url (arXiv, bioRxiv, journals); ebis reads the paper itself.
+  // A scholarly page names its paper in citation_pdf_url (arXiv, bioRxiv, journals). When the page
+  // is only the paper's abstract, read the paper itself; when it carries the full text, stay here.
   const paper = doc.querySelector('meta[name="citation_pdf_url"]')?.content;
-  if (paper) return importURL(new URL(paper, final).href, opts);
+  if (paper && (await articleLength(doc)) < 8000) return importURL(new URL(paper, final).href, opts);
   return finish(webSource(doc, final, opts.fetcher), 'web', final, opts);
 }
 
+// The page a browser is showing, handed over by the "Save to Ebis" bookmarklet: read where
+// it lives, so its pictures and links resolve and its source is the page's real address.
+export async function importPage(html, url, opts) {
+  return finish(webSource(parse(html), url, opts.fetcher, true), 'web', url, opts);
+}
+
 const parse = html => new DOMParser().parseFromString(html, 'text/html');
+
+// The paper's HTML edition for an arXiv abstract or PDF link (papers old and new have one).
+const arxivHTML = url => {
+  const m = /^https?:\/\/(?:www\.|export\.)?arxiv\.org\/(?:abs|pdf)\/(?:(\d{4}\.\d{4,5})|([a-z-]+)(?:\.[a-z]{2})?\/(\d{7}))(v\d+)?(?:\.pdf)?\/?(?:[?#].*)?$/i.exec(url);
+  return m ? `https://arxiv.org/html/${m[1] || `${m[2]}/${m[3]}`}${m[4] || ''}` : null;
+};
+
+// How much article a page shows, measured on a throwaway copy (Readability rearranges its input).
+async function articleLength(doc) {
+  const { Readability } = await import('../vendor/readability.js');
+  return new Readability(doc.cloneNode(true)).parse()?.textContent.trim().length ?? 0;
+}
 
 async function finish(source, format, origin, { fetcher, progress }) {
   const { book, zip } = await build(source, { fetcher, progress });
@@ -153,8 +178,9 @@ function comicBook(zip, name) {
   };
 }
 
-// Web pages and saved HTML: the article itself, found by Readability.
-function webSource(doc, url, fetcher) {
+// Web pages and saved HTML: the article itself, found by Readability. A page `shown` is one as
+// the browser showed it to its reader.
+function webSource(doc, url, fetcher, shown) {
   // Before Readability looks: dialogs go, being the page's interface (consent prompts, menus,
   // popovers) rather than its text; and patterns Readability mistakes for clutter are put right: old
   // <font> tags, which split its paragraphs; headings wrapped with link chrome ("[edit]", "#" anchors),
@@ -196,16 +222,20 @@ function webSource(doc, url, fetcher) {
   const image = metaOf('og:image', 'twitter:image'); // the picture the page shares itself with becomes its cover
   const declaresArticle = /article/i.test(metaOf('og:type')) ||
     /"\w*(Article|BlogPosting)"/.test([...doc.querySelectorAll('script[type="application/ld+json"]')].map(s => s.textContent).join());
+  const paper = doc.querySelector('article.ltx_document'); // a paper LaTeXML made from its LaTeX (arXiv's HTML papers)
   const source = { meta: {}, cover: image && fetcher(new URL(image, url).href).catch(() => null), toc: null, sections: [{ load }], resolve };
 
   async function load() {
+    await mathify(doc);
     // A page that says it is an article may carry the whole of it for machines too (schema.org's
     // articleBody, or the JSON state its app boots from); when that holds clearly more than the page
-    // shows, it is read instead. It has to be found before Readability rearranges the document.
-    const embedded = declaresArticle ? embeddedArticle(doc) : '';
+    // shows, it is read instead — unless the page is as its reader saw it, the whole article.
+    // It has to be found before Readability rearranges the document.
+    const embedded = declaresArticle && !paper && !shown ? embeddedArticle(doc) : '';
     const walled = botWall(doc);
     const { Readability } = await import('../vendor/readability.js');
-    const article = new Readability(doc, { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
+    const article = paper ? latexml(paper)
+      : new Readability(doc, { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
     const fuller = embedded.length > article.textContent.length * 1.25 + 500 && sameText(embedded, article.textContent, metaOf('og:description', 'description'));
     if ((fuller ? embedded : article.textContent).trim().length < 500) {
       throw new Error(walled ? 'The site only shows its pages to a real browser.' : 'That page has no article ebis can find.');
@@ -233,6 +263,199 @@ function webSource(doc, url, fetcher) {
     return target.hash && target.href.split('#')[0] === url.split('#')[0] ? `s0-${decodeURIComponent(target.hash.slice(1))}` : null;
   }
   return source;
+}
+
+const MATHML = 'http://www.w3.org/1998/Math/MathML';
+
+// Formulas, however a page sets them, become MathML, which ebis typesets itself.
+async function mathify(doc) {
+  // TeX to typeset: MathJax's script elements, each in its own place. On a page saved as the
+  // browser showed it, MathJax has drawn its formulas already, keeping each one's MathML beside
+  // the drawing (see below) or else its TeX: version 2 in that script, after the drawing (its
+  // "Frame"); version 4 on the drawing itself. The drawing goes for the TeX.
+  const scripts = [...doc.querySelectorAll('script')];
+  const tex = [];
+  for (const s of scripts.filter(s => /^math\/tex/.test(s.type))) {
+    const drawn = s.id && doc.getElementById(`${s.id}-Frame`);
+    if (drawn?.querySelector('math')) s.remove();
+    else {
+      drawn?.remove();
+      tex.push([s, s.textContent, /mode=display/.test(s.type)]);
+    }
+  }
+  for (const drawn of doc.querySelectorAll('mjx-container')) {
+    const source = !drawn.querySelector('math') && drawn.querySelector('[data-latex]')?.getAttribute('data-latex');
+    if (source) tex.push([drawn, source, drawn.getAttribute('display') === 'true']);
+  }
+  // A formula is often there twice: as MathML for assistive technology, and drawn for the eye
+  // where assistive technology is told not to look (KaTeX's HTML, MathJax's glyphs, a wiki's
+  // picture of it). The MathML stays, in place of the typesetter's wrapper that held both.
+  for (const math of doc.querySelectorAll('math')) {
+    let wrapper;
+    for (let el = math; el.parentElement && el.parentElement !== doc.body; el = el.parentElement) {
+      const rest = [...el.parentElement.childNodes].filter(n => n !== el && (n.nodeType === 1 || n.data?.trim()));
+      if (!rest.every(n => n.nodeType === 1 && n.getAttribute('aria-hidden') === 'true')) break;
+      if (rest.length) wrapper = el.parentElement;
+      rest.forEach(n => n.remove());
+    }
+    wrapper?.replaceWith(math);
+  }
+  // TeX that the page would have typeset in the browser, as MathJax and KaTeX look for it in
+  // the text: \(…\), \[…\], $$…$$ and \begin{…}…\end{…}, and $…$ where the page's
+  // configuration asks for it. Like them, a formula may run across lines.
+  const config = scripts.map(s => `${s.src} ${s.textContent.slice(0, 3000)}`).join('\n');
+  const dollars = /inlineMath[^\]]*\[\s*(['"])\$\1|left\s*:\s*(['"])\$\2\s*,\s*right/.test(config);
+  const delimiters = /mathjax|katex/i.test(config) && new RegExp(String.raw`\\\[([\s\S]+?)\\\]|\$\$([\s\S]+?)\$\$|(\\begin\{((?:equation|align|alignat|gather|multline|eqnarray|flalign)\*?)\}[\s\S]+?\\end\{\4\})|\\\(([\s\S]+?)\\\)`
+    + (dollars ? String.raw`|(?<![\\$\w])\$(?=\S)([^$]+?)(?<=[^\s\\])\$(?![\w$])` : ''), 'g');
+  const runs = []; // lines of text, with the breaks between them
+  if (delimiters) {
+    const skip = 'script, style, code, pre, kbd, samp, textarea, math, svg, title';
+    for (const el of [doc.body, ...doc.body.querySelectorAll(`:not(${skip})`)]) {
+      if (el.closest(skip)) continue;
+      let run = [];
+      for (const n of [...el.childNodes, null]) {
+        if (n && (n.nodeType === 3 || n.localName === 'br')) { run.push(n); continue; }
+        const text = run.map(r => r.nodeType === 3 ? r.data : '\n').join('');
+        if (delimiters.test(text)) runs.push([run, text]);
+        delimiters.lastIndex = 0;
+        run = [];
+      }
+    }
+  }
+  if (tex.length || runs.length) {
+    const { default: temml } = await import('../vendor/temml.js');
+    const typeset = (source, display) => { // the TeX stays as an annotation, so the page's text still measures the same
+      const t = doc.createElement('template');
+      t.innerHTML = temml.renderToString(source.trim(), { displayMode: display, throwOnError: false, annotate: true });
+      return t.content.firstChild;
+    };
+    for (const [el, source, display] of tex) el.replaceWith(typeset(source, display));
+    const lines = text => text.split('\n').flatMap((line, i) => i ? [doc.createElement('br'), line] : [line]);
+    for (const [run, text] of runs) {
+      const parts = [];
+      let at = 0;
+      for (const m of text.matchAll(delimiters)) {
+        const display = m[1] ?? m[2] ?? m[3];
+        parts.push(...lines(text.slice(at, m.index)), typeset(display ?? m[5] ?? m[6], display != null));
+        at = m.index + m[0].length;
+      }
+      run[0].before(...parts, ...lines(text.slice(at)));
+      run.forEach(n => n.remove());
+    }
+  }
+  // Readability knows MathML as inline only by an HTML element's name, which MathML elements
+  // don't have; in a span, a formula stays in its sentence.
+  for (const math of doc.querySelectorAll('math')) {
+    const span = doc.createElement('span');
+    math.replaceWith(span);
+    span.append(math);
+  }
+}
+
+// A paper LaTeXML made from its LaTeX source (arXiv's HTML papers) is an article already: its
+// formulas are MathML, its figures, tables and notes are marked as such. What LaTeXML's own
+// stylesheet would do is done here instead.
+const LTX_STYLES = {
+  ltx_font_bold: 'font-weight:bold', ltx_font_italic: 'font-style:italic', ltx_font_typewriter: 'font-family:monospace',
+  ltx_font_smallcaps: 'font-variant:small-caps', ltx_align_center: 'text-align:center', ltx_centering: 'text-align:center',
+  ltx_align_right: 'text-align:right', ltx_align_left: 'text-align:left', ltx_p: 'display:block',
+};
+function latexml(root) {
+  const doc = root.ownerDocument;
+  for (const el of root.querySelectorAll('.ltx_ERROR')) el.remove(); // a command it couldn't convert, shown raw
+  for (const [cls, style] of Object.entries(LTX_STYLES)) for (const el of root.getElementsByClassName(cls)) el.style.cssText += `;${style}`;
+
+  // Displayed equations are tables: a row per line, its parts in cells aligned right and left
+  // (an align environment), its number at the edge. Each becomes one formula of the same rows
+  // and columns, with its number after it (which ebis sets at the margin); when several lines
+  // are numbered, each number stays on its line.
+  const M = (tag, attrs = {}, ...kids) => {
+    const el = doc.createElementNS(MATHML, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    el.append(...kids);
+    return el;
+  };
+  const formula = cell => [...cell.childNodes].flatMap(n => n.localName === 'math'
+    ? [...(n.querySelector('semantics') || n).children].filter(c => !/^annotation/.test(c.localName))
+    : n.textContent.trim() ? [M('mtext', {}, n.textContent.trim())] : []);
+  const align = td => /ltx_align_right/.test(td.className) ? 'r' : /ltx_align_left/.test(td.className) ? 'l' : 'c';
+  for (const table of root.querySelectorAll('table.ltx_equation, table.ltx_equationgroup')) {
+    if (table.parentElement.closest('table.ltx_equation, table.ltx_equationgroup')) continue;
+    const rows = [...table.querySelectorAll('tr')].filter(tr => tr.querySelector('math'));
+    const numbers = [...table.querySelectorAll('.ltx_eqn_eqno')].filter(td => td.textContent.trim());
+    const cells = tr => [...tr.cells].filter(td => !/ltx_eqn_(center|left|right)_pad|ltx_eqn_eqno/.test(td.className));
+    const p = doc.createElement('p');
+    p.id = table.id;
+    if (numbers.length > 1) {
+      p.append(M('math', { display: 'block' }, M('mtable', { class: 'eqs numbered', displaystyle: 'true' }, ...rows.map(tr => {
+        const no = tr.querySelector('.ltx_eqn_eqno');
+        return M('mtr', {}, M('mtd', { class: 's' }), ...cells(tr).map(td => M('mtd', { class: align(td) }, M('mrow', {}, ...formula(td)))),
+          ...no ? [M('mtd', { class: 'n', rowspan: no.rowSpan }, M('mtext', {}, no.textContent.trim()))] : []);
+      }))));
+    } else {
+      const single = rows.length === 1 && cells(rows[0]).length === 1 && rows[0].querySelector('math');
+      const math = single || M('math', {}, M('mtable', { class: 'eqs', displaystyle: 'true' },
+        ...rows.map(tr => M('mtr', {}, ...cells(tr).map(td => M('mtd', { class: align(td) }, M('mrow', {}, ...formula(td))))))));
+      math.setAttribute('display', 'block');
+      p.append(math, numbers[0]?.textContent.trim() || '');
+    }
+    table.replaceWith(p);
+  }
+
+  // A paragraph's heading (LaTeX's \\paragraph) runs into its paragraph, in bold, as on the page.
+  for (const head of root.querySelectorAll('.ltx_title_paragraph')) {
+    const p = head.parentElement.querySelector('.ltx_para .ltx_p');
+    if (!p || head.nextElementSibling !== p.closest('.ltx_para')) continue;
+    const b = doc.createElement('b');
+    b.append(...head.childNodes);
+    p.prepend(b, ' ');
+    head.remove();
+  }
+
+  // A listing is lines: an algorithm's, numbered; a program's, as code.
+  for (const listing of root.querySelectorAll('.ltx_listing')) {
+    const lines = [...listing.querySelectorAll('.ltx_listingline')];
+    if (!lines.length) continue;
+    if (listing.closest('.ltx_float_algorithm') && !lines.some(l => l.querySelector('.ltx_font_typewriter'))) {
+      const list = doc.createElement('ol');
+      for (const line of lines) {
+        line.querySelector('.ltx_tag_listingline')?.remove();
+        list.append(doc.createElement('li'));
+        list.lastChild.append(...line.childNodes);
+      }
+      listing.replaceWith(list);
+    } else {
+      const pre = doc.createElement('pre');
+      pre.textContent = lines.map(l => l.textContent.replace(/\s+$/, '')).join('\n');
+      listing.replaceWith(pre);
+    }
+  }
+
+  // Notes hide in the sentence until hovered; each becomes a numbered link to its text, set
+  // after the paragraph it belongs to (where ebis shows it when the number is touched).
+  let n = 0;
+  for (const note of root.querySelectorAll('.ltx_note')) {
+    const mark = note.classList.contains('ltx_role_footnotetext') ? '' : note.querySelector('.ltx_note_mark')?.textContent.trim() || '';
+    const body = note.querySelector('.ltx_note_content');
+    body?.querySelectorAll('.ltx_note_mark, .ltx_note_type, .ltx_tag_note').forEach(el => el.remove());
+    const sup = doc.createElement('sup');
+    if (body?.textContent.trim()) {
+      const aside = doc.createElement('aside');
+      aside.id = note.id || `ltx-note-${n++}`;
+      aside.append(mark ? `${mark} ` : '', ...body.childNodes);
+      let after = note.closest('.ltx_para, figure, li, table') || note.parentElement;
+      while (after.nextElementSibling?.localName === 'aside') after = after.nextElementSibling;
+      after.after(aside);
+      if (mark) sup.innerHTML = `<a href="#${aside.id}">${escape(mark)}</a>`;
+    } else sup.textContent = mark;
+    note.replaceWith(...mark ? [sup] : []);
+  }
+
+  // The title and authors are set on ebis's own title page.
+  const title = tidy(root.querySelector('.ltx_title_document')?.textContent);
+  const authors = [...root.querySelectorAll('.ltx_personname')].map(p => tidy(p.firstChild?.textContent)).filter(Boolean);
+  root.querySelector('.ltx_authors')?.remove();
+  return { title, byline: authors.join(', '), content: root, textContent: root.textContent, siteName: '' };
 }
 
 const tidy = s => (s || '').replace(/\s+/g, ' ').trim();
@@ -275,6 +498,7 @@ function prune(root, { title, author }, when, url) {
     else if (t) previous = t;
   }
   for (const el of root.querySelectorAll(HIDDEN.map(c => `.${c}`).join())) el.remove();
+  for (const a of root.querySelectorAll('a[href]:not(svg a)')) if (here(a) && /^[¶§#🔗]$/u.test(text(a))) a.remove(); // a permalink's mark
   for (const img of root.querySelectorAll('img')) if (/\bavatar\b/i.test(img.alt) || is(tidy(img.alt), author)) img.remove();
   const away = li => {
     const linked = [...li.querySelectorAll('a[href]')].filter(a => !here(a)).reduce((n, a) => n + text(a).length, 0);
