@@ -26,7 +26,7 @@
 <main id="desk" class="desk" hidden>
   <header>
     <h1><svg class="mark" aria-hidden="true"><use href="#myna"/></svg>myna</h1>
-    <button id="add" class="quiet">Add words</button>
+    <nav><button id="browse" class="quiet">Words</button><button id="add" class="quiet">Add words</button></nav>
   </header>
   <section class="today">
     <p id="plan" class="plan"></p>
@@ -66,18 +66,25 @@
     <h2>Good job.</h2>
     <p id="stats"></p>
     <p id="climbed"></p>
-    <div id="learned"><h3>New words</h3><ul></ul></div>
+    <div id="learned"><h3>New words</h3><div id="met"></div></div>
     <button id="home" class="begin">Home<span aria-hidden="true"> →</span></button>
   </div>
 </section>
 
 <dialog id="sheet" class="sheet">
   <form id="words" method="dialog">
-    <h2>Add words</h2>
-    <textarea name="text" placeholder="Words or phrases, in Korean or English" aria-label="Words or phrases" required></textarea>
+    <header><h2>Add words</h2><button type="button" class="x" aria-label="Close"><svg><use href="#i-close"/></svg></button></header>
+    <textarea name="text" placeholder="Words or phrases, in Korean or English" aria-label="Words or phrases" required autofocus></textarea>
     <button>Add</button>
   </form>
 </dialog>
+
+<section id="deck" class="deck" hidden>
+  <div class="column">
+    <header><h2>Words</h2><p id="count"></p><button class="x" aria-label="Close"><svg><use href="#i-close"/></svg></button></header>
+    <div id="by-level"></div>
+  </div>
+</section>
 
 <div id="toast" class="toast" popover="manual" role="status" aria-live="polite"></div>
 
@@ -87,6 +94,7 @@
     <path d="M23 31L9 34.5L23 37.5Z" style="fill:var(--accent)"/>
     <circle cx="31" cy="29" r="3.2" style="fill:var(--accent)"/>
   </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11"/></symbol>
 </svg>
 </body>
 </html>

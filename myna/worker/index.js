@@ -42,6 +42,7 @@ async function route(request, env, ctx) {
   if (path === '/grade') return Response.json(await grade(env, ctx, body));
   if (path === '/add') return Response.json(await add(env, body));
   if (path === '/speak') return speak(env, body);
+  if (path === '/words') return Response.json((await env.DB.prepare('SELECT ko, en, level FROM cards ORDER BY level, ko').all()).results);
   return new Response('Not found.', { status: 404 });
 }
 

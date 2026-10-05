@@ -14,8 +14,8 @@ export default {
   // How likely a card should still be remembered on the day it comes back (FSRS's desired retention).
   retention: 0.9,
 
-  // How long to recall the answer before Myna says it, as a multiple of how long the question took to say.
-  think: 1.5,
+  // How long to recall the answer before Myna says it: these seconds, plus this many times as long as the question took to say.
+  think: { seconds: 1, times: 1.5 },
 
   // How a card is asked at each level, picked at random from its list. A card goes up a level each time
   // the number of days it can be remembered doubles: level 2 at 2 days, 3 at 4, 4 at 8, and so on to

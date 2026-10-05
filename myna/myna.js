@@ -56,18 +56,20 @@ function desk() {
     + '<figcaption>Words by level, from new to mastered</figcaption>';
 }
 
-// Where the app is: the desk, a session (#study), or adding words (#add). Back leaves each.
+// Where the app is: the desk, a session (#study), every word (#words), or adding words (#add). Back leaves each.
 function route() {
-  const studying = location.hash === '#study';
+  const hash = location.hash, studying = hash === '#study';
   if (!studying && !$('study').hidden) { // back from a session, finished or not
     silence();
     card = null;
     load();
   }
+  if (hash === '#words' && $('deck').hidden) deck();
   $('lock').hidden = !!password;
   $('desk').hidden = studying || !password;
   $('study').hidden = !studying || !password;
-  if (location.hash !== '#add') $('sheet').close();
+  $('deck').hidden = hash !== '#words' || !password;
+  if (hash !== '#add') $('sheet').close();
   else if (!$('sheet').open) $('sheet').showModal();
   android?.keys(studying);
 }
@@ -100,7 +102,7 @@ function next() {
   if (!card) return summary();
   const mine = run, [q] = show(card.front === 'ko' ? ['ko', 'en'] : ['en', 'ko'], '', 'ask', words.length + tally.cards.size, queue.length + 1);
   soon(queue);
-  say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, length * config.think * 1000, true); });
+  say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, (config.think.seconds + length * config.think.times) * 1000, true); });
 }
 
 // Fills in the card, its controls and the progress so far; returns the card's two sides in the order asked.
@@ -162,13 +164,35 @@ function summary() {
   $('stats').textContent = `${minutes} minute${minutes > 1 ? 's' : ''} · ${cards.length} card${cards.length > 1 ? 's' : ''} · ${Math.round(right / cards.length * 100)}% right the first time`;
   $('climbed').textContent = up ? `${up} went up a level${mastered ? `, and ${mastered} ${mastered > 1 ? 'are' : 'is'} now mastered` : ''}.` : '';
   $('learned').hidden = !tally.met.length;
-  $('learned').querySelector('ul').replaceChildren(...tally.met.map(c => {
-    const li = document.createElement('li');
-    li.append(Object.assign(document.createElement('span'), { lang: 'ko', textContent: c.word }), c.gloss);
-    return li;
-  }));
+  $('met').replaceChildren(list(tally.met.map(c => [c.word, c.gloss])));
   $('session').hidden = true;
   $('summary').hidden = false;
+}
+
+// Every word in the deck, by level.
+async function deck() {
+  $('count').textContent = '';
+  $('by-level').replaceChildren();
+  const all = await (await api('/words', {})).json();
+  $('count').textContent = `${all.length} word${all.length === 1 ? '' : 's'}`;
+  $('by-level').replaceChildren(...Array.from({ length: 10 }, (_, l) => all.filter(w => w.level === l)).flatMap((these, l) => {
+    if (!these.length) return [];
+    const heading = document.createElement('h3');
+    heading.append(`Level ${l}${l === 0 ? ', not yet met' : l === 9 ? ', mastered' : ''}`, Object.assign(document.createElement('span'), { textContent: these.length }));
+    return [heading, list(these.map(w => [w.ko, w.en]))];
+  }));
+}
+
+// Words as a list, Korean then English.
+function list(pairs) {
+  const ul = document.createElement('ul');
+  ul.className = 'list';
+  ul.append(...pairs.map(([ko, en]) => {
+    const li = document.createElement('li');
+    li.append(Object.assign(document.createElement('span'), { lang: 'ko', textContent: ko }), en);
+    return li;
+  }));
+  return ul;
 }
 
 // Says each [text, lang] in turn, resolving with the last one's length in seconds. A newer turn
@@ -206,6 +230,8 @@ const soon = cards => { for (const c of cards.slice(0, 2)) clip(c.ko, 'ko'), cli
 // Adding words: they join today's session as new words.
 
 $('add').onclick = () => { location.hash = 'add'; };
+$('browse').onclick = () => { location.hash = 'words'; };
+for (const x of document.querySelectorAll('.x')) x.onclick = () => history.back();
 $('sheet').onclose = () => { if (location.hash === '#add') history.back(); };
 $('words').onsubmit = async e => {
   e.preventDefault();
@@ -224,12 +250,12 @@ $('words').onsubmit = async e => {
 
 addEventListener('keydown', e => {
   if (e.repeat || $('sheet').open) return;
-  if (e.key === 'Escape' && location.hash === '#study') history.back();
+  if (e.key === 'Escape' && location.hash) history.back();
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-  if (location.hash !== '#study') {
-    if (e.key === 'ArrowRight' && !$('desk').hidden && !$('begin').hidden) begin();
-  } else if (!$('summary').hidden) history.back();
-  else press(e.key === 'ArrowRight');
+  if (location.hash === '#study') {
+    if (!$('summary').hidden) history.back();
+    else press(e.key === 'ArrowRight');
+  } else if (!location.hash && e.key === 'ArrowRight' && !$('desk').hidden && !$('begin').hidden) begin();
 });
 for (const b of document.querySelectorAll('.controls button')) b.onclick = () => press(b.dataset.good === 'true');
 $('begin').onclick = begin;
