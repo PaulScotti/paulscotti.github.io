@@ -6,7 +6,7 @@
   "compatibility_date": "2026-10-01",
   "account_id": "bf4d563d019ba4efff46afba844e5163",
   "workers_dev": true,
-  "d1_databases": [{ "binding": "DB", "database_name": "myna" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "myna", "database_id": "5b1c5ad2-77a7-4cfc-be19-5467b1eaa32b" }],
   "r2_buckets": [{ "binding": "AUDIO", "bucket_name": "myna-audio" }],
   "observability": { "enabled": true }
 }
