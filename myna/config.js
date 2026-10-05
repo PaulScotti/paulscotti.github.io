@@ -5,8 +5,9 @@ export default {
   model: 'gpt-6.1-sol',
   effort: 'low',
 
-  // Voices for each language, from Azure's MAI-Voice-2.1.
-  voices: { ko: 'ko-KR-Haena:MAI-Voice-2.1', en: 'en-US-Harper:MAI-Voice-2.1' },
+  // Voices for each language, from Azure Speech. MAI-Voice-2.1 garbled lone Korean words (집 as 점) in about
+  // 4 of 10 tries, so Korean uses SunHi, Azure's standard voice, which said 172 of 174 test words right.
+  voices: { ko: 'ko-KR-SunHiNeural', en: 'en-US-Harper:MAI-Voice-2.1' },
 
   // New words a day: the most when nothing is due, one fewer for every few reviews, never below the least.
   newWords: { most: 10, least: 1, reviewsEach: 10 },

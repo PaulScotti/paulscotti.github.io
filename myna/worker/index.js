@@ -1,6 +1,6 @@
 // Myna's worker, on Paul's own Cloudflare. The deck lives in D1 and every spoken card in R2. One password
 // opens it: the KEY secret, the same as ebis. OpenAI picks new words and writes how each card is asked as it
-// climbs; Azure's MAI-Voice-2.1 says them. Days are Paul's local dates, sent by the app.
+// climbs; Azure Speech says them, in the voices set in config.js. Days are Paul's local dates, sent by the app.
 
 import config from '../config.js';
 
