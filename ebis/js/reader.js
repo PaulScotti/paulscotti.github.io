@@ -1,6 +1,6 @@
-// The reader. One chapter at a time is laid out in CSS columns, a page per screen
-// (two on a wide one). A position is [chapter, block, character], so it survives any
-// change of device, type size or theme.
+// The reader. One chapter at a time, one long page scrolled like the web — never flipped.
+// A position is [chapter, block, character], so it survives any change of device, type size
+// or theme.
 
 import * as store from './store.js';
 import { blocks as leafBlocks, blockSizes } from './convert.js';
@@ -14,13 +14,12 @@ let deviceName = matchMedia('(pointer: coarse)').matches ? 'phone' : 'computer';
 navigator.userAgentData?.getHighEntropyValues(['model']).then(d => { if (d.model) deviceName = d.model; });
 
 let book = null;            // { id, record, data: book.json, urls, starts: first character of each chapter }
-let chapter = 0, at = 0;    // chapter index and page within it
+let chapter = 0;
 let anchor = [0, 0];        // the reader's place: what a new layout must keep on screen
-let geo = null;             // the page geometry
 let blocks = [], offsets = [];
 let heads = [];             // contents entries in this chapter, with the block each starts at
 let cpm = +localStorage.getItem('ebis.cpm') || 1100; // reading speed, characters per minute
-let lastTurn = { at: 0, char: 0 }, wake = null, wakeTimer = 0;
+let lastRead = { at: 0, char: 0 }, wake = null, wakeTimer = 0;
 const parsed = new Map();   // chapter index → parsed section, for search and link previews
 
 let opening = 0; // only the latest open (or leaving) counts when loads finish out of order
@@ -58,8 +57,12 @@ export function hide() {
 
 function render(c, target, fade) {
   chapter = Math.max(0, Math.min(c, book.data.chapters.length - 1));
-  flow.innerHTML = book.data.chapters[chapter] + '<i class="end"></i>';
+  flow.innerHTML = book.data.chapters[chapter];
   for (const img of flow.querySelectorAll('img[data-k]')) img.src = book.urls[img.dataset.k];
+  // Doorways to the chapters before and after. They hold buttons, never paragraphs, so they
+  // don't count as reading blocks and positions stay put.
+  if (chapter > 0) flow.prepend(chapterLink(chapter - 1, 'Previous'));
+  if (chapter < book.data.chapters.length - 1) flow.append(chapterLink(chapter + 1, 'Next'));
   blocks = leafBlocks(flow);
   offsets = [];
   blocks.reduce((sum, el) => (offsets.push(sum), sum + (el.textContent.length || 1)), 0);
@@ -68,38 +71,41 @@ function render(c, target, fade) {
     const el = flow.querySelector(`[id="${CSS.escape(t.id)}"]`);
     return { entry: t, b: el ? blockAt(el) : 0 };
   });
-  const p = target === 'end' ? geo.pages - 1
-    : target === 'start' ? 0
-    : target.id ? pageOfElement(flow.querySelector(`[id="${CSS.escape(target.id)}"]`))
-    : pageOf(target.loc);
-  go(p, false, target.loc);
+  const el = target?.id ? flow.querySelector(`[id="${CSS.escape(target.id)}"]`) : null;
+  if (target === 'end') page.scrollTop = page.scrollHeight;
+  else if (el) scrollRect(el.getBoundingClientRect());
+  else if (target?.loc) scrollLoc(target.loc);
+  else page.scrollTop = 0; // 'start', or nothing named
+  anchor = target?.loc ?? (el ? [blockAt(el), 0] : locator());
+  refresh();
+  remember(anchor);
   paintMarks();
   if (fade) flow.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
 }
 
+function chapterLink(c, dir) {
+  const title = book.data.toc.find(t => book.data.ids[t.id] === c)?.title || `Chapter ${c + 1}`;
+  const nav = document.createElement('nav');
+  nav.className = `chap ${dir.toLowerCase()}`;
+  const button = document.createElement('button');
+  button.textContent = dir === 'Next' ? `Next: ${title}` : `Previous: ${title}`;
+  button.onclick = () => render(c, dir === 'Next' ? 'start' : 'end', true);
+  nav.append(button);
+  return nav;
+}
+
 function measure() {
-  const W = page.clientWidth, H = page.clientHeight, fs = settings.size;
+  const W = page.clientWidth, fs = settings.size;
   const mx = Math.round(Math.min(Math.max(W * 0.06, 16), 48) * settings.margin);
-  const cols = settings.spread && W / 2 - 2 * mx >= fs * 22 ? 2 : 1;
-  const colStride = Math.floor(W / cols);
-  const c = Math.floor(Math.min(colStride - 2 * mx, fs * 34));
-  const gap = colStride - c;
-  const x0 = Math.round((W - colStride * cols + gap) / 2);
+  const c = Math.floor(Math.min(W - 2 * mx, fs * 34));
   const vars = {
-    '--fs': `${fs}px`, '--lh': settings.leading, '--cols': cols, '--gap': `${gap}px`, '--x0': `${x0}px`,
-    '--flow-w': `${cols * c + (cols - 1) * gap}px`, '--page-h': `${H}px`,
+    '--fs': `${fs}px`, '--lh': settings.leading, '--flow-w': `${c}px`, '--page-h': `${page.clientHeight}px`,
     '--align': settings.justify ? 'justify' : 'start', '--hyphens': settings.justify ? 'auto' : 'manual',
     '--indent': settings.indent ? '1.4em' : '0', '--para-gap': settings.indent ? '0' : '.7em',
   };
   for (const [k, v] of Object.entries(vars)) view.style.setProperty(k, v);
-  view.dataset.cols = cols;
-  geo = { W, H, cols, c, gap, stride: colStride * cols };
-  geo.pages = Math.floor(columnOf(flow.querySelector('.end').getBoundingClientRect()) / cols) + 1;
 }
 
-const columnOf = rect => Math.floor((rect.left - flow.getBoundingClientRect().left + 1) / (geo.c + geo.gap));
-const pageOfRect = rect => rect ? Math.floor(columnOf(rect) / geo.cols) : 0;
-const pageOfElement = el => el ? pageOfRect(el.getClientRects()[0] || el.getBoundingClientRect()) : 0;
 const blockAt = el => { const i = blocks.findIndex(b => b === el || b.contains(el) || el.contains(b)); return i < 0 ? 0 : i; };
 
 // [node, offset] for character o of a block, and the inverse.
@@ -128,70 +134,68 @@ function charRect(el, o) {
   r.setEnd(node, Math.min(off + 1, node.length));
   return r.getClientRects()[0] || el.getClientRects()[0];
 }
-function pageOf([b, o] = [0, 0]) {
-  const el = blocks[Math.min(b, blocks.length - 1)];
-  return el ? pageOfRect(o > 0 ? charRect(el, o) : el.getClientRects()[0]) : 0;
-}
 
-// The first character on the current page.
+// Scrolling.
+
+// The first character on screen.
 function locator() {
-  const first = at * geo.cols;
-  const endsAfter = el => { const r = el.getClientRects(); return r.length && columnOf(r[r.length - 1]) >= first; };
-  let lo = 0, hi = blocks.length - 1, b = Math.max(0, blocks.length - 1);
+  const top = page.getBoundingClientRect().top + 6;
+  const shows = el => { const r = el.getClientRects(); return r.length && r[r.length - 1].bottom > top; };
+  let lo = 0, hi = blocks.length - 1, b = Math.max(0, hi);
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
-    if (endsAfter(blocks[mid])) b = mid, hi = mid - 1;
+    if (shows(blocks[mid])) b = mid, hi = mid - 1;
     else lo = mid + 1;
   }
   const el = blocks[b];
-  const start = el?.getClientRects()[0];
-  if (!start || columnOf(start) >= first) return [b, 0];
+  if (!el) return [0, 0];
+  const start = el.getClientRects()[0];
+  if (!start || start.top >= top) return [b, 0];
   let o = 0;
   for (let l = 0, h = el.textContent.length - 1; l <= h;) {
     const mid = (l + h) >> 1;
-    if (columnOf(charRect(el, mid)) >= first) o = mid, h = mid - 1;
+    const r = charRect(el, mid);
+    if (r && r.bottom > top) o = mid, h = mid - 1;
     else l = mid + 1;
   }
   return [b, o];
+}
+
+function scrollRect(rect) {
+  if (!rect) return;
+  page.scrollTop += rect.top - page.getBoundingClientRect().top - 14;
+}
+function scrollLoc([b, o]) {
+  const el = blocks[Math.min(b, blocks.length - 1)];
+  if (el) scrollRect((o > 0 ? charRect(el, o) : el.getClientRects()[0]) || el.getBoundingClientRect());
+}
+
+// Where the reader rests, kept fresh whenever scrolling stops.
+let restTimer = 0;
+page.addEventListener('scroll', () => {
+  clearTimeout(restTimer);
+  restTimer = setTimeout(rested, 140);
+}, { passive: true });
+function rested() {
+  if (!book || view.hidden) return;
+  anchor = locator();
+  refresh();
+  remember(anchor);
 }
 
 const fraction = ([b, o]) => (book.starts[chapter] + (offsets[b] || 0) + o) / book.total;
 // The contents entry the reader is in: the last one at or before the place.
 const entry = () => heads.filter(h => h.b <= anchor[0]).at(-1)?.entry ?? book.data.toc.filter(t => book.data.ids[t.id] < chapter).at(-1);
 
-// Turning pages.
-
-// Show page p. The place it records is the exact one being shown when known (a search
-// result, a synced position), otherwise the page's first character.
-function go(p, animate, place) {
-  at = Math.max(0, Math.min(p, geo.pages - 1));
-  flow.classList.toggle('turning', !!animate && settings.slide);
-  flow.style.transform = `translateX(${-at * geo.stride}px)`;
-  anchor = place ?? locator();
-  refresh();
-  remember(anchor);
-}
-
-function next() {
-  if (at < geo.pages - 1) go(at + 1, true);
-  else if (chapter < book.data.chapters.length - 1) render(chapter + 1, 'start', true);
-  else go(at, true);
-}
-function prev() {
-  if (at > 0) go(at - 1, true);
-  else if (chapter > 0) render(chapter - 1, 'end', true);
-  else go(at, true);
-}
-
 function remember([b, o]) {
-  // Reading speed, learned from ordinary page turns.
+  // Reading speed, learned from ordinary pauses between scrolls (a fast jump is not reading).
   const now = Date.now(), char = book.starts[chapter] + (offsets[b] || 0) + o;
-  const read = char - lastTurn.char, minutes = (now - lastTurn.at) / 60000;
-  if (read > 200 && read < 6000 && minutes > 0.07 && minutes < 10) {
+  const read = char - lastRead.char, minutes = (now - lastRead.at) / 60000;
+  if (read > 200 && read < 6000 && minutes > Math.max(0.07, read / 2400) && minutes < 10) {
     cpm = Math.round(cpm * 0.9 + (read / minutes) * 0.1);
     localStorage.setItem('ebis.cpm', cpm);
   }
-  lastTurn = { at: now, char };
+  lastRead = { at: now, char };
   const pos = store.get('pos', book.id);
   if (pos && pos.c === chapter && pos.b === b && pos.o === o) return;
   store.put('pos', book.id, { c: chapter, b, o, pct: fraction([b, o]), device: deviceName, at: now }, false);
@@ -200,12 +204,11 @@ function remember([b, o]) {
 
 function refresh() {
   const [b, o] = anchor, pct = fraction(anchor);
-  const left = geo.pages - 1 - at;
   const charsLeft = book.data.sizes[chapter] - (offsets[b] || 0) - o;
   const minutes = Math.max(1, Math.round(charsLeft / cpm));
   $('folio-l').textContent = settings.folio === 'time'
     ? `${minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`} left in chapter`
-    : left ? `${left} ${left > 1 ? 'pages' : 'page'} left in chapter` : 'Last page in chapter';
+    : `Chapter ${chapter + 1} of ${book.data.chapters.length}`;
   $('folio-r').textContent = `${Math.floor(pct * 100)}%`;
   const head = entry()?.title || book.record.title;
   $('run-l').textContent = book.record.title;
@@ -214,76 +217,57 @@ function refresh() {
   $('scrub-label').textContent = head;
 }
 
-// Touch, mouse, keys and wheel.
+// Touch, mouse and keys. The scroll itself is the browser's own; taps act, they don't turn.
 
 let touch = null;
 page.addEventListener('pointerdown', e => {
-  if (e.isPrimary && e.button < 1) touch = { x: e.clientX, y: e.clientY, t: e.timeStamp, id: e.pointerId, mouse: e.pointerType === 'mouse', dx: 0 };
-});
-page.addEventListener('pointermove', e => {
-  if (!touch || touch.mouse || e.pointerId !== touch.id) return;
-  const dx = e.clientX - touch.x, dy = e.clientY - touch.y;
-  if (!touch.drag) {
-    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.2 || !getSelection().isCollapsed) return;
-    touch.drag = true;
-    page.setPointerCapture(e.pointerId);
-    flow.classList.remove('turning');
-  }
-  const stuck = (dx > 0 && at === 0 && chapter === 0) || (dx < 0 && at === geo.pages - 1 && chapter === book.data.chapters.length - 1);
-  touch.dx = dx;
-  flow.style.transform = `translateX(${-at * geo.stride + dx * (stuck ? 0.25 : 1)}px)`;
+  if (e.isPrimary && e.button < 1) touch = { x: e.clientX, y: e.clientY, t: e.timeStamp, id: e.pointerId };
 });
 page.addEventListener('pointerup', e => {
   const t = touch;
   touch = null;
   if (!t || e.pointerId !== t.id) return;
-  if (t.drag) {
-    const speed = t.dx / Math.max(1, e.timeStamp - t.t);
-    if (t.dx < -geo.W * 0.2 || speed < -0.35) next();
-    else if (t.dx > geo.W * 0.2 || speed > 0.35) prev();
-    else go(at, true);
-  } else if (Math.hypot(e.clientX - t.x, e.clientY - t.y) < 8 && e.timeStamp - t.t < 450) tap(e);
+  if (Math.hypot(e.clientX - t.x, e.clientY - t.y) < 8 && e.timeStamp - t.t < 450) tap(e);
 });
-page.addEventListener('pointercancel', () => { if (touch?.drag) go(at, true); touch = null; });
+page.addEventListener('pointercancel', () => { touch = null; });
 flow.addEventListener('click', e => { if (e.target.closest('a')) e.preventDefault(); });
 
 function tap(e) {
   if (!getSelection().isCollapsed) return getSelection().removeAllRanges();
   if (layerOpen()) return closeLayers();
+  if (e.target.closest('.chap')) return; // a chapter doorway acts on its own
   const link = e.target.closest('a[href]');
   if (link) return follow(link);
   const mark = markAt(e.clientX, e.clientY);
   if (mark) return editMark(mark);
   if (e.target.localName === 'img') return lightbox(e.target.src);
-  if (view.classList.contains('ui')) return showUI(false);
-  const x = e.clientX / innerWidth;
-  if (x < 0.3) prev();
-  else if (x > 0.7) next();
-  else showUI(true);
+  showUI(!view.classList.contains('ui'));
 }
-
-// A wheel or trackpad gesture is a stream of events; each gesture turns one page.
-let wheel = { sum: 0, last: 0, spent: false };
-page.addEventListener('wheel', e => {
-  e.preventDefault();
-  if (e.timeStamp - wheel.last > 200) wheel = { sum: 0, spent: false };
-  wheel.last = e.timeStamp;
-  if (wheel.spent) return;
-  wheel.sum += Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-  if (Math.abs(wheel.sum) > 30) wheel.spent = true, wheel.sum > 0 ? next() : prev();
-}, { passive: false });
 
 addEventListener('keydown', e => {
   if (view.hidden || e.metaKey || e.ctrlKey || e.target.closest?.('input, textarea')) return;
   if (layerOpen()) return e.key === 'Escape' && closeLayers();
   const k = e.key;
-  if (k === 'ArrowRight' || k === 'PageDown' || (k === ' ' && !e.shiftKey)) next();
-  else if (k === 'ArrowLeft' || k === 'PageUp' || (k === ' ' && e.shiftKey)) prev();
+  if (k === 'ArrowRight' || k === 'PageDown' || (k === ' ' && !e.shiftKey)) turn(1);
+  else if (k === 'ArrowLeft' || k === 'PageUp' || (k === ' ' && e.shiftKey)) turn(-1);
   else if (k === 'Escape') view.classList.contains('ui') ? showUI(false) : leave();
   else if (e.altKey && /^Digit[1-9]$/.test(e.code)) switchTab(+e.code.slice(5) - 1);
   else return;
   e.preventDefault();
 });
+
+// A screenful down or up; past the end of a chapter, on to the next one (and back).
+function turn(dir) {
+  const atEnd = page.scrollTop + page.clientHeight >= page.scrollHeight - 8;
+  const atStart = page.scrollTop <= 4;
+  if (dir > 0 && atEnd) {
+    if (chapter < book.data.chapters.length - 1) render(chapter + 1, 'start', true);
+  } else if (dir < 0 && atStart) {
+    if (chapter > 0) render(chapter - 1, 'end', true);
+  } else {
+    page.scrollBy({ top: dir * page.clientHeight * 0.92, behavior: 'smooth' });
+  }
+}
 
 new ResizeObserver(() => relayout()).observe(page);
 document.fonts.addEventListener('loadingdone', () => relayout());
@@ -291,12 +275,12 @@ onUpdate(changes => 'folio' in changes ? book && refresh() : relayout());
 
 // Lay the chapter out again (new size or settings) keeping the reader's place on screen.
 function relayout() {
-  if (!book || view.hidden || !geo) return;
+  if (!book || view.hidden) return;
   measure();
-  go(pageOf(anchor), false, anchor);
+  scrollLoc(anchor);
 }
 
-// Keep the screen awake while reading, for a few minutes after each page.
+// Keep the screen awake while reading, for a few minutes after each rest.
 async function keepAwake() {
   clearTimeout(wakeTimer);
   wakeTimer = setTimeout(releaseWake, 5 * 60000);

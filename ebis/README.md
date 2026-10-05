@@ -17,7 +17,7 @@ that ebis typesets itself.
   equations) from the rendered page.
 - `js/convert.js` mounts each document in a hidden frame so the browser resolves its CSS, then keeps
   only what a reader notices: structure, emphasis, alignment, images, links.
-- `js/reader.js` lays out one chapter at a time in CSS columns. A position is
+- `js/reader.js` lays out one chapter at a time as a single page you scroll. A position is
   `[chapter, block, character]`, so it survives any device, type size or theme.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
