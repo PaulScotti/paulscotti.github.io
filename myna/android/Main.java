@@ -22,7 +22,7 @@ import java.net.URL;
 // site does. This shell adds what a web page can't do: answer cards with the volume keys (up is correct, down
 // is incorrect) without looking, keep the screen on through a session, and install a newer copy of itself.
 public class Main extends Activity {
-  static final String SITE = "https://paulscotti.com/myna/";
+  static final String SITE = "https://www.paulscotti.com/myna/";
   WebView web;
   volatile boolean keys; // a session is on, so the volume keys answer cards
 
