@@ -1,0 +1,12 @@
+{
+  // Deploy from this folder: npx wrangler deploy. The table is in schema.sql.
+  // Secrets: KEY (the password, the same as ebis), OPENAI_API_KEY, AZURE_KEY (a Speech resource in eastus).
+  "name": "myna",
+  "main": "index.js",
+  "compatibility_date": "2026-10-01",
+  "account_id": "bf4d563d019ba4efff46afba844e5163",
+  "workers_dev": true,
+  "d1_databases": [{ "binding": "DB", "database_name": "myna" }],
+  "r2_buckets": [{ "binding": "AUDIO", "bucket_name": "myna-audio" }],
+  "observability": { "enabled": true }
+}

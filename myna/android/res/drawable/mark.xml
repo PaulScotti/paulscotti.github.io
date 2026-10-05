@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The myna from myna.svg, sized into the middle of an adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="100" android:viewportHeight="100">
+  <group android:scaleX="0.58" android:scaleY="0.58" android:translateX="21.6" android:translateY="18.7">
+    <path android:fillColor="#1d1b18" android:pathData="M22 31C23 22 30 16 38 17C46 18 50 24 52 30C60 36 70 46 73 58L88 88C88.5 90 87 91.5 85.5 90.5L69 74C63 78 52 78 44 72C34 65 27 55 25 43C24 41 23 39 22 37Z"/>
+    <path android:fillColor="#c08a1e" android:pathData="M23 31L9 34.5L23 37.5Z"/>
+    <path android:fillColor="#c08a1e" android:pathData="M27.8 29a3.2 3.2 0 1 0 6.4 0a3.2 3.2 0 1 0 -6.4 0Z"/>
+  </group>
+</vector>

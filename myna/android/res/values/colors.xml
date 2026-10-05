@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="paper">#f7f5ef</color>
+  <color name="icon">#f7f5ef</color>
+  <bool name="light">true</bool>
+</resources>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f5ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151412" media="(prefers-color-scheme: dark)">
+<title>Myna</title>
+<link rel="icon" href="myna.svg" type="image/svg+xml">
+<link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="myna.css">
+<script type="module" src="myna.js"></script>
+</head>
+<body>
+
+<form id="lock" class="lock" hidden>
+  <svg class="mark" aria-hidden="true"><use href="#myna"/></svg>
+  <h1>myna</h1>
+  <div class="field">
+    <input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required>
+    <button>Open</button>
+  </div>
+</form>
+
+<main id="desk" class="desk" hidden>
+  <header>
+    <h1><svg class="mark" aria-hidden="true"><use href="#myna"/></svg>myna</h1>
+    <button id="add" class="quiet">Add words</button>
+  </header>
+  <section class="today">
+    <p id="plan" class="plan"></p>
+    <button id="begin" class="begin">Begin<span aria-hidden="true"> →</span></button>
+  </section>
+  <figure id="levels" class="levels" aria-label="Words by level"></figure>
+  <footer>
+    <button id="update" class="quiet" hidden>A new version of the app is ready. Update</button>
+    <a id="get" class="quiet" href="myna.apk" hidden>Get the Android app</a>
+  </footer>
+</main>
+
+<section id="study" class="study" hidden>
+  <div class="progress"><i id="progress"></i></div>
+  <p id="left" class="left"></p>
+  <div id="card" class="card">
+    <p id="tag" class="tag">New word</p>
+    <p id="front" class="front"></p>
+    <div id="answer" class="answer">
+      <p id="back" class="back"></p>
+      <p id="base" class="base"></p>
+    </div>
+  </div>
+  <div id="grade" class="grade">
+    <button data-good="false"><span aria-hidden="true">← </span>Incorrect</button>
+    <button data-good="true">Correct<span aria-hidden="true"> →</span></button>
+  </div>
+  <div id="next" class="grade"><button>Next<span aria-hidden="true"> →</span></button></div>
+</section>
+
+<dialog id="sheet" class="sheet">
+  <form id="words" method="dialog">
+    <h2>Add words</h2>
+    <textarea name="text" placeholder="Words or phrases, in Korean or English" aria-label="Words or phrases" required></textarea>
+    <button>Add</button>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" popover="manual" role="status" aria-live="polite"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="myna" viewBox="0 0 100 100">
+    <path fill="currentColor" d="M22 31C23 22 30 16 38 17C46 18 50 24 52 30C60 36 70 46 73 58L88 88C88.5 90 87 91.5 85.5 90.5L69 74C63 78 52 78 44 72C34 65 27 55 25 43C24 41 23 39 22 37Z"/>
+    <path d="M23 31L9 34.5L23 37.5Z" style="fill:var(--accent)"/>
+    <circle cx="31" cy="29" r="3.2" style="fill:var(--accent)"/>
+  </symbol>
+</svg>
+</body>
+</html>
