@@ -18,6 +18,7 @@ function show(...shown) {
 
 export function closeLayers(silent) {
   if (!layerOpen()) return;
+  unpeek();
   for (const l of layers) l.hidden = true;
   if (!silent && history.state?.layer) history.back();
 }
@@ -30,6 +31,7 @@ export function openSheet(title, body) {
 }
 
 export function popover(content, actions) {
+  unpeek();
   const row = document.createElement('div');
   row.className = 'actions';
   for (const [label, fn] of actions) {
@@ -40,6 +42,30 @@ export function popover(content, actions) {
   }
   pop.replaceChildren(content, row);
   show(pop);
+}
+
+// A peek floats a note beside the link that named it, with no actions and no history entry;
+// it stays while the pointer or focus rests on the link or the note itself.
+export function peek(content, anchor) {
+  pop.replaceChildren(content);
+  pop.classList.add('peek');
+  pop.hidden = false;
+  const r = anchor.getBoundingClientRect();
+  const half = pop.offsetWidth / 2 + 12;
+  pop.style.left = `${Math.min(Math.max(r.left + r.width / 2, half), innerWidth - half)}px`;
+  if (r.top > innerHeight * 0.5) {
+    pop.style.top = 'auto';
+    pop.style.bottom = `${innerHeight - r.top + 10}px`;
+  } else {
+    pop.style.top = `${r.bottom + 10}px`;
+    pop.style.bottom = 'auto';
+  }
+}
+export function unpeek() {
+  if (!pop.classList.contains('peek')) return;
+  pop.classList.remove('peek');
+  pop.hidden = true;
+  pop.style.left = pop.style.top = pop.style.bottom = '';
 }
 
 export function lightbox(src) {

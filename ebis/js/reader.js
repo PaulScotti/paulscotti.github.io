@@ -5,7 +5,7 @@
 import * as store from './store.js';
 import { blocks as leafBlocks, blockSizes } from './convert.js';
 import { settings, update, onUpdate } from './settings.js';
-import { $, template, escape, openSheet, popover, lightbox, closeLayers, layerOpen, toast } from './ui.js';
+import { $, template, escape, openSheet, popover, peek, unpeek, lightbox, closeLayers, layerOpen, toast } from './ui.js';
 
 const view = $('reader'), page = $('page'), flow = $('flow');
 const COLORS = ['ochre', 'rubric', 'lapis'];
@@ -97,7 +97,7 @@ function chapterLink(c, dir) {
 function measure() {
   const W = page.clientWidth, fs = settings.size;
   const mx = Math.round(Math.min(Math.max(W * 0.06, 16), 48) * settings.margin);
-  const c = Math.floor(Math.min(W - 2 * mx, fs * 34));
+  const c = Math.floor(Math.min(W - 2 * mx, fs * 32));
   const vars = {
     '--fs': `${fs}px`, '--lh': settings.leading, '--flow-w': `${c}px`, '--page-h': `${page.clientHeight}px`,
     '--align': settings.justify ? 'justify' : 'start', '--hyphens': settings.justify ? 'auto' : 'manual',
@@ -234,6 +234,7 @@ flow.addEventListener('click', e => { if (e.target.closest('a')) e.preventDefaul
 
 function tap(e) {
   if (!getSelection().isCollapsed) return getSelection().removeAllRanges();
+  if (popoverEl.classList.contains('peek')) unpeek(); // a peek never swallows a tap
   if (layerOpen()) return closeLayers();
   if (e.target.closest('.chap')) return; // a chapter doorway acts on its own
   const link = e.target.closest('a[href]');
@@ -509,14 +510,59 @@ function follow(a) {
   const id = decodeURIComponent(href.slice(1));
   const c = book.data.ids[id];
   if (c == null) return;
+  const note = noteFor(id, c);
+  if (!note) return jump(id, true);
+  popover(note, [['Go to', () => jump(id, true)]]);
+}
+
+// The content of a note: the block its id names — or, when that's only the note's marker
+// ("1"), what follows, since a converted footnote splits the number from its text.
+function noteFor(id, c) {
   const target = (c === chapter ? flow : section(c)).querySelector(`[id="${CSS.escape(id)}"]`);
-  if (!target || target.localName === 'section' || /^h[234]$/.test(target.localName)) return jump(id, true);
+  if (!target || target.localName === 'section' || /^h[234]$/.test(target.localName)) return null;
+  const markerOnly = el => /^\d{1,3}\.?$/.test(el.textContent.trim()) && el.querySelector('a');
+  let block = target.closest('aside, li, p, dd, figure, blockquote') || target;
+  while (markerOnly(block) && block.nextElementSibling) block = block.nextElementSibling;
   const note = document.createElement('div');
   note.className = 'flow';
   note.lang = flow.lang;
-  note.append((target.closest('aside, li, p, dd, figure, blockquote') || target).cloneNode(true));
+  note.append(block.cloneNode(true));
+  for (let el = block.nextElementSibling; el && note.textContent.trim().length < 12 && !markerOnly(el); el = el.nextElementSibling) {
+    note.append(el.cloneNode(true));
+  }
   for (const img of note.querySelectorAll('img[data-k]')) img.src = book.urls[img.dataset.k];
-  popover(note, [['Go to', () => jump(id, true)]]);
+  return note.textContent.trim() || note.querySelector('img') ? note : null;
+}
+
+// On a device with a mouse, resting on a note's number peeks at it beside the link.
+const popoverEl = $('pop');
+const hovering = matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (hovering) {
+  let peekTimer = 0, peekLink = null;
+  const drop = () => { clearTimeout(peekTimer); peekLink = null; unpeek(); };
+  flow.addEventListener('mouseover', e => {
+    const a = e.target.closest?.('a[href^="#"]');
+    if (a && a === peekLink && !popoverEl.hidden) return;
+    clearTimeout(peekTimer);
+    if (a) peekTimer = setTimeout(() => { peekLink = a; preview(a); }, 220);
+    else if (!e.target.closest?.('#pop')) peekTimer = setTimeout(drop, 180);
+  });
+  flow.addEventListener('focusin', e => {
+    const a = e.target.closest?.('a[href^="#"]');
+    if (a) { peekLink = a; preview(a); }
+  });
+  flow.addEventListener('focusout', () => setTimeout(drop, 180));
+  popoverEl.addEventListener('mouseover', () => clearTimeout(peekTimer));
+  popoverEl.addEventListener('mouseleave', drop);
+  page.addEventListener('scroll', drop, { passive: true });
+}
+function preview(a) {
+  if (layerOpen() || !getSelection().isCollapsed) return;
+  const id = decodeURIComponent(a.getAttribute('href').slice(1));
+  const c = book.data.ids[id];
+  if (c == null) return;
+  const note = noteFor(id, c);
+  if (note) peek(note, a);
 }
 
 // Highlights are ranges painted with the CSS Custom Highlight API; the text itself is untouched.
