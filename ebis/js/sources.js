@@ -235,7 +235,7 @@ function webSource(doc, url, fetcher, shown) {
     const walled = botWall(doc);
     const { Readability } = await import('../vendor/readability.js');
     const article = paper ? latexml(paper)
-      : new Readability(doc, { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
+      : new Readability(asSet(doc), { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
     const fuller = embedded.length > article.textContent.length * 1.25 + 500 && sameText(embedded, article.textContent, metaOf('og:description', 'description'));
     if ((fuller ? embedded : article.textContent).trim().length < 500) {
       throw new Error(walled ? 'The site only shows its pages to a real browser.' : 'That page has no article ebis can find.');
@@ -245,7 +245,7 @@ function webSource(doc, url, fetcher, shown) {
     const site = tidy(article.siteName) || new URL(url).hostname.replace(/^www\./, '');
     const meta = source.meta = {
       title: withoutSite(tidy(article.title || doc.title) || url, site),
-      author: withoutDate(tidy(article.byline).replace(/^by\s+/i, ''), when),
+      author: withoutDate(tidy(article.byline).replace(/^by\b:?\s*/i, ''), when),
       site, lang: article.lang || lang, published: isNaN(when) ? '' : when.toISOString(),
     };
     prune(article.content, meta, when, url);
@@ -459,6 +459,18 @@ function latexml(root) {
 }
 
 const tidy = s => (s || '').replace(/\s+/g, ' ').trim();
+
+// The text as a browser sets it: outside preformatted text, a run of spaces and line breaks is
+// one space. Readability measures some things as written (a byline is under 100 characters),
+// and a page's indentation would count: a byline of 34 characters set across indented lines
+// measures 115, and is passed over for the "By" inside it.
+function asSet(doc) {
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+  for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+    if (!text.parentElement.closest('pre, textarea, code, script, style')) text.data = text.data.replace(/[ \t\n\r\f]+/g, ' ');
+  }
+  return doc;
+}
 
 // A page's title often carries its site's name ("Headline | Site"), which ebis sets on a line of its own.
 function withoutSite(title, site) {
