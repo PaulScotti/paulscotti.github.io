@@ -134,6 +134,41 @@
    "requested": "Confirmed by email (bring photo ID)"
   },
   {
+   "id": "7445a-4th-ave-ne",
+   "name": "7445 A 4th Ave NE",
+   "address": "7445 A 4th Ave NE, Seattle, WA 98115",
+   "neighborhood": "Green Lake",
+   "type": "Townhouse",
+   "beds": 3,
+   "baths": 2.5,
+   "sqft": 1466,
+   "rent": "$4,245/mo",
+   "fees": "Tenant pays applicable utilities. Application $49/adult; refundable security deposit $4,000",
+   "lease": "Confirm standard lease length; advertised free-month promotion requires 18 months",
+   "available": "Now",
+   "parking": "Attached garage",
+   "laundry": "Full-size washer/dryer in unit (per management listing)",
+   "pets": "Cats and small dogs considered individually; pet deposit and monthly pet rent may apply",
+   "highlights": [
+    "Three-level layout with 3 bedrooms and 2.5 bathrooms",
+    "Open living/dining area with gas fireplace",
+    "Stainless kitchen appliances, including dishwasher and gas range",
+    "Private fenced patio; blocks from Green Lake"
+   ],
+   "watch_outs": [
+    "Confirm AC coverage, bedroom flooring and the condition of the laundry area",
+    "Three levels: check stairs, bedroom placement and shared-wall noise",
+    "Free-month promotion requires occupancy by Oct 15, before the tour"
+   ],
+   "listing_url": "https://madeson.appfolio.com/listings/detail/43d9aa78-62cd-4c3a-9ab4-38e5398b12a4",
+   "photo_url": "https://images.cdn.appfolio.com/madeson/images/8f07a663-d04a-48c3-9f92-536e4757fcbb/medium.jpg",
+   "lat": 47.682410647775,
+   "lng": -122.325046722758,
+   "status": "booked",
+   "tour_at": "2026-10-18T14:00",
+   "requested": "Confirmed in Google Calendar: October 18, 2026, 2:00-3:00 PM Seattle time."
+  },
+  {
    "id": "the-meyden",
    "name": "The Meyden",
    "address": "10333 Main St, Bellevue, WA 98004",
