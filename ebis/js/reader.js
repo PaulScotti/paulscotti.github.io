@@ -248,7 +248,7 @@ function tap(e) {
   if (link) return follow(link);
   const mark = markAt(e.clientX, e.clientY);
   if (mark) return editMark(mark);
-  if (e.target.localName === 'img') return lightbox(e.target.src);
+  if (e.target.localName === 'img') return lightbox(e.target);
   showUI(!view.classList.contains('ui'));
 }
 

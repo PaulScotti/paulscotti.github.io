@@ -168,7 +168,7 @@ class Writer {
   picture(el, look) {
     if (el.closest('[aria-hidden="true"]') || /^(presentation|none)$/.test(el.getAttribute('role'))) return; // decoration: icons, flourishes
     const href = node => node?.getAttribute('href') || node?.getAttribute('xlink:href');
-    const link = el.localName === 'img' ? el.currentSrc || el.getAttribute('src')
+    const link = el.localName === 'img' ? sharpest(el) || el.currentSrc || el.getAttribute('src')
       : el.localName === 'object' ? el.getAttribute('data')
       : el.localName === 'image' ? href(el)
       : href(el.querySelector('image'));
@@ -380,8 +380,21 @@ function split(section) {
   return parts;
 }
 
+// Of the sizes a page offers a picture in (its srcset), the one ebis keeps: the smallest that is
+// as sharp as ebis stores pictures, or else the largest. The browser's own pick suits the page it
+// laid out, where the picture may have been set much narrower than in the reader.
+function sharpest(img) {
+  const sets = [...(img.parentElement?.localName === 'picture' ? img.parentElement.querySelectorAll('source') : []), img]
+    .map(el => [...(el.getAttribute('srcset') || '').matchAll(/([^\s,]\S*)\s+(\d+(?:\.\d+)?)([wx])/g)]
+      .map(([, url, n, unit]) => ({ url: URL.parse(url, img.baseURI)?.href, n: unit === 'w' ? +n : +n * SHARP / 3 })))
+    .filter(set => set.length);
+  const set = (sets.find(set => set.some(c => c.url === img.currentSrc)) || sets.at(-1))?.sort((a, b) => a.n - b.n);
+  return set && (set.find(c => c.n >= SHARP) || set.at(-1)).url;
+}
+
 // Images are stored once per source, scaled down when they exceed any screen.
-export async function fitImage(blob, max = 1800) {
+const SHARP = 1800; // pixels on a picture's longer side
+export async function fitImage(blob, max = SHARP) {
   if (/svg/.test(blob.type)) return { blob, ...svgSize(await blob.text()) };
   const bitmap = await createImageBitmap(blob);
   const { width: w, height: h } = bitmap;

@@ -281,8 +281,8 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow mtable.numbered > mtr > :is(.s, .n) { width: 50%; }
 .flow mtable.numbered > mtr > .n { text-align: right; vertical-align: middle; padding-left: 1em; }
 .flow mtable.numbered > mtr > .n mtext { font-family: var(--serif); font-size: .83em; }
-:root[data-theme="dusk"] .flow img, :root[data-theme="night"] .flow img { filter: brightness(.85); background: #e9e4d8; } /* line art drawn on transparency stays legible */
-:root[data-theme="dusk"] .flow img.ink, :root[data-theme="night"] .flow img.ink { filter: invert(1) brightness(.82); background: none; } /* type cut from a page is ink, in the theme's own */
+:root[data-theme="dusk"] :is(.flow, .lightbox) img, :root[data-theme="night"] :is(.flow, .lightbox) img { filter: brightness(.85); background: #e9e4d8; } /* line art drawn on transparency stays legible */
+:root[data-theme="dusk"] :is(.flow, .lightbox) img.ink, :root[data-theme="night"] :is(.flow, .lightbox) img.ink { filter: invert(1) brightness(.82); background: none; } /* type cut from a page is ink, in the theme's own */
 
 ::highlight(ochre) { background-color: var(--hl-ochre); }
 ::highlight(rubric) { background-color: var(--hl-rubric); }

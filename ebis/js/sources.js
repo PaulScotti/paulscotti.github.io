@@ -31,9 +31,9 @@ export async function importFile(file, opts) {
 export async function importURL(url, opts) {
   // An arXiv paper's HTML edition keeps its tables, formulas and figures as real
   // markup, where the PDF keeps only glyphs; read the page, falling back to the PDF.
-  const edition = arxivHTML(url);
-  if (edition) {
-    try { return await importURL(edition, opts); } catch { /* this paper has no HTML edition */ }
+  const editions = arxiv(url);
+  if (editions && !/\/html\//.test(url)) {
+    try { return await importURL(editions.html, opts); } catch { /* this paper has no HTML edition */ }
   }
   let blob, final;
   try {
@@ -66,10 +66,12 @@ export async function importPage(html, url, opts) {
 
 const parse = html => new DOMParser().parseFromString(html, 'text/html');
 
-// The paper's HTML edition for an arXiv abstract or PDF link (papers old and new have one).
-const arxivHTML = url => {
-  const m = /^https?:\/\/(?:www\.|export\.)?arxiv\.org\/(?:abs|pdf)\/(?:(\d{4}\.\d{4,5})|([a-z-]+)(?:\.[a-z]{2})?\/(\d{7}))(v\d+)?(?:\.pdf)?\/?(?:[?#].*)?$/i.exec(url);
-  return m ? `https://arxiv.org/html/${m[1] || `${m[2]}/${m[3]}`}${m[4] || ''}` : null;
+// An arXiv paper's two editions, from a link to its abstract, its PDF or its HTML edition (the one
+// LaTeXML made from its LaTeX; papers old and new have one).
+const arxiv = url => {
+  const m = /^https?:\/\/(?:www\.|export\.)?arxiv\.org\/(?:abs|pdf|html)\/(?:(\d{4}\.\d{4,5})|([a-z-]+)(?:\.[a-z]{2})?\/(\d{7}))(v\d+)?(?:\.pdf)?\/?(?:[?#].*)?$/i.exec(url);
+  const id = m && `${m[1] || `${m[2]}/${m[3]}`}${m[4] || ''}`;
+  return id ? { html: `https://arxiv.org/html/${id}`, pdf: `https://arxiv.org/pdf/${id}` } : null;
 };
 
 // How much article a page shows, measured on a throwaway copy (Readability rearranges its input).
@@ -236,6 +238,7 @@ function webSource(doc, url, fetcher, shown) {
     const { Readability } = await import('../vendor/readability.js');
     const article = paper ? latexml(paper)
       : new Readability(asSet(doc), { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
+    if (paper) await sharpen(article.content, arxiv(url)?.pdf, fetcher);
     const fuller = embedded.length > article.textContent.length * 1.25 + 500 && sameText(embedded, article.textContent, metaOf('og:description', 'description'));
     if ((fuller ? embedded : article.textContent).trim().length < 500) {
       throw new Error(walled ? 'The site only shows its pages to a real browser.' : 'That page has no article ebis can find.');
@@ -456,6 +459,70 @@ function latexml(root) {
   const authors = [...root.querySelectorAll('.ltx_personname')].map(p => tidy(p.firstChild?.textContent)).filter(Boolean);
   root.querySelector('.ltx_authors')?.remove();
   return { title, byline: authors.join(', '), content: root, textContent: root.textContent, siteName: '' };
+}
+
+// LaTeXML often sets a paper's raster figures at the size they're printed, which a screen enlarges
+// into a blur (Figure 3 of arXiv's 2608.05643 is 397 pixels wide). The paper's PDF has them sharp,
+// so each such figure is cut from there instead: the PDF's picture that looks like it, shrunk to a
+// few gray squares, and that carries its label as well unless the likeness is unmistakable. (The
+// PDF's labels can sit under the wrong picture, and its pictures can lack them.) A figure drawn as
+// SVG, or at twice its printed size or more, is sharp already; one with no likeness in the PDF
+// stays as it is.
+async function sharpen(root, pdf, fetcher) {
+  const label = s => s?.match(/^\s*Fig(?:ure|\.)\s*([A-Z]?[\d.]*\d)/i)?.[1];
+  const figures = [...root.querySelectorAll('figure.ltx_figure')] // a float, or one of two set side by side
+    .map(figure => ({ figure, name: label(figure.querySelector(':scope > figcaption')?.textContent), imgs: [...figure.querySelectorAll('img')] }))
+    .filter(f => f.name && f.imgs.length && !f.figure.querySelector('object, svg') && f.imgs.every(img => !/\.svg$/i.test(img.getAttribute('src'))));
+  for (const f of figures) f.bitmaps = await Promise.all(f.imgs.map(async img => createImageBitmap(await fetcher(img.src)))).catch(() => []);
+  const blurred = figures.filter(f => f.bitmaps.some((b, i) => b.width < 2 * (f.imgs[i].width || b.width)));
+  if (!pdf || !blurred.length) return;
+  const { pdfSource } = await import('./pdf.js');
+  const source = await pdfSource(await fetcher(pdf));
+  const cuts = [];
+  for (const section of source.sections) {
+    for (const img of parse((await section.load()).html).querySelectorAll('img')) {
+      if (!img.classList.contains('figure')) { URL.revokeObjectURL(img.src); continue; }
+      cuts.push({ img, name: label(img.closest('figure')?.querySelector('figcaption')?.textContent), look: likeness([await createImageBitmap(await (await fetch(img.src)).blob())]) });
+    }
+  }
+  for (const f of blurred) f.look = likeness(f.bitmaps, f.imgs.map(img => [img.width, img.height]));
+  const pairs = blurred.flatMap(f => cuts.map(cut => ({ f, cut, alike: f.look.v.reduce((sum, x, i) => sum + x * cut.look.v[i], 0) })))
+    .filter(({ f, cut, alike }) => Math.max(f.look.shape / cut.look.shape, cut.look.shape / f.look.shape) < 1.25 && (alike > 0.9 || (alike > 0.6 && cut.name === f.name)))
+    .sort((a, b) => b.alike - a.alike);
+  for (const { f, cut } of pairs) {
+    if (f.done || cut.done || !f.figure.isConnected) continue;
+    f.done = cut.done = true;
+    const parts = [...f.figure.children].filter(el => el.localName !== 'figcaption');
+    parts[0].before(root.ownerDocument.importNode(cut.img));
+    parts.forEach(el => el.remove());
+  }
+  for (const cut of cuts) if (!cut.done) URL.revokeObjectURL(cut.img.src);
+}
+
+// A picture as a few gray squares: its parts set side by side at their sizes (a figure's panels),
+// trimmed to their ink and shrunk to 16×16, with its shape; two likenesses compare by correlation.
+function likeness(bitmaps, sizes = []) {
+  const boxes = bitmaps.map((b, i) => sizes[i]?.[0] && sizes[i][1] ? sizes[i] : [b.width, b.height]);
+  const k = 240 / Math.max(...boxes.map(([, h]) => h));
+  const canvas = new OffscreenCanvas(Math.ceil(boxes.reduce((w, [bw]) => w + bw * k, 0)), 240);
+  const g = canvas.getContext('2d', { willReadFrequently: true });
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  boxes.reduce((x, [w, h], i) => (g.drawImage(bitmaps[i], x, (240 - h * k) / 2, w * k, h * k), x + w * k), 0);
+  const px = g.getImageData(0, 0, canvas.width, canvas.height).data;
+  let [x0, y0, x1, y1] = [canvas.width, canvas.height, 0, 0];
+  for (let i = 0; i < px.length; i += 4) {
+    if (px[i] * 0.3 + px[i + 1] * 0.59 + px[i + 2] * 0.11 > 230) continue;
+    const x = (i >> 2) % canvas.width, y = (i >> 2) / canvas.width | 0;
+    [x0, y0, x1, y1] = [Math.min(x0, x), Math.min(y0, y), Math.max(x1, x + 1), Math.max(y1, y + 1)];
+  }
+  const small = new OffscreenCanvas(16, 16).getContext('2d', { willReadFrequently: true });
+  small.imageSmoothingQuality = 'high';
+  small.drawImage(canvas, x0, y0, Math.max(1, x1 - x0), Math.max(1, y1 - y0), 0, 0, 16, 16);
+  const d = small.getImageData(0, 0, 16, 16).data, v = [];
+  for (let i = 0; i < d.length; i += 4) v.push(d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11);
+  const mean = v.reduce((a, b) => a + b) / v.length, norm = Math.hypot(...v.map(a => a - mean)) || 1;
+  return { v: v.map(a => (a - mean) / norm), shape: Math.max(1, x1 - x0) / Math.max(1, y1 - y0) };
 }
 
 const tidy = s => (s || '').replace(/\s+/g, ' ').trim();

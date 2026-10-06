@@ -68,13 +68,19 @@ export function unpeek() {
   pop.style.left = pop.style.top = pop.style.bottom = '';
 }
 
-export function lightbox(src) {
-  picture.firstElementChild.src = src;
+// A picture full screen. A touch opens it and its click follows, landing on the picture now
+// shown; only a tap that begins on the picture closes it.
+let touched = false;
+export function lightbox(img) {
+  Object.assign(picture.firstElementChild, { src: img.src, className: img.className }); // shown as on the page
+  touched = false;
   show(picture);
 }
+picture.onpointerdown = () => { touched = true; };
+picture.onclick = () => touched && closeLayers();
 
 addEventListener('popstate', () => closeLayers(true));
-backdrop.onclick = picture.onclick = $('sheet-close').onclick = () => closeLayers();
+backdrop.onclick = $('sheet-close').onclick = () => closeLayers();
 
 export function toast(message, action) {
   toastEl.replaceChildren(message);
