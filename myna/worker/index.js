@@ -98,7 +98,12 @@ async function grade(env, ctx, { id, good, day }) {
   s = Math.max(s, 0.001);
   d = Math.min(Math.max(d, 1), 10);
   const level = Math.min(Math.max(Math.floor(Math.log2(s)) + 1, 1), 9);
-  const days = Math.max(1, Math.round(s / FACTOR * (config.retention ** (1 / DECAY) - 1)));
+  // The gap FSRS asks for, spread like Anki's fuzz: from 2.5 days up, any whole day within a few either side, a
+  // smaller share the longer the gap, so words learned together drift apart instead of always coming back together.
+  const ideal = Math.max(1, s / FACTOR * (config.retention ** (1 / DECAY) - 1));
+  const spread = ideal < 2.5 ? 0 : [[2.5, 7, 0.15], [7, 20, 0.1], [20, Infinity, 0.05]]
+    .reduce((delta, [start, end, share]) => delta + share * Math.max(Math.min(ideal, end) - start, 0), 1);
+  const low = Math.round(ideal - spread), days = low + Math.floor(Math.random() * (Math.round(ideal + spread) - low + 1));
   // A missed card stays due today, asked the same way until it's answered; a remembered one is asked anew next time.
   const due = good ? new Date(Date.parse(day) + days * 864e5).toISOString().slice(0, 10) : day;
   await db.batch([
