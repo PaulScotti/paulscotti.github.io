@@ -339,7 +339,7 @@
    "rent": "$3,800/mo",
    "fees": "Move-in: first + last month + $3,800 deposit (~$11,400). Renter's insurance required",
    "lease": "12 months; must start within 30 days of applying; 700+ credit, 3x income",
-   "available": "Now",
+   "available": "Unconfirmed; WJL sent tour follow-ups Oct 3–5, 2026",
    "parking": "1 assigned off-street space + street",
    "laundry": "In-unit washer/dryer",
    "ac": "Ductless split AC",
@@ -354,10 +354,10 @@
    "watch_outs": [
     "Lease must start within 30 days of applying (move in by mid/late Nov)",
     "Big move-in cost: first + last + deposit (~$11,400)",
-    "Listed on Redfin for ~14 months: ask why it's still open",
+    "Confirm current availability before arranging a tour",
     "4 levels including the roof: lots of stairs"
    ],
-   "listing_url": "https://www.redfin.com/WA/Seattle/5810-14th-Ave-NW-98107/unit-B/home/494489",
+   "listing_url": "https://www.zillow.com/homedetails/5810-14th-Ave-NW-B-Seattle-WA-98107/2068063082_zpid/",
    "other_urls": [
     "https://www.zumper.com/address/5810-14th-ave-nw-seattle-wa-98107-usa"
    ],
@@ -365,7 +365,7 @@
    "lat": 47.671017541245,
    "lng": -122.373401432422,
    "status": "contacted",
-   "requested": "Requested Oct 17 (not confirmed)"
+   "requested": "Requested Oct 17. WJL acknowledged the Unit B inquiry Oct 3 and invited scheduling Oct 4–5. No tour time confirmed; verify current availability."
   },
   {
    "id": "5511-11th-ave-nw",
@@ -870,7 +870,46 @@
    "lat": 47.692830464643,
    "lng": -122.376768738233,
    "status": "contacted",
-   "requested": "Requested Oct 18 (calendar to-do: book a tour)"
+   "requested": "Requested Oct 18. Fathom acknowledged the inquiry Oct 3 under the complex address 8709 15th Ave NW; its property link points to this 8711 #B listing. No tour time confirmed. 8715 #B is a separate contacted listing."
+  },
+  {
+   "id": "8715-15th-ave-nw-b",
+   "name": "8715 15th Ave NW #B",
+   "address": "8715 15th Ave NW, Unit B, Seattle, WA 98117",
+   "neighborhood": "Crown Hill",
+   "type": "Townhouse",
+   "beds": 3,
+   "baths": 3,
+   "sqft": 1636,
+   "rent": "$3,895/mo ($3,920 with required fees)",
+   "listing_url": "https://showmojo.com/l/e4d29a107f",
+   "photo_url": "https://s3.amazonaws.com/ShowMojo-Dev/64142942/standard/large.jpg?1787267302",
+   "fees": "Required $15/mo insurance + $10/mo credit builder. Tenant pays utilities. App $50; deposit $2,000",
+   "available": "Listed as available now; confirm with Fathom",
+   "parking": "1 garage space with 110V and 240V EV outlets",
+   "laundry": "In-unit washer/dryer (listing description)",
+   "ac": "Ductless heat/AC",
+   "pets": "Cats; dogs up to 25 lb; 2 max; $300 deposit + $50/mo per pet",
+   "year_built": 2026,
+   "highlights": [
+    "2026 three-story townhome with a private rooftop deck",
+    "Garage parking, storage and bike storage included",
+    "Oversized windows and stainless appliances",
+    "3D tour linked in the listing"
+   ],
+   "watch_outs": [
+    "Three stories plus rooftop; ceramic tile, laminate and carpet",
+    "On 15th Ave NW: check traffic noise",
+    "Check the laundry room and appliance condition during the tour",
+    "Dogs limited to 25 lb; 650+ credit and 3x income"
+   ],
+   "other_urls": [
+    "https://www.zillow.com/view-imx/7edeb57a-4d86-45d8-8a1a-a9bad3ad2838/"
+   ],
+   "lat": 47.692964408111,
+   "lng": -122.376728086468,
+   "status": "contacted",
+   "requested": "Fathom acknowledged the inquiry Oct 3, 2026 and sent a scheduling reminder Oct 4. Both emails identify 8715 #B at $3,895/mo. No tour time confirmed."
   },
   {
    "id": "ten20",

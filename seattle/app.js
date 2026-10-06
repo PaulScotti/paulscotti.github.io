@@ -111,7 +111,7 @@ init();
 async function init() {
   applyStaticText();
   [base, hoodGeo] = await Promise.all([
-    fetch("places.json?v=12", { cache: "no-cache" }).then((r) => r.json()),
+    fetch("places.json?v=13", { cache: "no-cache" }).then((r) => r.json()),
     fetch("neighborhoods.json?v=10", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
   ]);
   setupMap();
@@ -198,19 +198,18 @@ function setupMap() {
   // Popup buttons re-render the popup; without this, Leaflet sees the detached button's click as a map click and closes it.
   map.on("popupopen", (e) => {
     e.popup.getElement().addEventListener("click", stopClick);
-    // Limit popup height to the visible map without moving the map.
-    const h = Math.max(220, map.getSize().y - 90);
-    if (e.popup.options.maxHeight !== h) {
-      e.popup.options.maxHeight = h;
-      e.popup.update();
-    }
+    positionPopup();
+    e.popup._sizeObserver = new ResizeObserver(positionPopup);
+    e.popup._sizeObserver.observe(e.popup.getElement());
     e.popup._sig = popupSig(e.popup);
     const hash = e.popup._placeId || e.popup._homeId || (e.popup._hoodId && "hood-" + e.popup._hoodId);
     if (hash) history.replaceState(null, "", "#" + hash);
   });
   // The panel resizes the map on phones (sheet open/closed, list length); keep Leaflet's size in sync.
   new ResizeObserver(() => map.invalidateSize()).observe(document.getElementById("map"));
+  map.on("move zoom resize", positionPopup);
   map.on("popupclose", (e) => {
+    e.popup._sizeObserver?.disconnect();
     const id = e.popup._placeId;
     if (id) editing.delete(id);
     if (location.hash) history.replaceState(null, "", location.pathname + location.search);
@@ -335,6 +334,30 @@ function popupOpts() {
     autoPan: false,
     className: "place-popup", closeButton: true,
   };
+}
+
+// Keep the card inside the map by moving the card, leaving the map and pin in place.
+function positionPopup() {
+  const popup = map._popup;
+  const el = popup?.getElement();
+  if (!el || !popup.isOpen()) return;
+  el.style.translate = "none";
+  const bounds = map.getContainer().getBoundingClientRect();
+  let card = el.getBoundingClientRect();
+  let x = Math.max(bounds.left + 16 - card.left, Math.min(0, bounds.right - 16 - card.right));
+  const zoom = map.getContainer().querySelector(".leaflet-control-zoom").getBoundingClientRect();
+  const top = card.right + x > zoom.left && card.left + x < zoom.right
+    ? Math.max(bounds.top + 16, zoom.bottom + 12) : bounds.top + 16;
+  const height = Math.max(40, bounds.bottom - top - 44);
+  if (popup.options.maxHeight !== height) {
+    popup.options.maxHeight = height;
+    popup.update();
+  }
+  card = el.getBoundingClientRect();
+  x = Math.max(bounds.left + 16 - card.left, Math.min(0, bounds.right - 16 - card.right));
+  const y = Math.max(top - card.top, Math.min(0, bounds.bottom - 16 - card.bottom));
+  el.style.translate = `${x}px ${y}px`;
+  el.classList.toggle("popup-shifted", x !== 0 || y !== 0);
 }
 
 function pinIcon(p) {
