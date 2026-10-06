@@ -365,7 +365,7 @@
    "lat": 47.671017541245,
    "lng": -122.373401432422,
    "status": "contacted",
-   "requested": "Requested Oct 17. WJL acknowledged the Unit B inquiry Oct 3 and invited scheduling Oct 4–5. No tour time confirmed; verify current availability."
+   "requested": "Paul replied Oct 5 requesting late afternoon Oct 17 or any time Oct 21, with a mid-to-late November move-in. WJL sent scheduling invitations Oct 3–5. No tour time confirmed; verify current availability."
   },
   {
    "id": "5511-11th-ave-nw",
@@ -473,6 +473,44 @@
    "status": "contacted",
    "requested": "Removed from shortlist at Paul's request.",
    "hidden": true
+  },
+  {
+   "id": "1709-ne-90th-st",
+   "name": "1709 NE 90th St",
+   "address": "1709 NE 90th St, Seattle, WA 98115",
+   "neighborhood": "Maple Leaf / Wedgwood",
+   "type": "Single-family house",
+   "beds": 3,
+   "baths": 2.5,
+   "sqft": 1870,
+   "rent": "$4,200/mo",
+   "fees": "$3,800 deposit and first month's rent due at move-in. Tenant pays utilities; confirm other fees",
+   "lease": "12 months; no smoking or vaping",
+   "available": "Nov 15, per rental listing",
+   "parking": "2-car attached garage",
+   "laundry": "In-home washer/dryer (listing description)",
+   "ac": "Central AC listed; confirm during the tour",
+   "pets": "No cats or dogs, per listing",
+   "year_built": 1992,
+   "highlights": [
+    "Laminate flooring, vaulted ceilings and natural light",
+    "Primary suite with walk-in closet and private deck access",
+    "Fully fenced backyard with patio, garden space and hot tub"
+   ],
+   "watch_outs": [
+    "Check washer/dryer condition and cooling during the tour",
+    "Confirm hot-tub maintenance responsibilities and utility costs"
+   ],
+   "listing_url": "https://www.zillow.com/homedetails/1709-NE-90th-St-Seattle-WA-98115/48946321_zpid/",
+   "other_urls": [
+    "https://www.trulia.com/es/home/1709-ne-90th-st-seattle-wa-98115-48946321"
+   ],
+   "photo_url": "https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/2dbe1568476279e3d2e22b795bd74233-full.webp",
+   "lat": 47.693899607639,
+   "lng": -122.309342954023,
+   "status": "booked",
+   "tour_at": "2026-10-19T15:30",
+   "requested": "Paul confirmed the tour with Travis Boyd for Oct 19, 2026 at 3:30 PM Seattle time. Added to Yooly & Poru calendar."
   },
   {
    "id": "2007-ne-85th",
@@ -645,14 +683,14 @@
    "beds": 6,
    "baths": 3,
    "sqft": 2100,
-   "rent": "$5,400/mo (Zillow listing; confirm current quote)",
-   "fees": "Tenant pays all utilities. Zillow application $35/adult; first month's rent and security deposit due at signing. Confirm deposit amount",
+   "rent": "$5,400/mo (confirmed by Etruscan LLC Oct 5)",
+   "fees": "$5,000 security deposit. Tenant pays all utilities. Zillow application $35/adult; first month's rent and deposit due at signing",
    "lease": "1 year",
    "available": "Now, per listing",
    "parking": "1 off-street space with NEMA 14-50 outlet for EV charging",
    "laundry": "In-unit washer/dryer on the 2nd floor, per listing",
    "ac": "Individually controlled mini-split AC in each room; heat pump",
-   "pets": "Cats and dogs allowed, per listing; confirm terms",
+   "pets": "1 pet allowed; $500 deposit + $100/mo pet rent (owner reply Oct 5)",
    "year_built": 2021,
    "highlights": [
     "Three-level layout; 2 offices and playroom described on the 2nd floor",
@@ -669,7 +707,7 @@
    "lat": 47.647718690144,
    "lng": -122.358230388971,
    "status": "contacted",
-   "requested": "Contacted by Paul; no tour time confirmed."
+   "requested": "Etruscan LLC replied Oct 5 with rental terms and an invitation to tour. Requires 3x rent income and 720+ FICO. No tour time confirmed."
   },
   {
    "id": "2620-queen-anne-ave-n",
