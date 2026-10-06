@@ -573,7 +573,8 @@
    "lat": 47.643450731312,
    "lng": -122.356804222001,
    "status": "contacted",
-   "requested": "Requested Oct 19"
+   "requested": "Removed from shortlist: no longer interested in 2620 Queen Anne Ave N.",
+   "hidden": true
   },
   {
    "id": "3816a-13th-ave-w",
