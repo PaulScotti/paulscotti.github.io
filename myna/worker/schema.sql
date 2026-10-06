@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS cards (
   ko TEXT NOT NULL UNIQUE,   -- the word or phrase in its plain form
   en TEXT NOT NULL,          -- what it means
   ask_ko TEXT, ask_en TEXT,  -- how it is asked next, a form that suits its level; empty while being written
-  intro TEXT,                -- the day it is first shown; empty while it waits in the pool
+  intro TEXT,                -- the day it is shown as new: the first, or the latest if never answered; empty in the pool
   s REAL, d REAL,
   last TEXT,                 -- the day it was last answered
   due TEXT,                  -- the day it is next asked

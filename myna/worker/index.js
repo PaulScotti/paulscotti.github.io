@@ -52,9 +52,11 @@ async function route(request, env, ctx) {
 async function today(env, ctx, day, early) {
   const db = env.DB;
   const until = early ? (await db.prepare('SELECT min(due) AS due FROM cards WHERE level BETWEEN 1 AND 8 AND due > ?').bind(day).first()).due || day : day;
+  // Words shown on an earlier day but never answered are today's new words again, and count as today's.
+  if (!early) await db.prepare('UPDATE cards SET intro = ?1 WHERE s IS NULL AND intro < ?1').bind(day).run();
   const { load, met, pool } = await db.prepare(`SELECT
     count(CASE WHEN level BETWEEN 1 AND 8 AND ${early ? 'due <= ?2' : '(due <= ?2 OR last = ?1) AND intro != ?1'} THEN 1 END) AS load,
-    count(CASE WHEN ${early ? 's IS NULL AND intro <= ?1' : 'intro = ?1 OR (s IS NULL AND intro < ?1)'} THEN 1 END) AS met,
+    count(CASE WHEN ${early ? 's IS NULL AND intro <= ?1' : 'intro = ?1'} THEN 1 END) AS met,
     count(CASE WHEN intro IS NULL THEN 1 END) AS pool FROM cards`).bind(day, until).first();
   const { most, least, reviewsEach } = config.newWords;
   const want = Math.max(least, most - Math.floor(load / reviewsEach)) - met;
