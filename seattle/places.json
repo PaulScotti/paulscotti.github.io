@@ -536,6 +536,41 @@
    "requested": "Requested Oct 18 (not confirmed)"
   },
   {
+   "id": "33-w-etruria-st",
+   "name": "33 W Etruria St",
+   "address": "33 W Etruria St, Seattle, WA 98119",
+   "neighborhood": "North Queen Anne",
+   "type": "Single-family house",
+   "beds": 6,
+   "baths": 3,
+   "sqft": 2100,
+   "rent": "$5,400/mo (Zillow listing; confirm current quote)",
+   "fees": "Tenant pays all utilities. Zillow application $35/adult; first month's rent and security deposit due at signing. Confirm deposit amount",
+   "lease": "1 year",
+   "available": "Now, per listing",
+   "parking": "1 off-street space with NEMA 14-50 outlet for EV charging",
+   "laundry": "In-unit washer/dryer on the 2nd floor, per listing",
+   "ac": "Individually controlled mini-split AC in each room; heat pump",
+   "pets": "Cats and dogs allowed, per listing; confirm terms",
+   "year_built": 2021,
+   "highlights": [
+    "Three-level layout; 2 offices and playroom described on the 2nd floor",
+    "Induction range, dishwasher and stainless kitchen appliances",
+    "Small private yard and storage shed"
+   ],
+   "watch_outs": [
+    "Confirm the 6-bedroom count: the description uses some rooms as offices and a playroom",
+    "Check stairs, bedroom flooring and laundry condition",
+    "Back yard is not fenced, per listing"
+   ],
+   "listing_url": "https://www.zillow.com/homedetails/33-W-Etruria-St-Seattle-WA-98119/337590442_zpid/",
+   "photo_url": "https://photos.zillowstatic.com/fp/1172eb8fe0f4a70434945687b0bdc7f8-cc_ft_960.jpg",
+   "lat": 47.647718690144,
+   "lng": -122.358230388971,
+   "status": "contacted",
+   "requested": "Contacted by Paul; no tour time confirmed."
+  },
+  {
    "id": "2620-queen-anne-ave-n",
    "name": "2620 Queen Anne Ave N",
    "address": "2620 Queen Anne Ave N, Seattle, WA 98109",
