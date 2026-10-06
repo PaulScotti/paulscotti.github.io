@@ -86,15 +86,15 @@ async function grade(env, ctx, { id, good, day }) {
   const db = env.DB;
   const c = await db.prepare('SELECT * FROM cards WHERE id = ?').bind(id).first();
   const g = good ? 3 : 1, d0 = g => W[4] - Math.exp(W[5] * (g - 1)) + 1;
-  let s = W[g - 1], d = d0(g);
-  if (c.s !== null) {
-    const t = (Date.parse(day) - Date.parse(c.last)) / 864e5;
-    const r = (1 + FACTOR * t / c.s) ** DECAY;
-    s = t < 1 ? c.s * Math.max(Math.exp(W[17] * (g - 3 + W[18])) * c.s ** -W[19], good ? 1 : 0)
-      : good ? c.s * (1 + Math.exp(W[8]) * (11 - c.d) * c.s ** -W[9] * (Math.exp((1 - r) * W[10]) - 1))
-      : Math.min(W[11] * c.d ** -W[12] * ((c.s + 1) ** W[13] - 1) * Math.exp((1 - r) * W[14]), c.s / Math.exp(W[17] * W[18]));
-    d = W[7] * d0(4) + (1 - W[7]) * (c.d - W[6] * (g - 3) * (10 - c.d) / 9);
-  }
+  // A new word's first sight is its first rating, an Again: it wasn't known yet. Its first test, the same day,
+  // is then a short-term review, so a word met today comes back tomorrow.
+  const was = c.s === null ? { s: W[0], d: d0(1), last: day } : c;
+  const t = (Date.parse(day) - Date.parse(was.last)) / 864e5;
+  const r = (1 + FACTOR * t / was.s) ** DECAY;
+  let s = t < 1 ? was.s * Math.max(Math.exp(W[17] * (g - 3 + W[18])) * was.s ** -W[19], good ? 1 : 0)
+    : good ? was.s * (1 + Math.exp(W[8]) * (11 - was.d) * was.s ** -W[9] * (Math.exp((1 - r) * W[10]) - 1))
+    : Math.min(W[11] * was.d ** -W[12] * ((was.s + 1) ** W[13] - 1) * Math.exp((1 - r) * W[14]), was.s / Math.exp(W[17] * W[18]));
+  let d = W[7] * d0(4) + (1 - W[7]) * (was.d - W[6] * (g - 3) * (10 - was.d) / 9);
   s = Math.max(s, 0.001);
   d = Math.min(Math.max(d, 1), 10);
   const level = Math.min(Math.max(Math.floor(Math.log2(s)) + 1, 1), 9);
