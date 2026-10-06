@@ -357,6 +357,40 @@
    "requested": "Requested Oct 17 (not confirmed)"
   },
   {
+   "id": "5511-11th-ave-nw",
+   "name": "5511 11th Ave NW",
+   "address": "5511 11th Ave NW, Seattle, WA 98107",
+   "neighborhood": "West Woodland (east Ballard)",
+   "type": "Single-family house",
+   "beds": 3,
+   "baths": 2.5,
+   "sqft": 1540,
+   "rent": "$4,100/mo",
+   "fees": "Security deposit $4,100; confirm utilities and other required fees",
+   "lease": "12 or 24 months, per listing",
+   "available": "Now, per listing",
+   "parking": "Detached garage plus dedicated driveway space (2 cars total)",
+   "laundry": "In-unit washer/dryer, per listing",
+   "ac": "Central AC, per listing",
+   "pets": "Cats allowed, per listing; confirm terms",
+   "highlights": [
+    "Standalone Craftsman with 3 bedrooms and 2.5 bathrooms",
+    "Third-floor primary suite with ensuite bath and soaking tub",
+    "Fully fenced private yard and patio decks",
+    "Dishwasher and hardwood flooring listed"
+   ],
+   "watch_outs": [
+    "Three levels: check stairs and bedroom placement",
+    "Check bedroom flooring, laundry condition and nighttime noise"
+   ],
+   "listing_url": "https://www.redfin.com/WA/Seattle/5511-11th-Ave-NW-98107/home/494675",
+   "photo_url": "https://ssl.cdn-redfin.com/photo/rent/cf662b1b-9fe7-425c-a423-84d3b9bddf5a/islphoto/genIsl.0_3.jpg",
+   "lat": 47.668784870223,
+   "lng": -122.370845754802,
+   "status": "contacted",
+   "requested": "Tour request sent through Redfin on October 5, 2026; receipt confirmed the request was delivered. No tour date or time confirmed."
+  },
+  {
    "id": "valdok",
    "name": "Valdok",
    "address": "1701 NW 56th St, Seattle, WA 98107",
