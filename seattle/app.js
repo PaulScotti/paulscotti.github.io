@@ -189,7 +189,7 @@ function setupMap() {
   // Popup buttons re-render the popup; without this, Leaflet sees the detached button's click as a map click and closes it.
   map.on("popupopen", (e) => {
     e.popup.getElement().addEventListener("click", stopClick);
-    // Fit the popup inside the visible map (the list panel takes part of the screen on phones).
+    // Limit popup height to the visible map without moving the map.
     const h = Math.max(220, map.getSize().y - 90);
     if (e.popup.options.maxHeight !== h) {
       e.popup.options.maxHeight = h;
@@ -323,7 +323,7 @@ function popupOpts() {
   const w = Math.min(340, window.innerWidth - 40);
   return {
     maxWidth: w, minWidth: Math.min(300, w),
-    autoPanPaddingTopLeft: L.point(16, 16), autoPanPaddingBottomRight: L.point(16, 16),
+    autoPan: false,
     className: "place-popup", closeButton: true,
   };
 }
@@ -399,7 +399,7 @@ function openHood(id) {
   flyThen(b.getCenter(), Math.min(map.getBoundsZoom(b, false, L.point(40, 40)), 15), () => layer.openPopup(layer.getCenter()));
 }
 
-// Run fn only after this flight ends; an earlier animation's moveend would fire it mid-flight and break auto-pan.
+// Run fn only after this flight ends; an earlier animation's moveend could open the popup mid-flight.
 function flyThen(center, zoom, fn) {
   let done = false;
   const finish = () => {

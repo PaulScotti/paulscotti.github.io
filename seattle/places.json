@@ -391,6 +391,26 @@
    "requested": "Tour request sent through Redfin on October 5, 2026; receipt confirmed the request was delivered. No tour date or time confirmed."
   },
   {
+   "id": "3030-belvidere-ave-sw",
+   "name": "3030 Belvidere Ave SW",
+   "address": "3030 Belvidere Ave SW, Seattle, WA 98126",
+   "neighborhood": "West Seattle",
+   "type": "Single-family house",
+   "beds": 4,
+   "baths": 2,
+   "sqft": 2200,
+   "rent": "$4,800/mo (Redfin request receipt)",
+   "watch_outs": [
+    "Confirm availability, lease terms, AC and laundry condition with the landlord"
+   ],
+   "listing_url": "https://www.redfin.com/WA/Seattle/3030-Belvidere-Ave-SW-98126/home/329182",
+   "photo_url": "https://ssl.cdn-redfin.com/photo/rent/a7a56eb0-1771-41c6-967f-4e612ea5d7a4/islphoto/genIsl.0_1.jpg",
+   "lat": 47.577113987389,
+   "lng": -122.37911007656,
+   "status": "contacted",
+   "requested": "Tour request sent through Redfin on October 5, 2026; receipt confirmed the request was delivered. No tour date or time confirmed."
+  },
+  {
    "id": "valdok",
    "name": "Valdok",
    "address": "1701 NW 56th St, Seattle, WA 98107",
