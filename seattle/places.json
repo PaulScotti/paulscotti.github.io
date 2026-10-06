@@ -169,6 +169,31 @@
    "requested": "Confirmed in Google Calendar: October 18, 2026, 2:00-3:00 PM Seattle time."
   },
   {
+   "id": "modera-south-lake-union",
+   "name": "Modera South Lake Union",
+   "address": "435 Dexter Ave N, Seattle, WA 98109",
+   "neighborhood": "South Lake Union",
+   "type": "Apartment",
+   "rent": "Confirm quote for the exact unit and lease term",
+   "ac": "Yes, per official site",
+   "highlights": [
+    "Gas ranges and air conditioning",
+    "Rooftop deck with city and lake views",
+    "24-hour fitness center with yoga and Pilates studio"
+   ],
+   "watch_outs": [
+    "Calendar does not specify a unit or floor plan: confirm the home being toured",
+    "Confirm enclosed office space, laundry condition, bedroom flooring and total monthly cost"
+   ],
+   "listing_url": "https://www.moderasouthlakeunion.com/",
+   "photo_url": "https://medialibrarycfo.entrata.com/14034/MLv3/9/36/2022/3/25/133141/60f5c3cc0cb4d2.09105119125.jpg",
+   "lat": 47.622477088772,
+   "lng": -122.342454409196,
+   "status": "booked",
+   "tour_at": "2026-10-20T15:00",
+   "requested": "Confirmed in Google Calendar: October 20, 2026, 3:00-4:00 PM Seattle time."
+  },
+  {
    "id": "the-meyden",
    "name": "The Meyden",
    "address": "10333 Main St, Bellevue, WA 98004",
