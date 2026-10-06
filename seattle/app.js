@@ -111,8 +111,8 @@ init();
 async function init() {
   applyStaticText();
   [base, hoodGeo] = await Promise.all([
-    fetch("places.json?v=14", { cache: "no-cache" }).then((r) => r.json()),
-    fetch("neighborhoods.json?v=10", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
+    fetch("places.json?v=15", { cache: "no-cache" }).then((r) => r.json()),
+    fetch("neighborhoods.json?v=11", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
   ]);
   setupMap();
   setupHoods();
