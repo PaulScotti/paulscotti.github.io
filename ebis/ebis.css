@@ -134,7 +134,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
   position: fixed; inset: 0; overflow: hidden; background: var(--bg); user-select: text;
   --top: calc(env(safe-area-inset-top) + 46px); --bottom: calc(env(safe-area-inset-bottom) + 42px);
 }
-.page { position: absolute; top: var(--top); bottom: var(--bottom); left: 0; right: 0; overflow-y: auto; overscroll-behavior: contain; }
+.page { position: absolute; top: var(--top); bottom: var(--bottom); left: 0; right: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
 .flow { max-width: var(--flow-w); margin: 0 auto; padding-bottom: 38vh; }
 
 /* Doorways to the chapters before and after this one. */

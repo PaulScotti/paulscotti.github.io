@@ -110,7 +110,32 @@ $('add').onclick = () => {
   $('clip').onclick = e => { e.preventDefault(); toast('Drag it to your bookmarks bar.'); }; // clicked here, it would save ebis
 };
 
-function add(title, run) {
+// Whatever is added is read by the newest ebis. When a newer version is out than the one running
+// (installed or still downloading), what was added waits where shares wait while ebis restarts
+// into it, and is added there.
+let restarting = false;
+async function receive(items) {
+  const newer = await newerVersion();
+  if (newer) {
+    restarting = true;
+    toast('Updating ebis first…');
+    restarting = await installed(newer); // a download can fail, and this version adds it then
+    if (restarting) {
+      await keep(items);
+      await queue; // what is being added already is finished first
+      history.replaceState(null, '', '#/shared');
+      return newer.postMessage('update'); // it takes over, and the page reloads into it
+    }
+  }
+  items.forEach(add);
+}
+
+// A file, a link, or a page as a browser showed it.
+function add({ file, url, html }) {
+  const title = file?.name ?? url.replace(/^https?:\/\/(www\.)?/, '');
+  const opts = { fetchPage: store.fetchPage, fetcher: store.fetchBlob };
+  const run = progress => file ? importFile(file, { ...opts, progress })
+    : html ? importPage(html, url, { ...opts, progress }) : importURL(url, { ...opts, progress });
   const key = `pending-${crypto.randomUUID()}`;
   pending.set(key, { title, progress: 0.02 });
   draw();
@@ -130,10 +155,8 @@ function add(title, run) {
     }
   });
 }
-const addFiles = files => [...files].forEach(file =>
-  add(file.name, progress => importFile(file, { fetcher: store.fetchBlob, progress })));
-const addURL = url => add(url.replace(/^https?:\/\/(www\.)?/, ''), progress =>
-  importURL(url, { fetchPage: store.fetchPage, fetcher: store.fetchBlob, progress }));
+const addFiles = files => receive([...files].map(file => ({ file })));
+const addURL = url => receive([{ url }]);
 
 let drags = 0;
 addEventListener('dragenter', e => { if (e.dataTransfer.types.includes('Files') || e.dataTransfer.types.includes('text/uri-list')) drags++, $('drop').hidden = false; });
@@ -154,19 +177,30 @@ addEventListener('paste', e => {
   else if (/^https?:\/\/\S+$/.test(text)) addURL(text);
 });
 
-// The service worker keeps what Android shares in a cache until we pick it up.
+// What waits in a cache until ebis picks it up: what Android shares (the service worker keeps
+// it there), and what was added just before a restart into a new version.
 async function receiveShared() {
   const cache = await caches.open('ebis-shared');
+  const items = [];
   for (const req of await cache.keys()) {
     const res = await cache.match(req);
-    const name = decodeURIComponent(res.headers.get('x-name') || '');
-    if (name) addFiles([new File([await res.blob()], name, { type: res.headers.get('content-type') })]);
+    const name = decodeURIComponent(res.headers.get('x-name') || ''), page = res.headers.get('x-url');
+    if (name) items.push({ file: new File([await res.blob()], name, { type: res.headers.get('content-type') }) });
+    else if (page) items.push({ url: page, html: await res.text() });
     else {
-      const text = await res.text();
-      const url = text.match(/https?:\/\/\S+/)?.[0];
-      if (url) addURL(url);
+      const url = (await res.text()).match(/https?:\/\/\S+/)?.[0];
+      if (url) items.push({ url });
     }
     await cache.delete(req);
+  }
+  if (items.length) receive(items);
+}
+async function keep(items) {
+  const cache = await caches.open('ebis-shared');
+  for (const { file, url, html } of items) {
+    await cache.put(`shared/${crypto.randomUUID()}`, file
+      ? new Response(file, { headers: { 'x-name': encodeURIComponent(file.name), 'content-type': file.type || 'application/octet-stream' } })
+      : new Response(html ?? url, { headers: html ? { 'x-url': url } : {} }));
   }
 }
 
@@ -199,7 +233,7 @@ function receiveClip() {
     if (e.source !== page || type !== 'ebis-clip' || typeof html !== 'string' || typeof url !== 'string') return;
     clearTimeout(giveUp);
     removeEventListener('message', hear);
-    add(url.replace(/^https?:\/\/(www\.)?/, ''), progress => importPage(html, url, { fetcher: store.fetchBlob, progress }));
+    receive([{ url, html }]);
   }
 }
 
@@ -238,6 +272,33 @@ function showSync() {
 
 // Start.
 
+// A new version installs in the background and waits; ebis offers to restart into it, and goes
+// there itself before adding anything (see receive). It looks for one whenever it comes back to
+// the screen, too: a phone keeps ebis open for days. (In development, served over plain http,
+// ebis runs without its service worker.)
+const registration = location.protocol === 'https:' && navigator.serviceWorker
+  ? navigator.serviceWorker.register('sw.js').catch(() => null) : Promise.resolve(null);
+registration.then(reg => {
+  if (!reg) return;
+  const offer = worker => worker && navigator.serviceWorker.controller && !restarting && toast('ebis has been updated.', ['Restart', () => worker.postMessage('update')]);
+  offer(reg.waiting);
+  reg.addEventListener('updatefound', () => reg.installing.addEventListener('statechange', e => e.target.state === 'installed' && offer(e.target)));
+  navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+  addEventListener('visibilitychange', () => document.visibilityState === 'visible' && reg.update().catch(() => {}));
+});
+async function newerVersion() { // than the one running, which on a first visit is the newest
+  const reg = await registration;
+  await reg?.update().catch(() => {}); // offline, there's no knowing
+  return navigator.serviceWorker?.controller && (reg?.installing || reg?.waiting) || null;
+}
+function installed(worker) {
+  return new Promise(resolve => {
+    const check = () => worker.state === 'redundant' ? resolve(false) : worker.state !== 'installing' && resolve(true);
+    check();
+    worker.addEventListener('statechange', check);
+  });
+}
+
 await store.ready;
 addEventListener('hashchange', route);
 route();
@@ -251,10 +312,3 @@ store.onChange(change => {
   if (!$('library').hidden && (change.kind === 'book' || change.kind === 'pos')) draw();
 });
 showSync();
-// A new version installs in the background and waits; ebis offers to restart into it.
-if (location.protocol === 'https:') navigator.serviceWorker?.register('sw.js').then(reg => {
-  const offer = worker => worker && navigator.serviceWorker.controller && toast('ebis has been updated.', ['Restart', () => worker.postMessage('update')]);
-  offer(reg.waiting);
-  reg.addEventListener('updatefound', () => reg.installing.addEventListener('statechange', e => e.target.state === 'installed' && offer(e.target)));
-  navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
-});

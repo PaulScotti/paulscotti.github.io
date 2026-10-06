@@ -264,17 +264,51 @@ addEventListener('keydown', e => {
   e.preventDefault();
 });
 
-// A screenful down or up; past the end of a chapter, on to the next one (and back).
+// A screenful down or up; past the end of a chapter, on to the next one (and back). (While a
+// book opens, the page is empty and at no chapter's end.)
+const atEnd = () => !!flow.firstElementChild && page.scrollTop + page.clientHeight >= page.scrollHeight - 8;
 function turn(dir) {
-  const atEnd = page.scrollTop + page.clientHeight >= page.scrollHeight - 8;
   const atStart = page.scrollTop <= 4;
-  if (dir > 0 && atEnd) {
+  if (dir > 0 && atEnd()) {
     if (chapter < book.data.chapters.length - 1) render(chapter + 1, 'start', true);
   } else if (dir < 0 && atStart) {
     if (chapter > 0) render(chapter - 1, 'end', true);
   } else {
     page.scrollBy({ top: dir * page.clientHeight * 0.92, behavior: 'smooth' });
   }
+}
+
+// Scrolling on past the end of a chapter goes on to the next, as the keys do. Only a scroll that
+// begins at the end pulls (not the momentum that brought the reader there): a wheel turned on
+// past it, or a swipe up. What is left of that scroll is spent on a page held still, so the next
+// chapter opens at its start.
+let pull = 0, pulling = false, wheelAt = 0, swipe = null, still = 0;
+page.addEventListener('wheel', e => {
+  if (e.timeStamp - wheelAt > 250) { // a new scroll
+    pulling = atEnd();
+    if (!pulling) pull = 0;
+  }
+  wheelAt = e.timeStamp;
+  if (page.style.overflowY) return hold();
+  if (!pulling || e.ctrlKey) return; // a pinch is a zoom
+  pull = e.deltaY > 0 ? pull + e.deltaY : 0;
+  if (pull > 120) onward();
+}, { passive: true });
+page.addEventListener('touchstart', e => { swipe = e.touches.length === 1 && atEnd() ? e.touches[0].clientY : null; }, { passive: true });
+page.addEventListener('touchend', e => {
+  if (swipe !== null && swipe - e.changedTouches[0].clientY > 80 && getSelection().isCollapsed) onward();
+  swipe = null;
+}, { passive: true });
+function onward() {
+  pull = 0;
+  if (chapter === book.data.chapters.length - 1) return;
+  render(chapter + 1, 'start', true);
+  page.style.overflowY = 'hidden';
+  hold();
+}
+function hold() { // till the scroll has been still a moment
+  clearTimeout(still);
+  still = setTimeout(() => { page.style.overflowY = ''; }, 300);
 }
 
 new ResizeObserver(() => relayout()).observe(page);
