@@ -13,7 +13,8 @@ Named for the myna, the bird that learns to talk by copying what it hears.
   card is asked Korean first or English first, chosen at random for each card each day. Its answer is
   said after a moment to think, or at once on any key; then → or volume up is correct, ← or volume
   down is incorrect. It ends with an overview: time, cards, first-try accuracy, levels gained.
-- Scheduling is FSRS-6 with its default parameters and two grades. A card's level (0 to 9) follows
+- Scheduling is FSRS-6 with its default parameters and two grades. A new word's first sight counts as
+  an Again, since it wasn't known yet, so a word met today comes back tomorrow. A card's level (0 to 9) follows
   its stability: it climbs a level each time the days it can be remembered double, and at 256 days
   (level 9) it is mastered and never asked again. As it climbs it is asked as the word, then in
   other forms, then in phrases and sentences built from words you know about as well. The forms per
