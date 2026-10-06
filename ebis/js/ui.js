@@ -72,7 +72,8 @@ export function unpeek() {
 // shown; only a tap that begins on the picture closes it.
 let touched = false;
 export function lightbox(img) {
-  Object.assign(picture.firstElementChild, { src: img.src, className: img.className }); // shown as on the page
+  const shown = Object.assign(picture.firstElementChild, { src: img.src, className: img.className }); // shown as on the page
+  shown.style.setProperty('--shape', img.naturalWidth / img.naturalHeight || 1);
   touched = false;
   show(picture);
 }
