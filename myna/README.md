@@ -18,7 +18,8 @@ Named for the myna, the bird that learns to talk by copying what it hears.
   are spread a few days either way as Anki does, so words learned together drift apart. A card's level (0 to 9) follows
   its stability: it climbs a level each time the days it can be remembered double, and at 256 days
   (level 9) it is mastered and never asked again. As it climbs it is asked as the word, then in
-  other forms, then in phrases and sentences built from words you know about as well. The forms per
+  other forms, then in phrases and sentences built only from words you know at least as well, more
+  often ones you know better, so a miss points at the word being tested. The forms per
   level, the model and the voices are in `config.js`.
 - Korean is spoken by Azure's SunHi voice and English by MAI-Voice-2.1, and each line is kept in R2, so
   it is synthesized once. MAI-Voice-2.1 garbled lone Korean words in about 4 of 10 tries (집 as 점), so it

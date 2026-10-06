@@ -14,6 +14,7 @@ const POOL = 10; // words chosen ahead of time, so a new day starts without wait
 const SAID = 'ko is hangeul only, never romanization. en is read aloud, so no slashes, brackets or notes, and it starts in lowercase unless it is a sentence.';
 const CARD = { type: 'object', additionalProperties: false, required: ['ko', 'en'], properties: { ko: { type: 'string' }, en: { type: 'string' } } };
 const WORDS = { type: 'object', additionalProperties: false, required: ['words'], properties: { words: { type: 'array', items: CARD } } };
+const LINE = { ...CARD, required: ['ko', 'en', 'uses'], properties: { ...CARD.properties, uses: { type: 'array', items: { type: 'string' } } } };
 
 export default {
   async fetch(request, env, ctx) {
@@ -110,22 +111,30 @@ async function grade(env, ctx, { id, good, day }) {
     db.prepare(`UPDATE cards SET s = ?, d = ?, level = ?, last = ?, due = ?${good ? ', ask_ko = NULL, ask_en = NULL' : ''} WHERE id = ?`).bind(s, d, level, day, due, id),
     db.prepare('INSERT INTO answers (card, day, at, good, ko, en) VALUES (?, ?, ?, ?, ?, ?)').bind(id, day, Date.now(), good ? 1 : 0, c.ask_ko, c.ask_en),
   ]);
-  if (good && level < 9) ctx.waitUntil(vary(env, { ...c, level, due }));
+  if (good && level < 9) ctx.waitUntil(vary(env, { ...c, s, level, due }));
   return { level };
 }
 
-// How a card is asked at its level: the word itself, or a form or sentence OpenAI writes around it from
-// words Paul knows about as well, unlike the lines other cards will be asked around the same day.
+// How a card is asked at its level: the word itself, or a form, phrase or sentence OpenAI writes around it. Any
+// other word in it is one Paul knows at least as well as this one, so a miss points at this word: they are drawn
+// at random, more often the better he knows them, and a line that uses any word outside them is written again.
+// When none can be made, the word is asked as it is. The line differs from those other cards are asked with then.
 async function vary(env, c) {
   const forms = config.levels[c.level], form = forms[Math.floor(Math.random() * forms.length)];
   let ask = { ko: c.ko, en: c.en };
   if (form !== 'word') {
-    const [{ results: known }, { results: nearby }] = await env.DB.batch([
-      env.DB.prepare('SELECT ko, en FROM cards WHERE level >= 2 AND id != ?1 ORDER BY abs(level - ?2), random() LIMIT 40').bind(c.id, c.level),
+    const [{ results: stronger }, { results: nearby }] = await env.DB.batch([
+      env.DB.prepare('SELECT ko, en, s FROM cards WHERE s >= ?1 AND id != ?2').bind(c.s, c.id),
       env.DB.prepare('SELECT ask_ko FROM cards WHERE ask_ko != ko AND id != ?1 ORDER BY abs(julianday(due) - julianday(?2)) LIMIT 20').bind(c.id, c.due),
     ]);
-    ask = await gpt(env, `You write one flashcard for an English speaker learning Korean from spoken flashcards. It tests the given word in the given form. The Korean must contain the word, inflected as the form needs, and be natural, correct, everyday spoken Korean, polite unless the form asks otherwise. Every other word must be one of the learner's known words, apart from particles, endings and pointing words like 이거 or 저기. Make it different from the lines other cards are asked with. en is its natural English translation, specific enough that the Korean is the obvious answer. ${SAID}`,
-      `Word: ${c.ko} (${c.en})\nForm: ${config.forms[form]}\nWords the learner knows, those known about as well as this one first: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\nLines other cards are asked with: ${nearby.map(n => n.ask_ko).join(' / ')}`, CARD);
+    // A weighted draw (Efraimidis-Spirakis): a word known twice as long as this one counts twice, four times as long, three times.
+    const known = stronger.map(k => [Math.random() ** (1 / (1 + Math.log2(k.s / c.s))), k]).sort((a, b) => b[0] - a[0]).slice(0, 40)
+      .map(([, k]) => k).sort((a, b) => b.s - a.s);
+    for (let tries = 0; tries < 3; tries++) {
+      const line = await gpt(env, `You write one flashcard for an English speaker learning Korean from spoken flashcards. It tests the given word in the given form. The Korean must contain the word, inflected as the form needs, and be natural, correct, everyday spoken Korean, polite unless the form asks otherwise. Every other word must come from the listed words, which the learner knows at least as well as this one, best known first; prefer those near the top. Particles, endings and pointing words like 이거 or 저기 are fine. If no natural line can be made from them, write the word alone in another everyday form. Make it different from the lines other cards are asked with. en is its natural English translation, specific enough that the Korean is the obvious answer. uses lists every other word the Korean contains, in dictionary form, spelled as in the list when it is one of them, leaving out particles, endings and pointing words. ${SAID}`,
+        `Word: ${c.ko} (${c.en})\nForm: ${config.forms[form]}\nWords the learner knows at least as well, best known first: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\nLines other cards are asked with: ${nearby.map(n => n.ask_ko).join(' / ')}`, LINE);
+      if (line.uses.every(w => w === c.ko || known.some(k => k.ko === w))) { ask = line; break; }
+    }
   }
   await env.DB.prepare('UPDATE cards SET ask_ko = ?, ask_en = ? WHERE id = ?').bind(ask.ko, ask.en, c.id).run();
 }
