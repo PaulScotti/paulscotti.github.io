@@ -5,6 +5,17 @@
   "lng": -122.318541899167,
   "description": "Green Lake 2 bd / 2 ba with AC, close to UW and light rail"
  },
+ "additional_homes": [
+  {
+   "id": "bellevue-hotel",
+   "name": "Bellevue hotel",
+   "name_ko": "벨뷰 호텔",
+   "address": "208 106th Pl NE, Bellevue, WA 98004",
+   "lat": 47.612119149049,
+   "lng": -122.197855422482,
+   "description": "AC Hotel Seattle Bellevue/Downtown"
+  }
+ ],
  "places": [
   {
    "id": "ballard-independent",
@@ -460,7 +471,8 @@
    "lat": 47.669386822936,
    "lng": -122.37897026616,
    "status": "contacted",
-   "requested": "List says \"10\": unclear if that's a date or a time"
+   "requested": "Removed from shortlist at Paul's request.",
+   "hidden": true
   },
   {
    "id": "2007-ne-85th",
@@ -900,7 +912,8 @@
    "lat": 47.619501,
    "lng": -122.19624,
    "status": "none",
-   "requested": "Plan: book a virtual tour later"
+   "requested": "Removed from map at Paul's request.",
+   "hidden": true
   },
   {
    "id": "bellevue-10",
@@ -940,7 +953,8 @@
    "lat": 47.619304,
    "lng": -122.205961,
    "status": "none",
-   "requested": "May have no vacancy; community tour?"
+   "requested": "Removed from map at Paul's request.",
+   "hidden": true
   }
  ]
 }

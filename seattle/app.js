@@ -8,7 +8,7 @@ const REFRESH_MS = 30000;
 const I18N = {
   en: {
     title: "Seattle house tours",
-    subtitle: "Oct 16–26 · home base: Green Lake Airbnb",
+    subtitle: "Oct 16–26 · Green Lake Airbnb + Bellevue hotel",
     addPlace: "+ Add a place", addPlaceTitle: "Add a place", addToMap: "Add to map", adding: "Adding…",
     showList: "Show list", hideList: "Hide list",
     footer: "Notes and edits are shared with everyone who has this link.",
@@ -44,7 +44,7 @@ const I18N = {
   },
   ko: {
     title: "시애틀 집 투어",
-    subtitle: "10월 16–26일 · 숙소: 그린레이크 에어비앤비",
+    subtitle: "10월 16–26일 · 그린레이크 에어비앤비 + 벨뷰 호텔",
     addPlace: "+ 장소 추가", addPlaceTitle: "장소 추가", addToMap: "지도에 추가", adding: "추가 중…",
     showList: "목록 보기", hideList: "목록 숨기기",
     footer: "메모와 수정 내용은 이 링크를 가진 모든 사람에게 공유됩니다.",
@@ -90,7 +90,7 @@ let shared = { notes: [], edits: {} };
 let synced = false;
 let map;
 const markers = new Map();
-let homeMarker;
+const homeMarkers = new Map();
 const filters = { booked: true, contacted: true, none: true };
 let hoodGeo = { features: [] };
 let hoodLayer;
@@ -111,7 +111,7 @@ init();
 async function init() {
   applyStaticText();
   [base, hoodGeo] = await Promise.all([
-    fetch("places.json?v=10", { cache: "no-cache" }).then((r) => r.json()),
+    fetch("places.json?v=12", { cache: "no-cache" }).then((r) => r.json()),
     fetch("neighborhoods.json?v=10", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ features: [] })),
   ]);
   setupMap();
@@ -139,6 +139,12 @@ function stripMeta(e) {
   if (!e) return {};
   const { _updated_at, _updated_by, ...rest } = e;
   return rest;
+}
+function homes() {
+  return [{ ...base.home, id: "home" }, ...(base.additional_homes || [])];
+}
+function homeName(h) {
+  return h.id === "home" ? t("home") : (lang === "ko" ? h.name_ko || h.name : h.name);
 }
 function placeById(id) {
   return allPlaces().find((p) => p.id === id);
@@ -182,10 +188,13 @@ function setupMap() {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
-  const h = base.home;
-  homeMarker = L.marker([h.lat, h.lng], { icon: homeIcon(), zIndexOffset: 1000, title: t("home") })
-    .addTo(map)
-    .bindPopup(() => homePopup(), popupOpts());
+  for (const h of homes()) {
+    const marker = L.marker([h.lat, h.lng], { icon: homeIcon(), zIndexOffset: 1000, title: homeName(h) })
+      .addTo(map)
+      .bindPopup(() => homePopup(h), popupOpts());
+    marker.getPopup()._homeId = h.id;
+    homeMarkers.set(h.id, marker);
+  }
   // Popup buttons re-render the popup; without this, Leaflet sees the detached button's click as a map click and closes it.
   map.on("popupopen", (e) => {
     e.popup.getElement().addEventListener("click", stopClick);
@@ -196,7 +205,7 @@ function setupMap() {
       e.popup.update();
     }
     e.popup._sig = popupSig(e.popup);
-    const hash = e.popup._placeId || (e.popup._hoodId && "hood-" + e.popup._hoodId);
+    const hash = e.popup._placeId || e.popup._homeId || (e.popup._hoodId && "hood-" + e.popup._hoodId);
     if (hash) history.replaceState(null, "", "#" + hash);
   });
   // The panel resizes the map on phones (sheet open/closed, list length); keep Leaflet's size in sync.
@@ -279,7 +288,7 @@ function hoodPopup(id) {
   const el = document.createElement("div");
   el.className = "pop pop-hood";
   const here = placesInHood(id);
-  const homeHere = hoodById(id) && inGeom(base.home.lat, base.home.lng, hoodById(id).geometry);
+  const homesHere = homes().filter((home) => hoodById(id) && inGeom(home.lat, home.lng, hoodById(id).geometry));
   const essentials = [
     ["e_groceries", Array.isArray(h.groceries) ? h.groceries.join("; ") : h.groceries],
     ["e_transit", h.transit],
@@ -296,10 +305,10 @@ function hoodPopup(id) {
       ${h.summary ? `<p class="hood-summary">${esc(h.summary)}</p>` : ""}
       <div class="hood-places">
         <h4>${esc(t("yourPlaces"))}${here.length ? ` (${here.length})` : ""}</h4>
-        ${homeHere ? `<button type="button" class="place-chip" data-home-chip="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>` : ""}
+        ${homesHere.map((home) => `<button type="button" class="place-chip" data-home-chip="${escAttr(home.id)}"><span class="dot dot-home"></span>${esc(homeName(home))}</button>`).join("")}
         ${here.length
           ? here.map((p) => `<button type="button" class="place-chip" data-place="${escAttr(p.id)}"><span class="dot dot-${p.status}"></span>${esc(p.name)}</button>`).join("")
-          : homeHere ? "" : `<p class="muted">${esc(t("noPlaces"))}</p>`}
+          : homesHere.length ? "" : `<p class="muted">${esc(t("noPlaces"))}</p>`}
       </div>
       ${listBlock(t("notable"), h.notable, "note")}
       ${listBlock(t("pros"), h.pros, "good")}
@@ -310,7 +319,7 @@ function hoodPopup(id) {
       ${notesHtml()}
     </div>`;
   el.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("click", () => openPlace(b.dataset.place)));
-  $("[data-home-chip]", el)?.addEventListener("click", () => flyThen(homeMarker.getLatLng(), Math.max(map.getZoom(), 14), () => homeMarker.openPopup()));
+  el.querySelectorAll("[data-home-chip]").forEach((b) => b.addEventListener("click", () => openHome(b.dataset.homeChip)));
   wireNotes(el, "hood-" + id);
   return el;
 }
@@ -377,8 +386,15 @@ function renderMarkers() {
 
 function fitAll() {
   const pts = allPlaces().filter((p) => !p.hidden && p.lat != null).map((p) => [p.lat, p.lng]);
-  pts.push([base.home.lat, base.home.lng]);
+  pts.push(...homes().map((h) => [h.lat, h.lng]));
   map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], animate: false });
+}
+
+function openHome(id) {
+  const marker = homeMarkers.get(id);
+  if (!marker) return;
+  if (window.innerWidth < 720) setSheet(false);
+  flyThen(marker.getLatLng(), Math.max(map.getZoom(), 14), () => marker.openPopup());
 }
 
 function openPlace(id) {
@@ -416,21 +432,20 @@ function flyThen(center, zoom, fn) {
 
 function openFromHash() {
   const id = decodeURIComponent(location.hash.slice(1));
-  if (id === "home") homeMarker.openPopup();
+  if (homeMarkers.has(id)) openHome(id);
   else if (id.startsWith("hood-")) openHood(id.slice(5));
   else if (id && markers.has(id)) openPlace(id);
 }
 
 // ---------- popups ----------
 
-function homePopup() {
-  const h = base.home;
+function homePopup(h) {
   const el = document.createElement("div");
   el.className = "pop pop-home";
   el.innerHTML = `
     <div class="pop-body">
       <div class="pop-kicker">${esc(t("homeSub"))}</div>
-      <h3>${esc(t("home"))}</h3>
+      <h3>${esc(homeName(h))}</h3>
       <p class="pop-addr">${esc(h.address)}</p>
       ${h.description ? `<p class="pop-desc">${esc(h.description)}</p>` : ""}
       <div class="pop-links"><a class="btn btn-small" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.address)}">Google Maps ↗</a></div>
@@ -687,7 +702,7 @@ function renderLegend() {
     <button type="button" class="legend-chip ${filters[s] ? "on" : ""}" data-status="${s}" aria-pressed="${filters[s]}">
       <span class="dot dot-${s}"></span>${esc(t("st_" + s))}<b>${count(s)}</b>
     </button>`).join("") + `
-    <button type="button" class="legend-chip legend-home" data-home="1"><span class="dot dot-home"></span>${esc(t("home"))}</button>
+    ${homes().map((h) => `<button type="button" class="legend-chip legend-home" data-home="${escAttr(h.id)}"><span class="dot dot-home"></span>${esc(homeName(h))}</button>`).join("")}
     ${hoodGeo.features.length ? `<button type="button" class="legend-chip ${showHoods ? "on" : ""}" data-hoods="1" aria-pressed="${showHoods}"><span class="dot dot-hood"></span>${esc(t("hoods"))}</button>` : ""}`;
 }
 
@@ -770,7 +785,7 @@ function wireUi() {
   $("#legend").addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.home) return flyThen(homeMarker.getLatLng(), Math.max(map.getZoom(), 14), () => homeMarker.openPopup());
+    if (b.dataset.home) return openHome(b.dataset.home);
     if (b.dataset.hoods) return toggleHoods(!showHoods);
     const s = b.dataset.status;
     filters[s] = !filters[s];
