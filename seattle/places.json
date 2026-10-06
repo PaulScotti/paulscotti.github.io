@@ -700,14 +700,16 @@
    "watch_outs": [
     "Confirm the 6-bedroom count: the description uses some rooms as offices and a playroom",
     "Check stairs, bedroom flooring and laundry condition",
-    "Back yard is not fenced, per listing"
+    "Back yard is not fenced, per listing",
+    "Owner requires 3x rent income and 720+ FICO"
    ],
    "listing_url": "https://www.zillow.com/homedetails/33-W-Etruria-St-Seattle-WA-98119/337590442_zpid/",
    "photo_url": "https://photos.zillowstatic.com/fp/1172eb8fe0f4a70434945687b0bdc7f8-cc_ft_960.jpg",
    "lat": 47.647718690144,
    "lng": -122.358230388971,
-   "status": "contacted",
-   "requested": "Paul replied Oct 5 requesting an in-person tour Oct 20 at 4:15 PM Seattle time, or alternatively Oct 21 or 23. Awaiting confirmation. Owner requires 3x rent income and 720+ FICO."
+   "status": "booked",
+   "tour_at": "2026-10-20T18:00",
+   "requested": "Paul confirmed the in-person tour for Oct 20, 2026 at 6 PM Seattle time. Added to Yooly & Poru calendar."
   },
   {
    "id": "2620-queen-anne-ave-n",
