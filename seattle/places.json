@@ -243,7 +243,8 @@
    "lat": 47.61009,
    "lng": -122.202366,
    "status": "booked",
-   "tour_at": "2026-10-24T10:15"
+   "tour_at": "2026-10-24T10:15",
+   "requested": "Tour booked for Oct 24 at 10:15 AM. Park in Future Resident Parking; if full, use a 3-hour commercial space in the garage. Follow signs to the leasing office behind Belle Pastry off Main St (Oct 3 email)."
   },
   {
    "id": "amli-bellevue-park",
@@ -554,47 +555,6 @@
    "requested": "Called; no tour date yet"
   },
   {
-   "id": "3038-37th-ave-sw",
-   "name": "3038 37th Ave SW (upper unit)",
-   "address": "3038 37th Ave SW (upper unit), Seattle, WA 98126",
-   "neighborhood": "North Admiral",
-   "type": "Upper unit of house",
-   "beds": 4,
-   "baths": 3,
-   "sqft": 1700,
-   "rent": "$4,595/mo + $375 utilities = $4,970",
-   "fees": "$375/mo flat utility fee (electric, water, sewer, garbage); gas and internet extra. Deposit $4,495; app fee $35 per adult; renter's insurance required",
-   "lease": "12 months",
-   "available": "Oct 18, 2026",
-   "parking": "Street parking only",
-   "laundry": "In-unit washer/dryer",
-   "ac": "Central air / heat pump",
-   "pets": "Up to 2 dogs or cats, 50 lb limit",
-   "year_built": 1926,
-   "highlights": [
-    "Puget Sound and downtown skyline views; deck with skyline view",
-    "Fully remodeled upstairs unit (renovated 2022)",
-    "Hardwood floors, tall ceilings, gas fireplace",
-    "Quartz counters, soft-close cabinets, stainless appliances",
-    "Primary suite with freestanding tub and private balcony with water view"
-   ],
-   "watch_outs": [
-    "Street parking only",
-    "Shares the 1926 house with a lower unit: check noise and the shared entry",
-    "Listing says both heat pump and furnace; ask if heat runs on gas (billed on top of the $375)",
-    "Unit spans two floors, so expect stairs inside"
-   ],
-   "listing_url": "https://sagareus.managebuilding.com/Resident/public/rentals/69789",
-   "other_urls": [
-    "https://sagareus.managebuilding.com/Resident/public/rentals"
-   ],
-   "photo_url": "https://sagareus.managebuilding.com/Resident/api/public/files/download?fileName=6fd39ac7f390460f820925afe854aac4.jpg",
-   "lat": 47.576264,
-   "lng": -122.377817,
-   "status": "contacted",
-   "requested": "Requested Oct 18 or 19"
-  },
-  {
    "id": "villa-andora-308",
    "name": "Villa Andora #308",
    "address": "1520 California Ave SW #308, Seattle, WA 98116",
@@ -632,7 +592,8 @@
    "lat": 47.589685,
    "lng": -122.385872,
    "status": "contacted",
-   "requested": "Requested Oct 18 (calendar to-do: book the 18th)"
+   "requested": "Removed from shortlist: no longer interested in 1520 California Ave SW.",
+   "hidden": true
   },
   {
    "id": "6202-38th-ave-ne",
@@ -672,7 +633,7 @@
    "lat": 47.67404115197,
    "lng": -122.28683475392,
    "status": "contacted",
-   "requested": "Requested Oct 18 (not confirmed)"
+   "requested": "Requested Oct 18. Madeson sent a Showdigs scheduling link (Oct 3, reminder Oct 4); no tour time confirmed."
   },
   {
    "id": "33-w-etruria-st",
@@ -829,7 +790,7 @@
    "lat": 47.674492332492,
    "lng": -122.37929801697,
    "status": "contacted",
-   "requested": "Requested Oct 20 (calendar to-do: book Oct 17 afternoon)"
+   "requested": "Requested Oct 20; calendar to-do says Oct 17 afternoon. RPA sent a ShowMojo scheduling link (Oct 3, reminder Oct 4); booking still required."
   },
   {
    "id": "6032-42nd-ave-sw",
@@ -870,7 +831,7 @@
    "lat": 47.547495,
    "lng": -122.38524,
    "status": "contacted",
-   "requested": "Requested Oct 19–21"
+   "requested": "Requested Oct 19-21. TurboTenant sent a required pre-screener for Jeff Purcell (Oct 3-5); no tour time confirmed."
   },
   {
    "id": "8711-15th-ave-nw",
