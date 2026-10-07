@@ -291,10 +291,20 @@ $('update').hidden = !(android && android.version() < config.apk);
 $('update').onclick = () => { $('update').textContent = 'Updating…'; android.update(); };
 $('get').hidden = !!android || !/Android/.test(navigator.userAgent);
 
-// A new day brings new cards, and whatever has changed in Myna since.
-document.addEventListener('visibilitychange', () => { if (!document.hidden && day && today() !== day) location.reload(); });
+// Opening Myna or coming back to it: a newer version is fetched past the browser's cache, which can hold the old
+// files for ten minutes, and opened; a new day brings its cards.
+async function fresh() {
+  const text = await (await fetch('config.js', { cache: 'reload' })).text();
+  const live = (await import(URL.createObjectURL(new Blob([text], { type: 'text/javascript' })))).default;
+  if (live.version !== config.version) {
+    await Promise.all(['./', 'myna.js', 'myna.css'].map(file => fetch(file, { cache: 'reload' })));
+    location.reload();
+  } else if (day && today() !== day) location.reload();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) fresh(); });
 
 history.replaceState(null, '', location.pathname);
 addEventListener('hashchange', route);
 route();
 if (password) load();
+fresh();
