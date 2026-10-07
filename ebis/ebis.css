@@ -218,7 +218,8 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow .i em, .flow em em { font-style: normal; } /* emphasis inside italic is set roman */
 .flow strong, .flow b { font-weight: 700; }
 .flow sup, .flow sub { font-size: .68em; line-height: 0; }
-.flow a { color: inherit; text-decoration: underline 1px; text-decoration-color: var(--rule); text-underline-offset: .2em; }
+.flow a { color: inherit; text-decoration: underline 1.5px; text-decoration-color: color-mix(in srgb, var(--rubric) 70%, transparent); text-underline-offset: .2em; }
+.flow a:hover { text-decoration-color: var(--rubric); }
 .flow a[href^="#"] { text-decoration: none; color: var(--rubric); }
 .flow blockquote { margin: 1em 0 1em 1.5em; }
 .flow ul, .flow ol { margin: .8em 0; padding-left: 1.5em; }
