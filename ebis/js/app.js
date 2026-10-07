@@ -48,7 +48,7 @@ function draw() {
     .filter(b => filter === 'all' || b.kind === filter)
     .filter(b => !query || `${b.title} ${b.author} ${b.site}`.toLowerCase().includes(query))
     .sort((a, b) => lastRead(b) - lastRead(a));
-  shelf.replaceChildren(...[...pending].map(([key, p]) => item({ id: key, title: p.title, busy: p.progress }, true)), ...books.map(b => item(b)));
+  shelf.replaceChildren(...[...pending].map(([key, p]) => item({ id: key, title: p.title, busy: p.progress, by: p.by }, true)), ...books.map(b => item(b)));
   $('empty').hidden = !!(books.length || pending.size || query || filter !== 'all');
 }
 const lastRead = b => store.get('pos', b.id)?.at || b.added;
@@ -62,10 +62,13 @@ function item(b, busy) {
   li.innerHTML = `<div class="cover" style="--paint:${paint};--paint-ink:${ink}">${b.cover ? `<img src="${b.cover}" alt="">`
     : `<div class="typeset">${b.site ? `<span class="site">${escape(b.site)}</span>` : ''}<span class="name">${escape(b.title)}</span><span class="author">${escape(b.author || '')}</span><svg aria-hidden="true"><use href="#ibis"/></svg></div>`}
     ${pct ? `<div class="progress"><i style="width:${(pct * 100).toFixed(1)}%"></i></div>` : ''}</div>
-    <div class="meta"><span class="title">${escape(b.title)}</span><span class="by">${escape(busy ? 'Adding…' : b.author || b.site)}</span></div>`;
+    <div class="meta"><span class="title">${escape(b.title)}</span><span class="by">${escape(busy ? b.by : b.author || b.site)}</span></div>`;
   if (!busy) {
     li.onclick = () => { location.hash = `#/read/${b.id}`; };
     li.oncontextmenu = e => { e.preventDefault(); manage(b); };
+    const more = Object.assign(document.createElement('button'), { className: 'more', textContent: '⋯', title: 'More' });
+    more.onclick = e => { e.stopPropagation(); manage(b); };
+    li.append(more);
   }
   return li;
 }
@@ -84,9 +87,11 @@ function manage(b) {
   const when = new Date(b.added).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   box.innerHTML = `<p>${escape(b.author || b.site)}</p>
     <p class="quiet">${escape(b.format.toUpperCase())} · ${b.words.toLocaleString()} words · added ${when}</p>
-    ${/^https?:/.test(b.source) ? `<p><a href="${escape(b.source)}" target="_blank" rel="noopener">Original page</a></p>` : ''}
-    <div class="actions"><button id="m-open">Read</button><button id="m-remove">Remove from library</button></div>`;
+    <div class="actions row"><button id="m-open">Read</button><button id="m-remove">Remove</button><button id="m-recompile">Recompile</button><button id="m-source">Original page</button></div>`;
   openSheet(b.title, box);
+  const page = /^https?:/.test(b.source) && b.source;
+  Object.assign($('m-source'), { disabled: !page, title: page || 'Added from a file', onclick: () => open(page, '_blank', 'noopener') });
+  $('m-recompile').onclick = () => { closeLayers(); recompile(b); };
   $('m-open').onclick = () => { closeLayers(); location.hash = `#/read/${b.id}`; };
   $('m-remove').onclick = async () => {
     closeLayers();
@@ -130,14 +135,15 @@ async function receive(items) {
   items.forEach(add);
 }
 
-// A file, a link, or a page as a browser showed it.
-function add({ file, url, html }) {
-  const title = file?.name ?? url.replace(/^https?:\/\/(www\.)?/, '');
+// A file, a link, or a page as a browser showed it; built again, it replaces the book it was.
+function add({ file, url, html, replaces }) {
+  const old = replaces && store.get('book', replaces);
+  const title = old?.title ?? file?.name ?? url.replace(/^https?:\/\/(www\.)?/, '');
   const opts = { fetchPage: store.fetchPage, fetcher: store.fetchBlob };
   const run = progress => file ? importFile(file, { ...opts, progress })
     : html ? importPage(html, url, { ...opts, progress }) : importURL(url, { ...opts, progress });
   const key = `pending-${crypto.randomUUID()}`;
-  pending.set(key, { title, progress: 0.02 });
+  pending.set(key, { title, progress: 0.02, by: old ? 'Recompiling…' : 'Adding…' });
   draw();
   queue = queue.then(async () => {
     try {
@@ -145,10 +151,13 @@ function add({ file, url, html }) {
         pending.get(key).progress = p;
         shelf.querySelector(`[data-id="${key}"] .progress i`)?.style.setProperty('width', `${p * 100}%`);
       });
-      const id = await store.addBook(record, zip);
-      toast(`Added “${record.title}”.`, ['Read', () => { location.hash = `#/read/${id}`; }]);
+      // A build with far less in it than the copy it would replace (its page behind a paywall now,
+      // say) leaves the copy as it was.
+      if (old && record.words < old.words / 2) throw new Error(`It came out with ${record.words.toLocaleString()} words, not ${old.words.toLocaleString()}, so your copy stays as it was.`);
+      const id = old ? await store.replaceBook(replaces, record, zip) : await store.addBook(record, zip);
+      toast(`${old ? 'Recompiled' : 'Added'} “${record.title}”.`, ['Read', () => { location.hash = `#/read/${id}`; }]);
     } catch (e) {
-      toast(`Couldn’t add ${title}. ${e.message}`);
+      toast(`Couldn’t ${old ? 'recompile' : 'add'} ${title}. ${e.message}`);
     } finally {
       pending.delete(key);
       draw();
@@ -157,6 +166,15 @@ function add({ file, url, html }) {
 }
 const addFiles = files => receive([...files].map(file => ({ file })));
 const addURL = url => receive([{ url }]);
+
+// A book built again by the newest ebis, from its link, or from its file, chosen again.
+function recompile(b) {
+  if (/^https?:/.test(b.source)) return receive([{ url: b.source, replaces: b.id }]);
+  const pick = Object.assign(document.createElement('input'), { type: 'file' });
+  pick.onchange = () => pick.files[0] && receive([{ file: pick.files[0], replaces: b.id }]);
+  toast(`Choose ${b.source} to recompile it.`);
+  pick.click();
+}
 
 let drags = 0;
 addEventListener('dragenter', e => { if (e.dataTransfer.types.includes('Files') || e.dataTransfer.types.includes('text/uri-list')) drags++, $('drop').hidden = false; });
@@ -185,11 +203,12 @@ async function receiveShared() {
   for (const req of await cache.keys()) {
     const res = await cache.match(req);
     const name = decodeURIComponent(res.headers.get('x-name') || ''), page = res.headers.get('x-url');
-    if (name) items.push({ file: new File([await res.blob()], name, { type: res.headers.get('content-type') }) });
-    else if (page) items.push({ url: page, html: await res.text() });
+    const replaces = res.headers.get('x-replaces') || undefined;
+    if (name) items.push({ file: new File([await res.blob()], name, { type: res.headers.get('content-type') }), replaces });
+    else if (page) items.push({ url: page, html: await res.text(), replaces });
     else {
       const url = (await res.text()).match(/https?:\/\/\S+/)?.[0];
-      if (url) items.push({ url });
+      if (url) items.push({ url, replaces });
     }
     await cache.delete(req);
   }
@@ -197,10 +216,11 @@ async function receiveShared() {
 }
 async function keep(items) {
   const cache = await caches.open('ebis-shared');
-  for (const { file, url, html } of items) {
+  for (const { file, url, html, replaces } of items) {
+    const headers = replaces ? { 'x-replaces': replaces } : {};
     await cache.put(`shared/${crypto.randomUUID()}`, file
-      ? new Response(file, { headers: { 'x-name': encodeURIComponent(file.name), 'content-type': file.type || 'application/octet-stream' } })
-      : new Response(html ?? url, { headers: html ? { 'x-url': url } : {} }));
+      ? new Response(file, { headers: { ...headers, 'x-name': encodeURIComponent(file.name), 'content-type': file.type || 'application/octet-stream' } })
+      : new Response(html ?? url, { headers: html ? { ...headers, 'x-url': url } : headers }));
   }
 }
 

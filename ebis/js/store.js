@@ -63,6 +63,18 @@ export async function addBook(record, zip) {
   put('book', id, record);
   return id;
 }
+// A book built again (by a newer ebis, from the same source) takes the old one's place: on the
+// shelf, in the open tabs, with its reading position and highlights. It does so under an id of
+// its own, so every device fetches the new package.
+export async function replaceBook(old, record, zip) {
+  const id = await addBook({ ...record, added: get('book', old)?.added ?? record.added }, zip);
+  const pos = get('pos', old), tabs = get('tabs', 'open');
+  if (pos) put('pos', id, pos);
+  for (const { id: mark, ...m } of all('mark').filter(m => m.book === old)) put('mark', mark, { ...m, book: id });
+  if (tabs?.ids.includes(old)) put('tabs', 'open', { ids: tabs.ids.map(x => x === old ? id : x) });
+  await removeBook(old);
+  return id;
+}
 export async function removeBook(id) {
   remove('book', id);
   remove('pos', id);

@@ -93,6 +93,12 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .item .by { font-size: 13px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item.busy { cursor: default; }
 .item.busy .cover { opacity: .55; }
+.item .more { /* the item's pane, as a right-click opens it; shown where a pointer can hover */
+  position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%;
+  background: rgb(20 18 15 / .55); color: #fff; font-size: 18px; line-height: 1; visibility: hidden; opacity: 0; transition: opacity .15s;
+}
+@media (hover: hover) { .item:hover .more { visibility: visible; opacity: 1; } }
+.item .more:hover { background: rgb(20 18 15 / .8); }
 
 .cover {
   position: relative; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 2px 5px 5px 2px; container-type: inline-size;
@@ -358,7 +364,10 @@ textarea { display: block; width: 100%; height: 96px; padding: 10px 14px; resize
 .url button, .actions button, .pop button {
   height: 44px; padding: 0 18px; border-radius: 10px; background: var(--ink); color: var(--bg);
 }
-.actions { display: flex; gap: 8px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions button:disabled { opacity: .4; cursor: default; }
+.actions.row { flex-wrap: nowrap; gap: 6px; } /* a book's four, in one row even on a phone */
+.actions.row button { flex: 1 1 auto; padding: 0 10px; font-size: 14px; white-space: nowrap; }
 .actions button + button, .pop button + button { background: none; color: var(--ink); border: 1px solid var(--rule); }
 .pick { display: grid; place-items: center; height: 120px; border: 1px dashed var(--ink-3); border-radius: 12px; cursor: pointer; font-size: 18px; margin: 8px 0 8px; }
 .pick input { position: absolute; width: 1px; height: 1px; opacity: 0; }
