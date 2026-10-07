@@ -383,16 +383,6 @@
    "requested": "Tour request sent through Redfin on October 5, 2026; receipt confirmed the request was delivered. No tour date or time confirmed."
   },
   {
-   "id": "1740-nw-63rd-st",
-   "name": "1740 NW 63rd St",
-   "address": "1740 NW 63rd St, Seattle, WA 98107",
-   "neighborhood": "Ballard",
-   "available": "Unavailable for tours or leasing; owner is listing the home for sale",
-   "status": "contacted",
-   "hidden": true,
-   "requested": "Contacted through Zillow. Caroline Shin replied on October 5, 2026 that the home is being listed for sale and is no longer available to tour or lease. Leasing might resume in 2–3 months if it does not sell, but this is not promised."
-  },
-  {
    "id": "valdok",
    "name": "Valdok",
    "address": "1701 NW 56th St, Seattle, WA 98107",
