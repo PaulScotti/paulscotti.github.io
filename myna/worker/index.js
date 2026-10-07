@@ -82,31 +82,34 @@ const shape = (c, day) => ({
   front: [...`${c.id}/${day}`].reduce((h, ch) => Math.imul(h ^ ch.charCodeAt(0), 16777619), 2166136261) < 0 ? 'en' : 'ko',
 });
 
-// FSRS-6 with two grades, Again and Good. A card's level follows its stability, the days it can be remembered.
+// FSRS-6 with two grades, Again and Good. A card's level follows its stability, the days it can be remembered,
+// but it is only mastered once it has also been answered right as a sentence.
 async function grade(env, ctx, { id, good, day }) {
   const db = env.DB;
   const c = await db.prepare('SELECT * FROM cards WHERE id = ?').bind(id).first();
   const g = good ? 3 : 1, d0 = g => W[4] - Math.exp(W[5] * (g - 1)) + 1;
-  // A new word's first sight is its first rating, an Again: it wasn't known yet. Its first test, the same day,
-  // is then a short-term review, so a word met today comes back tomorrow.
-  const was = c.s === null ? { s: W[0], d: d0(1), last: day } : c;
-  const t = (Date.parse(day) - Date.parse(was.last)) / 864e5;
-  const r = (1 + FACTOR * t / was.s) ** DECAY;
-  let s = t < 1 ? was.s * Math.max(Math.exp(W[17] * (g - 3 + W[18])) * was.s ** -W[19], good ? 1 : 0)
-    : good ? was.s * (1 + Math.exp(W[8]) * (11 - was.d) * was.s ** -W[9] * (Math.exp((1 - r) * W[10]) - 1))
-    : Math.min(W[11] * was.d ** -W[12] * ((was.s + 1) ** W[13] - 1) * Math.exp((1 - r) * W[14]), was.s / Math.exp(W[17] * W[18]));
-  let d = W[7] * d0(4) + (1 - W[7]) * (was.d - W[6] * (g - 3) * (10 - was.d) / 9);
+  let s = W[g - 1], d = d0(g);
+  if (c.s !== null) {
+    const t = (Date.parse(day) - Date.parse(c.last)) / 864e5;
+    const r = (1 + FACTOR * t / c.s) ** DECAY;
+    s = t < 1 ? c.s * Math.max(Math.exp(W[17] * (g - 3 + W[18])) * c.s ** -W[19], good ? 1 : 0)
+      : good ? c.s * (1 + Math.exp(W[8]) * (11 - c.d) * c.s ** -W[9] * (Math.exp((1 - r) * W[10]) - 1))
+      : Math.min(W[11] * c.d ** -W[12] * ((c.s + 1) ** W[13] - 1) * Math.exp((1 - r) * W[14]), c.s / Math.exp(W[17] * W[18]));
+    d = W[7] * d0(4) + (1 - W[7]) * (c.d - W[6] * (g - 3) * (10 - c.d) / 9);
+  }
   s = Math.max(s, 0.001);
   d = Math.min(Math.max(d, 1), 10);
-  const level = Math.min(Math.max(Math.floor(Math.log2(s)) + 1, 1), 9);
+  const level = Math.max(1, Math.min(Math.floor(Math.log2(s)) + 1, c.form === 'sentence' ? 9 : 8));
   // The gap FSRS asks for, spread like Anki's fuzz: from 2.5 days up, any whole day within a few either side, a
   // smaller share the longer the gap, so words learned together drift apart instead of always coming back together.
   const ideal = Math.max(1, s / FACTOR * (config.retention ** (1 / DECAY) - 1));
   const spread = ideal < 2.5 ? 0 : [[2.5, 7, 0.15], [7, 20, 0.1], [20, Infinity, 0.05]]
     .reduce((delta, [start, end, share]) => delta + share * Math.max(Math.min(ideal, end) - start, 0), 1);
   const low = Math.round(ideal - spread), days = low + Math.floor(Math.random() * (Math.round(ideal + spread) - low + 1));
+  // A word answered right on the day it is met comes back the next day, sooner than FSRS would ask, like an
+  // Anki learning step.
   // A missed card stays due today, asked the same way until it's answered; a remembered one is asked anew next time.
-  const due = good ? new Date(Date.parse(day) + days * 864e5).toISOString().slice(0, 10) : day;
+  const due = good ? new Date(Date.parse(day) + (c.intro === day ? 1 : days) * 864e5).toISOString().slice(0, 10) : day;
   await db.batch([
     db.prepare(`UPDATE cards SET s = ?, d = ?, level = ?, last = ?, due = ?${good ? ', ask_ko = NULL, ask_en = NULL' : ''} WHERE id = ?`).bind(s, d, level, day, due, id),
     db.prepare('INSERT INTO answers (card, day, at, good, ko, en) VALUES (?, ?, ?, ?, ?, ?)').bind(id, day, Date.now(), good ? 1 : 0, c.ask_ko, c.ask_en),
@@ -116,27 +119,28 @@ async function grade(env, ctx, { id, good, day }) {
 }
 
 // How a card is asked at its level: the word itself, or a form, phrase or sentence OpenAI writes around it. Any
-// other word in it is one Paul knows at least as well as this one, so a miss points at this word: they are drawn
-// at random, more often the better he knows them, and a line that uses any word outside them is written again.
-// When none can be made, the word is asked as it is. The line differs from those other cards are asked with then.
+// other word in it is at this card's level or higher, so a miss points at this word: they are drawn at random, more
+// often the better Paul knows them, and a line that uses any word outside them is written again. When none can be
+// made, the word is asked as it is. The line differs from those other cards are asked with then, and its form is
+// kept: a phrase or sentence only counts as one if it has another word in it.
 async function vary(env, c) {
   const forms = config.levels[c.level], form = forms[Math.floor(Math.random() * forms.length)];
-  let ask = { ko: c.ko, en: c.en };
+  let ask = { ko: c.ko, en: c.en, form: 'word' };
   if (form !== 'word') {
     const [{ results: stronger }, { results: nearby }] = await env.DB.batch([
-      env.DB.prepare('SELECT ko, en, s FROM cards WHERE s >= ?1 AND id != ?2').bind(c.s, c.id),
+      env.DB.prepare('SELECT ko, en, s FROM cards WHERE level >= ?1 AND id != ?2').bind(c.level, c.id),
       env.DB.prepare('SELECT ask_ko FROM cards WHERE ask_ko != ko AND id != ?1 ORDER BY abs(julianday(due) - julianday(?2)) LIMIT 20').bind(c.id, c.due),
     ]);
     // A weighted draw (Efraimidis-Spirakis): a word known twice as long as this one counts twice, four times as long, three times.
-    const known = stronger.map(k => [Math.random() ** (1 / (1 + Math.log2(k.s / c.s))), k]).sort((a, b) => b[0] - a[0]).slice(0, 40)
+    const known = stronger.map(k => [Math.random() ** (1 / (1 + Math.max(0, Math.log2(k.s / c.s)))), k]).sort((a, b) => b[0] - a[0]).slice(0, 40)
       .map(([, k]) => k).sort((a, b) => b.s - a.s);
     for (let tries = 0; tries < 3; tries++) {
       const line = await gpt(env, `You write one flashcard for an English speaker learning Korean from spoken flashcards. It tests the given word in the given form. The Korean must contain the word, inflected as the form needs, and be natural, correct, everyday spoken Korean, polite unless the form asks otherwise. Every other word must come from the listed words, which the learner knows at least as well as this one, best known first; prefer those near the top. Particles, endings and pointing words like 이거 or 저기 are fine. If no natural line can be made from them, write the word alone in another everyday form. Make it different from the lines other cards are asked with. en is its natural English translation, specific enough that the Korean is the obvious answer. uses lists every other word the Korean contains, in dictionary form, spelled as in the list when it is one of them, leaving out particles, endings and pointing words. ${SAID}`,
         `Word: ${c.ko} (${c.en})\nForm: ${config.forms[form]}\nWords the learner knows at least as well, best known first: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\nLines other cards are asked with: ${nearby.map(n => n.ask_ko).join(' / ')}`, LINE);
-      if (line.uses.every(w => w === c.ko || known.some(k => k.ko === w))) { ask = line; break; }
+      if (line.uses.every(w => w === c.ko || known.some(k => k.ko === w))) { ask = { ...line, form: line.uses.length ? form : 'inflected' }; break; }
     }
   }
-  await env.DB.prepare('UPDATE cards SET ask_ko = ?, ask_en = ? WHERE id = ?').bind(ask.ko, ask.en, c.id).run();
+  await env.DB.prepare('UPDATE cards SET ask_ko = ?, ask_en = ?, form = ? WHERE id = ?').bind(ask.ko, ask.en, ask.form, c.id).run();
 }
 
 // New words for the pool, chosen against everything already in the deck. Returns how many were new.

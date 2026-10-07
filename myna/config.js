@@ -20,7 +20,8 @@ export default {
 
   // How a card is asked at each level, picked at random from its list. A card goes up a level each time
   // the number of days it can be remembered doubles: level 2 at 2 days, 3 at 4, 4 at 8, and so on to
-  // 9 at 256 days, which is mastered and never asked again. Level 0 is a word not yet met.
+  // 9 at 256 days, once it has also been answered right as a sentence; level 9 is mastered and never asked
+  // again. Level 0 is a word not yet met.
   levels: {
     1: ['word'],
     2: ['word'],
@@ -28,7 +29,7 @@ export default {
     4: ['inflected'],
     5: ['inflected', 'phrase'],
     6: ['phrase'],
-    7: ['phrase', 'sentence'],
+    7: ['sentence'],
     8: ['sentence'],
   },
   forms: {
