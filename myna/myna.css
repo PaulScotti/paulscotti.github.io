@@ -53,6 +53,7 @@ h1 { margin: 0; font-weight: 400; letter-spacing: .01em; }
 .desk header { display: flex; align-items: center; justify-content: space-between; }
 .desk nav { display: flex; gap: 18px; }
 .desk h1 { display: flex; align-items: center; gap: 4px; margin-left: -6px; font-size: 28px; line-height: 1; }
+.desk h1 small { align-self: flex-end; margin: 0 0 3px 4px; font-size: 12px; color: var(--ink-3); letter-spacing: .03em; }
 .today { margin: auto 0; padding: 48px 0; }
 .plan { margin: 0 0 28px; font-size: clamp(26px, 7vw, 34px); line-height: 1.25; text-wrap: balance; }
 .begin {

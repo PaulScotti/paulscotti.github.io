@@ -284,6 +284,8 @@ function toast(message) {
 addEventListener('unhandledrejection', e => toast(e.reason.message));
 addEventListener('error', e => toast(e.message));
 
+$('version').textContent = `v${config.version}`;
+
 // The Android app updates itself when a newer one is published; on Android in a browser, Myna offers the app.
 $('update').hidden = !(android && android.version() < config.apk);
 $('update').onclick = () => { $('update').textContent = 'Updating…'; android.update(); };

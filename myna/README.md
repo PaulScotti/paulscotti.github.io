@@ -39,7 +39,7 @@ cd worker && npx wrangler deploy        # after changing the worker
 android/build.sh                        # after changing android/: raise `apk` in config.js first
 ```
 
-The app updates itself when the site changes. When `apk` in `config.js` is higher than the installed
+Raise `version` in `config.js` with every update; the app shows it beside the logo. The app updates itself when the site changes. When `apk` in `config.js` is higher than the installed
 app's version, the app offers to update; the first update asks to allow installs from Myna, later
 ones install without asking. The signing key is in `~/.config/myna`: keep a copy, since Android only
 accepts an update signed with the same key. On `localhost` the app talks to `npx wrangler dev --port 8788`

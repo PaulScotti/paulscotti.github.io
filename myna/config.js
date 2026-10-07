@@ -38,6 +38,9 @@ export default {
     sentence: 'a natural spoken sentence using the word with several words the learner knows, with more varied grammar',
   },
 
+  // Myna's version, shown beside the logo so each device shows which code it is running. Raised with every update.
+  version: 13,
+
   // The Android app's version. Raise it after changing android/ and rebuilding; the app then offers the update.
   apk: 1,
 };
