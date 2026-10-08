@@ -299,8 +299,8 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .gloss .bracket { position: absolute; left: var(--bracket-x); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; opacity: .45; pointer-events: none; transition: opacity .2s; }
 .reader.beside .gloss .bracket { opacity: .85; }
 .gloss .bracket.on { opacity: 1; }
-.note { font: italic var(--note-fs)/1.4 var(--serif); color: var(--ink-2); text-align: start; text-indent: 0; hyphens: manual; user-select: none; -webkit-user-select: none; }
-.note.coming { color: var(--ink-3); }
+.gloss .note, .now { font: italic var(--note-fs)/1.4 var(--serif); color: var(--ink-2); text-align: start; text-indent: 0; hyphens: manual; user-select: none; -webkit-user-select: none; }
+.gloss .note.coming, .now.coming { color: var(--ink-3); }
 .gloss .side { position: absolute; left: var(--note-x); width: var(--note-w); }
 .gloss .side .note { position: sticky; top: .9em; }
 .now {
@@ -310,7 +310,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .now::after { content: ""; position: absolute; top: 1.6em; bottom: .65em; left: calc(var(--bracket-x) - var(--flow-x)); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; }
 .now.coming::after { display: none; }
 .reader.ui .now { opacity: 0; }
-::highlight(run) { background-color: color-mix(in srgb, var(--rubric) 9%, transparent); }
+::highlight(run), ::highlight(lit) { background-color: color-mix(in srgb, var(--rubric) 9%, transparent); }
 
 ::highlight(ochre) { background-color: var(--hl-ochre); }
 ::highlight(rubric) { background-color: var(--hl-rubric); }
@@ -373,6 +373,9 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .list .snip { display: block; color: var(--ink-2); font-size: 15px; }
 .list .snip mark { background: var(--select); color: inherit; }
 .list .note { display: block; margin-top: 4px; color: var(--ink-2); font-style: italic; }
+.outline .head { font-variant-caps: all-small-caps; letter-spacing: .06em; color: var(--ink-3); }
+.outline .gist { font-style: italic; font-size: 15px; line-height: 1.4; }
+.outline .coming { padding: 11px 22px; color: var(--ink-3); font-style: italic; font-size: 15px; }
 .sheet .find { position: sticky; top: 0; background: var(--surface); padding: 4px 0 10px; }
 
 .url { display: flex; gap: 8px; margin-top: 10px; }

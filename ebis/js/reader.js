@@ -441,9 +441,42 @@ $('r-toc').onclick = () => {
     }
     body.append(label, ml);
   }
+  if (settings.notes) body.append(...outline());
   openSheet('Contents', body);
   list.querySelector('[aria-current]')?.scrollIntoView({ block: 'center' });
 };
+
+// The chapter's margin notes as an outline under its headings: its argument at a glance, each note
+// a way to its run. Asking for it has the rest of the chapter noted.
+function outline() {
+  notes.prepare(book.id, book.data, { c: chapter, b: 0 }, book.data.sizes[chapter]);
+  const list = notes.of(book.id, chapter).filter(n => blocks[n.b] && blocks[n.b2]), coming = notes.writing(book.id, chapter).length;
+  if (!list.length && !coming) return [];
+  const ol = Object.assign(document.createElement('ol'), { className: 'list outline' });
+  const add = (html, go) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<button>${html}</button>`;
+    li.firstChild.onclick = () => { closeLayers(); showUI(false); go(); };
+    ol.append(li);
+  };
+  let h = 0;
+  for (const n of list) {
+    for (; heads[h]?.b <= n.b; h++) {
+      const { title, id } = heads[h].entry;
+      add(`<span class="head">${escape(title)}</span>`, () => jump(id));
+    }
+    add(`<span class="gist">${escape(n.t)}</span>`, () => toRun(n));
+  }
+  if (coming) ol.insertAdjacentHTML('beforeend', '<li class="coming">Writing the rest of this chapter’s notes…</li>');
+  return [Object.assign(document.createElement('h3'), { className: 'label quiet', textContent: 'Margin notes' }), ol];
+}
+// To a note's run, with a little of what comes before it above, the run lit up a moment.
+function toRun(n) {
+  scrollLoc([n.b, n.o]);
+  page.scrollTop -= page.clientHeight / 4;
+  CSS.highlights.set('lit', new Highlight(rangeOf(n)));
+  setTimeout(() => CSS.highlights.delete('lit'), 2500);
+}
 
 function jump(id, from) {
   const c = book.data.ids[id];

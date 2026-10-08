@@ -134,7 +134,8 @@ function pump() {
 async function write({ p, data }) {
   busy.set(p.key, p);
   watchers.forEach(fn => fn(p));
-  const notes = await store.annotate({ title: data.title, author: data.author, before: p.before, text: p.text }).then(r => {
+  await store.sync(); // another device may have noted it already
+  const notes = !store.get('notes', p.key) && await store.annotate({ title: data.title, author: data.author, before: p.before, text: p.text }).then(r => {
     if (!Array.isArray(r.notes)) throw new Error('Claude sent no notes.');
     return r.notes;
   }).catch(e => {

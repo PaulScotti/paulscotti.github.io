@@ -29,7 +29,9 @@ that ebis typesets itself.
   start of a book) is noted as it's added, and while reading, the next twenty minutes or so.
   Where the window has room, notes stand in a column beside the text, each staying in view
   while its run is; on a phone, the note of the run being read stands at the foot of the page.
-  Licences, title pages and the like go unnoted. They sync like highlights.
+  Licences, title pages and the like go unnoted. Contents lists a chapter's notes under its
+  headings, to skim its argument; a tap goes to the passage. They sync like highlights, and a
+  device catches up with the library before writing any, so each passage is noted once.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
 To keep a page you are reading — one a paywall shows only to a logged-in browser — drag the
