@@ -2,6 +2,7 @@
 
 import * as store from './store.js';
 import * as reader from './reader.js';
+import * as notes from './notes.js';
 import { importFile, importPage, importURL } from './sources.js';
 import { $, template, escape, openSheet, closeLayers, toast } from './ui.js';
 
@@ -147,7 +148,7 @@ function add({ file, url, html, replaces }) {
   draw();
   queue = queue.then(async () => {
     try {
-      const { record, zip } = await run(p => {
+      const { record, zip, book } = await run(p => {
         pending.get(key).progress = p;
         shelf.querySelector(`[data-id="${key}"] .progress i`)?.style.setProperty('width', `${p * 100}%`);
       });
@@ -155,6 +156,7 @@ function add({ file, url, html, replaces }) {
       // say) leaves the copy as it was.
       if (old && record.words < old.words / 2) throw new Error(`It came out with ${record.words.toLocaleString()} words, not ${old.words.toLocaleString()}, so your copy stays as it was.`);
       const id = old ? await store.replaceBook(replaces, record, zip) : await store.addBook(record, zip);
+      notes.prepare(id, book, undefined, notes.FIRST); // margin notes for its start (all of an article) are written now
       toast(`${old ? 'Recompiled' : 'Added'} “${record.title}”.`, ['Read', () => { location.hash = `#/read/${id}`; }]);
     } catch (e) {
       toast(`Couldn’t ${old ? 'recompile' : 'add'} ${title}. ${e.message}`);

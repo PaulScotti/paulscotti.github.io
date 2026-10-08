@@ -141,7 +141,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
   --top: calc(env(safe-area-inset-top) + 46px); --bottom: calc(env(safe-area-inset-bottom) + 42px);
 }
 .page { position: absolute; top: var(--top); bottom: var(--bottom); left: 0; right: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
-.flow { max-width: var(--flow-w); margin: 0 auto; padding-bottom: 38vh; }
+.flow { max-width: var(--flow-w); margin: 0 auto 0 var(--flow-x, auto); padding-bottom: 38vh; }
 
 /* Doorways to the chapters before and after this one. */
 .chap { display: flex; justify-content: center; }
@@ -152,7 +152,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 
 /* Running heads and folios sit on the text block, like a printed page. */
 .running, .folio {
-  position: absolute; left: 50%; transform: translateX(-50%); width: var(--flow-w); font-size: 12.5px; color: var(--ink-3); user-select: none;
+  position: absolute; left: var(--flow-x); width: var(--flow-w); font-size: 12.5px; color: var(--ink-3); user-select: none;
 }
 .running { top: calc(env(safe-area-inset-top) + 16px); display: flex; justify-content: space-between; gap: 16px; font-variant-caps: all-small-caps; letter-spacing: .09em; pointer-events: none; }
 .folio { bottom: calc(env(safe-area-inset-bottom) + 14px); display: flex; justify-content: space-between; gap: 16px; font-variant-numeric: tabular-nums; cursor: pointer; }
@@ -290,6 +290,22 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow mtable.numbered > mtr > .n mtext { font-family: var(--serif); font-size: .83em; }
 :root[data-theme="dusk"] :is(.flow, .lightbox) img, :root[data-theme="night"] :is(.flow, .lightbox) img { filter: brightness(.85); background: #e9e4d8; } /* line art drawn on transparency stays legible */
 :root[data-theme="dusk"] :is(.flow, .lightbox) img.ink, :root[data-theme="night"] :is(.flow, .lightbox) img.ink { filter: invert(1) brightness(.82); background: none; } /* type cut from a page is ink, in the theme's own */
+
+/* Margin notes: a bracket beside each run of text a note sums up, and the note beside it in a column
+   of their own. Where there's no room for one, the note of the run being read stands at the foot of
+   the page, over the text that fades beneath it, bracketed like the run whose bracket darkens. */
+.gloss { position: absolute; top: 0; left: 0; }
+.gloss .bracket { position: absolute; left: var(--bracket-x); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; opacity: .5; pointer-events: none; transition: opacity .2s; }
+.gloss .bracket.on { opacity: 1; }
+.note { font: italic var(--note-fs)/1.4 var(--serif); color: var(--ink-2); text-align: start; text-indent: 0; hyphens: manual; user-select: none; -webkit-user-select: none; }
+.gloss .note { position: absolute; left: var(--note-x); width: var(--note-w); }
+.now {
+  position: absolute; left: var(--flow-x); width: var(--flow-w); bottom: var(--bottom); padding: 1.5em 0 .55em;
+  background: linear-gradient(to bottom, transparent, var(--bg) 1.3em); pointer-events: none; transition: opacity .2s;
+}
+.now::after { content: ""; position: absolute; top: 1.6em; bottom: .65em; left: calc(var(--bracket-x) - var(--flow-x)); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; }
+.reader.ui .now { opacity: 0; }
+::highlight(run) { background-color: color-mix(in srgb, var(--rubric) 9%, transparent); }
 
 ::highlight(ochre) { background-color: var(--hl-ochre); }
 ::highlight(rubric) { background-color: var(--hl-rubric); }

@@ -3,11 +3,12 @@
 // or theme.
 
 import * as store from './store.js';
+import * as notes from './notes.js';
 import { blocks as leafBlocks, blockSizes } from './convert.js';
 import { settings, update, onUpdate } from './settings.js';
 import { $, template, escape, openSheet, popover, peek, unpeek, lightbox, closeLayers, layerOpen, toast } from './ui.js';
 
-const view = $('reader'), page = $('page'), flow = $('flow');
+const view = $('reader'), page = $('page'), flow = $('flow'), gloss = $('gloss');
 const COLORS = ['ochre', 'rubric', 'lapis'];
 const FACES = ['1em Libron', 'italic 1em Libron', 'bold 1em Libron', 'italic bold 1em Libron'];
 let deviceName = matchMedia('(pointer: coarse)').matches ? 'phone' : 'computer';
@@ -68,6 +69,7 @@ function render(c, target, fade) {
   blocks.reduce((sum, el) => (offsets.push(sum), sum + (el.textContent.length || 1)), 0);
   measure();
   fitFormulas();
+  drawNotes();
   heads = book.data.toc.filter(t => book.data.ids[t.id] === chapter).map(t => {
     const el = flow.querySelector(`[id="${CSS.escape(t.id)}"]`);
     return { entry: t, b: el ? blockAt(el) : 0 };
@@ -81,6 +83,7 @@ function render(c, target, fade) {
   refresh();
   remember(anchor);
   paintMarks();
+  prepareNotes();
   if (fade) flow.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out' });
 }
 
@@ -101,12 +104,23 @@ function chapterLink(c, dir) {
   return nav;
 }
 
+// The column of text, and where there's room, a column of margin notes beside it: the text moves
+// left, and narrows a little, to make room. (Where there isn't, see drawNotes.)
 function measure() {
   const W = page.clientWidth, fs = settings.size;
   const mx = Math.round(Math.min(Math.max(W * 0.06, 16), 48) * settings.margin);
-  const c = Math.floor(Math.min(W - 2 * mx, fs * 32));
+  let c = Math.floor(Math.min(W - 2 * mx, fs * 32)), x = (W - c) / 2;
+  const small = Math.max(13, Math.round(fs * 0.74)), gap = Math.round(fs * 0.9), side = gap + 16 + small * 16 + mx; // to the bracket, to the note, the note, the margin
+  const beside = settings.notes && W - side - mx >= fs * 24;
+  if (beside) {
+    c = Math.min(c, W - side - mx);
+    x = Math.min(x, W - side - c);
+  }
+  view.classList.toggle('beside', beside);
+  const bracket = x + c + (beside ? gap : Math.round(Math.min(fs * 0.45, mx * 0.35)));
   const vars = {
-    '--fs': `${fs}px`, '--lh': settings.leading, '--flow-w': `${c}px`, '--page-h': `${page.clientHeight}px`,
+    '--fs': `${fs}px`, '--lh': settings.leading, '--flow-w': `${c}px`, '--flow-x': `${x}px`, '--page-h': `${page.clientHeight}px`,
+    '--note-fs': `${beside ? small : Math.round(fs * 0.82)}px`, '--note-w': `${small * 16}px`, '--bracket-x': `${bracket}px`, '--note-x': `${bracket + 16}px`,
     '--align': settings.justify ? 'justify' : 'start', '--hyphens': settings.justify ? 'auto' : 'manual',
     '--indent': settings.indent ? '1.4em' : '0', '--para-gap': settings.indent ? '0' : '.7em',
   };
@@ -188,6 +202,7 @@ function rested() {
   anchor = locator();
   refresh();
   remember(anchor);
+  prepareNotes();
 }
 
 const fraction = ([b, o]) => (book.starts[chapter] + (offsets[b] || 0) + o) / book.total;
@@ -313,13 +328,18 @@ function hold() { // till the scroll has been still a moment
 
 new ResizeObserver(() => relayout()).observe(page);
 document.fonts.addEventListener('loadingdone', () => relayout());
-onUpdate(changes => 'folio' in changes ? book && refresh() : relayout());
+onUpdate(changes => {
+  if ('folio' in changes) return book && refresh();
+  relayout();
+  if (changes.notes && book && !view.hidden) prepareNotes();
+});
 
 // Lay the chapter out again (new size or settings) keeping the reader's place on screen.
 function relayout() {
   if (!book || view.hidden) return;
   measure();
   fitFormulas();
+  drawNotes();
   scrollLoc(anchor);
 }
 
@@ -343,9 +363,14 @@ async function keepAwake() {
 }
 function releaseWake() { wake?.release(); wake = null; }
 
-// Positions from the other device.
+// Positions from the other device, and notes as they're written.
 store.onChange(({ kind, id, remote }) => {
-  if (!book || view.hidden || !remote) return;
+  if (!book || view.hidden) return;
+  if (kind === 'notes') {
+    const written = store.get('notes', id);
+    return written?.book === book.id && written.c === chapter && drawNotes();
+  }
+  if (!remote) return;
   if (kind === 'mark') paintMarks();
   if (kind === 'tabs') drawTabs();
   if (kind !== 'pos' || id !== book.id) return;
@@ -546,6 +571,59 @@ $('r-tabs').onclick = () => {
   list.append(li);
   openSheet('Open books', list);
 };
+
+// Margin notes: a bracket beside each run of text a note sums up, and the note beside the bracket.
+// Where there's no room for a column of them, the note of the run being read (the one a third of
+// the way down the screen) is shown at the foot of the page instead, and its bracket darkens.
+let runs = [], shown = null;
+function drawNotes() {
+  const beside = view.classList.contains('beside');
+  gloss.replaceChildren();
+  CSS.highlights.delete('run');
+  const list = settings.notes ? notes.of(book.id, chapter).filter(n => blocks[n.b] && blocks[n.b2]) : [];
+  const els = beside ? list.map(n => {
+    const el = Object.assign(document.createElement('div'), { className: 'note', textContent: n.t });
+    el.onmouseenter = () => CSS.highlights.set('run', new Highlight(rangeOf(n)));
+    el.onmouseleave = () => CSS.highlights.delete('run');
+    gloss.append(el);
+    return el;
+  }) : [];
+  const origin = page.getBoundingClientRect().top - page.scrollTop;
+  runs = list.map((n, i) => {
+    const r = rangeOf(n).getBoundingClientRect();
+    return { top: r.top - origin, bottom: r.bottom - origin, t: n.t, height: els[i]?.offsetHeight };
+  });
+  let free = 0; // where the column of notes is clear from
+  runs.forEach((run, i) => {
+    const end = Math.min(run.bottom, (runs[i + 1]?.top ?? Infinity) - 5);
+    run.bracket = Object.assign(document.createElement('i'), { className: 'bracket' });
+    run.bracket.style.cssText = `top:${run.top}px;height:${Math.max(end - run.top, 10)}px`;
+    gloss.append(run.bracket);
+    if (!beside) return;
+    const top = Math.max(run.top, free);
+    els[i].style.top = `${top}px`;
+    free = top + run.height + 12;
+  });
+  showNow(true);
+}
+const now = $('now');
+function showNow(redrawn) {
+  const y = page.scrollTop + page.clientHeight / 3;
+  const run = view.classList.contains('beside') ? null : runs.findLast(r => r.top <= y);
+  const reading = run && y <= run.bottom + 40 ? run : null; // (past a run's end, by more than a line, is between runs)
+  if (reading === shown && !redrawn) return;
+  shown?.bracket.classList.remove('on');
+  reading?.bracket.classList.add('on');
+  shown = reading;
+  if (!reading) return void (now.hidden = true);
+  if (!now.hidden && now.textContent === reading.t) return;
+  now.textContent = reading.t;
+  now.hidden = false;
+  now.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
+}
+let nowFrame = 0;
+page.addEventListener('scroll', () => { cancelAnimationFrame(nowFrame); nowFrame = requestAnimationFrame(showNow); }, { passive: true });
+const prepareNotes = () => notes.prepare(book.id, book.data, { c: chapter, b: anchor[0] });
 
 // Links, images and highlights.
 

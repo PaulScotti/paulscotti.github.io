@@ -2,7 +2,7 @@
 
 const touch = matchMedia('(pointer: coarse)').matches;
 const dark = matchMedia('(prefers-color-scheme: dark)');
-const defaults = { size: touch ? 18 : 20, leading: 1.55, margin: 1, justify: true, indent: true, theme: 'auto', folio: 'pages' };
+const defaults = { size: touch ? 18 : 20, leading: 1.55, margin: 1, justify: true, indent: true, notes: true, theme: 'auto', folio: 'pages' };
 const listeners = new Set();
 
 export const settings = { ...defaults, ...JSON.parse(localStorage.getItem('ebis.settings') || '{}') };

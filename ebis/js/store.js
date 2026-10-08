@@ -1,5 +1,5 @@
 // The library on this device (IndexedDB), kept in step with Paul's Cloudflare worker.
-// Everything small (books, reading positions, highlights, open tabs) is a record that
+// Everything small (books, reading positions, highlights, margin notes, open tabs) is a record that
 // replicates last-write-wins; each book's content is a zip package stored beside it.
 
 import { unzipSync, strFromU8 } from '../vendor/fflate.js';
@@ -79,6 +79,7 @@ export async function removeBook(id) {
   remove('book', id);
   remove('pos', id);
   for (const m of all('mark').filter(m => m.book === id)) remove('mark', m.id);
+  for (const n of all('notes').filter(n => n.book === id)) remove('notes', n.id);
   close(id);
   await idb('packages', 'readwrite', s => s.delete(id));
 }
@@ -201,6 +202,9 @@ export async function fetchPage(url) {
   return { blob: await res.blob(), url: res.headers.get('x-final-url') };
 }
 export const fetchBlob = async url => (await fetchPage(url)).blob;
+
+// Margin notes are written by Claude, through the worker.
+export const annotate = async passage => (await api('/notes', { method: 'POST', body: JSON.stringify(passage) })).json();
 
 // The worker answers in words a reader can be shown.
 async function api(path, init = {}, key = password) {

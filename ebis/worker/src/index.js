@@ -1,6 +1,8 @@
 // ebis sync, on Paul's own Cloudflare account. One library, opened by one password: the KEY secret.
-// Records (books, reading positions, highlights, tabs) replicate last-write-wins through D1;
-// book packages live in R2; /fetch reads web pages for the reader, which browsers can't do directly.
+// Records (books, reading positions, highlights, margin notes, tabs) replicate last-write-wins through
+// D1; book packages live in R2; /fetch reads web pages for the reader, which browsers can't do
+// directly; /notes has Claude write margin notes (the ANTHROPIC_API_KEY secret, and for a personal
+// key that spans workspaces, ANTHROPIC_WORKSPACE).
 
 const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -44,6 +46,7 @@ async function route(request, env) {
       : new Response('This book hasn’t finished uploading from your other device yet.', { status: 404 });
   }
   if (url.pathname === '/fetch' && request.method === 'POST') return proxy(await request.text());
+  if (url.pathname === '/notes' && request.method === 'POST') return annotate(await request.json(), env);
   return new Response('Not found.', { status: 404 });
 }
 
@@ -95,4 +98,65 @@ async function proxy(target) {
   return new Response(res.body, {
     headers: { 'content-type': res.headers.get('content-type') || 'application/octet-stream', 'x-final-url': res.url },
   });
+}
+
+// Margin notes, written by Claude. A passage arrives in numbered pieces of a sentence or few; the
+// notes go back as runs of them, each with what it says.
+const MODEL = 'claude-haiku-5-5';
+const SPAN = 700; // characters of text a note sums up, at least on average: room in the margin beside them
+const NOTE = `You write the margin notes in someone's copy of a book, paper or article: brackets beside the text, each with a note saying what that stretch says, so they can take it in at a glance.
+
+The passage comes one paragraph to a line, each paragraph in numbered pieces: a short paragraph is one piece, a longer one a few pieces of a couple of sentences or more. A line starting with # is a heading; one starting with "Formula:" is a displayed formula.
+
+Bracket the whole passage into runs of consecutive pieces, in order, each making one point. Think in paragraphs: a run is a whole paragraph, or several paragraphs that make one point together (as a stretch of dialogue usually does). Only a long paragraph that makes two or three separate points is split.
+
+Beside each run, write the note a sharp reader would scribble there:
+- The substance itself: the claim, the reason, how it works, the result, with the names and numbers that matter (in a story: what happens, to whom, and what it shows). Never describe the text ("The author argues…", "This section discusses…").
+- Direct and plain, in quick shorthand: short sentences, everyday words, abbreviations, lists like (1), (2). Say things in words rather than symbols.
+- One to three short sentences, at most 45 words, and much shorter than the run it notes.
+- Only what this passage says, nothing from beyond it.
+
+For instance, beside two paragraphs on test-time scaling: "Test-time scaling, using more inference to reason better before the final output, matters most for math, where one early mistake in reasoning screws up the final answer."
+
+A run that needs no note gets an empty one: licences and copyright notices, title pages, bylines and publication details, tables of contents, reference lists, acknowledgments, captions, code, and lead-ins like "Our contributions are threefold." Write in English.`;
+const NOTES = {
+  type: 'object', required: ['notes'],
+  properties: {
+    notes: {
+      type: 'array',
+      items: {
+        type: 'object', required: ['from', 'to', 'note'],
+        properties: { from: { type: 'integer', description: 'first piece of the run' }, to: { type: 'integer', description: 'last piece of the run' }, note: { type: 'string', description: 'empty if the run needs none' } },
+      },
+    },
+  },
+};
+
+async function annotate({ title, author, text }, env) {
+  if (!env.ANTHROPIC_API_KEY) return new Response('The worker has no ANTHROPIC_API_KEY.', { status: 503 });
+  const res = await busy('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json',
+      ...env.ANTHROPIC_WORKSPACE && { 'anthropic-workspace-id': env.ANTHROPIC_WORKSPACE }, // a personal key spanning workspaces names one
+    },
+    body: JSON.stringify({
+      model: MODEL, max_tokens: 4096, system: NOTE,
+      messages: [{ role: 'user', content: `${title ? `From ${title}${author ? `, by ${author}` : ''}. ` : ''}At most ${Math.ceil(text.length / SPAN)} notes.\n\n${text}` }],
+      tools: [{ name: 'notes', description: 'The margin notes for this passage.', input_schema: NOTES }],
+      tool_choice: { type: 'tool', name: 'notes' },
+    }),
+  });
+  if (!res.ok) return new Response(`Claude answered ${res.status}: ${(await res.json().catch(() => null))?.error?.message || 'no reason given'}.`, { status: 502 });
+  const { content } = await res.json();
+  return Response.json(content.find(c => c.type === 'tool_use')?.input ?? { notes: [] });
+}
+
+// Claude answers 429, 529 or another 5xx when it's busy, which usually passes within seconds.
+async function busy(url, init) {
+  for (let tries = 1; ; tries++) {
+    const res = await fetch(url, init);
+    if (res.ok || tries === 3 || (res.status !== 429 && res.status < 500)) return res;
+    await new Promise(resolve => setTimeout(resolve, 2000 * tries));
+  }
 }

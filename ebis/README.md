@@ -24,6 +24,11 @@ that ebis typesets itself.
   only what a reader notices: structure, emphasis, alignment, images, links.
 - `js/reader.js` lays out one chapter at a time as a single page you scroll. A position is
   `[chapter, block, character]`, so it survives any device, type size or theme.
+- `js/notes.js` writes margin notes: Claude Haiku, through the worker, brackets each passage
+  into runs that make one point and says beside each what it says. All of an article (the
+  start of a book) is noted as it's added, and while reading, the next twenty minutes or so.
+  Where the window has room, notes stand in a column beside the text; on a phone, the note of
+  the run being read stands at the foot of the page. They sync like highlights.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
 To keep a page you are reading — one a paywall shows only to a logged-in browser — drag the
@@ -41,6 +46,8 @@ records replicate last-write-wins through D1, book packages live in R2, and
 cd worker
 npx wrangler deploy              # after changing src/index.js
 npx wrangler secret put KEY      # to change the password
+npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_WORKSPACE,
+                                             # for a personal key that spans workspaces)
 ```
 
 ## Changing the app

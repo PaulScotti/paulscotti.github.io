@@ -46,9 +46,10 @@
 </main>
 
 <section id="reader" class="reader" hidden>
-  <div class="page" id="page"><article class="flow" id="flow"></article></div>
+  <div class="page" id="page"><article class="flow" id="flow"></article><div class="gloss" id="gloss" aria-hidden="true"></div></div>
   <div class="running" aria-hidden="true"><span id="run-l"></span><span id="run-r"></span></div>
   <div class="folio" id="folio"><span id="folio-l"></span><span id="folio-r"></span></div>
+  <div class="now note" id="now" hidden></div>
   <div class="chrome" id="chrome">
     <header class="bar top">
       <button class="icon" id="r-back" aria-label="Library"><svg><use href="#i-back"/></svg></button>
@@ -121,6 +122,7 @@
   </div>
   <label class="toggle"><span>Justify</span><input type="checkbox" name="justify"></label>
   <label class="toggle"><span>Indent paragraphs</span><input type="checkbox" name="indent"></label>
+  <label class="toggle"><span>Margin notes</span><input type="checkbox" name="notes"></label>
 </template>
 
 <template id="t-sync">

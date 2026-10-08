@@ -1,10 +1,10 @@
 // Keeps ebis on the device so it opens without a connection, and receives what Android
 // shares to it. Change VERSION whenever the app's files change.
 
-const VERSION = 'ebis-18';
+const VERSION = 'ebis-19';
 const APP = [
   './', 'ebis.css', 'manifest.webmanifest', 'icons/ibis.svg', 'icons/icon-192.png',
-  'js/app.js', 'js/reader.js', 'js/store.js', 'js/convert.js', 'js/sources.js', 'js/pdf.js', 'js/settings.js', 'js/ui.js',
+  'js/app.js', 'js/reader.js', 'js/notes.js', 'js/store.js', 'js/convert.js', 'js/sources.js', 'js/pdf.js', 'js/settings.js', 'js/ui.js',
   'fonts/Libron-Regular.woff2', 'fonts/Libron-Italic.woff2', 'fonts/Libron-Bold.woff2', 'fonts/Libron-BoldItalic.woff2', 'fonts/LatinModernMath.woff2',
   'vendor/fflate.js', 'vendor/readability.js', 'vendor/temml.js', 'vendor/foliate/epub.js', 'vendor/foliate/epubcfi.js',
   'vendor/foliate/mobi.js', 'vendor/foliate/fb2.js', 'vendor/pdfjs/pdf.min.mjs', 'vendor/pdfjs/pdf.worker.min.mjs',
