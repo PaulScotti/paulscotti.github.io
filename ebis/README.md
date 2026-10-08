@@ -27,8 +27,9 @@ that ebis typesets itself.
 - `js/notes.js` writes margin notes: Claude Haiku, through the worker, brackets each passage
   into runs that make one point and says beside each what it says. All of an article (the
   start of a book) is noted as it's added, and while reading, the next twenty minutes or so.
-  Where the window has room, notes stand in a column beside the text; on a phone, the note of
-  the run being read stands at the foot of the page. They sync like highlights.
+  Where the window has room, notes stand in a column beside the text, each staying in view
+  while its run is; on a phone, the note of the run being read stands at the foot of the page.
+  Licences, title pages and the like go unnoted. They sync like highlights.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
 To keep a page you are reading — one a paywall shows only to a logged-in browser — drag the

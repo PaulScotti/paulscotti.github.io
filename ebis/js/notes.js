@@ -20,22 +20,28 @@ const APART = 'figure, table, aside, pre'; // captions, tables, footnotes, code:
 
 const books = new Map(); // id → each chapter's passages, worked out once
 const queues = new Map(); // id → passages waiting to be noted, the book asked for last first
-const busy = new Set(), failed = new Map(), told = new Set();
+const busy = new Map(), failed = new Map(), told = new Set(); // busy: key → passage being noted now
+const watchers = new Set();
+
+// The reader shows where notes are still being written, or waiting to be.
+export const onWriting = fn => watchers.add(fn);
+export const writing = (id, c) => [...busy.values(), ...(queues.get(id) ?? []).map(q => q.p)]
+  .filter(p => p.id === id && p.c === c && !store.get('notes', p.key));
 
 // A chapter in passages: { key, c, b, b1 (its blocks), size, text (what the model reads), said
-// (where each numbered piece is) }. Each starts a new section where it can, and is told the
-// sections it begins inside of.
+// (where each numbered piece is), before (the end of the paragraph before it) }. Each starts a new
+// section where it can, and is told the sections it begins inside of.
 export function passages(id, data, c) {
   const chapters = books.get(id) ?? books.set(id, []).get(id);
   if (chapters[c]) return chapters[c];
   const section = new DOMParser().parseFromString(data.chapters[c], 'text/html').body.firstElementChild;
   const out = [], trail = [];
-  let p = null;
+  let p = null, last = '';
   blocks(section).forEach((el, b) => {
     const text = el.textContent, level = +el.localName.match(/^h([234])$/)?.[1] || 0;
     if (!p || p.weight >= PASSAGE || (level && p.weight >= PASSAGE * 0.6)) {
       const within = trail.slice(0, level ? level - 2 : trail.length).filter(Boolean);
-      p = { key: `${id}.${c}.${out.length}`, id, c, b, size: 0, weight: 0, lines: within.map((t, i) => `${'#'.repeat(i + 1)} ${t}`), said: [] };
+      p = { key: `${id}.${c}.${out.length}`, id, c, b, size: 0, weight: 0, lines: within.map((t, i) => `${'#'.repeat(i + 1)} ${t}`), said: [], before: clean(last).slice(-600).replace(/^\S*\s/, '') };
       out.push(p);
     }
     p.b1 = b + 1;
@@ -53,6 +59,7 @@ export function passages(id, data, c) {
       });
       p.lines.push('', `${el.localName === 'li' ? '• ' : ''}${line.join(' ')}`);
       p.weight += text.length;
+      last = text;
     }
   });
   for (const p of out) p.text = p.lines.join('\n').trim(), delete p.lines, delete p.weight;
@@ -110,26 +117,33 @@ export function prepare(id, data, place = store.get('pos', id) ?? { c: 0, b: 0 }
   queues.delete(id);
   queues.set(id, [...wanted.map(p => ({ p, data })), ...rest]);
   pump();
+  if (wanted.length) watchers.forEach(fn => fn({ id, c: place.c }));
 }
 
 function pump() {
+  if (!settings.notes) return; // (turned off meanwhile: what's waiting waits)
   for (const [id, queue] of [...queues].reverse()) {
     while (busy.size < AT_ONCE && queue.length) {
       const next = queue.shift();
-      if (!busy.has(next.p.key) && !store.get('notes', next.p.key)) write(next);
+      if (!busy.has(next.p.key) && !store.get('notes', next.p.key) && store.get('book', id)) write(next);
     }
     if (!queue.length) queues.delete(id);
   }
 }
 
 async function write({ p, data }) {
-  busy.add(p.key);
-  const notes = await store.annotate({ title: data.title, author: data.author, text: p.text }).then(r => r.notes, e => {
+  busy.set(p.key, p);
+  watchers.forEach(fn => fn(p));
+  const notes = await store.annotate({ title: data.title, author: data.author, before: p.before, text: p.text }).then(r => {
+    if (!Array.isArray(r.notes)) throw new Error('Claude sent no notes.');
+    return r.notes;
+  }).catch(e => {
     failed.set(p.key, Date.now());
     if (!/can’t reach/.test(e.message) && !told.has(e.message)) told.add(e.message), toast(`Margin notes couldn’t be written. ${e.message}`);
   });
   busy.delete(p.key);
   if (notes && store.get('book', p.id)) store.put('notes', p.key, { book: p.id, c: p.c, notes: runs(p, notes) }); // (unless it was removed meanwhile)
+  watchers.forEach(fn => fn(p));
   pump();
 }
 

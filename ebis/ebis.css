@@ -292,18 +292,23 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 :root[data-theme="dusk"] :is(.flow, .lightbox) img.ink, :root[data-theme="night"] :is(.flow, .lightbox) img.ink { filter: invert(1) brightness(.82); background: none; } /* type cut from a page is ink, in the theme's own */
 
 /* Margin notes: a bracket beside each run of text a note sums up, and the note beside it in a column
-   of their own. Where there's no room for one, the note of the run being read stands at the foot of
-   the page, over the text that fades beneath it, bracketed like the run whose bracket darkens. */
+   of their own, staying in view while its run is. Where there's no room for one, the note of the run
+   being read stands at the foot of the page, over the text that fades beneath it, bracketed like
+   the run whose bracket darkens. */
 .gloss { position: absolute; top: 0; left: 0; }
-.gloss .bracket { position: absolute; left: var(--bracket-x); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; opacity: .5; pointer-events: none; transition: opacity .2s; }
+.gloss .bracket { position: absolute; left: var(--bracket-x); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; opacity: .45; pointer-events: none; transition: opacity .2s; }
+.reader.beside .gloss .bracket { opacity: .85; }
 .gloss .bracket.on { opacity: 1; }
 .note { font: italic var(--note-fs)/1.4 var(--serif); color: var(--ink-2); text-align: start; text-indent: 0; hyphens: manual; user-select: none; -webkit-user-select: none; }
-.gloss .note { position: absolute; left: var(--note-x); width: var(--note-w); }
+.note.coming { color: var(--ink-3); }
+.gloss .side { position: absolute; left: var(--note-x); width: var(--note-w); }
+.gloss .side .note { position: sticky; top: .9em; }
 .now {
   position: absolute; left: var(--flow-x); width: var(--flow-w); bottom: var(--bottom); padding: 1.5em 0 .55em;
   background: linear-gradient(to bottom, transparent, var(--bg) 1.3em); pointer-events: none; transition: opacity .2s;
 }
 .now::after { content: ""; position: absolute; top: 1.6em; bottom: .65em; left: calc(var(--bracket-x) - var(--flow-x)); width: 5px; border: 1.5px solid var(--rubric); border-left: 0; }
+.now.coming::after { display: none; }
 .reader.ui .now { opacity: 0; }
 ::highlight(run) { background-color: color-mix(in srgb, var(--rubric) 9%, transparent); }
 

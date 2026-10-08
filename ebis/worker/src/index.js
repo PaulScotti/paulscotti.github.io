@@ -118,21 +118,26 @@ Beside each run, write the note a sharp reader would scribble there:
 
 For instance, beside two paragraphs on test-time scaling: "Test-time scaling, using more inference to reason better before the final output, matters most for math, where one early mistake in reasoning screws up the final answer."
 
-A run that needs no note gets an empty one: licences and copyright notices, title pages, bylines and publication details, tables of contents, reference lists, acknowledgments, captions, code, and lead-ins like "Our contributions are threefold." Write in English.`;
+Mark each run as part of the work (any prose written to be read, prefaces, introductions, notes and appendices included) or as apparatus, which no one reads for what it says, however long it runs: licences and legal terms (a Project Gutenberg licence, say), copyright and publication details, title pages, bylines, tables of contents, reference lists, acknowledgments, captions, code, and lead-ins like "Our contributions are threefold." Apparatus gets no note. Write in English.`;
 const NOTES = {
   type: 'object', required: ['notes'],
   properties: {
     notes: {
       type: 'array',
       items: {
-        type: 'object', required: ['from', 'to', 'note'],
-        properties: { from: { type: 'integer', description: 'first piece of the run' }, to: { type: 'integer', description: 'last piece of the run' }, note: { type: 'string', description: 'empty if the run needs none' } },
+        type: 'object', required: ['from', 'to', 'part', 'note'],
+        properties: {
+          from: { type: 'integer', description: 'first piece of the run' },
+          to: { type: 'integer', description: 'last piece of the run' },
+          part: { enum: ['work', 'apparatus'] },
+          note: { type: 'string', description: 'for the work, what the run says; for apparatus, empty' },
+        },
       },
     },
   },
 };
 
-async function annotate({ title, author, text }, env) {
+async function annotate({ title, author, before, text }, env) {
   if (!env.ANTHROPIC_API_KEY) return new Response('The worker has no ANTHROPIC_API_KEY.', { status: 503 });
   const res = await busy('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -142,14 +147,18 @@ async function annotate({ title, author, text }, env) {
     },
     body: JSON.stringify({
       model: MODEL, max_tokens: 4096, system: NOTE,
-      messages: [{ role: 'user', content: `${title ? `From ${title}${author ? `, by ${author}` : ''}. ` : ''}At most ${Math.ceil(text.length / SPAN)} notes.\n\n${text}` }],
+      messages: [{
+        role: 'user',
+        content: `${title ? `From ${title}${author ? `, by ${author}` : ''}. ` : ''}At most ${Math.ceil(text.length / SPAN)} notes.\n\n`
+          + `${before ? `Just before the passage, for context only (no notes): "…${before}"\n\n` : ''}${text}`,
+      }],
       tools: [{ name: 'notes', description: 'The margin notes for this passage.', input_schema: NOTES }],
       tool_choice: { type: 'tool', name: 'notes' },
     }),
   });
-  if (!res.ok) return new Response(`Claude answered ${res.status}: ${(await res.json().catch(() => null))?.error?.message || 'no reason given'}.`, { status: 502 });
-  const { content } = await res.json();
-  return Response.json(content.find(c => c.type === 'tool_use')?.input ?? { notes: [] });
+  if (!res.ok) return new Response(`Claude answered ${res.status}: ${((await res.json().catch(() => null))?.error?.message || 'no reason given').replace(/\.$/, '')}.`, { status: 502 });
+  const notes = (await res.json()).content.find(c => c.type === 'tool_use')?.input.notes;
+  return Response.json({ notes: Array.isArray(notes) ? notes.filter(n => n.part === 'work').map(({ from, to, note }) => ({ from, to, note })) : null });
 }
 
 // Claude answers 429, 529 or another 5xx when it's busy, which usually passes within seconds.

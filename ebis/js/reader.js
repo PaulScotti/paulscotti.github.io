@@ -289,7 +289,7 @@ function turn(dir) {
   } else if (dir < 0 && atStart) {
     if (chapter > 0) render(chapter - 1, 'end', true);
   } else {
-    page.scrollBy({ top: dir * page.clientHeight * 0.92, behavior: 'smooth' });
+    page.scrollBy({ top: dir * (page.clientHeight * 0.92 - (now.hidden ? 0 : now.offsetHeight)), behavior: 'smooth' }); // what the note at the foot hides is still to read
   }
 }
 
@@ -362,6 +362,8 @@ async function keepAwake() {
   }
 }
 function releaseWake() { wake?.release(); wake = null; }
+
+notes.onWriting(p => p.id === book?.id && p.c === chapter && !view.hidden && drawNotes());
 
 // Positions from the other device, and notes as they're written.
 store.onChange(({ kind, id, remote }) => {
@@ -572,36 +574,44 @@ $('r-tabs').onclick = () => {
   openSheet('Open books', list);
 };
 
-// Margin notes: a bracket beside each run of text a note sums up, and the note beside the bracket.
-// Where there's no room for a column of them, the note of the run being read (the one a third of
-// the way down the screen) is shown at the foot of the page instead, and its bracket darkens.
+// Margin notes: a bracket beside each run of text a note sums up, and the note beside the bracket,
+// staying in view while its run is. Where there's no room for a column of them, the note of the
+// run being read (the one a third of the way down the screen) shows at the foot of the page
+// instead, and its bracket darkens. A passage whose notes are being written says so.
 let runs = [], shown = null;
 function drawNotes() {
   const beside = view.classList.contains('beside');
   gloss.replaceChildren();
   CSS.highlights.delete('run');
-  const list = settings.notes ? notes.of(book.id, chapter).filter(n => blocks[n.b] && blocks[n.b2]) : [];
+  const coming = notes.writing(book.id, chapter).map(({ said }) => ({ ...said[0], b2: said.at(-1).b, o2: said.at(-1).e, t: 'Writing notes…', coming: true }));
+  const list = settings.notes ? [...notes.of(book.id, chapter), ...coming].filter(n => blocks[n.b] && blocks[n.b2]).sort((x, y) => x.b - y.b || x.o - y.o) : [];
   const els = beside ? list.map(n => {
-    const el = Object.assign(document.createElement('div'), { className: 'note', textContent: n.t });
-    el.onmouseenter = () => CSS.highlights.set('run', new Highlight(rangeOf(n)));
-    el.onmouseleave = () => CSS.highlights.delete('run');
-    gloss.append(el);
+    const el = Object.assign(document.createElement('div'), { className: n.coming ? 'note coming' : 'note', textContent: n.t });
+    if (!n.coming) {
+      el.onmouseenter = () => CSS.highlights.set('run', new Highlight(rangeOf(n)));
+      el.onmouseleave = () => CSS.highlights.delete('run');
+    }
+    const side = Object.assign(document.createElement('div'), { className: 'side' }); // as tall as the run, for the note to stay in
+    side.append(el);
+    gloss.append(side);
     return el;
   }) : [];
   const origin = page.getBoundingClientRect().top - page.scrollTop;
   runs = list.map((n, i) => {
     const r = rangeOf(n).getBoundingClientRect();
-    return { top: r.top - origin, bottom: r.bottom - origin, t: n.t, height: els[i]?.offsetHeight };
+    return { top: r.top - origin, bottom: r.bottom - origin, t: n.t, coming: n.coming, height: els[i]?.offsetHeight };
   });
   let free = 0; // where the column of notes is clear from
   runs.forEach((run, i) => {
-    const end = Math.min(run.bottom, (runs[i + 1]?.top ?? Infinity) - 5);
-    run.bracket = Object.assign(document.createElement('i'), { className: 'bracket' });
-    run.bracket.style.cssText = `top:${run.top}px;height:${Math.max(end - run.top, 10)}px`;
-    gloss.append(run.bracket);
+    if (!run.coming) {
+      const end = Math.min(run.bottom, (runs[i + 1]?.top ?? Infinity) - 5);
+      run.bracket = Object.assign(document.createElement('i'), { className: 'bracket' });
+      run.bracket.style.cssText = `top:${run.top}px;height:${Math.max(end - run.top, 10)}px`;
+      gloss.append(run.bracket);
+    }
     if (!beside) return;
     const top = Math.max(run.top, free);
-    els[i].style.top = `${top}px`;
+    els[i].parentNode.style.cssText = `top:${top}px;height:${Math.max(run.bottom - top, run.height)}px`;
     free = top + run.height + 12;
   });
   showNow(true);
@@ -610,12 +620,13 @@ const now = $('now');
 function showNow(redrawn) {
   const y = page.scrollTop + page.clientHeight / 3;
   const run = view.classList.contains('beside') ? null : runs.findLast(r => r.top <= y);
-  const reading = run && y <= run.bottom + 40 ? run : null; // (past a run's end, by more than a line, is between runs)
+  const reading = run && y <= run.bottom + page.clientHeight / 3 ? run : null; // (a heading or figure after a run doesn't take its note away)
   if (reading === shown && !redrawn) return;
-  shown?.bracket.classList.remove('on');
-  reading?.bracket.classList.add('on');
+  shown?.bracket?.classList.remove('on');
+  reading?.bracket?.classList.add('on');
   shown = reading;
   if (!reading) return void (now.hidden = true);
+  now.classList.toggle('coming', !!reading.coming);
   if (!now.hidden && now.textContent === reading.t) return;
   now.textContent = reading.t;
   now.hidden = false;
