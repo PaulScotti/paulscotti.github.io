@@ -8,13 +8,15 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
 ## How it works
 
 ```
- 6am PT  parenthood-generate (GitHub Actions)
-           read notes emailed to <gmail>+digest@ (IMAP) ─┐
-           decrypt private state from `parenthood-data`  ─┼─► Claude plans, researches, writes EN + KO
-           validate (schema, length, citations, URLs,    ─┘   ─► a second Claude session edits the Korean
-           no-repeat check vs. everything already taught)       against the English ─► encrypt ─► commit
- 8:30pm  parenthood-email ─► takeaway + link, each in their own language, and on some nights one question
-           for one of them (Gmail SMTP; replies become notes, read on every generate run)
+ morning parenthood-generate (GitHub Actions; Claude Opus 5.5 at extra-high effort, Claude Code pinned)
+           read notes and reactions emailed to <gmail>+digest@ (IMAP) on every run
+           decrypt private state ─► plan (topic quota, dates, feedback) ─► Claude researches and writes EN + KO
+           ─► validate (schema, length, citations, URLs, Korean, no-repeat vs. everything already taught)
+           ─► fact-check: a fresh session checks every claim against its cited source, fixes both languages
+           ─► Korean editor: a fresh session revises the Korean; English problems it notices go back to the
+              fact-checker ─► encrypt ─► commit to `parenthood-data`
+ 8:30pm  parenthood-email ─► takeaway, the "For the two of you" note, a link, "more / less like this" reply
+           links, and on some nights one question for one of them (Gmail SMTP; replies become notes)
 
  Phone ─► www.paulscotti.com/parenthood (static shell on master) ─► fetches *.enc from the data branch via
           raw.githubusercontent.com ─► decrypts in the browser with the family password (remembered per device)
@@ -35,6 +37,14 @@ pregnancy and parenthood. The site lives at `/parenthood/`; the content is encry
   and the same numbers and citations as the English, section by section, and flags known mistranslations. Then a
   fresh Claude session, acting only as Korean editor, compares it with the English and revises the Korean fields;
   its edits are kept only if the digest still validates, and its corrections are fed to the writer on later days.
+- **Checked against its sources.** After the writer, a separate fact-checking session opens every cited source and
+  checks each number and claim (and every fact about the couple against what they've told it); its fixes are kept
+  only if the digest still validates. English problems the Korean editor notices are sent back to it.
+- **Front-loads what matters now.** The planner tracks how many of the last 7 days were on the current stage's own
+  topics (target 5 of 7 while priority ones remain), puts priority topics first, schedules topics before the dates
+  they belong to (a trip, a move, open enrollment), keeps far-off stages for later, and weighs their one-tap feedback.
+- **Remembers.** Lasting facts from their emails (results, decisions, appointments, plans) are saved encrypted and
+  given to the writer every day; a reported period start keeps the cycle day current.
 - **Dense, not padded.** About 3 minutes of reading, nearly all of it in 3–5 sections of specific, sourced facts;
   no quotes or prompts, and the validator rejects any sentence that restates an earlier one. Each day ends with a
   short personalized note ("For the two of you") and a bilingual glossary.

@@ -34,24 +34,26 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 210 # writer, fact-check, Korean review and their repair rounds at extra-high effort
     env:
       HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
+      # Pinned so an upstream release can't change behaviour overnight; bump it deliberately (npm view @anthropic-ai/claude-code version).
+      CLAUDE_CODE_VERSION: 2.1.296
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: parenthood
           fetch-depth: 1
 
       - name: Check out encrypted data
         if: env.HAS_PASSPHRASE == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: parenthood-data
           path: data
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.HAS_PASSPHRASE == 'true'
         with:
           node-version: 22
@@ -62,7 +64,10 @@ jobs:
           INPUT_INBOX_ONLY: ${{ inputs.inbox_only }}
         run: |
           npm ci --prefix parenthood/pipeline --no-audit --no-fund
-          if [ "$INPUT_INBOX_ONLY" != "true" ]; then npm install -g @anthropic-ai/claude-code --no-audit --no-fund; fi
+          if [ "$INPUT_INBOX_ONLY" != "true" ]; then
+            npm install -g "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" --no-audit --no-fund
+            claude --version
+          fi
 
       - name: Generate today's digest
         if: env.HAS_PASSPHRASE == 'true'
@@ -72,7 +77,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          PARENTHOOD_MODEL: ${{ vars.PARENTHOOD_MODEL }}
+          PARENTHOOD_MODEL: ${{ vars.PARENTHOOD_MODEL }}   # optional override; default claude-opus-5-5
+          PARENTHOOD_EFFORT: ${{ vars.PARENTHOOD_EFFORT }} # optional override; default xhigh
           INPUT_DATE: ${{ inputs.date }}
           INPUT_FORCE: ${{ inputs.force }}
           INPUT_INBOX_ONLY: ${{ inputs.inbox_only }}

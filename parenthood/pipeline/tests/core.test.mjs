@@ -149,10 +149,10 @@ test('the emailed question: validated, never two days in a row, shown only to wh
 
 test('a reported period start gives the cycle day while trying, and is ignored once stale', async () => {
   const { currentPhase } = await import('../pull-context.mjs');
-  assert.equal(currentPhase({ stage: 'ttc', lmp: '2026-09-22' }, '2026-09-29').cycleDay, 8);
+  assert.equal(currentPhase({ stage: 'ttc', lmp: '2026-03-02' }, '2026-03-09').cycleDay, 8);
   assert.equal(currentPhase({ stage: 'ttc', lmp: '2026-07-01' }, '2026-09-29').cycleDay, undefined);
   assert.equal(currentPhase({ stage: 'ttc' }, '2026-09-29').phase, 'preconception');
-  assert.equal(currentPhase({ stage: 'pregnant', lmp: '2026-09-22' }, '2026-11-17').phase, 'pregnancy-1');
+  assert.equal(currentPhase({ stage: 'pregnant', lmp: '2026-03-02' }, '2026-04-27').phase, 'pregnancy-1');
 });
 
 test('a failed generation is remembered with its fix, for the 8:30pm alert', async () => {

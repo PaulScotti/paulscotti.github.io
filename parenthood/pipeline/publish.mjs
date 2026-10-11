@@ -31,6 +31,42 @@ export function ledgerEntry(d) {
   };
 }
 
+const FACT_KEY = /^[a-z0-9][a-z0-9.-]{1,40}$/;
+
+/** Validate facts the writer wants to remember from their notes: { set: { key: fact }, remove: [key] }. */
+export function cleanFactsUpdate(u) {
+  if (!u || typeof u !== 'object') return null;
+  const set = {};
+  for (const [k, v] of Object.entries(u.set && typeof u.set === 'object' ? u.set : {}).slice(0, 10)) {
+    const key = String(k).toLowerCase().trim();
+    if (FACT_KEY.test(key) && typeof v === 'string' && v.trim()) set[key] = v.trim().slice(0, 300);
+  }
+  const remove = (Array.isArray(u.remove) ? u.remove : []).map((k) => String(k).toLowerCase().trim()).filter((k) => FACT_KEY.test(k)).slice(0, 10);
+  return Object.keys(set).length || remove.length ? { set, remove } : null;
+}
+
+/** Apply a facts update; each fact keeps the date it was last set. At most 80 facts, newest kept. */
+export function mergeFacts(facts = {}, update, date) {
+  const out = { ...facts };
+  for (const k of update?.remove || []) delete out[k];
+  for (const [k, v] of Object.entries(update?.set || {})) out[k] = { value: v, date };
+  return Object.fromEntries(Object.entries(out).sort(([, a], [, b]) => (a.date < b.date ? 1 : -1)).slice(0, 80));
+}
+
+/** Fold the Korean editor's lessons into rules keyed by pattern, counting how often each recurs. */
+export function mergeKoRules(rules = {}, lessons = [], date) {
+  const out = { ...rules };
+  for (const l of lessons) {
+    const key = String(l?.key || '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48);
+    if (!key || !l.rule) continue;
+    const prev = out[key];
+    out[key] = { key, rule: String(l.rule).slice(0, 240), before: String(l.before || '').slice(0, 160), after: String(l.after || '').slice(0, 160),
+      count: (prev?.count || 0) + 1, first: prev?.first || date, last: date };
+  }
+  const kept = Object.values(out).sort((a, b) => b.count - a.count || (a.last < b.last ? 1 : -1)).slice(0, 80);
+  return Object.fromEntries(kept.map((r) => [r.key, r]));
+}
+
 /** Validate a stage update proposed from the couple's notes (e.g. a positive test or a birth). */
 export function cleanStateUpdate(u) {
   if (!u || typeof u !== 'object' || !['ttc', 'pregnant', 'born'].includes(u.stage)) return null;
@@ -40,7 +76,7 @@ export function cleanStateUpdate(u) {
   return out;
 }
 
-export function publishDigest(store, digest, { generator = {}, stateUpdate = null, koLessons = [] } = {}) {
+export function publishDigest(store, digest, { generator = {}, stateUpdate = null, koLessons = [], factsUpdate = null } = {}) {
   const priv = store.readPrivate();
   const date = digest.date;
   const ledger = (priv.ledger || []).filter((e) => e.date !== date);
@@ -65,8 +101,11 @@ export function publishDigest(store, digest, { generator = {}, stateUpdate = nul
     const note = (priv.inbox || []).find((n) => n.id === id);
     if (note) Object.assign(note, { status: 'covered', coveredBy: date });
   }
-  // Corrections from the Korean review, shown to the writer on later days (context/ko-lessons.json).
-  if (koLessons.length) priv.koLessons = [...(priv.koLessons || []), ...koLessons.map((l) => ({ ...l, date }))].slice(-60);
+  // Lessons from the Korean review, counted by pattern; recurring ones become house rules (context/ko-lessons.json).
+  if (koLessons.length) priv.koRules = mergeKoRules(priv.koRules, koLessons, date);
+  // Lasting facts from their notes (results, decisions, dates), shown to the writer every day (context/facts.json).
+  const facts = cleanFactsUpdate(factsUpdate);
+  if (facts) priv.facts = mergeFacts(priv.facts, facts, date);
   const update = cleanStateUpdate(stateUpdate);
   if (update) priv.state = { ...update, updatedAt: new Date().toISOString(), updatedBy: 'digest-inbox' };
   store.writePrivate(priv);

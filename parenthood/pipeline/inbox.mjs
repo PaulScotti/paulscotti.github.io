@@ -9,6 +9,7 @@ import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import { Store, replyAddress } from './lib/store.mjs';
 import { parseArgs, log, SITE_DIR } from './lib/env.mjs';
+import { parseFeedback } from './lib/feedback.mjs';
 
 /** Keep only what the person wrote: drop quoted history and signatures. */
 export function stripQuoted(text = '') {
@@ -38,6 +39,7 @@ export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').
   const client = new ImapFlow({ host: 'imap.gmail.com', port: 993, secure: true, auth: { user, pass }, logger: false });
   await client.connect();
   let added = 0;
+  let reactions = 0; // one-tap "more / less like this" votes
   let matched = 0; // new messages sent to the digest address
   let ignored = 0; // …of which not from the two members, not authenticated, or empty
   let changed = false;
@@ -58,12 +60,22 @@ export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').
         const subject = (mail.subject || '').replace(/^(re|fwd?):\s*/gi, '').trim();
         if (!members.has(from) || !isAuthenticated(mail.headers, msg.labels) || (!text && !subject)) { ignored++; continue; }
         const id = `mail-${msg.uid}`;
+        const vote = parseFeedback(subject, text);
+        if (vote) {
+          if (!(priv.feedback ||= []).some((f) => f.id === id)) {
+            const day = (priv.ledger || []).find((e) => e.day === vote.day);
+            priv.feedback.push({ id, ...vote, from: members.get(from), date: (mail.date || new Date()).toISOString().slice(0, 10), unit: day?.unit, track: day?.track });
+            priv.feedback = priv.feedback.slice(-200);
+            reactions++;
+          }
+          continue;
+        }
         if ((priv.inbox ||= []).some((n) => n.id === id)) continue;
         priv.inbox.push({ id, from: members.get(from), date: (mail.date || new Date()).toISOString().slice(0, 10), subject: subject.slice(0, 200), text, status: 'open' });
         added++;
       }
       // Only rewrite the encrypted file when something moved, so hourly checks don't churn the data branch.
-      if (maxUid !== lastUid || added) {
+      if (maxUid !== lastUid || added || reactions) {
         priv.mail = { ...(priv.mail || {}), lastUid: maxUid, checkedAt: new Date().toISOString() };
         changed = true;
       }
@@ -74,14 +86,15 @@ export async function fetchInbox(store, { user = (process.env.GMAIL_USER || '').
     await client.logout().catch(() => {});
   }
   if (changed) store.writePrivate(priv);
-  return { added, matched, ignored };
+  return { added, reactions, matched, ignored };
 }
 
 /** One status line with counts only (workflow logs are public). */
 export function describeInbox(res) {
   if (res.skipped) return `Inbox skipped (${res.skipped}).`;
   const extra = res.ignored ? `; ${res.ignored} ignored (not from you two, not authenticated, or empty)` : '';
-  return `Inbox: ${res.added} new note(s) from ${res.matched} new message(s) to the digest address${extra}.`;
+  const votes = res.reactions ? ` and ${res.reactions} reaction(s)` : '';
+  return `Inbox: ${res.added} new note(s)${votes} from ${res.matched} new message(s) to the digest address${extra}.`;
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {

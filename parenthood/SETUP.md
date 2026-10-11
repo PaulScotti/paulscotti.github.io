@@ -48,7 +48,9 @@ It will:
 | The email asks you something | Some nights the email carries one short question (never on the site); just reply with a line |
 | Check that a note arrived | Actions → parenthood-generate → Run workflow with *inbox_only*; the log shows how many new notes were stored (counts only) |
 | Re-run or redo a day | Actions → parenthood-generate → Run workflow (date, *force*) |
-| Change the model | Repo variable `PARENTHOOD_MODEL` (default `opus`) |
+| Tell it what you liked | Tap **More like this** / **Less like this** in the nightly email and send (add a comment if you like) |
+| Change the model or effort | Repo variables `PARENTHOOD_MODEL` (default `claude-opus-5-5`) and `PARENTHOOD_EFFORT` (default `xhigh`) |
+| Update Claude Code | Bump `CLAUDE_CODE_VERSION` in `.github/workflows/parenthood-generate.yml` (pinned on purpose) |
 | Update the private profile | Edit `parenthood/pipeline/private/profile.json`, rerun `node parenthood/pipeline/setup.mjs` |
 | Republish edited seed digests | `node parenthood/pipeline/setup.mjs --reseed --no-secrets` |
 | Fix the nightly email ("Gmail rejected the login" in the run log) | `node parenthood/pipeline/setup.mjs --gmail`: enter a new app password; it tests the login before saving |

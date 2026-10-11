@@ -42,20 +42,20 @@ jobs:
     env:
       HAS_PASSPHRASE: ${{ secrets.PARENTHOOD_PASSPHRASE != '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: parenthood
           fetch-depth: 1
 
       - name: Check out encrypted data
         if: env.HAS_PASSPHRASE == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: parenthood-data
           path: data
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.HAS_PASSPHRASE == 'true'
         with:
           node-version: 22

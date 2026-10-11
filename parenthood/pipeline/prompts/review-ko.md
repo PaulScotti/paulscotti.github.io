@@ -5,8 +5,8 @@ polite Korean (합니다체), and read as if a skilled Korean science journalist
 
 ## Inputs (read all of them first)
 - `{{WORK}}/ref/ko-style.md` — the Korean style guide: register, fidelity rules, standard terms, mistakes made before.
-- `{{WORK}}/context/ko-lessons.json` — corrections made to the Korean on earlier days (may be empty). Look for the
-  same patterns.
+- `{{WORK}}/context/ko-lessons.json` — what earlier reviews kept correcting. `houseRules` recurred and are binding;
+  check today's Korean against each of them first.
 - `{{WORK}}/digest.json` — today's digest. Format: `{{WORK}}/ref/schema.md`.
 
 ## What to review
@@ -38,15 +38,17 @@ Then write `{{WORK}}/ko-review.json`:
 ```json
 {
   "edits": 0,
-  "issues": [
-    { "type": "fidelity | register | naturalness | terminology | spacing",
-      "before": "short Korean excerpt as it was", "after": "your version", "why": "one line in English" }
+  "lessons": [
+    { "key": "kebab-case-pattern-name", "rule": "one general rule in English",
+      "before": "short Korean excerpt as it was", "after": "your version" }
   ],
-  "englishConcerns": ["one line each"]
+  "englishConcerns": ["one line each: where, what looks wrong, and why"]
 }
 ```
-List up to 12 issues, most important first. Reusable lessons (a term, a pattern) matter most: they are shown to the
-writer on later days. Do not put personal details in `why`.
+`lessons`: at most 5, only for patterns likely to recur (a term, an ending, a construction), most important first;
+leave out one-off fixes. When a lesson matches one in `ko-lessons.json`, reuse its `key`, so repeats are counted and
+recurring ones become house rules. Rules and excerpts must be general: no names, dates, results or other personal
+details. `englishConcerns` go to the fact-checker, who verifies them against the sources.
 
 Finally run `node {{PIPELINE}}/validate.mjs {{WORK}}/digest.json` and fix anything your edits broke until it prints
 `VALID`. Reply with one line: `DONE <number of edits>`. Do not print the digest.

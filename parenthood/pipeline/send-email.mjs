@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Nightly email: each member gets the day's one-sentence takeaway in their language + a link to read the digest,
-// plus, on some days, one short question for them (digest.ask; shown only here, never on the site).
+// Nightly email: each member gets, in their language, the day's one-sentence takeaway, the "For the two of you" note,
+// a link to read the digest, one-tap "more / less like this" reply links, and on some days one short question for
+// them (digest.ask; shown only here, never on the site).
 // Replies go to <mailbox>+digest@…, where the next morning's run picks them up as notes for the digest.
 // Usage: node send-email.mjs --data <dir> [--date D] [--at 20:30] [--dry-run] [--force] [--only <member key>]
 //   --at HH:MM  wait until this Pacific time. GitHub's scheduled runs can start hours late, so the workflow starts
@@ -14,15 +15,16 @@ import { Store, replyAddress } from './lib/store.mjs';
 import { parseArgs, log, SITE_URL, WORK_ROOT } from './lib/env.mjs';
 import { todayPT, ptWallTimeToEpoch } from './lib/dates.mjs';
 import { failureNote } from './lib/alert.mjs';
+import { feedbackLink } from './lib/feedback.mjs';
 
 function esc(s = '') {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 function strip(md = '') {
-  return String(md).replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*?([^*]+)\*\*?/g, '$1').replace(/\s+/g, ' ').trim();
+  return String(md).replace(/\s*\[(\d+(?:\s*,\s*\d+)*)\]/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*?([^*]+)\*\*?/g, '$1').replace(/\s+/g, ' ').trim();
 }
 
-export function renderEmail({ digest, lang, link, name, who }) {
+export function renderEmail({ digest, lang, link, name, who, replyTo }) {
   const e = digest[lang];
   const ko = lang === 'ko';
   const d = new Date(`${digest.date}T12:00:00Z`);
@@ -30,9 +32,11 @@ export function renderEmail({ digest, lang, link, name, who }) {
     ? `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${['일', '월', '화', '수', '목', '금', '토'][d.getUTCDay()]}요일`
     : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
   const t = ko
-    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', foot: '매일 밤 8시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트', ask: '여쭙고 싶은 점', askHint: '이 메일에 한 줄로 답장해 주시면 됩니다.' }
-    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', foot: 'Sent nightly at 8:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest', ask: 'A quick question', askHint: 'Just reply to this email; a line is enough.' };
+    ? { day: `${digest.day}일차`, gist: '오늘의 핵심', read: '오늘의 다이제스트 읽기 · 3분', foot: '매일 밤 8시 30분(태평양 시간)에 보내 드립니다. 이 메일에 답장하시면 새 소식이나 궁금한 주제가 다음 다이제스트에 반영됩니다.', from: '부모 되기 다이제스트', ask: '여쭙고 싶은 점', askHint: '이 메일에 한 줄로 답장해 주시면 됩니다.', forUs: '두 분을 위해', more: '이런 내용 더 보기', less: '이런 내용은 줄이기', vote: '오늘 내용은 어떠셨습니까?' }
+    : { day: `Day ${digest.day}`, gist: 'The gist', read: 'Read today\'s digest · 3 min', foot: 'Sent nightly at 8:30pm Pacific. Reply to this email with news, a worry or a topic, and the next digests will take it in.', from: 'Parenthood Digest', ask: 'A quick question', askHint: 'Just reply to this email; a line is enough.', forUs: 'For the two of you', more: 'More like this', less: 'Less like this', vote: 'How was today\'s?' };
   const ask = digest.ask && (digest.ask.to === 'both' || digest.ask.to === who) ? strip(digest.ask[lang] || '') : '';
+  const forUs = strip(e.forUs || '');
+  const votes = replyTo ? [[1, t.more], [-1, t.less]].map(([v, label]) => ({ label, href: feedbackLink(replyTo, digest.day, v, lang) })) : [];
   const subject = `${t.day} · ${strip(e.title)}`;
   const greeting = name ? (ko ? `${name} 님, 좋은 저녁입니다` : `Good evening, ${name}`) : '';
   const font = ko
@@ -56,7 +60,11 @@ export function renderEmail({ digest, lang, link, name, who }) {
     <div style="padding-top:6px;font:400 17px/27px ${font};color:#19201c;">${esc(strip(e.takeaway))}</div>
   </div>
 </td></tr>
-${ask ? `<tr><td style="padding:22px 0 0;">
+${forUs ? `<tr><td style="padding:22px 0 0;">
+  <div style="font:500 11px/16px ${mono};letter-spacing:.06em;text-transform:uppercase;color:#2d593e;">${esc(t.forUs)}</div>
+  <div style="padding-top:6px;font:400 15px/24px ${font};color:#19201c;">${esc(forUs)}</div>
+</td></tr>
+` : ''}${ask ? `<tr><td style="padding:22px 0 0;">
   <div style="border:1px solid #cddfeb;background:#edf4f9;padding:12px 14px 13px;">
     <div style="font:500 11px/16px ${mono};letter-spacing:.06em;text-transform:uppercase;color:#286b98;">${esc(t.ask)}</div>
     <div style="padding-top:6px;font:400 16px/25px ${font};color:#19201c;">${esc(ask)}</div>
@@ -66,7 +74,10 @@ ${ask ? `<tr><td style="padding:22px 0 0;">
 ` : ''}<tr><td style="padding:26px 0 0;">
   <a href="${esc(link)}" style="display:inline-block;font:500 13px/20px ${mono};color:#ffffff;background:#2d593e;text-decoration:none;padding:11px 16px;">${esc(t.read)} &rarr;</a>
 </td></tr>
-<tr><td style="padding:34px 0 0;border-bottom:1px solid #e5e9e6;"></td></tr>
+${votes.length ? `<tr><td style="padding:22px 0 0;font:400 12px/20px ${mono};color:#6c756f;"><div>${esc(t.vote)}</div>
+  ${votes.map((v) => `<a href="${esc(v.href)}" style="display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border:1px solid #cfd9d1;color:#2d593e;text-decoration:none;">${esc(v.label)}</a>`).join('')}
+</td></tr>
+` : ''}<tr><td style="padding:34px 0 0;border-bottom:1px solid #e5e9e6;"></td></tr>
 <tr><td style="padding:12px 0 0;font:400 11px/18px ${mono};color:#7d8580;">${esc(t.foot)} <a href="${esc(SITE_URL)}" style="color:#7d8580;">paulscotti.com/parenthood</a></td></tr>
 </table></td></tr></table></body></html>`;
   const text = [
@@ -75,9 +86,11 @@ ${ask ? `<tr><td style="padding:22px 0 0;">
     '',
     `${t.gist}: ${strip(e.takeaway)}`,
     '',
+    ...(forUs ? [`${t.forUs}: ${forUs}`, ''] : []),
     ...(ask ? [`${t.ask}: ${ask}`, `(${t.askHint})`, ''] : []),
     `${t.read}: ${link}`,
     '',
+    ...(votes.length ? [`${t.vote} ${votes.map((v) => `${v.label}: ${v.href}`).join('  ')}`, ''] : []),
     t.foot,
   ].join('\n');
   return { subject, html, text, fromName: t.from };
@@ -184,7 +197,7 @@ async function main() {
   const link = `${SITE_URL}#/d/${date}`;
   for (const m of members) {
     const lang = m.lang === 'ko' ? 'ko' : 'en';
-    const mail = renderEmail({ digest, lang, link, name: m.name?.[lang], who: m.key });
+    const mail = renderEmail({ digest, lang, link, name: m.name?.[lang], who: m.key, replyTo });
     await send(m.email, mail.subject, mail.html, mail.text, mail.fromName);
   }
   if (!dryRun) store.writeStatus({ ...status, emailed: { ...(status.emailed || {}), [date]: new Date().toISOString() } });
