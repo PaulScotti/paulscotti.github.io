@@ -704,45 +704,6 @@
    "requested": "Requested Oct 19"
   },
   {
-   "id": "1733-nw-63rd",
-   "name": "1733 NW 63rd St #A",
-   "address": "1733 NW 63rd St, Unit A, Seattle, WA 98107",
-   "neighborhood": "Ballard",
-   "type": "Townhouse",
-   "beds": 3,
-   "baths": 2,
-   "sqft": 1270,
-   "rent": "$3,650/mo",
-   "listing_url": "https://rpa.appfolio.com/listings/detail/13773079-c272-439d-ac58-0867688549fc",
-   "fees": "Tenant pays all utilities. Benefits package $30/mo (includes required insurance). App $55/adult; deposit $3,650",
-   "available": "Now",
-   "parking": "Not mentioned; ask",
-   "laundry": "LG front-load washer/dryer in unit",
-   "ac": "Mini-split in living area and one bedroom only",
-   "pets": "Case by case; $300 deposit + $35/mo",
-   "highlights": [
-    "Private rooftop deck with panoramic views",
-    "Private patio with garden access",
-    "Hardwood floors, quartz island kitchen, stainless appliances",
-    "Walk Score 92: close to Ballard Ave, PCC, Trader Joe's, QFC"
-   ],
-   "watch_outs": [
-    "Narrow multi-level townhouse with lots of stairs (your 'Narrow!' note)",
-    "AC covers only the living area and one bedroom",
-    "No parking mentioned",
-    "Rent dropped from $3,850 to $3,650: may be negotiable"
-   ],
-   "other_urls": [
-    "https://www.zumper.com/address/1733-nw-63rd-st-seattle-wa-98107-usa",
-    "https://www.redfin.com/WA/Seattle/1733-NW-63rd-St-98107/home/191513692"
-   ],
-   "photo_url": "https://images.cdn.appfolio.com/rpa/images/7c71c1a6-99ee-460b-842e-e82e7c23dee3/medium.png",
-   "lat": 47.674492332492,
-   "lng": -122.37929801697,
-   "status": "contacted",
-   "requested": "Requested Oct 20; calendar to-do says Oct 17 afternoon. RPA sent a ShowMojo scheduling link (Oct 3, reminder Oct 4); booking still required."
-  },
-  {
    "id": "6032-42nd-ave-sw",
    "name": "6032 42nd Ave SW #B",
    "address": "6032 42nd Ave SW, Unit B, Seattle, WA 98136",
