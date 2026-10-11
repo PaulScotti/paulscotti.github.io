@@ -37,6 +37,7 @@ export async function open(id) {
     const starts = data.sizes.reduce((a, n) => [...a, a.at(-1) + n], [0]);
     book = { id, record, data, urls, starts, total: starts.at(-1) };
     parsed.clear();
+    book.end = textEnd();
     flow.lang = data.lang || 'en';
   }
   addTab(id);
@@ -80,6 +81,7 @@ function render(c, target, fade) {
   else if (target?.loc) scrollLoc(target.loc);
   else page.scrollTop = 0; // 'start', or nothing named
   anchor = target?.loc ?? (el ? [blockAt(el), 0] : locator());
+  ended = seenEnd();
   refresh();
   remember(anchor);
   paintMarks();
@@ -203,6 +205,9 @@ function rested() {
   refresh();
   remember(anchor);
   prepareNotes();
+  const seen = seenEnd();
+  if (seen && !ended && !store.get('done', book.id)) finish();
+  ended = seen;
 }
 
 const fraction = ([b, o]) => (book.starts[chapter] + (offsets[b] || 0) + o) / book.total;
@@ -341,6 +346,7 @@ function relayout() {
   fitFormulas();
   drawNotes();
   scrollLoc(anchor);
+  ended = seenEnd();
 }
 
 // A displayed formula wider than the page is set smaller to fit, down to three quarters of the
@@ -350,6 +356,37 @@ function fitFormulas() {
   for (const m of maths) m.style.fontSize = '';
   const sizes = maths.map(m => [m.clientWidth / m.scrollWidth, parseFloat(getComputedStyle(m).fontSize)]);
   maths.forEach((m, i) => { const [fit, size] = sizes[i]; if (fit < 1) m.style.fontSize = `${Math.max(0.75, fit) * size}px`; });
+}
+
+// Reading on until the last line of a book's own text comes on screen finishes it, and the shelf
+// moves it down among the finished. Its own text ends before the matter that closes it (references,
+// notes, appendices, a licence…): the first of that past the book's first quarter (a paper's long
+// appendices can put its references before its middle), among its contents with nothing of higher
+// rank after it, or among the headings of its last chapter. A jump there, to a reference say,
+// isn't reading on to it: only scrolling from before it is.
+let ended = false; // whether the end of the text was on screen at the last rest
+const CLOSING = /^(\d+\.?\s+)?(references|bibliography|works cited|literature cited|citations?|(end ?)?notes|index|colophon|acknowledge?ments?|about the authors?|author contributions|appendi(x|ces)\b.*|supplementary\b.*|.*\b(licen[cs]e|copyright)\b.*)$/i;
+function textEnd() {
+  const { toc, ids, chapters } = book.data, last = chapters.length - 1;
+  const closing = [
+    ...toc.filter((t, i) => CLOSING.test(t.title.trim()) && toc.slice(i + 1).every(u => u.level >= t.level))
+      .map(t => [ids[t.id], section(ids[t.id]).id === t.id ? section(ids[t.id]) : section(ids[t.id]).querySelector(`[id="${CSS.escape(t.id)}"]`)]),
+    ...[...section(last).querySelectorAll('h2, h3, h4')].filter(h => CLOSING.test(h.textContent.trim())).map(h => [last, h]),
+  ];
+  for (const [c, el] of closing) {
+    if (!el) continue;
+    let b = leafBlocks(section(c)).findIndex(x => x === el || el.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING);
+    if (b < 0) b = blockSizes(section(c)).length;
+    if (book.starts[c] + blockSizes(section(c)).slice(0, b).reduce((sum, n) => sum + n, 0) < book.total / 4) continue;
+    return b ? { c, b: b - 1 } : { c: c - 1, b: blockSizes(section(c - 1)).length - 1 };
+  }
+  return { c: last, b: blockSizes(section(last)).length - 1 };
+}
+const seenEnd = () => chapter > book.end.c || (chapter === book.end.c && blocks[book.end.b]?.getBoundingClientRect().bottom <= page.getBoundingClientRect().bottom);
+function finish() {
+  const { id, record } = book;
+  store.put('done', id, { at: Date.now() });
+  toast(`Finished “${record.title}”.`, ['Undo', () => store.remove('done', id)]);
 }
 
 // Keep the screen awake while reading, for a few minutes after each rest.
@@ -474,6 +511,7 @@ function outline() {
 function toRun(n) {
   scrollLoc([n.b, n.o]);
   page.scrollTop -= page.clientHeight / 4;
+  ended = seenEnd();
   CSS.highlights.set('lit', new Highlight(rangeOf(n)));
   setTimeout(() => CSS.highlights.delete('lit'), 2500);
 }

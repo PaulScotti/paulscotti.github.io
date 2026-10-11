@@ -32,6 +32,11 @@ that ebis typesets itself.
   Licences, title pages and the like go unnoted. Contents lists a chapter's notes under its
   headings, to skim its argument; a tap goes to the passage. They sync like highlights, and a
   device catches up with the library before writing any, so each passage is noted once.
+- `js/app.js` is the shelf: what you're reading (the last read first), then what's still to read
+  (opened at most to its first page; the last added first), then what's finished. Reading on
+  to the end of a book's own text finishes it: for a paper or a book that ends in references,
+  notes, appendices or a licence, the end of what comes before them. A book's pane has a
+  Finished switch too.
 - `js/store.js` keeps the library in IndexedDB and syncs it with the worker.
 
 To keep a page you are reading — one a paywall shows only to a logged-in browser — drag the

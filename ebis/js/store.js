@@ -1,5 +1,5 @@
 // The library on this device (IndexedDB), kept in step with Paul's Cloudflare worker.
-// Everything small (books, reading positions, highlights, margin notes, open tabs) is a record that
+// Everything small (books, reading positions, highlights, margin notes, what's finished, open tabs) is a record that
 // replicates last-write-wins; each book's content is a zip package stored beside it.
 
 import { unzipSync, strFromU8 } from '../vendor/fflate.js';
@@ -68,8 +68,9 @@ export async function addBook(record, zip) {
 // its own, so every device fetches the new package.
 export async function replaceBook(old, record, zip) {
   const id = await addBook({ ...record, added: get('book', old)?.added ?? record.added }, zip);
-  const pos = get('pos', old), tabs = get('tabs', 'open');
+  const pos = get('pos', old), done = get('done', old), tabs = get('tabs', 'open');
   if (pos) put('pos', id, pos);
+  if (done) put('done', id, done);
   for (const { id: mark, ...m } of all('mark').filter(m => m.book === old)) put('mark', mark, { ...m, book: id });
   if (tabs?.ids.includes(old)) put('tabs', 'open', { ids: tabs.ids.map(x => x === old ? id : x) });
   await removeBook(old);
@@ -78,6 +79,7 @@ export async function replaceBook(old, record, zip) {
 export async function removeBook(id) {
   remove('book', id);
   remove('pos', id);
+  remove('done', id);
   for (const m of all('mark').filter(m => m.book === id)) remove('mark', m.id);
   for (const n of all('notes').filter(n => n.book === id)) remove('notes', n.id);
   close(id);

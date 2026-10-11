@@ -42,23 +42,29 @@ async function route() {
   }
 }
 
-// The shelf.
+// The shelf, in three rows: what's being read, the last read first; what's still to read (opened
+// at most to its first page), the last added first; and what's finished, the last finished first.
 
 function draw() {
   const books = store.all('book')
     .filter(b => filter === 'all' || b.kind === filter)
-    .filter(b => !query || `${b.title} ${b.author} ${b.site}`.toLowerCase().includes(query))
-    .sort((a, b) => lastRead(b) - lastRead(a));
-  shelf.replaceChildren(...[...pending].map(([key, p]) => item({ id: key, title: p.title, busy: p.progress, by: p.by }, true)), ...books.map(b => item(b)));
+    .filter(b => !query || `${b.title} ${b.author} ${b.site}`.toLowerCase().includes(query));
+  const done = b => store.get('done', b.id), at = b => store.get('pos', b.id).at;
+  shelf.replaceChildren(...[...pending].map(([key, p]) => item({ id: key, title: p.title, busy: p.progress, by: p.by }, true)),
+    ...row('Reading', books.filter(b => reading(b)).sort((a, b) => at(b) - at(a))),
+    ...row('To read', books.filter(b => !done(b) && !reading(b)).sort((a, b) => b.added - a.added)),
+    ...row('Finished', books.filter(done).sort((a, b) => done(b).at - done(a).at)));
   $('empty').hidden = !!(books.length || pending.size || query || filter !== 'all');
 }
-const lastRead = b => store.get('pos', b.id)?.at || b.added;
+const row = (label, books) => books.length ? [Object.assign(document.createElement('li'), { className: 'label', textContent: label }), ...books.map(b => item(b))] : [];
+// Past its first page (some 1,500 characters in) and not yet finished, a book is being read.
+const reading = b => !store.get('done', b.id) && (store.get('pos', b.id)?.pct ?? 0) * b.words * 6 > 1500;
 
 function item(b, busy) {
   const li = document.createElement('li');
   li.className = busy ? 'item busy' : 'item';
   li.dataset.id = b.id;
-  const pct = busy ? b.busy : store.get('pos', b.id)?.pct || 0;
+  const pct = busy ? b.busy : reading(b) ? store.get('pos', b.id).pct : 0;
   const [paint, ink] = PAINTS[[...b.title].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % PAINTS.length];
   li.innerHTML = `<div class="cover" style="--paint:${paint};--paint-ink:${ink}">${b.cover ? `<img src="${b.cover}" alt="">`
     : `<div class="typeset">${b.site ? `<span class="site">${escape(b.site)}</span>` : ''}<span class="name">${escape(b.title)}</span><span class="author">${escape(b.author || '')}</span><svg aria-hidden="true"><use href="#ibis"/></svg></div>`}
@@ -88,8 +94,10 @@ function manage(b) {
   const when = new Date(b.added).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   box.innerHTML = `<p>${escape(b.author || b.site)}</p>
     <p class="quiet">${escape(b.format.toUpperCase())} · ${b.words.toLocaleString()} words · added ${when}</p>
-    <div class="actions row"><button id="m-open">Read</button><button id="m-remove">Remove</button><button id="m-recompile">Recompile</button><button id="m-source">Original page</button></div>`;
+    <div class="actions row"><button id="m-open">Read</button><button id="m-remove">Remove</button><button id="m-recompile">Recompile</button><button id="m-source">Original page</button></div>
+    <label class="toggle"><span>Finished</span><input type="checkbox" id="m-done"></label>`;
   openSheet(b.title, box);
+  Object.assign($('m-done'), { checked: !!store.get('done', b.id), onchange: e => e.target.checked ? store.put('done', b.id, { at: Date.now() }) : store.remove('done', b.id) });
   const page = /^https?:/.test(b.source) && b.source;
   Object.assign($('m-source'), { disabled: !page, title: page || 'Added from a file', onclick: () => open(page, '_blank', 'noopener') });
   $('m-recompile').onclick = () => { closeLayers(); recompile(b); };
@@ -331,6 +339,6 @@ store.onChange(change => {
     showSync();
     $('sync').classList.toggle('busy', change.syncing);
   }
-  if (!$('library').hidden && (change.kind === 'book' || change.kind === 'pos')) draw();
+  if (!$('library').hidden && ['book', 'pos', 'done'].includes(change.kind)) draw();
 });
 showSync();
