@@ -55,7 +55,8 @@ const { brief, ledger } = pullContext(store, { date, workDir });
 // Reference files are copied in so Claude never needs access to the pipeline folder itself.
 fs.mkdirSync(path.join(workDir, 'ref'), { recursive: true });
 for (const f of ['curriculum.json', 'schema.md', 'ko-style.md']) fs.copyFileSync(path.join(PIPELINE_DIR, f), path.join(workDir, 'ref', f));
-log(`Generating Day ${brief.day} for ${date} (${brief.coveredUnits.length} prior digests; stage: ${brief.stage.stage || 'ttc'}; ${brief.openInbox} open notes)`);
+// This repo's Actions logs are public: never log the stage, topic or anything else that hints at their situation.
+log(`Generating Day ${brief.day} for ${date} (${brief.coveredUnits.length} prior digests; ${brief.openInbox} open notes)`);
 
 const loadPrompt = (name) => fs.readFileSync(path.join(PIPELINE_DIR, 'prompts', name), 'utf8')
   .replaceAll('{{DAY}}', String(brief.day))
@@ -206,7 +207,7 @@ if (result.errors.length) {
   process.exit(1);
 }
 const stats = result.stats || {};
-log(`Valid digest: unit ${result.digest.unit}, track ${result.digest.track}, ${stats.enWords} EN words, ${stats.koHangul} KO syllables, max repeat ${stats.maxRepeat ?? 0}.`);
+log(`Valid digest: ${stats.enWords} EN words, ${stats.koHangul} KO syllables, max repeat ${stats.maxRepeat ?? 0}.`);
 
 let koLessons = [];
 if (!args['no-ko-review']) ({ result, lessons: koLessons } = await reviewKorean(result));
@@ -221,5 +222,5 @@ try {
   if (fs.existsSync(f)) stateUpdate = cleanStateUpdate(JSON.parse(fs.readFileSync(f, 'utf8')));
 } catch { stateUpdate = null; }
 const pub = publishDigest(store, result.digest, { generator: { tool: 'claude-code', model, at: new Date().toISOString(), koReview: !args['no-ko-review'] }, stateUpdate, koLessons });
-log(`Published ${date} as Day ${pub.day}${pub.stageUpdated ? ' (journey stage updated from a note)' : ''}.`);
+log(`Published ${date} as Day ${pub.day}.`);
 if (!args.keep) fs.rmSync(workDir, { recursive: true, force: true });
