@@ -906,6 +906,117 @@
    "status": "none",
    "requested": "Removed from map at Paul's request.",
    "hidden": true
+  },
+  {
+   "id": "2311-48th-ave-sw",
+   "name": "2311 48th Ave SW",
+   "address": "2311 A 48th Ave SW, Seattle, WA 98116",
+   "neighborhood": "North Admiral",
+   "type": "Townhouse",
+   "beds": 3,
+   "baths": 1.5,
+   "sqft": 1420,
+   "rent": "$3,650/mo (cut from $3,850 in Sept)",
+   "fees": "App fee $50; deposit $3,475; $275 non-refundable carpet cleaning fee; no utilities included",
+   "available": "Now",
+   "parking": "Attached 1-car garage",
+   "laundry": "Stackable washer/dryer in unit",
+   "ac": "Mini-split heat pump with AC",
+   "pets": "Case by case ($500 deposit)",
+   "highlights": [
+    "Newer townhouse with oak hardwood floors and marble counters",
+    "Rooftop deck plus a private balcony off the great room",
+    "AC (mini-split heat pump)",
+    "About 0.3 mi to Metropolitan Market and Admiral Way buses"
+   ],
+   "watch_outs": [
+    "Only 1.5 baths",
+    "Haven's online scheduler only books virtual showings; in-person needs Sound@havenrent.com or (253) 214-7423",
+    "Min. credit 625, income 3x rent"
+   ],
+   "listing_url": "https://haven.appfolio.com/listings/detail/577ff044-51a6-479a-9a72-2f5d05ebde2b",
+   "other_urls": [
+    "https://www.redfin.com/WA/Seattle/2311-48th-Ave-SW-98116/home/179798664"
+   ],
+   "photo_url": "https://images.cdn.appfolio.com/haven/images/ee66cbbb-189c-44fb-b313-0799ed0e674a/large.jpg",
+   "lat": 47.582922107813,
+   "lng": -122.392903617688,
+   "status": "none",
+   "requested": "Wanted: Mon Oct 19 ~3:15 PM. Not requested yet (in-person tours need an email or call to Haven)."
+  },
+  {
+   "id": "3053-belvidere-ave-sw",
+   "name": "3053 Belvidere Ave SW",
+   "address": "3053 Belvidere Ave SW, Seattle, WA 98126",
+   "neighborhood": "North Admiral",
+   "type": "Single-family house",
+   "beds": "2 (+1 downstairs)",
+   "baths": 2,
+   "sqft": 1830,
+   "rent": "$3,750/mo",
+   "fees": "Required resident benefits $36.50/mo + renter's insurance $11.95/mo (opt out with your own policy); pet screening required for all applicants",
+   "available": "Oct 30, 2026",
+   "parking": "Alley parking for 1–2 cars + outdoor workshop",
+   "laundry": "In unit",
+   "pets": "Dogs case by case (up to 50 lb)",
+   "highlights": [
+    "Updated craftsman with Seattle skyline views",
+    "Large updated deck and fully fenced front yard",
+    "Upstairs: 2 bedrooms + den; downstairs: extra bedroom, media room and workshop",
+    "About 0.3 mi to PCC; across the street from 3030 Belvidere"
+   ],
+   "watch_outs": [
+    "No AC listed",
+    "No online showing times yet (free Oct 30): call SJA (425) 475-2586 or email info@sjapm.com",
+    "About $48/mo in required fees"
+   ],
+   "listing_url": "https://sja.appfolio.com/listings/detail/6112d9e3-94e6-4acc-b134-cddfb81c49e1",
+   "other_urls": [
+    "https://www.redfin.com/WA/Seattle/3053-Belvidere-Ave-SW-98126/home/328484"
+   ],
+   "photo_url": "https://images.cdn.appfolio.com/sja/images/067e027c-0203-48ff-b9cd-829d219cdfad/large.jpg",
+   "lat": 47.576921902222,
+   "lng": -122.379282332003,
+   "status": "none",
+   "requested": "Wanted: Mon Oct 19 ~4:00 PM. Not requested yet (SJA needs a call or email)."
+  },
+  {
+   "id": "1727-45th-ave-sw",
+   "name": "1727 45th Ave SW",
+   "address": "1727 45th Ave SW, Seattle, WA 98116",
+   "neighborhood": "North Admiral",
+   "type": "Single-family house",
+   "beds": 4,
+   "baths": 2.5,
+   "sqft": 2210,
+   "rent": "$4,999/mo (cut from $5,300)",
+   "fees": "Resident Benefits Package $25.99–49.99/mo; tenant pays utilities (Seattle utilities billed back)",
+   "available": "Now",
+   "parking": "2-car carport",
+   "laundry": "Washer/dryer in laundry room",
+   "ac": "None listed (gas central heat)",
+   "pets": "1 small dog or 1 cat",
+   "highlights": [
+    "Split-level with 4 bedrooms plus office/den and two bonus rooms",
+    "Two fireplaces; kitchen island with breakfast bar",
+    "Large storage areas off the carport; mature landscaping",
+    "About 0.4 mi to Metropolitan Market"
+   ],
+   "watch_outs": [
+    "No AC",
+    "Built before 1978 (lead-paint notice)",
+    "Tenant handles landscaping",
+    "Self-access tour: upload photo ID via the Tenant Turner email to confirm"
+   ],
+   "listing_url": "https://www.redfin.com/WA/Seattle/1727-45th-Ave-SW-98116/home/331128",
+   "other_urls": [
+    "https://app.tenantturner.com/qualify/select-time/1727-45th-ave-sw?p=Company"
+   ],
+   "photo_url": "https://ssl.cdn-redfin.com/photo/rent/2031f951-9914-4bfd-b1c6-8e578905962b/bigphoto/0_5.jpg",
+   "lat": 47.587879320712,
+   "lng": -122.389083471072,
+   "status": "contacted",
+   "requested": "Self-access viewing requested for Mon Oct 19, 2:30 PM (Oct 11). Not confirmed until Paul uploads a photo ID via the Tenant Turner email."
   }
  ]
 }
