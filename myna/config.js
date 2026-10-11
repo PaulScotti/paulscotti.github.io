@@ -39,7 +39,7 @@ export default {
   },
 
   // Myna's version, shown beside the logo so each device shows which code it is running. Raised with every update.
-  version: 14,
+  version: 15,
 
   // The Android app's version. Raise it after changing android/ and rebuilding; the app then offers the update.
   apk: 1,

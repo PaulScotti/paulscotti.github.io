@@ -11,7 +11,7 @@ const W = [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722,
   1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.1542];
 const DECAY = -W[20], FACTOR = 0.9 ** (1 / DECAY) - 1;
 const POOL = 10; // words chosen ahead of time, so a new day starts without waiting on OpenAI
-const SAID = 'ko is hangeul only, never romanization. en is read aloud, so no slashes, brackets or notes, and it starts in lowercase unless it is a sentence.';
+const SAID = 'ko is hangeul only, never romanization. en is read aloud, so no slashes, and it starts in lowercase unless it is a sentence. When a different, equally common Korean word would answer en just as rightly, en ends with a note in parentheses, a few words that point to the one in ko and still make sense heard straight after en, like "to be sorry (said to a friend)" for 미안하다, which 죄송하다 would also answer. Other endings of the same word need no note.';
 const CARD = { type: 'object', additionalProperties: false, required: ['ko', 'en'], properties: { ko: { type: 'string' }, en: { type: 'string' } } };
 const WORDS = { type: 'object', additionalProperties: false, required: ['words'], properties: { words: { type: 'array', items: CARD } } };
 const LINE = { ...CARD, required: ['ko', 'en', 'uses'], properties: { ...CARD.properties, uses: { type: 'array', items: { type: 'string' } } } };
