@@ -249,8 +249,9 @@
    "photo_url": "https://images.prismic.io/amli-website/a072a0bc-d1bf-4a0a-a70c-3db09ab59721_BellevuePark_amenity_rooftop.jpg?auto=compress,format&w=1600",
    "lat": 47.611198,
    "lng": -122.206787,
-   "status": "booked",
-   "tour_at": "2026-10-24T11:30"
+   "status": "contacted",
+   "hidden": true,
+   "requested": "Tour (Sat Oct 24, 11:30 AM) cancelled Oct 12: no built-in AC, which is a requirement. Cancellation reply to AMLI saved as a Gmail draft."
   },
   {
    "id": "amli-spring-district",
