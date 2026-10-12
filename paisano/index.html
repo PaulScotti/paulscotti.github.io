@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="paisano.svg" type="image/svg+xml">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css">
-<script type="module" src="paisano.js"></script>
+<link rel="stylesheet" href="paisano.css?v=4">
+<script type="module" src="paisano.js?v=4"></script>
 </head>
 <body>
 
@@ -41,9 +41,9 @@
       <g class="pebbles"><ellipse cx="118" cy="123" rx="4.4" ry="2.2"/><ellipse cx="126" cy="124" rx="2.2" ry="1.4"/><ellipse cx="318" cy="126" rx="3.6" ry="2"/><ellipse cx="236" cy="132" rx="2.4" ry="1.4"/></g>
       <g id="plants"></g>
       <ellipse id="puddle" class="puddle" cx="214" cy="128" rx="30" ry="3.4"/>
-      <g id="visitor" class="visitor"></g>
+      <g id="visitor" class="visitor" role="button" tabindex="-1"></g>
       <g id="strewn"></g>
-      <g id="bird" class="bird">
+      <g id="bird" class="bird" role="button" tabindex="0" aria-label="Pet Paisano">
         <g class="egg">
           <ellipse class="shell" cx="0" cy="-13.5" rx="11" ry="13.5"/>
           <path class="speck" d="M-5 -19 a1.6 1.6 0 1 0 0.1 0 M4 -12 a1.3 1.3 0 1 0 0.1 0 M-2 -7 a1 1 0 1 0 0.1 0 M3 -21 a1 1 0 1 0 0.1 0"/>
@@ -127,15 +127,19 @@
       </svg>
     </div>
     <p id="tally" class="tally"></p>
+    <details class="coverage"><summary>Today’s muscle coverage</summary><ul id="coverage"></ul><p>Full color marks two sets. This is a record of your day, not a daily quota. Rest sore muscles.</p></details>
   </section>
 
   <footer>
     <button id="spin" class="spin" disabled>Spin</button>
     <p id="since" class="since"></p>
+    <p id="daily" class="since"></p>
+    <div class="status"><button id="sync" type="button">Connecting…</button><button id="update" type="button" hidden>Update ready</button></div>
   </footer>
 </main>
 
 <section id="wheel" class="wheel" hidden>
+  <button class="x" aria-label="Cancel spin"><svg><use href="#i-close"/></svg></button>
   <div class="dial">
     <svg viewBox="-108 -108 216 216" aria-hidden="true"><g id="disc"></g><circle class="rim" r="101"/><circle class="hub" r="9"/></svg>
     <svg class="pointer" viewBox="0 0 20 22" aria-hidden="true"><path d="M2.6 1 H17.4 C18.6 1 19.2 2.2 18.6 3.2 L11.4 19.6 C10.8 20.8 9.2 20.8 8.6 19.6 L1.4 3.2 C0.8 2.2 1.4 1 2.6 1 Z"/></svg>
@@ -145,8 +149,8 @@
 </section>
 
 <section id="snack" class="snack" hidden>
-  <header><button class="x" aria-label="Stop without logging"><svg><use href="#i-close"/></svg></button></header>
-  <h2 id="name"></h2>
+  <header><button class="x" aria-label="Save snack for later"><svg><use href="#i-close"/></svg></button></header>
+  <h2 id="name" tabindex="-1"></h2>
   <p id="dose" class="dose"></p>
   <div class="ring">
     <svg viewBox="0 0 200 200" aria-hidden="true">
@@ -160,14 +164,25 @@
   </div>
   <p class="clock"><span id="clock">2:00</span><span id="phase" class="phase"></span></p>
   <ol id="cues" class="cues"></ol>
-  <div class="feel">
-    <p>How many more reps could you have done on the last set?</p>
-    <div>
+  <p id="plan" class="plan"></p>
+  <form id="setup" class="setup">
+    <div class="targets"><label>Reps<input id="target-reps" type="number" min="1" max="30" step="1" inputmode="numeric" required></label><label id="weight-label">Weight<select id="target-weight"></select></label></div>
+    <button class="spin">Start two minutes</button>
+    <select id="swap" aria-label="Choose another exercise"></select>
+  </form>
+  <div id="controls" class="controls" hidden><button id="pause">Pause</button><button id="finish-early">Finish early</button></div>
+  <form id="result" class="feel" hidden>
+    <p>Confirm the reps and weight you actually did. Use 0 for a skipped set.</p>
+    <div id="actual" class="actual"></div>
+    <p>How many more controlled reps on your last set? Tap to save.</p>
+    <div class="ratings">
       <button data-feel="easy"><b>4+</b>Easy</button>
       <button data-feel="good"><b>1–3</b>Good</button>
       <button data-feel="hard"><b>0</b>Hard</button>
     </div>
-  </div>
+    <button class="pain" data-feel="pain">Stopped with discomfort</button>
+  </form>
+  <button id="discard" class="discard">Discard snack</button>
 </section>
 
 <section id="history" class="sheet" hidden>
@@ -178,10 +193,10 @@
     <p id="day" class="day"></p>
     <h3>Sets per area, the last seven days</h3>
     <div id="volume" class="volume"></div>
-    <p class="note">An exercise counts as a full set for the areas it works most and half a set for those it assists. Meta-analyses find 10 or more sets a week per muscle build more than fewer; the line marks 10.</p>
-    <h3>Strength</h3>
+    <p class="note">Approximate sets: primary muscles count fully; assisting muscles count half. A left/right pair counts once. Older entries used prescribed sets.</p>
+    <h3>Logged performance</h3>
     <ul id="lifts" class="lifts"></ul>
-    <p class="note">Estimated from your answers: for dumbbell exercises, the heaviest dumbbell you could lift once, by Epley’s formula; for bodyweight ones, the most reps in a set. The lines share one scale; the percentage is the change since the first snack of each.</p>
+    <p class="note">Lines show weight on a 0–80 lb scale, or bodyweight reps. Weights are per hand. Easy adds a rep, then a weight step; hard lowers the next target.</p>
   </div>
 </section>
 
@@ -193,10 +208,10 @@
     <p class="note">What Paisano catches builds its traits. Speed: longer, quicker steps. Stealth: a moment’s grace when prey looks up. Nerve: the courage for stings and fangs.</p>
     <h3>Garden</h3>
     <ul id="beds" class="rows"></ul>
-    <p class="note">Plant seeds instead of feeding them, and once grown each plant brings its own visitor. It rains the day you work the whole body, and plants grow with each rain.</p>
+    <p class="note">Plant seeds instead of feeding them, and once grown each plant brings its own visitor. Three snacks bring rain once a day, and plants grow with each rain.</p>
     <h3>Field guide</h3>
     <ul id="guide" class="rows"></ul>
-    <p class="note">Each snack brings a visitor that’s out at that hour, so snacks spread through the day meet more of the desert. A new best or the whole body brings rarer ones.</p>
+    <p class="note">Each snack brings a visitor that’s out at that hour, so snacks spread through the day meet more of the desert. The snack that brings rain draws a rarer visitor.</p>
   </div>
 </section>
 

@@ -1,75 +1,86 @@
 # Paisano
 
-Two minutes of exercise about once an hour, for a day at a desk, at [paulscotti.com/paisano](https://www.paulscotti.com/paisano/).
-Named for the roadrunner, el paisano, which also means a companion.
+Two minutes of exercise for a day at a desk, with a roadrunner to keep you company.
+Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscotti.com/paisano/).
 
-## How it works
+## Workouts
 
-- **Spin.** A wheel picks one of twelve exercises for adjustable dumbbells (a PowerBlock Elite EXP, up to 80 lb a
-  hand) and a pull-up bar. Each slice is sized by the sets the exercise would add to the parts of the body still short
-  of today's two, and exercises already done today are left off. Spinning about hourly covers all thirteen areas in
-  about eight snacks: 7 to 9 in 98% of 20,000 simulated days.
-- **A snack** is two sets in two minutes, one on each minute; a one-sided exercise does both sides each minute. The
-  screen shows the dose, a figure doing the rep and three cues; it stays awake, and a chime marks the second minute.
-- **The dose.** Each exercise holds a belief about your strength, as chances over a grid: Epley's one-rep max
-  (load × (1 + reps / 30)) for dumbbell exercises, where the load includes the rough share of bodyweight a squat,
-  split squat, deadlift or calf raise moves, and the most reps in a set for bodyweight exercises. After each snack you
-  say how many more reps you could have done on the last set (reps in reserve, Zourdos et al. 2016): 4 or more, 1 to
-  3, or none. The belief is multiplied by how likely that answer was at each strength, allowing 1.5 reps of error, and
-  it widens between snacks as strength drifts (QUEST, Watson & Pelli 1983). The next dose is aimed at the belief's mean:
-  of the settings PowerBlock has and the reps that fit the minute at the exercise's tempo, the one most likely to leave
-  1 to 3 in reserve. Aimed at the middle of 1 to 3, an answer of 1 to 3 keeps the next dose where it was.
-- **Why that learner.** In simulation (lifters from 0.75 to 2 times the first dose's strength, answers off by 1.5
-  reps, strength growing 0.3% a snack), sets from the 21st snack of an exercise on truly left 1 to 3 in reserve 84% of
-  the time and none 1%; the first ten truly left none 10%. Answers, being off by 1.5 reps, said 1 to 3 for 56% and
-  none for 12%; with that error about 68% is the most any learner could have said 1 to 3. An answer of 1 to 3 never
-  made the next dose lighter; v1, which also docked a dose's chance of leaving none, made it lighter 15% of the time.
-- **The body.** Thirteen areas, each done for the day at two sets. A set counts in full for the areas an exercise
-  works most and half for those it assists, the "fractional" counting best supported in Pelland et al.'s dose-response
-  meta-regression (SportRxiv preprint). Two a day is fourteen a week; meta-analysis finds 10 or more weekly sets per
-  muscle build more than fewer (Schoenfeld, Ogborn & Krieger 2017). History shows each area's sets over the last week
-  against that line, and each exercise's estimated strength over time. Each point is estimated from every answer since,
-  forward and back (a smoother), so the guesses of the first snacks don't set the trend: in simulation the error of the
-  first point fell from 16% to 4%.
-- **Paisano** gets a seed for every snack, two more for a new best (a heavier dose by Epley than any finished before)
-  and three for the snack that completes the whole body. Tap the sack to feed it; it hatches and grows from a
-  hatchling to a chick (15), a fledgling (80) and a roadrunner (300), counting a seed as one and a creature as its
-  size. Its belly holds three seeds and digests one an hour, so a seed a snack keeps it fed: when the belly is empty
-  its crest droops and it asks for a seed, and a full belly has no room for another. It naps at night.
-- **Visitors.** Each snack brings a creature of the Sonoran Desert to the garden, one that's out at that hour: lizards
-  in the morning, whiptails and cicadas in the midday heat, centipedes and scorpions in the evening. So snacks spread
-  through the day, the point of the app, meet more of the desert. A new best or the whole body draws twice and keeps
-  the rarer. The draw is seeded by the snack's id, so every device sees the same visitor.
-- **The hunt.** Tap a visitor and Paisano stalks it. Each tap is a step, safe while it looks away and while it twitches
-  just before it looks up; a step while it's looking sends it running. Close enough, Paisano catches it: a meal of its
-  size, its fact in the field guide, and points toward a trait. Speed makes steps longer and quicker, Stealth gives a
-  moment's grace when it looks up, and Nerve is what the centipede, scorpion and rattlesnake take; bigger prey wait
-  for a bigger Paisano. As a Chao in Sonic Adventure 2 takes its stats from the animals it's given, Paisano takes its
-  from what it catches.
-- **The garden.** Seeds can be planted instead of fed: wildflowers, creosote, prickly pear or mesquite, each bringing
-  its own visitor once grown. The snack that finishes the whole body brings rain; plants grow with each rain, and the
-  spadefoot and palo verde beetle come out only on a rainy day, as they do with the summer monsoon. The Desert page
-  holds the traits, the garden and the field guide, with a hint for every creature not yet found.
-- **Field guide facts** come from the Cornell Lab's All About Birds (what roadrunners eat), the Arizona-Sonora Desert
-  Museum, Arizona and California wildlife guides, Sinervo & Lively 1996 (side-blotched lizards) and Toolson 1987
-  (cicadas sweating).
-- **Why snacks.** Breaking up sitting with two minutes of walking every 20 minutes lowered glucose and insulin after a
-  meal in 19 adults with overweight or obesity (Dunstan et al. 2012). Short bursts of vigorous exercise spread through
-  the day are a proposed way to build fitness, so far supported by small studies (Islam, Gibala & Little 2022).
+Spin to choose from twelve exercises for a pull-up bar and PowerBlock dumbbells up to 80 lb each.
+The wheel favors muscles with less work logged today and avoids repeating exercises until the pool is exhausted.
+Change the exercise, reps or weight before starting. Suggestions are starting points, not measured capacity.
 
-## Pieces
+Each snack lasts two minutes. Bilateral exercises have one set each minute; unilateral exercises have one minute
+per side, which counts as one set per muscle. Finish the prescribed reps, then rest until the next minute.
+Pause or finish early whenever needed. Closing the workout saves it for later on that tab; reloading restores it.
+The clock uses elapsed time, including time in the background, and never awards sets by itself.
 
-- `index.html`, `paisano.css`, `paisano.js`: the app. `figure.js` draws the exercise figures from the two poses of each
-  rep in `config.js`, which also holds every knob, the exercises, the plants and the creatures; their drawings are in
-  `index.html`. Libron comes from `../ebis/fonts`.
-- `worker/`: the `paisano` Worker at `paisano.scottibrain.workers.dev` on Paul's personal Cloudflare. D1 keeps one log
-  of snacks, feedings, hunts and plantings (`schema.sql`); the app works everything else out from it, and events wait
-  in the device's storage until the worker has them. The password is the same as ebis and myna.
+Confirm actual reps and weight for each set or side. Zero means skipped. A full timer pre-fills the target for
+confirmation; finishing early starts both fields at zero. Only nonzero sets count. Each area receives full credit
+for primary work and half for assisting work. This is an approximate activity map, not a requirement to train
+every muscle every day. A one-sided set contributes half the credit of a completed left-and-right pair.
 
+The next suggestion uses the lowest completed reps and weight from the last session. Good repeats that dose.
+Easy adds one rep when both sets or sides were completed, up to 12 or the exercise's 40-second work allowance.
+At that limit, the next available PowerBlock weight is suggested with the initial rep count. Hard lowers the
+weight one setting, or removes a rep when no lighter weight is available. Discomfort and skipped sets do not
+trigger progression. These are simple app rules, not a validated strength estimator; every suggestion is editable.
+
+History shows daily activity, seven-day muscle coverage, actual sets, and weight or rep trends. It does not infer
+bodyweight, a one-rep maximum, or a percentage strength gain. Older entries stored targets only and are labeled
+accordingly. Their original set credits and earned rewards remain intact, and the last prescription stays as the
+starting suggestion until actual work is recorded.
+
+## Paisano's garden
+
+Each logged snack earns a seed and can bring a desert visitor. Three snacks bring rain and three extra seeds once
+a day. Rain grows planted wildflowers, creosote, prickly pear and mesquite, which attract their own visitors.
+Older whole-body and personal-best rewards are preserved when replaying the historical log.
+
+Feed seeds to hatch and grow Paisano. Its belly holds three and digests one per hour. Tap a visitor to stalk it;
+step while it looks away and wait while it looks up. Catches feed Paisano and build Speed, Stealth and Nerve.
+The Desert page has the plants, traits and field guide. Rest days never remove growth or earned traits.
+
+## Evidence and limits
+
+The [2026 ACSM guidance](https://acsm.org/resistance-training-guidelines-update-2026/) emphasizes regular resistance
+training across major muscle groups, individualized volume, and that training to failure is generally optional.
+It does not establish that hourly two-minute lifting replaces all conventional training or aerobic activity.
+
+The [minimal-dose resistance training review](https://pubmed.ncbi.nlm.nih.gov/38509414/) describes exercise snacks as
+promising, with stronger existing support for single-set and weekend-warrior approaches. Paisano's particular
+schedule, muscle-credit map, progression rules and three-snack garden bonus are design choices. The old learner's
+simulation percentages are not evidence of real-world fitness outcomes and are no longer presented as such.
+
+## Storage and development
+
+`config.js` holds the exercises, weights, timings, animals and plants. `figure.js` animates the exercise poses at
+their configured tempos. The interface uses Libron from `../ebis/fonts` and respects reduced motion.
+
+The Worker stores an append-only D1 event log. Each unsent event has its own localStorage key; acknowledged events
+are cached before the outbox is cleared. A Web Lock serializes same-browser sync, and event IDs deduplicate retries.
+Sync errors remain visible with a retry button. Reconnects and tab returns retry automatically. New snacks store
+the completion time, local training date (4 am boundary) and hour so delayed confirmation or travel does not
+regroup them or redraw their visitor.
+Legacy entries lack that metadata and still use the viewing device's timezone.
+
+The production service worker caches the app after the first visit so it can open offline. Updates wait behind an
+**Update ready** button and preserve the active snack before reloading. Service worker registration is disabled
+on localhost to keep development changes immediate. Raise `version`, the `?v=` asset URLs, and the service worker
+cache version together for a release. Frontend and Worker changes should be released together.
+
+Serve the repository root, not just this folder, so the font paths work:
+
+```sh
+python3 -m http.server 8766 --directory ..
 ```
-cd worker && npx wrangler deploy      # after changing the worker
+
+In a second terminal, from `paisano/worker`, with the existing password in `.dev.vars`:
+
+```sh
+npx wrangler d1 execute paisano --local --file schema.sql
+npx wrangler dev --port 8789
 ```
 
-Raise `version` in `config.js` with every update; the app shows it beside the logo and reloads past the browser's
-cache when it changes. On `localhost` the app talks to `npx wrangler dev --port 8789` (with `KEY` in
-`worker/.dev.vars`).
+Open `http://localhost:8766/paisano/`. Local requests use the local Worker and local D1. Production uses
+`paisano.scottibrain.workers.dev`. The Worker rejects invalid exercise, rep, weight and event data before insertion.
+No new database migration is needed. Deploy only when explicitly authorized.

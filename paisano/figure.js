@@ -114,8 +114,9 @@ export function figure(svg, x) {
 // The figure's rep, over and over: up, a pause, back down a little slower, a pause. Returns a function that stops it.
 export function play(svg, x) {
   const draw = figure(svg, x), start = performance.now();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(0.5); return () => {}; }
   let frame = requestAnimationFrame(function tick(now) {
-    const s = ((now - start) / 1000) % 3.2;
+    const s = ((now - start) / 1000 / x.tempo % 1) * 3.2;
     const ease = u => u < 0.5 ? 2 * u * u : 1 - (2 - 2 * u) ** 2 / 2;
     draw(s < 0.5 ? 0 : s < 1.5 ? ease(s - 0.5) : s < 1.9 ? 1 : s < 3 ? 1 - ease((s - 1.9) / 1.1) : 0);
     frame = requestAnimationFrame(tick);
