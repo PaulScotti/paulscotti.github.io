@@ -1,8 +1,8 @@
 // Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=8';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=8';
+import config from './config.js?v=9';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=9';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
