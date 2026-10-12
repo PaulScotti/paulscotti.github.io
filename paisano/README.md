@@ -33,9 +33,26 @@ Named for the roadrunner, el paisano, which also means a companion.
   first point fell from 16% to 4%.
 - **Paisano** gets a seed for every snack, two more for a new best (a heavier dose by Epley than any finished before)
   and three for the snack that completes the whole body. Tap the sack to feed it; it hatches and grows from a
-  hatchling to a chick (15 seeds), a fledgling (80) and a roadrunner (300). Its belly holds three seeds and digests one
-  an hour, so a seed a snack keeps it fed: when the belly is empty its crest droops and it asks for a seed, or pecks the
-  sand for one if the sack is empty, and a full belly has no room for another. It naps at night.
+  hatchling to a chick (15), a fledgling (80) and a roadrunner (300), counting a seed as one and a creature as its
+  size. Its belly holds three seeds and digests one an hour, so a seed a snack keeps it fed: when the belly is empty
+  its crest droops and it asks for a seed, and a full belly has no room for another. It naps at night.
+- **Visitors.** Each snack brings a creature of the Sonoran Desert to the garden, one that's out at that hour: lizards
+  in the morning, whiptails and cicadas in the midday heat, centipedes and scorpions in the evening. So snacks spread
+  through the day, the point of the app, meet more of the desert. A new best or the whole body draws twice and keeps
+  the rarer. The draw is seeded by the snack's id, so every device sees the same visitor.
+- **The hunt.** Tap a visitor and Paisano stalks it. Each tap is a step, safe while it looks away and while it twitches
+  just before it looks up; a step while it's looking sends it running. Close enough, Paisano catches it: a meal of its
+  size, its fact in the field guide, and points toward a trait. Speed makes steps longer and quicker, Stealth gives a
+  moment's grace when it looks up, and Nerve is what the centipede, scorpion and rattlesnake take; bigger prey wait
+  for a bigger Paisano. As a Chao in Sonic Adventure 2 takes its stats from the animals it's given, Paisano takes its
+  from what it catches.
+- **The garden.** Seeds can be planted instead of fed: wildflowers, creosote, prickly pear or mesquite, each bringing
+  its own visitor once grown. The snack that finishes the whole body brings rain; plants grow with each rain, and the
+  spadefoot and palo verde beetle come out only on a rainy day, as they do with the summer monsoon. The Desert page
+  holds the traits, the garden and the field guide, with a hint for every creature not yet found.
+- **Field guide facts** come from the Cornell Lab's All About Birds (what roadrunners eat), the Arizona-Sonora Desert
+  Museum, Arizona and California wildlife guides, Sinervo & Lively 1996 (side-blotched lizards) and Toolson 1987
+  (cicadas sweating).
 - **Why snacks.** Breaking up sitting with two minutes of walking every 20 minutes lowered glucose and insulin after a
   meal in 19 adults with overweight or obesity (Dunstan et al. 2012). Short bursts of vigorous exercise spread through
   the day are a proposed way to build fitness, so far supported by small studies (Islam, Gibala & Little 2022).
@@ -43,10 +60,11 @@ Named for the roadrunner, el paisano, which also means a companion.
 ## Pieces
 
 - `index.html`, `paisano.css`, `paisano.js`: the app. `figure.js` draws the exercise figures from the two poses of each
-  rep in `config.js`, which also holds every knob and the exercises. Libron comes from `../ebis/fonts`.
+  rep in `config.js`, which also holds every knob, the exercises, the plants and the creatures; their drawings are in
+  `index.html`. Libron comes from `../ebis/fonts`.
 - `worker/`: the `paisano` Worker at `paisano.scottibrain.workers.dev` on Paul's personal Cloudflare. D1 keeps one log
-  of snacks and feedings (`schema.sql`); the app works everything else out from it, and events wait in the device's
-  storage until the worker has them. The password is the same as ebis and myna.
+  of snacks, feedings, hunts and plantings (`schema.sql`); the app works everything else out from it, and events wait
+  in the device's storage until the worker has them. The password is the same as ebis and myna.
 
 ```
 cd worker && npx wrangler deploy      # after changing the worker

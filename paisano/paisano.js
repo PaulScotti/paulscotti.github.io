@@ -1,7 +1,8 @@
 // Paisano: two minutes of exercise whenever you like, about once an hour. A wheel picks the exercise, each slice
 // sized by what it would add to the parts of the body today hasn't worked yet; the dose comes from what that exercise
-// has learned about you; and every snack earns seeds for Paisano, a roadrunner that grows up on them. All of it is
-// worked out from one log of snacks and feedings, which the worker keeps.
+// has learned about you; and every snack earns seeds for Paisano, a roadrunner, and brings a desert creature to its
+// garden for it to stalk. All of it is worked out from one log of snacks, feedings, hunts and plantings, which the
+// worker keeps.
 
 import config from './config.js';
 import { play } from './figure.js';
@@ -10,8 +11,11 @@ const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://local
 const $ = id => document.getElementById(id);
 const audio = new AudioContext();
 const X = Object.fromEntries(config.exercises.map(x => [x.id, x]));
+const C = Object.fromEntries(config.creatures.map(c => [c.id, c]));
+const P = Object.fromEntries(config.plants.map(p => [p.id, p]));
 const AREAS = Object.keys(config.areas);
 const GROUND = 118; // the garden's ground line
+const BIG = 1.7; // visitors are drawn larger than life beside Paisano, to be seen and tapped
 
 // What an exercise knows of your strength is a belief: chances over a grid of log strengths around its first dose's,
 // from about a quarter to four and a half times it (QUEST, Watson & Pelli 1983).
@@ -41,21 +45,44 @@ let pending = JSON.parse(localStorage.getItem('paisano.pending') || '[]'); // ev
 const dayOf = at => new Date(at - 4 * 3600e3).toLocaleDateString('sv');
 const today = () => st.days[dayOf(Date.now())] || { snacks: [], sets: {}, seeds: 0 };
 const done = sets => AREAS.filter(a => sets[a] >= config.sets).length;
+const stageOf = food => config.stages.findLastIndex(([, k]) => food >= k);
+const level = points => Math.floor((Math.sqrt(8 * points + 1) - 1) / 2); // level n at n(n + 1) / 2 points
+const levels = () => Object.fromEntries(Object.keys(config.traits).map(t => [t, level(st.traits[t])]));
 let st = replay(), snack = null, spun = null, toasting = 0;
 
 // Everything Paisano knows, from the log in time order: each exercise's belief about your strength, each day's
-// snacks, sets per area and seeds, the seeds eaten and what's in Paisano's belly.
+// snacks, sets per area, seeds and rain; and Paisano's food, belly, traits, garden, field guide and visitor.
 function replay() {
-  const s = { ex: {}, days: {}, earned: 0, eaten: 0, belly: 0, fed: 0 };
+  const s = { ex: {}, days: {}, earned: 0, used: 0, food: 0, belly: 0, ate: 0, plants: {}, guide: {}, visits: {}, visitor: null };
+  s.traits = Object.fromEntries(Object.keys(config.traits).map(t => [t, 0]));
   for (const x of config.exercises) {
     const [r, w] = x.start;
     s.ex[x.id] = { c0: Math.log(w ? load(x, w) * (1 + (r + config.reserve) / 30) : r + config.reserve), p: norm(GRID.map(g => Math.exp(-0.5 * (g / config.spread) ** 2))), last: 0, best: 0, steps: [] };
   }
+  const eat = (n, at) => { // the belly digests a seed an hour
+    s.belly = Math.max(0, s.belly - (at - s.ate) / 3600e3) + n;
+    s.ate = at;
+    s.food += n;
+  };
   for (const e of [...log, ...pending].sort((a, b) => a.at - b.at)) {
     if (e.kind === 'feed') {
-      s.belly = Math.max(0, s.belly - (e.at - s.fed) / 3600e3) + e.data.n; // it digests a seed an hour
-      s.fed = e.at;
-      s.eaten += e.data.n;
+      eat(e.data.n, e.at);
+      s.used += e.data.n;
+      continue;
+    }
+    if (e.kind === 'plant') {
+      s.plants[e.data.p] = 0; // rains since planting
+      s.used += P[e.data.p].cost;
+      continue;
+    }
+    if (e.kind === 'hunt') {
+      const c = C[s.visits[e.data.v]];
+      if (e.data.ok) {
+        eat(c.size, e.at);
+        for (const [t, n] of Object.entries(c.gain)) s.traits[t] += n;
+        s.guide[c.id].caught++;
+      }
+      if (s.visitor?.id === e.data.v) s.visitor = null;
       continue;
     }
     const { x: id, w, r, feel } = e.data, x = X[id], m = s.ex[id];
@@ -70,6 +97,25 @@ function replay() {
     d.snacks.push({ ...e.data, at: e.at, seeds, best, whole });
     d.seeds += seeds;
     s.earned += seeds;
+    if (whole) { // the whole body brings rain, and plants grow with it
+      d.rain = e.at;
+      for (const p in s.plants) s.plants[p]++;
+    }
+    // The visitor this snack brings: a creature out at this hour, at a plant that's grown, or out after today's rain,
+    // drawn by its odds from the snack's id so every device draws the same; a new best or the whole body draws twice
+    // and keeps the rarer. It stays until Paisano tries for it or the next snack.
+    const hour = new Date(e.at).getHours(), time = Object.keys(config.times).find(t => hour >= config.times[t][0] && hour < config.times[t][1]);
+    const pool = config.creatures.filter(c => c.times.includes(time) && (!c.plant || s.plants[c.plant] >= P[c.plant].rains) && (!c.rain || d.rain));
+    const total = pool.reduce((sum, c) => sum + config.odds[c.odds], 0), draw = k => {
+      let u = parseInt(e.id.replace(/-/g, '').slice(k, k + 8), 16) / 2 ** 32 * total;
+      return pool.find(c => (u -= config.odds[c.odds]) < 0);
+    };
+    const c = !pool.length ? null : best || whole ? [draw(0), draw(20)].sort((p, q) => config.odds[p.odds] - config.odds[q.odds])[0] : draw(0);
+    s.visitor = c && { id: e.id, c: c.id };
+    if (c) {
+      s.visits[e.id] = c.id;
+      (s.guide[c.id] ??= { seen: 0, caught: 0 }).seen++;
+    }
     // The belief widens with the days since this exercise's last snack, as strength may have moved, then each strength
     // is weighed by how likely it made the answer.
     const k = m.last && config.drift * Math.sqrt((e.at - m.last) / 864e5) / 0.03, prior = blur(m.p, k);
@@ -226,9 +272,11 @@ function finish(feel) {
   history.back();
   record('snack', { x: x.id, w, r, feel });
   const last = today().snacks.at(-1);
-  toast(`+${last.seeds} seed${last.seeds > 1 ? 's' : ''}${last.best ? ' with a new best' : ''}${last.whole ? ', and that’s the whole body today' : ''}. Next time ${said(x, dose(x))}.`);
+  const first = st.visitor && !Object.values(st.guide).some(g => g.caught) ? ' Tap the visitor in the garden to stalk it.' : '';
+  toast(`+${last.seeds} seed${last.seeds > 1 ? 's' : ''}${last.best ? ' with a new best' : ''}${last.whole ? ', and that’s the whole body today: rain in the garden' : ''}. Next time ${said(x, dose(x))}.${first}`);
   hop();
   emote(last.whole ? '♥' : '!');
+  if (last.whole) rain();
 }
 
 // The log, kept on the worker. Events wait in this device's storage until it has them, so none are lost offline.
@@ -269,20 +317,24 @@ async function api(path, body) {
   return res;
 }
 
-// Home: Paisano's seeds and growth, today's body, and how long since the last snack.
+// Home: Paisano's garden, seeds and growth, today's body, and how long since the last snack.
 function render() {
-  const t = today(), n = t.snacks.length, areas = done(t.sets), seeds = st.earned - st.eaten;
+  const t = today(), n = t.snacks.length, areas = done(t.sets), seeds = st.earned - st.used;
   shade($('today'), a => (t.sets[a] || 0) / config.sets);
   $('tally').textContent = !n ? 'Nothing yet today' : `${areas === AREAS.length ? 'Whole body' : `${areas} of ${AREAS.length} areas`} · ${n} snack${n > 1 ? 's' : ''} today`;
   $('seeds').textContent = seeds;
   $('feed').disabled = !seeds;
   $('spin').disabled = !loaded;
-  const i = config.stages.findLastIndex(([, k]) => st.eaten >= k), next = config.stages[i + 1];
-  $('grown').style.width = `${next ? (st.eaten - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
-  $('toward').textContent = next ? `${next[1] - st.eaten} to ${next[0].toLowerCase()}` : '';
+  const i = stageOf(st.food), next = config.stages[i + 1];
+  $('grown').style.width = `${next ? (st.food - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
+  $('toward').textContent = next ? `${next[1] - st.food} to ${next[0].toLowerCase()}` : '';
+  $('plants').innerHTML = config.plants.filter(p => p.id in st.plants).map(p => `<use href="#${st.plants[p.id] >= p.rains ? `p-${p.id}` : 'sprout'}" x="${p.x}" y="${GROUND}"/>`).join('');
+  $('puddle').classList.toggle('on', !!t.rain);
+  visitor();
   tick();
   grow();
   if (!$('history').hidden) chronicle();
+  if (!$('desert').hidden) desert();
 }
 
 const shade = (bodies, of) => {
@@ -290,23 +342,27 @@ const shade = (bodies, of) => {
 };
 
 // What's in Paisano's belly now, in seeds: what it last had, less one an hour since.
-const fullness = () => Math.max(0, st.belly - (Date.now() - st.fed) / 3600e3);
+const fullness = () => Math.max(0, st.belly - (Date.now() - st.ate) / 3600e3);
 
-// What changes as time passes: how long since the last snack, and whether Paisano is hungry.
+// What changes as time passes: how long since the last snack, whether Paisano is hungry, and where the sun is (it
+// crosses the garden from 6 am to 8 pm, and is below the dunes at night).
 function tick() {
   const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4);
   $('since').textContent = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
-  const stage = config.stages.findLast(([, k]) => st.eaten >= k)[0], hungry = st.eaten > 0 && !fullness();
+  const stage = config.stages[stageOf(st.food)][0], hungry = st.food > 0 && !fullness();
   $('stage').textContent = hungry ? `Hungry ${stage.toLowerCase()}` : stage;
   $('bird').classList.toggle('hungry', hungry);
+  const now = new Date(), day = (now.getHours() + now.getMinutes() / 60 - 6) / 14;
+  $('sun').setAttribute('cx', 24 + 312 * day);
+  $('sun').setAttribute('cy', 84 - 56 * Math.sin(Math.PI * day));
 }
 
 // History: every day as a square shaded by the areas it did, the last week's sets per area, and each exercise's strength.
 function chronicle() {
   const days = Object.entries(st.days), snacks = days.reduce((s, [, d]) => s + d.snacks.length, 0);
   const whole = days.filter(([, d]) => done(d.sets) === AREAS.length).length;
-  $('totals').textContent = snacks ? `${snacks} snack${snacks > 1 ? 's' : ''} on ${days.length} day${days.length > 1 ? 's' : ''}, ${whole} with the whole body done. Paisano has eaten ${st.eaten} seed${st.eaten === 1 ? '' : 's'}.`
+  $('totals').textContent = snacks ? `${snacks} snack${snacks > 1 ? 's' : ''} on ${days.length} day${days.length > 1 ? 's' : ''}, ${whole} with the whole body done.`
     : 'Nothing logged yet.';
   // Eighteen weeks of days, Monday to Sunday, the newest week on the right.
   const now = new Date(dayOf(Date.now()) + 'T12:00'), monday = new Date(now - ((now.getDay() + 6) % 7) * 864e5);
@@ -357,7 +413,8 @@ function chronicle() {
   }));
 }
 
-// Where the app is: home, the wheel (#wheel), a snack (#snack) or history (#history). Back leaves each.
+// Where the app is: home, the wheel (#wheel), a snack (#snack), the desert (#desert) or history (#history). Back leaves
+// each.
 function route() {
   const hash = location.hash.slice(1);
   if (hash !== 'wheel') spun = null;
@@ -368,7 +425,54 @@ function route() {
   $('wheel').hidden = hash !== 'wheel';
   $('snack').hidden = hash !== 'snack';
   $('history').hidden = hash !== 'history' || !password;
+  $('desert').hidden = hash !== 'desert' || !password;
   if (hash === 'history') chronicle();
+  if (hash === 'desert') desert();
+}
+
+// The desert: Paisano's traits, the garden's plants, and the field guide of every creature, a silhouette and a hint
+// until it visits and its fact once it's caught.
+function desert() {
+  const lv = levels(), seeds = st.earned - st.used, caught = config.creatures.filter(c => st.guide[c.id]?.caught).length;
+  $('about').textContent = `Paisano is ${st.food ? `a ${config.stages[stageOf(st.food)][0].toLowerCase()}` : 'an egg'} with ${seeds} seed${seeds === 1 ? '' : 's'} in the sack, and has caught ${caught} of the ${config.creatures.length} creatures.`;
+  $('traits').replaceChildren(...Object.entries(config.traits).flatMap(([t, name]) => {
+    const n = lv[t], from = n * (n + 1) / 2, bar = document.createElement('i');
+    bar.append(Object.assign(document.createElement('b'), { style: `width: ${(st.traits[t] - from) / (n + 1) * 100}%` }));
+    return [Object.assign(document.createElement('span'), { textContent: name }), bar, Object.assign(document.createElement('em'), { textContent: n })];
+  }));
+  const row = (art, unknown) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<svg${unknown ? ' class="unknown"' : ''}><use href="#${art}"/></svg><b></b><small></small><em></em>`;
+    return li;
+  };
+  $('beds').replaceChildren(...config.plants.map(p => {
+    const li = row(`p-${p.id}`), rains = st.plants[p.id], c = config.creatures.find(c => c.plant === p.id), brings = st.guide[c.id] ? `the ${c.name}` : 'its visitor';
+    li.querySelector('b').textContent = p.name;
+    li.querySelector('small').textContent = rains === undefined ? `Grows with ${p.rains} rain${p.rains > 1 ? 's' : ''}, then brings a visitor` : rains < p.rains ? `A sprout: ${rains} of ${p.rains} rain${p.rains > 1 ? 's' : ''}` : `Grown, and brings ${brings}`;
+    if (rains === undefined) {
+      const button = Object.assign(document.createElement('button'), { textContent: `Plant · ${p.cost}`, disabled: seeds < p.cost });
+      button.onclick = () => { record('plant', { p: p.id }); toast(`Planted ${p.name.toLowerCase()}. It grows with each rain.`); };
+      li.querySelector('em').replaceWith(button);
+    }
+    return li;
+  }));
+  const when = c => {
+    const t = c.times.map(t => t + 's');
+    return (t.length > 1 ? `${t.slice(0, -1).join(', ')} and ${t.at(-1)}` : t[0]).replace(/^./, m => m.toUpperCase());
+  };
+  $('guide').replaceChildren(...config.creatures.map(c => {
+    const g = st.guide[c.id], li = row(`c-${c.id}`, !g);
+    const needs = [c.size > stageOf(st.food) && `a ${config.stages[c.size][0].toLowerCase()}`, (c.nerve ?? 0) > lv.nerve && `Nerve ${c.nerve}`].filter(Boolean);
+    li.querySelector('b').textContent = g ? c.name : 'Not yet seen';
+    li.querySelector('small').textContent = g?.caught ? c.fact : `${when(c)}${c.plant ? `, at the ${P[c.plant].name.toLowerCase()}` : ''}${c.rain ? ', after rain' : ''} · ${c.odds}${needs.length ? ` · takes ${needs.join(' and ')}` : ''}`;
+    li.querySelector('em').textContent = g?.caught ? `×${g.caught}` : g ? 'Seen' : '';
+    return li;
+  }));
+  // Each drawing fits its box.
+  for (const svg of $('desert').querySelectorAll('.rows svg')) {
+    const b = svg.firstChild.getBBox();
+    svg.setAttribute('viewBox', `${b.x - 1} ${b.y - 1} ${b.width + 2} ${b.height + 2}`);
+  }
 }
 
 // Paisano, in its garden. It grows with each seed it eats, from a hatchling (0) to a roadrunner (1): legs, tail, crest
@@ -377,7 +481,7 @@ function route() {
 const pet = { x: 200, face: 1, size: 1, busy: false, flying: 0, strewn: [] }; // flying: seeds tossed, not yet eaten
 
 function grow() {
-  const eaten = st.eaten - pet.flying, stages = config.stages, i = stages.findLastIndex(([, k]) => eaten >= k);
+  const eaten = st.food - pet.flying, stages = config.stages, i = stageOf(eaten);
   $('bird').classList.toggle('hatched', i > 0);
   if (!i) return place();
   // Growth runs evenly through each stage from the hatchling's to the roadrunner's.
@@ -418,11 +522,11 @@ const flash = (name, ms) => new Promise(resolve => {
 });
 const hop = () => flash('hop', 450);
 
-// Walks to x, legs going, at a roadrunner's pace for its size.
-function walk(x) {
+// Walks to x, legs going, at a roadrunner's pace for its size (in garden units a millisecond), or faster on the hunt.
+function walk(x, pace = 0.09) {
   pet.face = x < pet.x ? -1 : 1;
   $('bird').classList.add('walking');
-  const from = pet.x, start = performance.now(), length = Math.abs(x - from) / 0.09;
+  const from = pet.x, start = performance.now(), length = Math.abs(x - from) / pace;
   return new Promise(resolve => requestAnimationFrame(function step(now) {
     const t = Math.min((now - start) / length, 1);
     pet.x = from + (x - from) * t;
@@ -444,8 +548,8 @@ async function peck(times) {
 // A seed is tossed from the sack and Paisano goes to eat it; the first one hatches the egg. A full belly has no room.
 function feed() {
   audio.resume();
-  if (st.earned - st.eaten <= 0) return;
-  if (st.eaten && fullness() > config.belly - 1) {
+  if (hunt || st.earned - st.used <= 0) return;
+  if (st.food && fullness() > config.belly - 1) {
     emote('…');
     return toast(`Paisano is full. Room for another in ${Math.ceil((fullness() - config.belly + 1) * 60)} min.`);
   }
@@ -486,8 +590,8 @@ async function eat() {
     hop();
     emote('♥');
     tone(1900, 0.12, { to: 2900, gain: 0.05 });
-    const eaten = st.eaten - pet.flying, stage = config.stages.find(([, k]) => k === eaten);
-    if (stage) toast(eaten === 1 ? 'Paisano hatched.' : `Paisano is a ${stage[0].toLowerCase()} now.`);
+    const food = st.food - pet.flying, stage = stageOf(food);
+    if (stage > stageOf(food - 1)) toast(stage === 1 ? 'Paisano hatched.' : `Paisano is a ${config.stages[stage][0].toLowerCase()} now.`);
     await new Promise(r => setTimeout(r, 400));
   }
   pet.busy = false;
@@ -498,17 +602,21 @@ async function idle() {
   setTimeout(idle, 2500 + Math.random() * 3500);
   const hour = new Date().getHours(), night = hour >= 22 || hour < 6;
   $('bird').classList.toggle('asleep', night);
-  if (pet.busy || !$('bird').classList.contains('hatched') || document.hidden) return;
+  if (pet.busy || hunt || !$('bird').classList.contains('hatched') || document.hidden) return;
   if (night) return Math.random() < 0.5 && emote('z');
   const hungry = !fullness(), r = Math.random();
   pet.busy = true;
-  if (hungry && st.earned > st.eaten && r < 0.4) { // asks for a seed from the sack
+  if (hungry && st.earned > st.used && r < 0.4) { // asks for a seed from the sack
     pet.face = 1;
     place();
     emote('!');
   } else if (hungry && r < 0.4) { // looks for one in the sand
     emote('?');
     await peck(3);
+  } else if (st.visitor && r < 0.6) { // eyes the visitor
+    pet.face = prey.x < pet.x ? -1 : 1;
+    place();
+    await flash('stalk', 1400);
   } else if (r < 0.45) await walk(90 + Math.random() * 200);
   else if (r < 0.7) await peck(1 + Math.floor(Math.random() * 3));
   else if (r < 0.85) await flash('tilt', 1300);
@@ -517,9 +625,145 @@ async function idle() {
   if (pet.strewn.length) eat();
 }
 
-$('bird').onclick = () => {
+// The visitor from the last snack: near its plant, or across the garden from Paisano, facing away until Paisano tries
+// for it.
+const prey = { id: null, x: 0, face: 1, fled: false };
+let hunt = null;
+
+function visitor() {
+  const v = st.visitor;
+  if (prey.id === (v?.id ?? null)) return;
+  prey.id = v?.id ?? null;
+  prey.fled = false;
+  if (hunt) end();
+  $('visitor').replaceChildren();
+  if (!v) return;
+  const c = C[v.c], plant = P[c.plant];
+  prey.x = plant ? plant.x + (plant.x > 280 ? -30 : 30) : pet.x < 180 ? 270 + Math.random() * 40 : 80 + Math.random() * 30;
+  prey.face = prey.x > pet.x ? 1 : -1;
+  $('visitor').innerHTML = `<g class="critter"><circle class="hit" cy="-4" r="11"/><use href="#c-${c.id}"/></g><text class="alert">!</text><text class="label"></text>`;
+  const top = $('visitor').firstChild.getBBox().y * BIG;
+  $('visitor').querySelector('.alert').setAttribute('y', top - 5);
+  $('visitor').querySelector('.label').setAttribute('y', top - 7);
+  $('visitor').querySelector('.label').textContent = c.name;
+  aim();
+}
+const aim = () => {
+  $('visitor').setAttribute('transform', `translate(${prey.x} ${GROUND})`);
+  $('visitor').firstChild.setAttribute('transform', `scale(${prey.face * BIG} ${BIG})`);
+};
+
+// Paisano stalks the visitor. Each tap is a step toward it, safe while it looks away, while it twitches just before
+// it looks up, and for a moment after (longer with Stealth); a step while it's looking sends it running. Close enough,
+// Paisano strikes. Steps are longer and quicker with Speed and size.
+async function stalk() {
+  const c = C[st.visitor.c], stage = stageOf(st.food);
+  if (!stage) return toast('Paisano hasn’t hatched yet. Feed it a seed.');
+  if (stage < c.size) return toast(`The ${c.name} is too big for Paisano until it’s a ${config.stages[c.size][0].toLowerCase()}.`);
+  if (levels().nerve < (c.nerve ?? 0)) return toast(`Paisano hasn’t the nerve for the ${c.name} yet: it takes Nerve ${c.nerve}.`);
+  const h = hunt = { c, looking: false, since: 0, moving: true, timer: 0, sound: null };
+  $('visitor').classList.add('hunted');
+  while (pet.busy) await new Promise(r => setTimeout(r, 100)); // whatever it's doing, it finishes first
+  if (h !== hunt) return;
+  pet.busy = true;
+  if (Math.abs(prey.x - pet.x) < 120) await walk(prey.x + (prey.x > 180 ? -140 : 140)); // backs off to begin
+  if (h !== hunt) return;
+  pet.face = prey.x > pet.x ? 1 : -1;
+  place();
+  $('bird').classList.add('stalk');
+  h.moving = false;
+  toast('Creep up while it looks away: tap for each step.');
+  look();
+}
+
+// It looks away for a while, twitches, then looks up at Paisano.
+function look() {
+  const c = hunt.c, [a, b] = c.busy, [p, q] = c.look ?? [1, 2], away = (a + (b - a) * Math.random()) * 1000, up = (p + (q - p) * Math.random()) * 1000;
+  hunt.looking = false;
+  prey.face = prey.x > pet.x ? 1 : -1;
+  aim();
+  $('visitor').classList.remove('looking');
+  if (c.sound === 'buzz') hunt.sound = pulses(5200, away + 350, 45);
+  hunt.timer = setTimeout(() => {
+    $('visitor').classList.add('twitch');
+    hunt.timer = setTimeout(() => {
+      $('visitor').classList.replace('twitch', 'looking');
+      hunt.looking = true;
+      hunt.since = performance.now();
+      prey.face = -prey.face;
+      aim();
+      if (c.sound === 'rattle') hunt.sound = pulses(2600, up, 16);
+      hunt.timer = setTimeout(look, up);
+    }, 350);
+  }, away);
+}
+
+async function step() {
+  const h = hunt;
+  if (h.moving) return;
+  if (h.looking && performance.now() - h.since > 150 + 60 * levels().stealth) return flee();
+  h.moving = true;
+  const reach = 30 * pet.size, gap = Math.abs(prey.x - pet.x) - reach, stride = (12 + 4 * levels().speed) * pet.size;
+  await walk(pet.x + Math.sign(prey.x - pet.x) * Math.min(stride, gap), stride / 250);
+  if (h !== hunt) return; // the visitor left mid-step
+  h.moving = false;
+  if (Math.abs(prey.x - pet.x) - reach < 1) pounce();
+}
+
+async function pounce() {
+  const { c } = hunt, v = st.visitor.id, before = levels(), stage = stageOf(st.food), first = !st.guide[c.id].caught;
+  end();
+  pet.busy = true;
+  await flash('peck', 220);
+  tone(2400, 0.03, { type: 'square', gain: 0.04 });
+  $('visitor').replaceChildren();
+  record('hunt', { v, ok: true });
+  hop();
+  emote('♥');
+  tone(1900, 0.12, { to: 2900, gain: 0.05 });
+  const after = levels(), up = Object.keys(after).find(t => after[t] > before[t]), grown = stageOf(st.food);
+  toast(`Paisano caught the ${c.name}${first ? ', new in the field guide' : ''}.${up ? ` ${config.traits[up]} is ${after[up]} now.` : ''}${grown > stage ? ` It’s a ${config.stages[grown][0].toLowerCase()} now.` : ''}`);
+  pet.busy = false;
+}
+
+function flee() {
+  const { c } = hunt, v = st.visitor.id, from = prey.x, start = performance.now();
+  end();
+  prey.fled = true;
+  emote('?');
+  toast(`The ${c.name} saw Paisano coming and got away.`);
+  prey.face = prey.x > pet.x ? 1 : -1;
+  requestAnimationFrame(function run(now) {
+    const t = Math.min((now - start) / 450, 1);
+    prey.x = from + (prey.face > 0 ? 400 - from : -40 - from) * t;
+    aim();
+    if (t < 1) return requestAnimationFrame(run);
+    record('hunt', { v, ok: false });
+  });
+}
+
+function end() {
+  clearTimeout(hunt.timer);
+  hunt.sound?.disconnect();
+  hunt = null;
+  pet.busy = false;
+  $('bird').classList.remove('stalk');
+  $('visitor').classList.remove('hunted', 'looking', 'twitch');
+}
+
+// Rain over the garden for a while, from the snack that finished the whole body.
+function rain() {
+  $('garden').parentNode.classList.add('raining');
+  setTimeout(() => $('garden').parentNode.classList.remove('raining'), 9000);
+}
+$('rain').innerHTML = Array.from({ length: 40 }, (_, i) => `<line x1="${i * 9.5}" x2="${i * 9.5 - 2.5}" y1="-14" y2="-4" style="animation-delay: -${Math.random().toFixed(2)}s"/>`).join('');
+
+// A tap in the garden: a step on the hunt, the start of one on the visitor, or a pat for Paisano.
+$('garden').onclick = e => {
   audio.resume();
-  if (pet.busy) return;
+  if (hunt) return step();
+  if (e.target.closest('#visitor') && !prey.fled) return stalk();
+  if (!e.target.closest('#bird') || pet.busy) return;
   tone(1900, 0.12, { to: 2900, gain: 0.05 });
   emote('♥');
   flash($('bird').classList.contains('hatched') ? 'proud' : 'wobble', 900);
@@ -527,7 +771,7 @@ $('bird').onclick = () => {
 $('feed').onclick = feed;
 
 // Sounds, made as they're played.
-function tone(f, length, { type = 'sine', gain = 0.1, at = 0, to } = {}) {
+function tone(f, length, { type = 'sine', gain = 0.1, at = 0, to, out = audio.destination } = {}) {
   const t = audio.currentTime + at, o = audio.createOscillator(), g = audio.createGain();
   o.type = type;
   o.frequency.setValueAtTime(f, t);
@@ -535,9 +779,17 @@ function tone(f, length, { type = 'sine', gain = 0.1, at = 0, to } = {}) {
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(gain, t + 0.005);
   g.gain.exponentialRampToValueAtTime(0.0001, t + length);
-  o.connect(g).connect(audio.destination);
+  o.connect(g).connect(out);
   o.start(t);
   o.stop(t + length + 0.02);
+}
+
+// A run of clicks, for a cicada's buzz or a rattle; disconnecting what it returns silences the rest.
+function pulses(f, ms, every) {
+  const out = audio.createGain();
+  out.connect(audio.destination);
+  for (let t = 0; t < ms; t += every) tone(f, 0.012, { type: 'square', gain: 0.025, at: t / 1000, out });
+  return out;
 }
 
 function toast(message) {
@@ -560,7 +812,10 @@ for (const half of document.querySelectorAll('#today .half')) {
 $('spin').onclick = spin;
 for (const b of document.querySelectorAll('.feel button')) b.onclick = () => finish(b.dataset.feel);
 for (const x of document.querySelectorAll('.x')) x.onclick = () => history.back();
-addEventListener('keydown', e => { if (e.key === 'Escape' && location.hash) history.back(); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && location.hash) history.back();
+  if (e.key === ' ' && hunt && !location.hash) { e.preventDefault(); step(); }
+});
 $('lock').onsubmit = e => {
   e.preventDefault();
   password = new FormData(e.target).get('password');

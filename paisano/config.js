@@ -30,11 +30,63 @@ export default {
   // Seeds for Paisano: one a snack, more for a new best and for the snack that finishes the day's whole body.
   seeds: { snack: 1, best: 2, whole: 3 },
 
-  // Paisano grows as it eats: the seeds eaten by each stage.
+  // Paisano grows as it eats: the food eaten by each stage, a seed being one and a creature its size.
   stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
 
   // Paisano's belly holds this many seeds and digests one an hour: fed a seed a snack, it's hungry when the next is due.
   belly: 3,
+
+  // Each snack brings a visitor to the garden: a creature that's out at that hour, drawn by its odds; a new best or the
+  // whole body draws twice and keeps the rarer. Some come only to a plant that's grown, some only on a day it rained,
+  // and it rains the day you work the whole body.
+  times: { morning: [6, 11], midday: [11, 15], afternoon: [15, 18], evening: [18, 22] },
+  odds: { common: 4, uncommon: 2, rare: 1 },
+
+  // Seeds can be planted instead of fed: a plant costs seeds, grows with each rain, and once grown brings its visitor.
+  // x is where it grows in the garden.
+  plants: [
+    { id: 'flowers', name: 'Wildflowers', cost: 5, rains: 1, x: 182 },
+    { id: 'creosote', name: 'Creosote bush', cost: 10, rains: 2, x: 318 },
+    { id: 'prickly', name: 'Prickly pear', cost: 15, rains: 3, x: 252 },
+    { id: 'mesquite', name: 'Mesquite', cost: 25, rains: 4, x: 116 },
+  ],
+
+  // Paisano stalks a visitor by stepping closer while it looks away: it looks away for `busy` seconds at a time,
+  // twitches, then looks up for `look` seconds (1 to 2 if not given), buzzing while it's busy or rattling while it looks
+  // if it has a `sound`. Catching one is a meal of its size and builds a trait: Speed for longer, quicker steps,
+  // Stealth for a moment's grace when it looks up, Nerve for stings and fangs. A trait reaches level n at n(n + 1) / 2
+  // points. size 2 takes a chick and 3 a fledgling; nerve is the Nerve it takes.
+  traits: { speed: 'Speed', stealth: 'Stealth', nerve: 'Nerve' },
+  creatures: [
+    { id: 'stink', name: 'Stink beetle', times: ['morning', 'evening'], odds: 'common', size: 1, busy: [2.5, 5], gain: { nerve: 1 },
+      fact: 'Threatened, it stands on its head and sprays a foul-smelling liquid from its rear.' },
+    { id: 'uta', name: 'Side-blotched lizard', times: ['morning', 'afternoon'], odds: 'common', size: 1, busy: [1.2, 3], gain: { speed: 1 },
+      fact: 'Males come with orange, blue or yellow throats, three ways of winning mates that beat each other like rock, paper, scissors.' },
+    { id: 'whiptail', name: 'Desert grassland whiptail', times: ['midday'], odds: 'uncommon', size: 2, busy: [0.8, 2], gain: { speed: 2 },
+      fact: 'Every one is female: they lay eggs that hatch without any males.' },
+    { id: 'zebra', name: 'Zebra-tailed lizard', times: ['midday'], odds: 'uncommon', size: 2, busy: [0.6, 1.6], gain: { speed: 3 },
+      fact: 'It sprints on its hind legs, then stops and wags its black-and-white tail at whatever is chasing it.' },
+    { id: 'horned', name: 'Regal horned lizard', times: ['morning', 'midday'], odds: 'rare', size: 2, busy: [3, 6], gain: { stealth: 3 },
+      fact: 'It can squirt blood from its eyes, which tastes foul to coyotes but does nothing to birds. Roadrunners swallow it head first.' },
+    { id: 'centipede', name: 'Giant desert centipede', times: ['evening'], odds: 'uncommon', size: 2, nerve: 2, busy: [1.2, 2.5], gain: { nerve: 2 },
+      fact: 'Up to 8 inches long, it bites with fangs that are its first pair of legs, reshaped.' },
+    { id: 'scorpion', name: 'Arizona bark scorpion', times: ['evening'], odds: 'uncommon', size: 2, nerve: 3, busy: [1.5, 3], gain: { nerve: 2 },
+      fact: 'Like every scorpion, it glows blue-green under ultraviolet light.' },
+    { id: 'rattler', name: 'Western diamondback', times: ['afternoon', 'evening'], odds: 'rare', size: 3, nerve: 6, busy: [1, 2.5], look: [1.5, 3], sound: 'rattle', gain: { nerve: 4 },
+      fact: 'Its rattle gains a segment each time it sheds, a few times a year, so the rattle can’t tell its age.' },
+    { id: 'clicker', name: 'Desert clicker', plant: 'creosote', times: ['morning', 'midday', 'afternoon'], odds: 'common', size: 1, busy: [1.2, 2.8], gain: { stealth: 1 },
+      fact: 'A grasshopper that lives on creosote: each male holds a bush and clicks from it to claim it.' },
+    { id: 'cicada', name: 'Apache cicada', plant: 'mesquite', times: ['midday', 'afternoon'], odds: 'common', size: 1, busy: [1.5, 3.5], sound: 'buzz', gain: { stealth: 2 },
+      fact: 'It sings through the hottest hours and keeps cool by sweating, drinking the water back from the plant it feeds on.' },
+    { id: 'sphinx', name: 'White-lined sphinx', plant: 'flowers', times: ['morning', 'afternoon', 'evening'], odds: 'common', size: 1, busy: [3, 6], gain: { stealth: 1 },
+      fact: 'After wet winters its caterpillars can cross the desert by the thousands, eating wildflowers. The moth hovers at flowers like a hummingbird.' },
+    { id: 'longhorn', name: 'Cactus longhorn beetle', plant: 'prickly', times: ['morning', 'afternoon'], odds: 'common', size: 1, busy: [2, 4], gain: { nerve: 1 },
+      fact: 'It can’t fly and eats only cactus, and it looks and acts much like a stink beetle, which predators learn to leave alone.' },
+    { id: 'spadefoot', name: 'Couch’s spadefoot', rain: true, times: ['morning', 'midday', 'afternoon', 'evening'], odds: 'common', size: 2, busy: [1.5, 3], gain: { stealth: 2 },
+      fact: 'It stays buried most of the year and comes up with the summer rains; its tadpoles can become toads in about 8 days.' },
+    { id: 'paloverde', name: 'Palo verde beetle', rain: true, times: ['afternoon', 'evening'], odds: 'uncommon', size: 2, busy: [2, 4], gain: { nerve: 2 },
+      fact: 'Its grubs eat tree roots underground for three years or more; the adults come out with the monsoon rains, never eat, and live about a month.' },
+  ],
 
   areas: {
     chest: 'Chest', shoulders: 'Shoulders', biceps: 'Biceps', triceps: 'Triceps', forearms: 'Forearms', upper: 'Upper back',
@@ -123,5 +175,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 2,
+  version: 3,
 };
