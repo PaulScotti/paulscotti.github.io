@@ -459,8 +459,11 @@ function chronicle() {
     const sessions = st.ex[x.id].sessions.filter(s => s.rounds), li = document.createElement('li'), last = sessions.at(-1);
     li.innerHTML = '<b></b><small></small><svg viewBox="0 0 84 28" preserveAspectRatio="none" aria-hidden="true"><polyline/></svg>';
     li.querySelector('b').textContent = x.name;
-    li.querySelector('small').textContent = last ? `Last ${last.rounds.map(v => `${v.r}${v.w === null ? '' : ` × ${v.w} lb`}`).join(' / ')} · Next ${said(x, dose(x))}` : `${st.ex[x.id].sessions.length ? 'Next' : 'First'} ${said(x, dose(x))}`;
-    const values = sessions.map(s => x.hold === 'none' ? Math.min(...s.rounds.map(v => v.r)) : Math.max(...s.rounds.map(v => v.w)));
+    li.querySelector('small').textContent = last ? `Last ${last.rounds.map(v => v.r ? `${v.r}${v.w === null ? '' : ` × ${v.w} lb`}` : 'skipped').join(' / ')} · Next ${said(x, dose(x))}` : `${st.ex[x.id].sessions.length ? 'Next' : 'First'} ${said(x, dose(x))}`;
+    const values = sessions.map(s => {
+      const completed = s.rounds.filter(v => v.r > 0);
+      return x.hold === 'none' ? Math.min(...completed.map(v => v.r)) : Math.max(...completed.map(v => v.w));
+    });
     const top = x.hold === 'none' ? Math.max(config.maxReps, ...values) : 80;
     li.querySelector('polyline').setAttribute('points', values.map((v, i) => `${values.length > 1 ? i / (values.length - 1) * 84 : 42},${26 - v / top * 24}`).join(' '));
     return li;

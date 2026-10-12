@@ -274,7 +274,6 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .lifts small { grid-row: 2; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .lifts svg { grid-row: 1 / 3; grid-column: 2; width: 84px; height: 28px; overflow: visible; }
 .lifts polyline { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.lifts em { grid-row: 1 / 3; grid-column: 3; font-style: normal; text-align: right; font-size: 15px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .rows li { display: grid; grid-template-columns: 56px 1fr auto; column-gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); }
