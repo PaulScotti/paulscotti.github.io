@@ -1151,6 +1151,45 @@
    "status": "contacted",
    "hidden": true,
    "requested": "Owner replied on Zillow (Oct 5) that the home is being listed for sale, so it's no longer available to tour or lease. Removed from shortlist."
+  },
+  {
+   "id": "the-olivian",
+   "name": "The Olivian",
+   "address": "809 Olive Way, Seattle, WA 98101",
+   "neighborhood": "Downtown (Denny Triangle)",
+   "type": "Apartment",
+   "beds": 2,
+   "baths": 2,
+   "sqft": "1,287–1,731 (2 bd plans)",
+   "rent": "2 bd from $4,387/mo (1,287 sq ft); 1,731 sq ft from $4,897",
+   "fees": "Prices are Greystar totals incl. mandatory monthly fees; utilities extra",
+   "lease": "12-month quotes",
+   "available": "1,287 sq ft unit 807 now; 1,731 sq ft unit 1206 now; another 1,287 sq ft unit Nov 1",
+   "parking": "Controlled-access garage; EV charging",
+   "laundry": "Washer/dryer in unit",
+   "ac": "None listed (ceiling fans only)",
+   "pets": "Dogs and cats, with restrictions",
+   "highlights": [
+    "High-rise with 24-hour concierge and a 26th-floor Sky Lounge",
+    "Walk Score and Transit Score 100: Westlake light rail and downtown on foot",
+    "In-unit washer/dryer; gas stoves and walk-in closets in select homes",
+    "Fitness center, business center, bike storage"
+   ],
+   "watch_outs": [
+    "No AC listed on Greystar or the building site (ceiling fans only): AC is a requirement, so ask the leasing office",
+    "Ask which unit/floor plan Yoolim booked to see",
+    "Downtown traffic and street noise; confirm parking cost"
+   ],
+   "listing_url": "https://www.greystar.com/the-olivian-seattle-wa/p_16601",
+   "other_urls": [
+    "https://www.theolivianapts.com/"
+   ],
+   "photo_url": "https://s7d9.scene7.com/is/image/greystarprod/16601CLB2?wid=1200",
+   "lat": 47.614069436709,
+   "lng": -122.333866180557,
+   "status": "booked",
+   "tour_at": "2026-10-19T14:30",
+   "requested": "Booked by Yoolim for Mon Oct 19, 2:30–3:30 PM (on the Yooly & Poru calendar). Leasing office: (206) 340-0809."
   }
  ]
 }
