@@ -38,8 +38,12 @@ export default {
     sentence: 'a natural spoken sentence using the word with several words the learner knows, with more varied grammar',
   },
 
+  // Each session ends with this many sentences joining its words, said in Korean to put into English, with think
+  // times as long to think as a card. They are marked right or wrong only to keep the task active; no card changes.
+  sentences: { count: 3, think: 2 },
+
   // Myna's version, shown beside the logo so each device shows which code it is running. Raised with every update.
-  version: 15,
+  version: 16,
 
   // The Android app's version. Raise it after changing android/ and rebuilding; the app then offers the update.
   apk: 1,

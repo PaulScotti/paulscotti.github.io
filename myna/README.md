@@ -14,7 +14,10 @@ Named for the myna, the bird that learns to talk by copying what it hears.
   Korean word would answer the English just as well, a few words in parentheses say which is meant,
   like to be sorry (said to a friend) for 미안하다 rather than 죄송하다. Its answer is said after a
   moment to think, or at once on any key; then → or volume up is correct, ← or volume down is
-  incorrect. It ends with an overview: time, cards, first-try accuracy, levels gained.
+  incorrect. Last come three Korean sentences that join the session's words, written by OpenAI while
+  the cards are asked, to put into English with twice as long to think. They are marked the same way,
+  only to keep the task active: no card changes. Then an overview: time, cards, first-try accuracy,
+  levels gained.
 - Scheduling is FSRS-6 with its default parameters and two grades. A new word's first test is its first
   answer, and a word answered right on the day it is met comes back the next day, like an Anki learning
   step. Gaps of 2.5 days or more are spread a few days either way as Anki does, so words learned together

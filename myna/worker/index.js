@@ -11,7 +11,9 @@ const W = [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722,
   1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.1542];
 const DECAY = -W[20], FACTOR = 0.9 ** (1 / DECAY) - 1;
 const POOL = 10; // words chosen ahead of time, so a new day starts without waiting on OpenAI
-const SAID = 'ko is hangeul only, never romanization. en is read aloud, so no slashes, and it starts in lowercase unless it is a sentence. When a different, equally common Korean word would answer en just as rightly, en ends with a note in parentheses, a few words that point to the one in ko and still make sense heard straight after en, like "to be sorry (said to a friend)" for 미안하다, which 죄송하다 would also answer. Other endings of the same word need no note.';
+const SAID = 'ko is hangeul only, never romanization. en is read aloud, so no slashes, and it starts in lowercase unless it is a sentence.';
+// A card can be asked English first, so its English says which Korean it wants when two would do.
+const NOTE = 'When a different, equally common Korean word would answer en just as rightly, en ends with a note in parentheses, a few words that point to the one in ko and still make sense heard straight after en, like "to be sorry (said to a friend)" for 미안하다, which 죄송하다 would also answer. Other endings of the same word need no note.';
 const CARD = { type: 'object', additionalProperties: false, required: ['ko', 'en'], properties: { ko: { type: 'string' }, en: { type: 'string' } } };
 const WORDS = { type: 'object', additionalProperties: false, required: ['words'], properties: { words: { type: 'array', items: CARD } } };
 const LINE = { ...CARD, required: ['ko', 'en', 'uses'], properties: { ...CARD.properties, uses: { type: 'array', items: { type: 'string' } } } };
@@ -42,6 +44,7 @@ async function route(request, env, ctx) {
   if (path === '/today') return Response.json(await today(env, ctx, body.day, body.early));
   if (path === '/grade') return Response.json(await grade(env, ctx, body));
   if (path === '/add') return Response.json(await add(env, body));
+  if (path === '/sentences') return Response.json(await sentences(env, body));
   if (path === '/speak') return speak(env, body);
   if (path === '/words') return Response.json((await env.DB.prepare('SELECT ko, en, level FROM cards ORDER BY level, ko').all()).results);
   return new Response('Not found.', { status: 404 });
@@ -135,7 +138,7 @@ async function vary(env, c) {
     const known = stronger.map(k => [Math.random() ** (1 / (1 + Math.max(0, Math.log2(k.s / c.s)))), k]).sort((a, b) => b[0] - a[0]).slice(0, 40)
       .map(([, k]) => k).sort((a, b) => b.s - a.s);
     for (let tries = 0; tries < 3; tries++) {
-      const line = await gpt(env, `You write one flashcard for an English speaker learning Korean from spoken flashcards. It tests the given word in the given form. The Korean must contain the word, inflected as the form needs, and be natural, correct, everyday spoken Korean, polite unless the form asks otherwise. Every other word must come from the listed words, which the learner knows at least as well as this one, best known first; prefer those near the top. Particles, endings and pointing words like 이거 or 저기 are fine. If no natural line can be made from them, write the word alone in another everyday form. Make it different from the lines other cards are asked with. en is its natural English translation, specific enough that the Korean is the obvious answer. uses lists every other word the Korean contains, in dictionary form, spelled as in the list when it is one of them, leaving out particles, endings and pointing words. ${SAID}`,
+      const line = await gpt(env, `You write one flashcard for an English speaker learning Korean from spoken flashcards. It tests the given word in the given form. The Korean must contain the word, inflected as the form needs, and be natural, correct, everyday spoken Korean, polite unless the form asks otherwise. Every other word must come from the listed words, which the learner knows at least as well as this one, best known first; prefer those near the top. Particles, endings and pointing words like 이거 or 저기 are fine. If no natural line can be made from them, write the word alone in another everyday form. Make it different from the lines other cards are asked with. en is its natural English translation, specific enough that the Korean is the obvious answer. uses lists every other word the Korean contains, in dictionary form, spelled as in the list when it is one of them, leaving out particles, endings and pointing words. ${SAID} ${NOTE}`,
         `Word: ${c.ko} (${c.en})\nForm: ${config.forms[form]}\nWords the learner knows at least as well, best known first: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\nLines other cards are asked with: ${nearby.map(n => n.ask_ko).join(' / ')}`, LINE);
       if (line.uses.every(w => w === c.ko || known.some(k => k.ko === w))) { ask = { ...line, form: line.uses.length ? form : 'inflected' }; break; }
     }
@@ -147,7 +150,7 @@ async function vary(env, c) {
 async function invent(env, n) {
   const db = env.DB;
   const { results: have } = await db.prepare('SELECT ko, en FROM cards').all();
-  const { words } = await gpt(env, `You choose vocabulary for an English speaker learning Korean from spoken flashcards. Choose the words or set expressions they should learn next: the ones heard most often in real everyday conversation, spread across the situations of daily life rather than one topic, and for each meaning the most common way to say it. Never repeat a word they have, or give one that means nearly the same as one they have. Most useful first. Verbs and adjectives in dictionary form. ${SAID}`,
+  const { words } = await gpt(env, `You choose vocabulary for an English speaker learning Korean from spoken flashcards. Choose the words or set expressions they should learn next: the ones heard most often in real everyday conversation, spread across the situations of daily life rather than one topic, and for each meaning the most common way to say it. Never repeat a word they have, or give one that means nearly the same as one they have. Most useful first. Verbs and adjectives in dictionary form. ${SAID} ${NOTE}`,
     `They have: ${have.map(w => `${w.ko} (${w.en})`).join(', ')}\n\nChoose ${n}.`, WORDS);
   const done = await db.batch(words.map(w => db.prepare('INSERT INTO cards (ko, en, ask_ko, ask_en) VALUES (?1, ?2, ?1, ?2) ON CONFLICT (ko) DO NOTHING').bind(w.ko, w.en)));
   return done.reduce((sum, r) => sum + r.meta.changes, 0);
@@ -156,10 +159,19 @@ async function invent(env, n) {
 // Words Paul adds join today's session. One already waiting in the pool is brought forward instead.
 async function add(env, { text, day }) {
   const db = env.DB;
-  const { words } = await gpt(env, `You turn what an English speaker learning Korean typed into flashcards, one for each word or phrase they listed. If they wrote Korean, keep their wording, fixing only clear typos. If they wrote English, give the most common natural Korean for it in everyday speech, verbs and adjectives in dictionary form. ${SAID}`, text, WORDS);
+  const { words } = await gpt(env, `You turn what an English speaker learning Korean typed into flashcards, one for each word or phrase they listed. If they wrote Korean, keep their wording, fixing only clear typos. If they wrote English, give the most common natural Korean for it in everyday speech, verbs and adjectives in dictionary form. ${SAID} ${NOTE}`, text, WORDS);
   const done = await db.batch(words.map(w => db.prepare(`INSERT INTO cards (ko, en, ask_ko, ask_en, intro) VALUES (?1, ?2, ?1, ?2, ?3)
     ON CONFLICT (ko) DO UPDATE SET intro = ?3 WHERE intro IS NULL RETURNING *`).bind(w.ko, w.en, day)));
   return { cards: done.flatMap(r => r.results).map(c => shape(c, day)), had: words.filter((w, i) => !done[i].results.length).map(w => w.ko) };
+}
+
+// The sentences a session ends with: its words joined into fuller Korean, to put into English. Paul marks them only
+// to keep the task active; they change no card.
+async function sentences(env, { words }) {
+  const { results: known } = await env.DB.prepare('SELECT ko, en FROM cards WHERE level >= 1').all();
+  const { words: lines } = await gpt(env, `You write sentences for an English speaker learning Korean, to translate into English at the end of a flashcard session. Each joins two to four of the session's words into one natural, everyday spoken Korean sentence, polite, and fuller than a flashcard: two ideas joined, another tense, a question. Spread them over as many different session words as you can. Every other word must be one the learner knows; particles, endings and pointing words like 이거 or 저기 are fine. en is its natural English translation. ${SAID}`,
+    `Words from this session: ${words.map(([ko, en]) => `${ko} (${en})`).join(', ')}\nOther words the learner knows: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\n\nWrite ${config.sentences.count}.`, WORDS);
+  return lines;
 }
 
 async function gpt(env, instructions, input, schema) {

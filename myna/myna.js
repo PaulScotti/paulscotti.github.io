@@ -1,6 +1,7 @@
 // Myna: Korean flashcards, said aloud. A session first shows its new words, stepped through with ← and →, then
 // asks each card one way, Korean or English first. The answer comes after a moment to think, or at once on any
-// key, and then the card is marked: → correct, ← incorrect. In the Android app the volume keys do the same.
+// key, and then the card is marked: → correct, ← incorrect. In the Android app the volume keys do the same. It
+// ends with a few Korean sentences made from its words, to put into English and mark the same way.
 
 import config from './config.js';
 
@@ -13,7 +14,7 @@ const audio = new AudioContext();
 const clips = new Map(); // "lang:text" → that line's mp3, fetched once
 let password = localStorage.getItem('myna.password'); // typed once on each device
 let day, levels, words = [], queue = [], at = 0, card = null, run = 0, shown = false, grace = 0, timer = 0, saving = false, sound = null, toasting = 0;
-let tally; // the session so far: when it began, its new words, and each card's first answer and its level before and after
+let tally; // the session so far: when it began, its new words, each card's first answer and its level before and after, its sentences and how many are done
 
 // The day turns at 4 am, so a late session counts for the day it began.
 const today = () => new Date(Date.now() - 4 * 3600e3).toLocaleDateString('sv');
@@ -79,7 +80,9 @@ function route() {
 function begin() {
   audio.resume();
   location.hash = 'study';
-  tally = { start: Date.now(), met: words, cards: new Map() };
+  // The sentences that end the session are written while its cards are asked.
+  const sentences = api('/sentences', { words: queue.map(c => [c.word, c.gloss]) }).then(res => res.json()).then(lines => (soon(lines), lines));
+  tally = { start: Date.now(), met: words, cards: new Map(), sentences, said: 0 };
   $('session').hidden = false;
   $('summary').hidden = true;
   at = 0;
@@ -96,13 +99,24 @@ function meet() {
   say(run, [[card.ko, 'ko'], [card.en, 'en'], [card.ko, 'ko']]);
 }
 
-function next() {
+async function next() {
   silence();
   card = queue.shift();
+  if (!card && tally.sentences) { // the cards are done, so the sentences follow, Korean first
+    const turn = run;
+    $('grade').hidden = true; // in case they are still being written
+    const lines = await tally.sentences;
+    if (turn !== run) return; // the session was left while they were written
+    queue = lines.map(line => ({ ...line, word: line.ko, front: 'ko', sentence: true }));
+    tally.sentences = null;
+    card = queue.shift();
+  }
   if (!card) return summary();
-  const mine = run, [q] = show(card.front === 'ko' ? ['ko', 'en'] : ['en', 'ko'], '', 'ask', words.length + tally.cards.size, queue.length + 1);
+  const tag = card.sentence ? `Sentence · ${tally.said + 1} of ${tally.said + queue.length + 1}` : '';
+  const mine = run, [q] = show(card.front === 'ko' ? ['ko', 'en'] : ['en', 'ko'], tag, 'ask', words.length + tally.cards.size + tally.said, queue.length + 1);
   soon(queue);
-  say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, (config.think.seconds + length * config.think.times) * 1000, true); });
+  const slow = card.sentence ? config.sentences.think : 1;
+  say(mine, [[card[q], q]]).then(length => { if (mine === run) timer = setTimeout(reveal, (config.think.seconds + length * config.think.times) * slow * 1000, true); });
 }
 
 // Fills in the card, its controls and the progress so far; returns the card's two sides in the order asked.
@@ -113,6 +127,7 @@ function show([q, a], tag, controls, done, left) {
   $('back').lang = a;
   $('base').textContent = card.ko === card.word ? '' : `${card.word} · ${card.gloss}`;
   $('tag').textContent = tag;
+  if (tally.sentences) left += config.sentences.count; // still to come at the end
   shown = controls === 'meet';
   $('card').classList.toggle('shown', shown);
   for (const id of ['meet', 'ask', 'grade']) $(id).hidden = id !== controls;
@@ -148,6 +163,10 @@ function press(good) {
 async function answer(good) {
   const answered = card;
   silence();
+  if (answered.sentence) { // marked only to keep it active: nothing is saved
+    tally.said++;
+    return next();
+  }
   saving = true;
   const res = await api('/grade', { id: answered.id, good, day }).finally(() => { saving = false; });
   const { level } = await res.json();
