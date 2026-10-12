@@ -1,0 +1,586 @@
+{
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "max",
+  "background": "transparent",
+  "generated": "2026-10-12",
+  "sources": {
+    "hatchling": {
+      "file": "hatchling.png",
+      "prompt": "Input image: the adult roadrunner sprite sheet is the CHARACTER AND STYLE REFERENCE. Create a new sheet of its younger growth stage. Preserve the exact same illustration finish, palette, character family, six-cell layout, pose order and cell baselines. Change the anatomy to a newly hatched baby roadrunner: very round fluffy little body, oversized round head and big curious eye, short soft three-feather tuft, very short stubby tail, tiny beak and short legs. The same warm cinnamon and cream identity as the adult, with subtler small turquoise and rust eye patches. Cute without accessories, eggshells or text.\n\nUse case: stylized-concept.\nAsset type: production 2D animated pet sprite sheet for Paisano, a calm, elegant fitness app with a tiny desert garden.\nCreate ONE polished transparent PNG sprite sheet with EXACTLY six full-body sprites of the SAME adorable hatchling greater roadrunner character. Layout: exactly 3 columns and 2 rows, equal 512-by-512 pixel cells on a 1536-by-1024 canvas. No lines between cells. No text, labels, numbers, frame borders, decorations, backdrop, or ground shadow. All empty space must be genuinely transparent alpha, not a checkerboard painted in the image.\nArt direction: warm illustrated storybook game art, restrained gouache and colored-pencil texture inside crisp readable silhouettes, subtle dimensional shading, expressive and collectible, with craftsmanship and warmth. Not pixel art, not plastic 3D, not photorealistic. A charming original desert bird, not an existing cartoon character. Broad readable shapes suited to rendering at only 60-110 pixels in a browser.\nIdentity for this younger stage: apply the younger proportions above rather than the reference adult proportions; sandy cinnamon-brown plumage, cream throat and round belly, chestnut wing with a few cream feather marks, age-appropriate younger brown tail with cream tips, age-appropriate dark feather tuft or crest, age-appropriate younger charcoal beak, age-appropriate younger muted slate-blue legs, one large friendly dark eye with a tiny highlight. Tiny muted turquoise and terracotta skin patches just behind the eye. Friendly curious disposition. Full body including complete tail, beak, crest and toes must fit inside every cell. Bird always faces RIGHT, seen directly from the side. No outfits, accessories, text or floating symbols.\nComposition: consistent camera, lighting, character anatomy and scale in all six cells. In each cell the hips are over local x=260 and toes rest at local y=448. Keep the full silhouette inside local x=35..477 and y=50..455. Leave transparent padding around every sprite. The standing bird is about 380 px wide and 340 px tall. Do not enlarge the sleeping or pecking poses to fill their cells: preserve the same anatomical scale.\nThe six poses, in reading order:\nTOP LEFT: idle, standing upright, alert, eye open, wing folded, both feet resting.\nTOP MIDDLE: running contact pose A, body tipped slightly forward, near leg forward and far leg back, tail level. Same bird and scale.\nTOP RIGHT: running contact pose B, opposite leg positions, near leg back and far leg forward. Same bird and scale; this alternates with pose A.\nBOTTOM LEFT: feeding, legs planted at the baseline, head and neck lowered naturally, beak tip just above the ground ahead of the feet, eye open, tail slightly raised. A distinct believable pecking pose.\nBOTTOM MIDDLE: asleep, crouched gently over folded legs, closed eye, relaxed crest, head resting close to body, tail on the ground. Same character size as standing, not expanded.\nBOTTOM RIGHT: delighted, standing with slightly lifted wings and proud tall crest, happy gently closed eye, feet still at the baseline. Same character scale.\nPrioritize identity consistency, exact six-cell grid, genuine transparency and clean separated sprites. The illustration should feel at home beside cream paper, serif typography, sage green cactus and warm sand.\n",
+      "generation_id": "1c5b986a-7ec8-4fe1-98b0-ad8f0250444c",
+      "usage": {
+        "input_tokens": 2373,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 837
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7861
+      },
+      "boxes": [
+        {
+          "left": 110,
+          "top": 132,
+          "width": 344,
+          "height": 362,
+          "pixels": 48583
+        },
+        {
+          "left": 576,
+          "top": 160,
+          "width": 415,
+          "height": 328,
+          "pixels": 50540
+        },
+        {
+          "left": 1090,
+          "top": 164,
+          "width": 404,
+          "height": 325,
+          "pixels": 50700
+        },
+        {
+          "left": 75,
+          "top": 632,
+          "width": 377,
+          "height": 304,
+          "pixels": 49505
+        },
+        {
+          "left": 580,
+          "top": 686,
+          "width": 386,
+          "height": 241,
+          "pixels": 47255
+        },
+        {
+          "left": 1126,
+          "top": 560,
+          "width": 364,
+          "height": 376,
+          "pixels": 62012
+        }
+      ]
+    },
+    "chick": {
+      "file": "chick.png",
+      "prompt": "Input image: the adult roadrunner sprite sheet is the CHARACTER AND STYLE REFERENCE. Create a new sheet of its younger growth stage. Preserve the exact same illustration finish, palette, character family, six-cell layout, pose order and cell baselines. Change the anatomy to a young roadrunner chick: plump round body, large head, a small distinct dark crest, a short developing tail about one-third the adult tail length, small beak and slightly longer legs than a hatchling. Clearly halfway between a fluffy hatchling and a fledgling. Match the adult cinnamon, cream, slate-blue and tiny turquoise and rust eye patches.\n\nUse case: stylized-concept.\nAsset type: production 2D animated pet sprite sheet for Paisano, a calm, elegant fitness app with a tiny desert garden.\nCreate ONE polished transparent PNG sprite sheet with EXACTLY six full-body sprites of the SAME adorable chick greater roadrunner character. Layout: exactly 3 columns and 2 rows, equal 512-by-512 pixel cells on a 1536-by-1024 canvas. No lines between cells. No text, labels, numbers, frame borders, decorations, backdrop, or ground shadow. All empty space must be genuinely transparent alpha, not a checkerboard painted in the image.\nArt direction: warm illustrated storybook game art, restrained gouache and colored-pencil texture inside crisp readable silhouettes, subtle dimensional shading, expressive and collectible, with craftsmanship and warmth. Not pixel art, not plastic 3D, not photorealistic. A charming original desert bird, not an existing cartoon character. Broad readable shapes suited to rendering at only 60-110 pixels in a browser.\nIdentity for this younger stage: apply the younger proportions above rather than the reference adult proportions; sandy cinnamon-brown plumage, cream throat and round belly, chestnut wing with a few cream feather marks, age-appropriate younger brown tail with cream tips, age-appropriate dark feather tuft or crest, age-appropriate younger charcoal beak, age-appropriate younger muted slate-blue legs, one large friendly dark eye with a tiny highlight. Tiny muted turquoise and terracotta skin patches just behind the eye. Friendly curious disposition. Full body including complete tail, beak, crest and toes must fit inside every cell. Bird always faces RIGHT, seen directly from the side. No outfits, accessories, text or floating symbols.\nComposition: consistent camera, lighting, character anatomy and scale in all six cells. In each cell the hips are over local x=260 and toes rest at local y=448. Keep the full silhouette inside local x=35..477 and y=50..455. Leave transparent padding around every sprite. The standing bird is about 380 px wide and 340 px tall. Do not enlarge the sleeping or pecking poses to fill their cells: preserve the same anatomical scale.\nThe six poses, in reading order:\nTOP LEFT: idle, standing upright, alert, eye open, wing folded, both feet resting.\nTOP MIDDLE: running contact pose A, body tipped slightly forward, near leg forward and far leg back, tail level. Same bird and scale.\nTOP RIGHT: running contact pose B, opposite leg positions, near leg back and far leg forward. Same bird and scale; this alternates with pose A.\nBOTTOM LEFT: feeding, legs planted at the baseline, head and neck lowered naturally, beak tip just above the ground ahead of the feet, eye open, tail slightly raised. A distinct believable pecking pose.\nBOTTOM MIDDLE: asleep, crouched gently over folded legs, closed eye, relaxed crest, head resting close to body, tail on the ground. Same character size as standing, not expanded.\nBOTTOM RIGHT: delighted, standing with slightly lifted wings and proud tall crest, happy gently closed eye, feet still at the baseline. Same character scale.\nPrioritize identity consistency, exact six-cell grid, genuine transparency and clean separated sprites. The illustration should feel at home beside cream paper, serif typography, sage green cactus and warm sand.\n",
+      "generation_id": "3d3c024a-f1ad-48cc-a53b-37a563c17e24",
+      "usage": {
+        "input_tokens": 2372,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 836
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7860
+      },
+      "boxes": [
+        {
+          "left": 109,
+          "top": 106,
+          "width": 361,
+          "height": 387,
+          "pixels": 48240
+        },
+        {
+          "left": 566,
+          "top": 143,
+          "width": 429,
+          "height": 337,
+          "pixels": 48303
+        },
+        {
+          "left": 1112,
+          "top": 137,
+          "width": 405,
+          "height": 350,
+          "pixels": 46725
+        },
+        {
+          "left": 96,
+          "top": 647,
+          "width": 400,
+          "height": 305,
+          "pixels": 47628
+        },
+        {
+          "left": 582,
+          "top": 722,
+          "width": 400,
+          "height": 221,
+          "pixels": 44410
+        },
+        {
+          "left": 1129,
+          "top": 554,
+          "width": 378,
+          "height": 399,
+          "pixels": 58355
+        }
+      ]
+    },
+    "fledgling": {
+      "file": "fledgling.png",
+      "prompt": "Input image: the adult roadrunner sprite sheet is the CHARACTER AND STYLE REFERENCE. Create a new sheet of its younger growth stage. Preserve the exact same illustration finish, palette, character family, six-cell layout, pose order and cell baselines. Change the anatomy to an adolescent fledgling roadrunner: slightly bigger head relative to body than the adult, developing long tail about two-thirds adult length, medium crest, longer legs and medium-length beak. Still youthful and round but visibly approaching the adult proportions. Match the adult cinnamon, cream, slate-blue and tiny turquoise and rust eye patches.\n\nUse case: stylized-concept.\nAsset type: production 2D animated pet sprite sheet for Paisano, a calm, elegant fitness app with a tiny desert garden.\nCreate ONE polished transparent PNG sprite sheet with EXACTLY six full-body sprites of the SAME adorable fledgling greater roadrunner character. Layout: exactly 3 columns and 2 rows, equal 512-by-512 pixel cells on a 1536-by-1024 canvas. No lines between cells. No text, labels, numbers, frame borders, decorations, backdrop, or ground shadow. All empty space must be genuinely transparent alpha, not a checkerboard painted in the image.\nArt direction: warm illustrated storybook game art, restrained gouache and colored-pencil texture inside crisp readable silhouettes, subtle dimensional shading, expressive and collectible, with craftsmanship and warmth. Not pixel art, not plastic 3D, not photorealistic. A charming original desert bird, not an existing cartoon character. Broad readable shapes suited to rendering at only 60-110 pixels in a browser.\nIdentity for this younger stage: apply the younger proportions above rather than the reference adult proportions; sandy cinnamon-brown plumage, cream throat and round belly, chestnut wing with a few cream feather marks, age-appropriate younger brown tail with cream tips, age-appropriate dark feather tuft or crest, age-appropriate younger charcoal beak, age-appropriate younger muted slate-blue legs, one large friendly dark eye with a tiny highlight. Tiny muted turquoise and terracotta skin patches just behind the eye. Friendly curious disposition. Full body including complete tail, beak, crest and toes must fit inside every cell. Bird always faces RIGHT, seen directly from the side. No outfits, accessories, text or floating symbols.\nComposition: consistent camera, lighting, character anatomy and scale in all six cells. In each cell the hips are over local x=260 and toes rest at local y=448. Keep the full silhouette inside local x=35..477 and y=50..455. Leave transparent padding around every sprite. The standing bird is about 380 px wide and 340 px tall. Do not enlarge the sleeping or pecking poses to fill their cells: preserve the same anatomical scale.\nThe six poses, in reading order:\nTOP LEFT: idle, standing upright, alert, eye open, wing folded, both feet resting.\nTOP MIDDLE: running contact pose A, body tipped slightly forward, near leg forward and far leg back, tail level. Same bird and scale.\nTOP RIGHT: running contact pose B, opposite leg positions, near leg back and far leg forward. Same bird and scale; this alternates with pose A.\nBOTTOM LEFT: feeding, legs planted at the baseline, head and neck lowered naturally, beak tip just above the ground ahead of the feet, eye open, tail slightly raised. A distinct believable pecking pose.\nBOTTOM MIDDLE: asleep, crouched gently over folded legs, closed eye, relaxed crest, head resting close to body, tail on the ground. Same character size as standing, not expanded.\nBOTTOM RIGHT: delighted, standing with slightly lifted wings and proud tall crest, happy gently closed eye, feet still at the baseline. Same character scale.\nPrioritize identity consistency, exact six-cell grid, genuine transparency and clean separated sprites. The illustration should feel at home beside cream paper, serif typography, sage green cactus and warm sand.\n",
+      "generation_id": "cd7cd265-2b6a-4a55-ad71-bbaebccd3402",
+      "usage": {
+        "input_tokens": 2365,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 829
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7853
+      },
+      "boxes": [
+        {
+          "left": 30,
+          "top": 83,
+          "width": 498,
+          "height": 407,
+          "pixels": 50967
+        },
+        {
+          "left": 534,
+          "top": 131,
+          "width": 487,
+          "height": 351,
+          "pixels": 47858
+        },
+        {
+          "left": 1039,
+          "top": 130,
+          "width": 487,
+          "height": 357,
+          "pixels": 46737
+        },
+        {
+          "left": 43,
+          "top": 583,
+          "width": 454,
+          "height": 382,
+          "pixels": 49553
+        },
+        {
+          "left": 538,
+          "top": 726,
+          "width": 472,
+          "height": 224,
+          "pixels": 47390
+        },
+        {
+          "left": 1052,
+          "top": 538,
+          "width": 466,
+          "height": 430,
+          "pixels": 62663
+        }
+      ]
+    },
+    "roadrunner": {
+      "file": "roadrunner.png",
+      "prompt": "Use case: stylized-concept.\nAsset type: production 2D animated pet sprite sheet for Paisano, a calm, elegant fitness app with a tiny desert garden.\nCreate ONE polished transparent PNG sprite sheet with EXACTLY six full-body sprites of the SAME adorable adult greater roadrunner character. Layout: exactly 3 columns and 2 rows, equal 512-by-512 pixel cells on a 1536-by-1024 canvas. No lines between cells. No text, labels, numbers, frame borders, decorations, backdrop, or ground shadow. All empty space must be genuinely transparent alpha, not a checkerboard painted in the image.\nArt direction: warm illustrated storybook game art, restrained gouache and colored-pencil texture inside crisp readable silhouettes, subtle dimensional shading, expressive and collectible, with craftsmanship and warmth. Not pixel art, not plastic 3D, not photorealistic. A charming original desert bird, not an existing cartoon character. Broad readable shapes suited to rendering at only 60-110 pixels in a browser.\nIdentity: sandy cinnamon-brown plumage, cream throat and round belly, chestnut wing with a few cream feather marks, long elegant brown tail with cream tips, dark upright feather crest, long charcoal beak, slender muted slate-blue legs, one large friendly dark eye with a tiny highlight. Tiny muted turquoise and terracotta skin patches just behind the eye. Friendly curious disposition. Full body including complete tail, beak, crest and toes must fit inside every cell. Bird always faces RIGHT, seen directly from the side. No outfits, accessories, text or floating symbols.\nComposition: consistent camera, lighting, character anatomy and scale in all six cells. In each cell the hips are over local x=260 and toes rest at local y=448. Keep the full silhouette inside local x=35..477 and y=50..455. Leave transparent padding around every sprite. The standing bird is about 380 px wide and 340 px tall. Do not enlarge the sleeping or pecking poses to fill their cells: preserve the same anatomical scale.\nThe six poses, in reading order:\nTOP LEFT: idle, standing upright, alert, eye open, wing folded, both feet resting.\nTOP MIDDLE: running contact pose A, body tipped slightly forward, near leg forward and far leg back, tail level. Same bird and scale.\nTOP RIGHT: running contact pose B, opposite leg positions, near leg back and far leg forward. Same bird and scale; this alternates with pose A.\nBOTTOM LEFT: feeding, legs planted at the baseline, head and neck lowered naturally, beak tip just above the ground ahead of the feet, eye open, tail slightly raised. A distinct believable pecking pose.\nBOTTOM MIDDLE: asleep, crouched gently over folded legs, closed eye, relaxed crest, head resting close to body, tail on the ground. Same character size as standing, not expanded.\nBOTTOM RIGHT: delighted, standing with slightly lifted wings and proud tall crest, happy gently closed eye, feet still at the baseline. Same character scale.\nPrioritize identity consistency, exact six-cell grid, genuine transparency and clean separated sprites. The illustration should feel at home beside cream paper, serif typography, sage green cactus and warm sand.\n",
+      "generation_id": "80cf2424-27cc-4ec9-9188-81b1d16f226f",
+      "usage": {
+        "input_tokens": 669,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 669
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 6157
+      },
+      "boxes": [
+        {
+          "left": 35,
+          "top": 66,
+          "width": 486,
+          "height": 408,
+          "pixels": 49967
+        },
+        {
+          "left": 524,
+          "top": 134,
+          "width": 494,
+          "height": 325,
+          "pixels": 42436
+        },
+        {
+          "left": 1026,
+          "top": 128,
+          "width": 500,
+          "height": 334,
+          "pixels": 45093
+        },
+        {
+          "left": 39,
+          "top": 567,
+          "width": 454,
+          "height": 398,
+          "pixels": 48656
+        },
+        {
+          "left": 533,
+          "top": 731,
+          "width": 471,
+          "height": 217,
+          "pixels": 43646
+        },
+        {
+          "left": 1024,
+          "top": 537,
+          "width": 491,
+          "height": 429,
+          "pixels": 63359
+        }
+      ]
+    },
+    "creatures": {
+      "file": "creatures.png",
+      "prompt": "Use case: stylized-concept.\nAsset type: transparent 2D sprite sheet for Paisano's small Sonoran-desert garden game.\nInput image: the roadrunner sprite sheet is STYLE REFERENCE ONLY. Match its warm illustrated game-art finish, soft gouache texture, restrained colors, crisp readable shapes and gentle charm. Do not include any bird in this output.\nCreate EXACTLY sixteen distinct isolated sprites on a genuinely transparent 1536 x 1536 PNG, in an EXACT 4-column by 4-row regular grid of 384 x 384 cells. No text, labels, grid lines, borders, floating decorations, background or ground shadows. Every creature is a full body in side profile FACING RIGHT, including intact tails, feet, feelers and wings. Keep the entire sprite inside its own cell with generous transparent padding. Animals should be recognizably different species; elegant stylization, not monster characters and not photorealistic. Give each a clear silhouette that reads at 24-60px. Fit each subject into the middle 80% of its cell, with the lowest foot/body point at local y=325. Do not stretch long animals to fill the cell vertically. Match the bird reference's lighting and palette.\nCell contents in reading order:\nRow 1 column 1: black desert stink beetle, oval matte black shell, six fine legs, short antennae, side view.\nRow 1 column 2: side-blotched lizard, small sandy brown lizard with one characteristic dark patch just behind the front leg, slim long tail, low posture, four legs.\nRow 1 column 3: desert grassland whiptail lizard, slender dark brown body with clear cream lengthwise stripes and a very long fine tail, four legs.\nRow 1 column 4: zebra-tailed lizard, pale sand body, upright curving tail with strong alternating black and cream bands, four legs.\nRow 2 column 1: regal horned lizard, squat broad flat sandy body, short tail, crown of small horns, four short legs. Friendly but recognizable.\nRow 2 column 2: giant desert centipede, elongated burgundy and brown segmented body, many paired slender yellow legs, dark reddish head facing right. Not a worm.\nRow 2 column 3: Arizona bark scorpion, small pale golden tan, two slender pincers, eight walking legs, arched segmented tail with stinger. A clear side silhouette.\nRow 2 column 4: western diamondback rattlesnake, loosely coiled dusty taupe snake with dark diamond markings, triangular head raised facing right, black and cream tail bands and a small tan rattle clearly visible behind. Calm pose, no tongue or attack.\nRow 3 column 1: desert clicker grasshopper, muted sage and sand, folded wings, powerful angular back legs, short feelers.\nRow 3 column 2: Apache cicada, brown ochre insect, large clear veined wings folded rooflike over body, big dark eye, six legs.\nRow 3 column 3: white-lined sphinx CATERPILLAR (not the moth), soft green body with yellow side dots and a small orange horn at the rear, crawling right.\nRow 3 column 4: cactus longhorn beetle, matte black elongated beetle with distinctly very long curved antennae, six legs.\nRow 4 column 1: Couch's spadefoot toad, plump light olive body with dark irregular olive markings, golden eye and vertical pupil, squat on four legs facing right.\nRow 4 column 2: palo verde beetle, large russet-brown longhorn beetle with glossy wing covers, long segmented feelers, six stout legs.\nRow 4 column 3: one charming speckled cream roadrunner EGG, upright, whole, warm cinnamon flecks, no crack, no nest, no face.\nRow 4 column 4: one plump sunflower SEED, charcoal brown hull with one creamy stripe, simple recognizable silhouette, slightly tilted.\nThe reference establishes a cohesive original storybook universe. Actual transparent alpha. Exactly one subject per cell and exactly sixteen cells.\n",
+      "generation_id": "6381dcbf-464d-405a-a1e5-961c86079181",
+      "usage": {
+        "input_tokens": 2411,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 875
+        },
+        "output_tokens": 10044,
+        "output_tokens_details": {
+          "image_tokens": 10044,
+          "text_tokens": 0
+        },
+        "total_tokens": 12455
+      },
+      "boxes": [
+        {
+          "left": 47,
+          "top": 189,
+          "width": 318,
+          "height": 173,
+          "pixels": 24158
+        },
+        {
+          "left": 399,
+          "top": 150,
+          "width": 367,
+          "height": 191,
+          "pixels": 18568
+        },
+        {
+          "left": 781,
+          "top": 134,
+          "width": 370,
+          "height": 209,
+          "pixels": 21252
+        },
+        {
+          "left": 1205,
+          "top": 60,
+          "width": 303,
+          "height": 292,
+          "pixels": 23897
+        },
+        {
+          "left": 36,
+          "top": 491,
+          "width": 339,
+          "height": 220,
+          "pixels": 35607
+        },
+        {
+          "left": 391,
+          "top": 541,
+          "width": 390,
+          "height": 181,
+          "pixels": 22576
+        },
+        {
+          "left": 815,
+          "top": 443,
+          "width": 333,
+          "height": 273,
+          "pixels": 25853
+        },
+        {
+          "left": 1181,
+          "top": 469,
+          "width": 327,
+          "height": 244,
+          "pixels": 55852
+        },
+        {
+          "left": 30,
+          "top": 843,
+          "width": 346,
+          "height": 245,
+          "pixels": 32727
+        },
+        {
+          "left": 384,
+          "top": 922,
+          "width": 375,
+          "height": 160,
+          "pixels": 35207
+        },
+        {
+          "left": 790,
+          "top": 915,
+          "width": 364,
+          "height": 151,
+          "pixels": 30014
+        },
+        {
+          "left": 1168,
+          "top": 818,
+          "width": 343,
+          "height": 293,
+          "pixels": 29917
+        },
+        {
+          "left": 49,
+          "top": 1219,
+          "width": 301,
+          "height": 225,
+          "pixels": 44768
+        },
+        {
+          "left": 413,
+          "top": 1184,
+          "width": 368,
+          "height": 277,
+          "pixels": 37723
+        },
+        {
+          "left": 891,
+          "top": 1209,
+          "width": 180,
+          "height": 244,
+          "pixels": 33494
+        },
+        {
+          "left": 1249,
+          "top": 1248,
+          "width": 198,
+          "height": 199,
+          "pixels": 26563
+        }
+      ]
+    },
+    "plants": {
+      "file": "plants.png",
+      "prompt": "Use case: stylized-concept.\nAsset type: transparent 2D plant sprite sheet for Paisano's Sonoran-desert garden.\nInput image: the roadrunner sprite sheet is STYLE REFERENCE ONLY. Match its warm, charming gouache and pencil game illustration, gently textured surfaces, crisp silhouettes, restrained earthy palette and soft dimensional shading. No bird in this output.\nCreate EXACTLY six distinct isolated plant sprites on a genuinely transparent 1536 x 1024 PNG arranged in EXACTLY 3 columns and 2 rows of 512 x 512 cells. No words, labels, borders, grid lines, pots, backdrop, soil platforms or ground shadows. Plants emerge from a narrow flat base, no exposed roots. Full plant including all branches fits inside each cell with clear transparent padding. Orthographic side view, suitable for a flat side-view game garden. Each sprite centered horizontally with its base at local y=448. Occupy roughly 80% of cell height; keep actual silhouette proportions natural, do not stretch.\nIn reading order:\nTOP LEFT: a small graceful clump of yellow desert wildflowers, eight butter-yellow daisy-like blossoms at staggered heights on slim sage stems, small elongated muted green leaves. Some buds. Readable simple flower heads.\nTOP MIDDLE: a rounded airy creosote bush, several woody branching stems, clusters of small paired olive leaves, a few tiny gold blossoms. Naturally open between branches, not a solid green ball.\nTOP RIGHT: a prickly pear cactus, five thick rounded oval sage-green pads arranged in an asymmetrical cluster, fine restrained cream spines, two muted coral pink blossoms and one deep reddish fruit.\nBOTTOM LEFT: a small mesquite tree, warm twisting split brown trunk, wide airy umbrella canopy with feathery muted olive leaves, branches visible through several openings. Keep trunk rooted at the bottom and full canopy inside the cell.\nBOTTOM MIDDLE: one tiny sprout with a curved green stem and just two fresh leaves. Clean gentle silhouette, no dirt mound or pot.\nBOTTOM RIGHT: one mature saguaro cactus with tall ribbed sage-green central stem, one upturned arm on each side at unequal heights, a single small cream and muted coral flower at the crown. Full cactus base visible.\nMuted sage, olive, ochre, warm brown and restrained coral, harmonious with cream paper and sand. Favor beautiful readable silhouettes over excessive detail. Actual transparent alpha and exactly six isolated sprites.\n",
+      "generation_id": "b652b1f2-974e-4f37-9c80-74aa20777817",
+      "usage": {
+        "input_tokens": 2049,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 513
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7537
+      },
+      "boxes": [
+        {
+          "left": 117,
+          "top": 65,
+          "width": 311,
+          "height": 422,
+          "pixels": 52685
+        },
+        {
+          "left": 542,
+          "top": 59,
+          "width": 452,
+          "height": 426,
+          "pixels": 75942
+        },
+        {
+          "left": 1106,
+          "top": 42,
+          "width": 360,
+          "height": 446,
+          "pixels": 77789
+        },
+        {
+          "left": 28,
+          "top": 545,
+          "width": 570,
+          "height": 428,
+          "pixels": 90919
+        },
+        {
+          "left": 663,
+          "top": 662,
+          "width": 250,
+          "height": 307,
+          "pixels": 14630
+        },
+        {
+          "left": 1170,
+          "top": 534,
+          "width": 248,
+          "height": 445,
+          "pixels": 51556
+        }
+      ]
+    }
+  },
+  "sprites": {
+    "c-stink": {
+      "file": "assets/c-stink.webp",
+      "width": 22,
+      "height": 12.09
+    },
+    "c-uta": {
+      "file": "assets/c-uta.webp",
+      "width": 32,
+      "height": 16.82
+    },
+    "c-whiptail": {
+      "file": "assets/c-whiptail.webp",
+      "width": 38,
+      "height": 21.64
+    },
+    "c-zebra": {
+      "file": "assets/c-zebra.webp",
+      "width": 30,
+      "height": 28.93
+    },
+    "c-horned": {
+      "file": "assets/c-horned.webp",
+      "width": 30,
+      "height": 19.59
+    },
+    "c-centipede": {
+      "file": "assets/c-centipede.webp",
+      "width": 38,
+      "height": 17.84
+    },
+    "c-scorpion": {
+      "file": "assets/c-scorpion.webp",
+      "width": 30,
+      "height": 24.66
+    },
+    "c-rattler": {
+      "file": "assets/c-rattler.webp",
+      "width": 34,
+      "height": 25.47
+    },
+    "c-clicker": {
+      "file": "assets/c-clicker.webp",
+      "width": 26,
+      "height": 18.5
+    },
+    "c-cicada": {
+      "file": "assets/c-cicada.webp",
+      "width": 28,
+      "height": 12.12
+    },
+    "c-sphinx": {
+      "file": "assets/c-sphinx.webp",
+      "width": 27,
+      "height": 11.37
+    },
+    "c-longhorn": {
+      "file": "assets/c-longhorn.webp",
+      "width": 27,
+      "height": 23.11
+    },
+    "c-spadefoot": {
+      "file": "assets/c-spadefoot.webp",
+      "width": 28,
+      "height": 21.02
+    },
+    "c-paloverde": {
+      "file": "assets/c-paloverde.webp",
+      "width": 28,
+      "height": 21.15
+    },
+    "egg": {
+      "file": "assets/egg.webp",
+      "width": 25,
+      "height": 33.7
+    },
+    "seed": {
+      "file": "assets/seed.webp",
+      "width": 6,
+      "height": 6.03
+    },
+    "p-flowers": {
+      "file": "assets/p-flowers.webp",
+      "width": 20.7,
+      "height": 28
+    },
+    "p-creosote": {
+      "file": "assets/p-creosote.webp",
+      "width": 36.06,
+      "height": 34
+    },
+    "p-prickly": {
+      "file": "assets/p-prickly.webp",
+      "width": 35.59,
+      "height": 44
+    },
+    "p-mesquite": {
+      "file": "assets/p-mesquite.webp",
+      "width": 75.74,
+      "height": 57
+    },
+    "sprout": {
+      "file": "assets/sprout.webp",
+      "width": 8.17,
+      "height": 10
+    },
+    "saguaro": {
+      "file": "assets/saguaro.webp",
+      "width": 29.18,
+      "height": 52
+    }
+  },
+  "bird": {
+    "cell": 256,
+    "columns": 6,
+    "stages": [
+      "hatchling",
+      "chick",
+      "fledgling",
+      "roadrunner"
+    ],
+    "poses": [
+      "idle",
+      "run-a",
+      "run-b",
+      "peck",
+      "sleep",
+      "happy"
+    ],
+    "tops": [
+      -63,
+      -67.5,
+      -70.875,
+      -71.25
+    ]
+  }
+}
