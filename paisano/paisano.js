@@ -4,7 +4,7 @@
 // garden for it to stalk. All of it is worked out from one log of snacks, feedings, hunts and plantings, which the
 // worker keeps.
 
-import config from './config.js?v=6';
+import config from './config.js?v=7';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -145,7 +145,6 @@ function odds() {
 
 // The wheel: it's drawn with today's odds, a winner is drawn by them, and the wheel spins to land on it.
 function spin() {
-  audio.resume();
   const chances = odds(), total = chances.reduce((s, [, g]) => s + g, 0);
   let r = Math.random() * total, won = 0;
   while (r > chances[won][1]) r -= chances[won++][1];
@@ -296,7 +295,7 @@ function review(completed = false) {
       const label = document.createElement('label');
       label.textContent = x.hold === 'pair' ? 'lb each' : 'lb';
       const weight = label.appendChild(document.createElement('select'));
-      weight.setAttribute('aria-label', `Set ${i + 1} weight`);
+      weight.setAttribute('aria-label', `${x.sides ? i ? 'Right' : 'Left' : `Set ${i + 1}`} weight`);
       weight.replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(w, w)));
       weight.value = v.w;
       weight.onchange = () => { v.w = +weight.value; saveSession(); };
@@ -347,7 +346,8 @@ function sync() {
     $('sync').textContent = 'Syncing…';
     log = JSON.parse(localStorage.getItem('paisano.log') || '[]');
     do {
-      const sent = outbox().slice(0, 40), since = log.at(-1)?.seq ?? 0;
+      // Workouts must arrive before their hunts, even when the outbox spans several batches.
+      const sent = outbox().sort((a, b) => (b.kind === 'snack') - (a.kind === 'snack') || a.at - b.at).slice(0, 40), since = log.at(-1)?.seq ?? 0;
       const got = await (await api('/sync', { since, events: sent })).json();
       log = [...new Map([...log, ...got].map(e => [e.id, e])).values()].sort((a, b) => a.seq - b.seq);
       // Persist the response before removing the outbox. Replay deduplicates a crash between these writes.
@@ -428,6 +428,7 @@ function tick() {
 
 // History: daily coverage, weekly sets, and observed reps and weights.
 function chronicle() {
+  const selected = $('calendar').querySelector('.on')?.dataset.day, focused = document.activeElement.dataset.day;
   const days = Object.entries(st.days), snacks = days.reduce((s, [, d]) => s + d.snacks.length, 0);
   $('totals').textContent = snacks ? `${snacks} snack${snacks > 1 ? 's' : ''} on ${days.length} day${days.length > 1 ? 's' : ''}.`
     : 'Nothing logged yet.';
@@ -444,19 +445,24 @@ function chronicle() {
       const x = d ? AREAS.reduce((sum, a) => sum + Math.min(config.sets, d.sets[a] || 0), 0) / (config.sets * AREAS.length) : 0;
       button.style.setProperty('--x', x);
       button.dataset.x = x;
+      button.dataset.day = key;
+      button.classList.toggle('on', key === selected);
       button.hidden = date > now;
       button.title = `${date.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}: ${d ? `${d.snacks.length} snack${d.snacks.length > 1 ? 's' : ''}, ${Object.values(d.sets).filter(n => n > 0).length} areas worked` : 'nothing'}`;
       button.setAttribute('aria-label', button.title);
       button.onclick = () => {
         for (const b of $('calendar').querySelectorAll('.on')) b.classList.remove('on');
         button.classList.add('on');
-        $('day').textContent = button.title + (d ? ` (${d.snacks.map(s => `${X[s.x].name}: ${s.rounds ? s.rounds.map(v => `${v.r} reps${v.w === null ? '' : ` at ${v.w} lb`}`).join(' / ') : 'target only (older entry)'}`).join('; ')})` : '');
+        $('day').textContent = button.title + (d ? ` (${d.snacks.map(s => `${X[s.x].name}: ${s.rounds ? s.rounds.map(v => v.r ? `${v.r} reps${v.w === null ? '' : ` at ${v.w} lb${X[s.x].hold === 'pair' ? ' each' : ''}`}` : 'skipped').join(' / ') : 'target only (older entry)'}`).join('; ')})` : '');
       };
       cells.push(button);
     }
   }
   $('calendar').replaceChildren(...cells);
+  if (!selected) $('calendar').scrollLeft = $('calendar').scrollWidth;
   $('day').textContent = '';
+  $('calendar').querySelector('.on')?.click();
+  if (focused) $('calendar').querySelector(`[data-day="${focused}"]`)?.focus({ preventScroll: true });
   const week = {};
   for (let k = 0; k < 7; k++) {
     const date = new Date(now);
@@ -490,6 +496,7 @@ function chronicle() {
 function route() {
   const hash = location.hash.slice(1);
   if (!password && hash) { history.replaceState(null, '', location.pathname); return route(); }
+  if (hunt && (!password || hash)) end();
   if (hash !== 'wheel') spun = null;
   if (hash !== 'snack' && snack) stop();
   if ((hash === 'wheel' && !spun) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
@@ -528,7 +535,7 @@ function desert() {
     li.querySelector('small').textContent = rains === undefined ? `Grows with ${p.rains} rain${p.rains > 1 ? 's' : ''}, then brings a visitor` : rains < p.rains ? `A sprout: ${rains} of ${p.rains} rain${p.rains > 1 ? 's' : ''}` : `Grown, and brings ${brings}`;
     if (rains === undefined) {
       const button = Object.assign(document.createElement('button'), { textContent: `Plant · ${p.cost}`, disabled: seeds < p.cost });
-      button.setAttribute('aria-label', button.title);
+      button.setAttribute('aria-label', `Plant ${p.name.toLowerCase()} for ${p.cost} seeds`);
       button.onclick = () => { record('plant', { p: p.id }); toast(`Planted ${p.name.toLowerCase()}. It grows with each rain.`); };
       li.querySelector('em').replaceWith(button);
     }
@@ -881,6 +888,7 @@ for (const half of document.querySelectorAll('#today .half')) {
 }
 
 $('spin').onclick = () => {
+  audio.resume();
   const saved = sessionStorage.getItem('paisano.snack');
   saved ? begin(X[JSON.parse(saved).x], JSON.parse(saved)) : spin();
 };
@@ -906,7 +914,7 @@ $('setup').onsubmit = e => {
   stayAwake();
 };
 $('pause').onclick = () => {
-  if (snack.start === null) { snack.start = Date.now(); $('pause').textContent = 'Pause'; stayAwake(); }
+  if (snack.start === null) { audio.resume(); snack.start = Date.now(); $('pause').textContent = 'Pause'; stayAwake(); }
   else { snack.elapsed += Date.now() - snack.start; snack.start = null; $('pause').textContent = 'Resume'; snack.lock?.release(); }
   saveSession();
 };
@@ -921,6 +929,7 @@ for (const id of ['bird', 'visitor']) $(id).onkeydown = e => { if (e.key === 'En
 
 addEventListener('keydown', e => {
   if (e.key === 'Escape' && location.hash) location.hash = '';
+  else if (e.key === 'Escape' && hunt) end();
   if (e.key === ' ' && hunt && !location.hash) { e.preventDefault(); step(); }
 });
 $('lock').onsubmit = e => {
@@ -934,7 +943,10 @@ $('lock').onsubmit = e => {
 $('version').textContent = `v${config.version}`;
 
 // Sync on reconnect and tab return. Never replace a running workout with an automatic reload.
-document.addEventListener('visibilitychange', () => { if (!document.hidden && password) { sync(); stayAwake(); } });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && hunt) end();
+  if (!document.hidden && password) { sync(); stayAwake(); }
+});
 addEventListener('online', () => { if (password) sync(); });
 addEventListener('storage', e => {
   if (e.key === 'paisano.log' || e.key?.startsWith('paisano.outbox.')) {

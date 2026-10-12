@@ -216,7 +216,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .totals { margin: 4px 0 18px; color: var(--ink-2); }
 .calendar { display: grid; grid-auto-flow: column; grid-template-rows: auto repeat(7, 1fr); gap: 3px; justify-content: start; overflow-x: auto; padding-bottom: 4px; }
 .calendar span { font-size: 11px; color: var(--ink-3); white-space: nowrap; width: 0; }
-.calendar button { width: 15px; height: 15px; border-radius: 3px; background: color-mix(in oklab, var(--accent) calc(var(--x) * 100%), var(--muscle)); }
+.calendar button { width: 24px; height: 24px; border-radius: 3px; background: color-mix(in oklab, var(--accent) calc(var(--x) * 100%), var(--muscle)); }
 .calendar button[data-x="0"] { background: var(--rule); }
 .calendar button.on { outline: 1.5px solid var(--ink); outline-offset: 1px; }
 .day { min-height: 1.4em; margin: 10px 0 0; font-size: 15px; color: var(--ink-2); }

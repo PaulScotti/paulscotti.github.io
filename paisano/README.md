@@ -42,8 +42,9 @@ At that limit, the next available PowerBlock weight is suggested with the initia
 weight one setting, or removes a rep when no lighter weight is available. Discomfort and skipped sets do not
 trigger progression. These are simple app rules, not a validated strength estimator; every suggestion is editable.
 
-History shows daily activity, seven-day muscle coverage, actual sets, and weight or rep trends. It does not infer
-bodyweight, a one-rep maximum, or a percentage strength gain. Older entries stored targets only and are labeled
+History shows daily activity, seven-day muscle coverage, actual sets, and weight or rep trends. The calendar opens
+at the most recent days, and the selected day stays open when the log syncs. It does not infer bodyweight, a one-rep
+maximum, or a percentage strength gain. Older entries stored targets only and are labeled
 accordingly. Their original set credits and earned rewards remain intact, and the last prescription stays as the
 starting suggestion until actual work is recorded.
 
@@ -54,7 +55,8 @@ a day. Rain grows planted wildflowers, creosote, prickly pear and mesquite, whic
 Older whole-body and personal-best rewards are preserved when replaying the historical log.
 
 Feed seeds to hatch and grow Paisano. Its belly holds three and digests one per hour. Tap a visitor to stalk it;
-step while it looks away and wait while it looks up. Catches feed Paisano and build Speed, Stealth and Nerve.
+step while it looks away and wait while it looks up. Escape, another screen, or switching tabs ends the hunt
+so you can try the same visitor again. Catches feed Paisano and build Speed, Stealth and Nerve.
 The Desert page has the plants, traits and field guide. Rest days never remove growth or earned traits.
 
 The bird, creatures, plants, egg and seed were generated through the OpenAI Images API with
@@ -81,6 +83,7 @@ with the browser's animation API. The interface uses Libron from `../ebis/fonts`
 
 The Worker stores an append-only D1 event log. Each unsent event has its own localStorage key; acknowledged events
 are cached before the outbox is cleared. A Web Lock serializes same-browser sync, and event IDs deduplicate retries.
+Workouts sync before the hunts that reference them, including across batches after a long offline stretch.
 Sync errors remain visible with a retry button. Reconnects and tab returns retry automatically. New snacks store
 the completion time, local training date (4 am boundary) and hour so delayed confirmation or travel does not
 regroup them or redraw their visitor.
