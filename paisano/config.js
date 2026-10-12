@@ -14,7 +14,7 @@ export default {
 
   // Three snacks bring rain once a day. best and whole preserve rewards from versions 1–3.
   rainAt: 3,
-  seeds: { snack: 1, day: 3, best: 2, whole: 3 },
+  seeds: { snack: 1, day: 3, pachinko: 1, best: 2, whole: 3 },
 
   // Paisano grows as it eats: the food eaten by each stage, a seed being one and a creature its size.
   stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
@@ -137,5 +137,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 7,
+  version: 8,
 };

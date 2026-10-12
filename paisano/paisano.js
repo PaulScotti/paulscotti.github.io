@@ -1,10 +1,8 @@
-// Paisano: two minutes of exercise whenever you like, about once an hour. A wheel picks the exercise, each slice
-// sized by what it would add to the parts of the body today hasn't worked yet; the dose comes from what that exercise
-// has learned about you; and every snack earns seeds for Paisano, a roadrunner, and brings a desert creature to its
-// garden for it to stalk. All of it is worked out from one log of snacks, feedings, hunts and plantings, which the
-// worker keeps.
+// Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
+// Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=7';
+import config from './config.js?v=8';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=8';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -31,7 +29,7 @@ const done = sets => AREAS.filter(a => sets[a] >= config.sets).length;
 const stageOf = food => config.stages.findLastIndex(([, k]) => food >= k);
 const level = points => Math.floor((Math.sqrt(8 * points + 1) - 1) / 2); // level n at n(n + 1) / 2 points
 const levels = () => Object.fromEntries(Object.keys(config.traits).map(t => [t, level(st.traits[t])]));
-let st = replay(), snack = null, spun = null, toasting = 0, renderedDay = dayOf(Date.now());
+let st = replay(), snack = null, board = null, toasting = 0, renderedDay = dayOf(Date.now());
 
 // Everything Paisano knows, from the log in time order: each exercise's recorded work, each day's
 // snacks, sets per area, seeds and rain; and Paisano's food, belly, traits, garden, field guide and visitor.
@@ -81,7 +79,7 @@ function replay() {
     if (!rounds && feel !== 'hard') m.best = Math.max(m.best, lift);
     const whole = before < AREAS.length && done(d.sets) === AREAS.length;
     const watered = rounds ? !d.rain && d.snacks.length + 1 >= config.rainAt : whole;
-    const seeds = rounds ? config.seeds.snack + (watered ? config.seeds.day : 0)
+    const seeds = rounds ? config.seeds.snack + (watered ? config.seeds.day : 0) + (e.data.prize === 'seed' ? config.seeds.pachinko : 0)
       : config.seeds.snack + (best ? config.seeds.best : 0) + (whole ? config.seeds.whole : 0);
     const entry = { ...e.data, id: e.id, at: e.at, seeds, best, whole, watered };
     d.snacks.push(entry);
@@ -134,59 +132,79 @@ function dose(x) {
 }
 const said = (x, { w, r }) => `${r} reps${x.sides ? ' per side' : ' per set'}${w === null ? '' : w ? ` · ${w} lb${x.hold === 'pair' ? ' each' : ''}` : ` · no dumbbell${x.hold === 'pair' ? 's' : ''}`}`;
 
-// The wheel's odds: each exercise not yet done today, by the sets it would add to areas still short of the day's
-// sets. Once every area is done, the rest are equally likely.
-function odds() {
+// Coverage affects which five exercises appear. Only the ball's landing chooses between them.
+function pachinko() {
   const t = today(), had = new Set(t.snacks.map(s => s.x));
-  const left = config.exercises.filter(x => !had.has(x.id)), pool = left.length ? left : config.exercises;
-  const useful = pool.map(x => [x, Object.entries(x.areas).reduce((g, [a, k]) => g + Math.min((x.sides ? 1 : config.minutes) * k, Math.max(0, config.sets - (t.sets[a] || 0))), 0)]);
-  return useful.some(([, g]) => g > 0) ? useful.filter(([, g]) => g > 0) : pool.map(x => [x, 1]);
+  const choices = config.exercises.map(x => {
+    const gain = Object.entries(x.areas).reduce((g, [a, k]) => g + Math.min((x.sides ? 1 : config.minutes) * k, Math.max(0, config.sets - (t.sets[a] || 0))), 0);
+    return [x, -Math.log(1 - Math.random()) / ((had.has(x.id) ? 0.2 : 1) * (1 + gain))];
+  }).sort((a, b) => a[1] - b[1]).slice(0, 5).map(([x]) => x);
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choices[i], choices[j]] = [choices[j], choices[i]];
+  }
+  board = { choices, prize: { x: 44 + 68 * Math.floor(Math.random() * 5), y: 197 }, ball: null };
+  $('pegs').innerHTML = pegs.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3"/>`).join('');
+  $('dividers').innerHTML = dividers.map(x => `<path d="M${x} 312V354"/>`).join('');
+  $('pockets').replaceChildren(...choices.map(x => Object.assign(document.createElement('span'), { textContent: x.name })));
+  $('prize').setAttribute('transform', `translate(${board.prize.x} ${board.prize.y})`);
+  $('prize').classList.remove('caught');
+  $('aim').value = 180;
+  $('aim').disabled = $('drop').disabled = false;
+  $('aim').oninput();
+  $('marble').setAttribute('cy', 26);
+  $('drop').textContent = 'Drop ball';
+  $('landed').textContent = '';
+  $('prize-note').textContent = `Catch the seed for +${config.seeds.pachinko} when you log your snack.`;
+  $('pachinko').classList.remove('dropped');
+  location.hash = 'pachinko';
 }
 
-// The wheel: it's drawn with today's odds, a winner is drawn by them, and the wheel spins to land on it.
-function spin() {
-  const chances = odds(), total = chances.reduce((s, [, g]) => s + g, 0);
-  let r = Math.random() * total, won = 0;
-  while (r > chances[won][1]) r -= chances[won++][1];
-  const NS = 'http://www.w3.org/2000/svg', R = 100, at = a => `${R * Math.sin(a * Math.PI / 180)} ${-R * Math.cos(a * Math.PI / 180)}`;
-  const slices = [];
-  let from = 0;
-  $('disc').replaceChildren();
-  for (const [x, g] of chances) {
-    const to = from + 360 * g / total, mid = (from + to) / 2, right = mid < 180;
-    const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', chances.length > 1 ? `M0 0 L${at(from)} A${R} ${R} 0 ${to - from > 180 ? 1 : 0} 1 ${at(to)} Z` : `M0 ${-R} A${R} ${R} 0 1 1 0 ${R} A${R} ${R} 0 1 1 0 ${-R} Z`);
-    const text = document.createElementNS(NS, 'text');
-    text.textContent = x.name;
-    text.setAttribute('transform', `rotate(${right ? mid - 90 : mid + 90})`);
-    text.setAttribute('x', right ? R - 6 : -(R - 6));
-    text.setAttribute('text-anchor', right ? 'end' : 'start');
-    $('disc').append(path, text);
-    slices.push({ x, from, to, path, text });
-    from = to;
+function drop() {
+  const current = board;
+  if (current.ball) {
+    if (current.ball.slot !== null) {
+      $('drop').disabled = true;
+      begin(current.choices[current.ball.slot], null, current.ball.prize);
+    }
+    return;
   }
-  // Lands somewhere inside the winner's slice, after five or six turns.
-  const win = slices[won], aim = win.from + (win.to - win.from) * (0.2 + 0.6 * Math.random());
-  const turn = 360 * (5 + Math.floor(Math.random() * 2)) + 360 - aim, start = performance.now(), length = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 2600;
-  $('landed').textContent = '';
-  location.hash = 'wheel';
-  let under = -1;
+  audio.resume();
+  const ball = current.ball = { x: +$('aim').value, y: 26, vx: (Math.random() < 0.5 ? -1 : 1) * (4 + Math.random() * 4), vy: 0, slot: null };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('aim').disabled = $('drop').disabled = true;
+  $('drop').textContent = 'Dropping…';
+  $('pachinko').classList.add('dropped');
+  let previous = performance.now(), carry = 0, lastTone = 0;
   const frame = now => {
-    if (spun !== frame) return; // left the wheel
-    const t = Math.min((now - start) / length, 1), angle = turn * (1 - (1 - t) ** 4);
-    $('disc').setAttribute('transform', `rotate(${angle})`);
-    const top = ((360 - angle % 360) % 360), i = slices.findIndex(s => top >= s.from && top < s.to);
-    if (i !== under && under !== -1) tone(1700, 0.025, { type: 'triangle', gain: 0.05 });
-    under = i;
-    if (t < 1) return requestAnimationFrame(frame);
-    win.path.classList.add('won');
-    win.text.classList.add('won');
-    $('landed').textContent = win.x.name;
-    [660, 990].forEach((f, k) => tone(f, 0.5, { at: k * 0.09, gain: 0.08 }));
-    setTimeout(() => { if (spun === frame) begin(win.x); }, 600);
+    if (board !== current) return;
+    carry += Math.min((now - previous) / 1000, 0.05);
+    previous = now;
+    let impact = 0;
+    while ((reduced || carry >= dt) && ball.slot === null) {
+      impact = Math.max(impact, bounce(ball, current.prize));
+      carry -= dt;
+    }
+    $('marble').setAttribute('cx', ball.x);
+    $('marble').setAttribute('cy', ball.y);
+    if (ball.prize && !$('prize').classList.contains('caught')) {
+      $('prize').classList.add('caught');
+      $('prize-note').textContent = `Seed caught · +${config.seeds.pachinko} when you log your snack.`;
+    }
+    if (!reduced && impact > 45 && now - lastTone > 65) {
+      tone(1000 + ball.y * 2, 0.025, { type: 'triangle', gain: 0.025 });
+      lastTone = now;
+    }
+    if (ball.slot === null) { current.frame = requestAnimationFrame(frame); return; }
+    $('pockets').children[ball.slot].classList.add('won');
+    $('landed').textContent = current.choices[ball.slot].name;
+    if (!ball.prize) $('prize-note').textContent = 'No bonus this time.';
+    $('drop').textContent = 'Do this exercise';
+    $('drop').disabled = false;
+    $('drop').focus({ preventScroll: true });
+    [660, 990].forEach((f, k) => tone(f, 0.3, { at: k * 0.09, gain: 0.05 }));
   };
-  spun = frame;
-  requestAnimationFrame(frame);
+  current.frame = requestAnimationFrame(frame);
 }
 
 // Eight illustrated poses travel out and back, with a short pause at each end.
@@ -208,9 +226,11 @@ function play(x) {
 }
 
 // Preparation, work and confirmation share one persisted session. Leaving it pauses rather than discarding it.
-function begin(x, saved = null) {
-  snack = saved || { id: crypto.randomUUID(), x: x.id, ...dose(x), start: null, elapsed: 0, review: false };
+function begin(x, saved = null, prize) {
+  snack = saved || { id: crypto.randomUUID(), x: x.id, ...dose(x), start: null, elapsed: 0, review: false, prize };
   $('name').textContent = x.name;
+  $('snack-prize').hidden = snack.prize !== 'seed';
+  $('snack-prize').textContent = `Pachinko seed · +${config.seeds.pachinko} when you log this snack`;
   $('dose').textContent = said(x, snack);
   $('plan').textContent = x.sides ? 'One minute per side. Do the reps, then rest until the chime.' : 'One set each minute. Do the reps, then rest until the chime.';
   $('target-reps').value = snack.r;
@@ -320,8 +340,8 @@ function finish(feel) {
   if (!snack) return; // the first tap already saved this session
   if (!$('result').reportValidity()) return;
   if (!snack.rounds.some(v => v.r > 0)) return toast('Enter the reps you did, or discard this snack.');
-  const { x: id, rounds, id: eventId, at, day, hour } = snack, x = X[id];
-  record('snack', { x: id, rounds, feel, day, hour }, eventId, at);
+  const { x: id, rounds, id: eventId, at, day, hour, prize } = snack, x = X[id];
+  record('snack', { x: id, rounds, feel, day, hour, prize }, eventId, at);
   stop();
   sessionStorage.removeItem('paisano.snack');
   location.hash = '';
@@ -385,8 +405,8 @@ function render() {
   $('tally').textContent = !n ? 'Nothing yet today' : `${areas} area${areas === 1 ? '' : 's'} worked · ${n} snack${n > 1 ? 's' : ''} today`;
   $('seeds').textContent = seeds;
   $('feed').disabled = !loaded || seeds <= 0;
-  $('spin').disabled = !loaded;
-  $('spin').textContent = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Spin';
+  $('choose').disabled = !loaded;
+  $('choose').textContent = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Choose a snack';
   renderedDay = dayOf(Date.now());
   $('coverage').replaceChildren(...AREAS.map(a => {
     const n = +(t.sets[a] || 0).toFixed(1);
@@ -491,24 +511,23 @@ function chronicle() {
   }));
 }
 
-// Where the app is: home, the wheel (#wheel), a snack (#snack), the desert (#desert) or history (#history). Back leaves
-// each.
+// Back leaves each screen. A running drop is cancelled; a workout is saved for later.
 function route() {
   const hash = location.hash.slice(1);
   if (!password && hash) { history.replaceState(null, '', location.pathname); return route(); }
   if (hunt && (!password || hash)) end();
-  if (hash !== 'wheel') spun = null;
+  if (hash !== 'pachinko' && board) { cancelAnimationFrame(board.frame); board = null; }
   if (hash !== 'snack' && snack) stop();
-  if ((hash === 'wheel' && !spun) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
+  if ((hash === 'pachinko' && !board) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
   $('lock').hidden = !!password;
   $('home').hidden = !password;
-  $('home').inert = ['wheel', 'snack', 'history', 'desert'].includes(hash);
-  if (!hash && password) { render(); $('spin').focus({ preventScroll: true }); }
-  $('wheel').hidden = hash !== 'wheel';
+  $('home').inert = ['pachinko', 'snack', 'history', 'desert'].includes(hash);
+  if (!hash && password) { render(); $('choose').focus({ preventScroll: true }); }
+  $('pachinko').hidden = hash !== 'pachinko';
   $('snack').hidden = hash !== 'snack';
   $('history').hidden = hash !== 'history' || !password;
   $('desert').hidden = hash !== 'desert' || !password;
-  if (hash === 'wheel') $('wheel').querySelector('.x').focus();
+  if (hash === 'pachinko') $('aim').focus({ preventScroll: true });
   if (hash === 'snack') $('name').focus({ preventScroll: true });
   if (hash === 'history') { chronicle(); $('history').querySelector('.x').focus(); }
   if (hash === 'desert') { desert(); $('desert').querySelector('.x').focus(); }
@@ -887,11 +906,30 @@ for (const half of document.querySelectorAll('#today .half')) {
   half.after(mirror);
 }
 
-$('spin').onclick = () => {
+$('choose').onclick = () => {
   audio.resume();
   const saved = sessionStorage.getItem('paisano.snack');
-  saved ? begin(X[JSON.parse(saved).x], JSON.parse(saved)) : spin();
+  saved ? begin(X[JSON.parse(saved).x], JSON.parse(saved)) : pachinko();
 };
+$('aim').oninput = () => {
+  const x = +$('aim').value;
+  $('marble').setAttribute('cx', x);
+  $('aim-line').setAttribute('d', `M${x} 37V58`);
+  $('aim').setAttribute('aria-valuetext', `Above ${board.choices[Math.floor((x - 10) / 68)].name}`);
+};
+$('board').onpointerdown = e => {
+  if (board.ball) return;
+  const move = e => {
+    const rect = $('board').getBoundingClientRect();
+    $('aim').value = Math.max(16, Math.min(344, (e.clientX - rect.left) / rect.width * 360));
+    $('aim').oninput();
+  };
+  move(e);
+  $('board').setPointerCapture(e.pointerId);
+  $('board').onpointermove = move;
+};
+$('board').onlostpointercapture = () => { $('board').onpointermove = null; };
+$('drop').onclick = drop;
 $('setup').oninput = () => {
   if (!$('setup').checkValidity()) return;
   snack.r = $('target-reps').valueAsNumber;
@@ -919,7 +957,7 @@ $('pause').onclick = () => {
   saveSession();
 };
 $('finish-early').onclick = () => review();
-$('swap').onchange = () => { const x = X[$('swap').value]; stop(); begin(x); };
+$('swap').onchange = () => { const x = X[$('swap').value], prize = snack.prize; stop(); begin(x, null, prize); };
 $('discard').onclick = () => { stop(); sessionStorage.removeItem('paisano.snack'); location.hash = ''; };
 $('result').onsubmit = e => { e.preventDefault(); finish(e.submitter.dataset.feel); };
 $('result').onkeydown = e => { if (e.key === 'Enter' && e.target.matches('input, select')) { e.preventDefault(); $('result').querySelector('[data-feel=good]').focus(); } };

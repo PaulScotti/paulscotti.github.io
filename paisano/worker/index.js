@@ -44,7 +44,7 @@ async function route(request, env) {
       if (x) {
         const weights = x.hold === 'none' ? [null] : x.share ? [0, ...config.weights] : config.weights;
         const rep = r => Number.isInteger(r) && r >= 0 && r <= 99;
-        valid = ['easy', 'good', 'hard', 'pain'].includes(d.feel) && (d.rounds
+        valid = (d.prize === undefined || (d.prize === 'seed' && !!d.rounds)) && ['easy', 'good', 'hard', 'pain'].includes(d.feel) && (d.rounds
           ? Array.isArray(d.rounds) && d.rounds.length === config.minutes && d.rounds.every(v => v && rep(v.r) && weights.includes(v.w)) && d.rounds.some(v => v.r > 0)
             && /^\d{4}-\d{2}-\d{2}$/.test(d.day) && Number.isFinite(Date.parse(d.day)) && new Date(d.day).toISOString().slice(0, 10) === d.day && Number.isInteger(d.hour) && d.hour >= 0 && d.hour < 24
           : rep(d.r) && d.r > 0 && weights.includes(d.w));

@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="assets/mark.png" type="image/png">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css?v=7">
-<script type="module" src="paisano.js?v=7"></script>
+<link rel="stylesheet" href="paisano.css?v=8">
+<script type="module" src="paisano.js?v=8"></script>
 </head>
 <body>
 
@@ -100,27 +100,42 @@
   </section>
 
   <footer>
-    <button id="spin" class="spin" disabled>Spin</button>
+    <button id="choose" class="primary" disabled>Choose a snack</button>
     <p id="since" class="since"></p>
     <p id="daily" class="since"></p>
     <div class="status"><button id="sync" type="button">Connecting…</button><button id="update" type="button" hidden>Update ready</button></div>
   </footer>
 </main>
 
-<section id="wheel" class="wheel" hidden>
-  <button class="x" aria-label="Cancel spin"><svg><use href="#i-close"/></svg></button>
-  <div class="dial">
-    <svg viewBox="-108 -108 216 216" aria-hidden="true"><g id="disc"></g><circle class="rim" r="101"/><circle class="hub" r="9"/></svg>
-    <svg class="pointer" viewBox="0 0 20 22" aria-hidden="true"><path d="M2.6 1 H17.4 C18.6 1 19.2 2.2 18.6 3.2 L11.4 19.6 C10.8 20.8 9.2 20.8 8.6 19.6 L1.4 3.2 C0.8 2.2 1.4 1 2.6 1 Z"/></svg>
+<section id="pachinko" class="pachinko" aria-labelledby="pachinko-title" hidden>
+  <div class="pachinko-column">
+    <header><h2 id="pachinko-title">Pachinko</h2><button class="x" aria-label="Close pachinko"><svg><use href="#i-close"/></svg></button></header>
+    <p class="board-hint">Place the ball, then drop. Its landing picks your exercise.</p>
+    <div class="machine">
+      <div class="launcher"><input id="aim" type="range" min="16" max="344" step="1" value="180" aria-label="Ball drop position"></div>
+      <svg id="board" viewBox="0 0 360 362" aria-hidden="true">
+        <path class="board-wall" d="M10 58V344Q10 354 20 354H340Q350 354 350 344V58"/>
+        <path class="drop-rail" d="M16 26H344"/>
+        <path id="aim-line" class="aim-line" d="M180 37V58"/>
+        <g id="pegs" class="pegs"></g>
+        <g id="dividers" class="dividers"></g>
+        <g id="prize" class="prize"><circle r="17"/><image href="assets/seed.webp" x="-11" y="-11" width="22" height="22"/></g>
+        <circle id="marble" class="marble" cx="180" cy="26" r="6"/>
+      </svg>
+      <div id="pockets" class="pockets" aria-label="Exercise pockets, left to right"></div>
+    </div>
+    <p id="landed" class="landed" aria-live="polite"></p>
+    <button id="drop" class="primary">Drop ball</button>
+    <p id="prize-note" class="prize-note" aria-live="polite"></p>
+    <p class="board-context">Five choices, favoring muscles you’ve worked less today.</p>
   </div>
-  <p id="landed" class="landed" aria-live="polite"></p>
-  <p class="odds">Each slice is its chance: bigger for the areas today hasn’t worked.</p>
 </section>
 
 <section id="snack" class="snack" hidden>
   <header><button class="x" aria-label="Save snack for later"><svg><use href="#i-close"/></svg></button></header>
   <h2 id="name" tabindex="-1"></h2>
   <p id="dose" class="dose"></p>
+  <p id="snack-prize" class="snack-prize" hidden></p>
   <div class="ring">
     <svg viewBox="0 0 200 200" aria-hidden="true">
       <circle class="spot" cx="100" cy="100" r="90"/>
@@ -136,7 +151,7 @@
   <p id="plan" class="plan"></p>
   <form id="setup" class="setup">
     <div class="targets"><label>Reps<input id="target-reps" type="number" min="1" max="30" step="1" inputmode="numeric" required></label><label id="weight-label">Weight<select id="target-weight"></select></label></div>
-    <button class="spin">Start two minutes</button>
+    <button class="primary">Start two minutes</button>
     <select id="swap" aria-label="Choose another exercise"></select>
   </form>
   <div id="controls" class="controls" hidden><button id="pause">Pause</button><button id="finish-early">Finish early</button></div>

@@ -5,9 +5,16 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
 
 ## Workouts
 
-Spin to choose from twelve exercises for a pull-up bar and PowerBlock dumbbells up to 80 lb each.
-The wheel favors muscles with less work logged today and avoids repeating exercises until the pool is exhausted.
+Pachinko chooses from twelve exercises for a pull-up bar and PowerBlock dumbbells up to 80 lb each.
+Each board has five different exercise pockets, favoring muscles with less work logged today and exercises not
+yet done. Move the ball along the top with a finger, mouse or arrow keys, then drop it. Peg collisions determine
+the actual landing; there is no preselected winner. Starting nearer an exercise makes landing there more likely.
 Change the exercise, reps or weight before starting. Suggestions are starting points, not measured capacity.
+
+A seed sits between the pegs. Catch it to earn one extra seed when you log the snack. The pending prize survives
+pauses, exercise swaps and reloads, and is discarded with an unlogged snack. Reduced motion computes the same
+drop without animating it. `pachinko.js` shares the peg positions and fixed-timestep physics with the renderer.
+`node --test pachinko.test.js` checks 3,942 drops for settling, reachable pockets and the effect of aiming.
 
 Each demonstration loops through eight illustrated poses at the exercise's tempo. The four exercises that allow
 0 lb have separate bodyweight artwork and cues. Single-side movements mirror after the first minute, and reduced
