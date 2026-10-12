@@ -316,6 +316,9 @@ registration.then(reg => {
   navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
   addEventListener('visibilitychange', () => document.visibilityState === 'visible' && reg.update().catch(() => {}));
 });
+// The version running, as the service worker serving ebis's files names it, beside the logo.
+navigator.serviceWorker?.addEventListener('message', e => { if (e.data?.version) $('version').textContent = e.data.version.replace(/^ebis-/, 'v'); });
+navigator.serviceWorker?.controller?.postMessage('version');
 async function newerVersion() { // than the one running, which on a first visit is the newest
   const reg = await registration;
   await reg?.update().catch(() => {}); // offline, there's no knowing

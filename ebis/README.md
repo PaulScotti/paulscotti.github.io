@@ -63,6 +63,6 @@ npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_W
 
 ## Changing the app
 
-Bump `VERSION` in `sw.js` whenever files change, so installed copies update.
+Bump `VERSION` in `sw.js` whenever files change, so installed copies update; it's shown beside the logo (`ebis-26` as v26).
 Develop with any static server at the repository root; on `localhost` the app talks to
 `npx wrangler dev` (with `KEY=…` in `worker/.dev.vars`) instead of the deployed worker.

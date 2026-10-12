@@ -1,7 +1,7 @@
 // Keeps ebis on the device so it opens without a connection, and receives what Android
 // shares to it. Change VERSION whenever the app's files change.
 
-const VERSION = 'ebis-25';
+const VERSION = 'ebis-26';
 const APP = [
   './', 'ebis.css', 'manifest.webmanifest', 'icons/ibis.svg', 'icons/icon-192.png',
   'js/app.js', 'js/reader.js', 'js/notes.js', 'js/store.js', 'js/convert.js', 'js/sources.js', 'js/pdf.js', 'js/settings.js', 'js/ui.js',
@@ -20,6 +20,7 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('message', event => {
   if (event.data === 'update') self.skipWaiting();
+  if (event.data === 'version') event.source.postMessage({ version: VERSION }); // shown beside the logo
 });
 
 self.addEventListener('fetch', event => {

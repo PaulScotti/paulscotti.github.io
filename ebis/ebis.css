@@ -59,6 +59,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .lib-head { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
 .brand { display: flex; align-items: center; gap: 2px; margin: 0 auto 0 -6px; font-weight: 400; font-size: 30px; line-height: 1; }
 .brand .mark { width: 40px; height: 40px; }
+.brand small { align-self: flex-end; margin: 0 0 4px 6px; font-size: 12px; color: var(--ink-3); letter-spacing: .03em; } /* the version running */
 .wordmark { letter-spacing: .01em; }
 .tittle { position: relative; }
 .tittle::after {
