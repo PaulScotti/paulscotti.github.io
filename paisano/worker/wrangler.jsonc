@@ -1,0 +1,11 @@
+{
+  // Deploy from this folder: npx wrangler deploy. The table is in schema.sql.
+  // Secret: KEY (the password, the same as ebis and myna).
+  "name": "paisano",
+  "main": "index.js",
+  "compatibility_date": "2026-10-01",
+  "account_id": "bf4d563d019ba4efff46afba844e5163",
+  "workers_dev": true,
+  "d1_databases": [{ "binding": "DB", "database_name": "paisano", "database_id": "b5111491-f8b2-4143-bba8-25df3d004b88" }],
+  "observability": { "enabled": true }
+}

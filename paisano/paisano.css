@@ -1,0 +1,271 @@
+/* Paisano: paper and ink with one warm accent, and the blue and orange behind a roadrunner's eye for its pet.
+   Libron is borrowed from ebis. */
+
+@font-face { font-family: Libron; font-weight: 400; font-style: normal; font-display: block; src: url(../ebis/fonts/Libron-Regular.woff2) format("woff2"); }
+@font-face { font-family: Libron; font-weight: 400; font-style: italic; font-display: block; src: url(../ebis/fonts/Libron-Italic.woff2) format("woff2"); }
+
+:root {
+  --serif: Libron, Georgia, serif;
+  --bg: #f6f3ee; --surface: #fdfbf8; --tint: #efeae2; --ink: #22201c; --ink-2: #5d5750; --ink-3: #8e877d;
+  --rule: #e4ded4; --accent: #bf5f38; --shade: rgb(34 32 28 / .05);
+  --skin: #ebe6de; --muscle: #d9d1c4;
+  --sky: #e9eef0; --sand: #ece2d1; --dune: #e5d7bf; --sage: #9db79a; --sage-2: #7e9b7b;
+  --tone: #e5bf9f; --tone-2: #cfa684; --hair: #3f322a; --shirt: #56697d; --shirt-2: #46586b;
+  --shorts: #34312d; --shorts-2: #272522; --shoe: #f3efe8; --shoe-2: #d9d2c7; --block: #44403b; --mat: #e2dbcf;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161513; --surface: #1f1d1a; --tint: #24221f; --ink: #ece6dc; --ink-2: #b2aa9e; --ink-3: #7d766c;
+    --rule: #312e29; --accent: #dd8058; --shade: rgb(255 255 255 / .05);
+    --skin: #282521; --muscle: #3b3631;
+    --sky: #1d2124; --sand: #2a251f; --dune: #322b23;
+    --shirt: #6c8297; --shirt-2: #586b7e; --shorts: #4c4843; --shorts-2: #3d3a36; --shoe: #d9d2c7; --shoe-2: #b3ab9f; --block: #8c857c; --mat: #2e2a25;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink);
+  font: 400 17px/1.45 var(--serif); font-kerning: normal; -webkit-tap-highlight-color: transparent;
+}
+button, input { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+[hidden] { display: none !important; }
+.mark { width: 34px; height: 34px; color: var(--ink); }
+.quiet { color: var(--ink-3); font-size: 15px; text-decoration: none; }
+h1, h2, h3 { margin: 0; font-weight: 400; }
+.x { display: grid; place-items: center; width: 40px; height: 40px; margin: -8px -10px -8px 0; border-radius: 50%; color: var(--ink-2); }
+.x svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+
+/* The password, typed once on each device */
+
+.lock { display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 100dvh; padding: 24px; }
+.lock .mark { width: 84px; height: 84px; }
+.lock h1 { font-size: 34px; margin-bottom: 24px; }
+.field { display: flex; gap: 8px; width: min(100%, 320px); }
+.field input {
+  flex: 1; min-width: 0; height: 44px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 10px;
+  background: var(--bg); outline: none; font-size: 16px;
+}
+.field input:focus { border-color: var(--ink-3); }
+.field button { height: 44px; padding: 0 18px; border-radius: 10px; background: var(--ink); color: var(--bg); }
+
+/* Home: Paisano's garden, today's body, and the wheel */
+
+.home {
+  display: flex; flex-direction: column; max-width: 560px; min-height: 100dvh; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 18px) 22px calc(env(safe-area-inset-bottom) + 22px);
+}
+.home > header { display: flex; align-items: center; justify-content: space-between; }
+.home h1 { display: flex; align-items: center; gap: 8px; font-size: 27px; line-height: 1; }
+.home h1 small { align-self: flex-end; margin: 0 0 3px; font-size: 12px; color: var(--ink-3); letter-spacing: .03em; }
+
+.garden { position: relative; margin-top: 16px; border-radius: 18px; overflow: hidden; background: var(--sky); }
+.garden > svg { display: block; width: 100%; height: auto; }
+.sun { fill: #f3d9a4; }
+.dune { fill: var(--dune); }
+.dune.far { fill: var(--sand); }
+.cactus { fill: var(--sage); stroke: var(--sage-2); stroke-width: 1; stroke-linejoin: round; }
+.bloom { fill: #e9a3a6; }
+.pebbles ellipse { fill: var(--dune); stroke: color-mix(in oklab, var(--dune), #000 8%); stroke-width: .6; }
+#strewn path { fill: #8a6f55; }
+.feed {
+  position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 3px; height: 36px; padding: 0 12px 0 8px;
+  font-size: 16px; font-variant-numeric: tabular-nums; border-radius: 18px; background: var(--surface); color: var(--ink);
+  box-shadow: 0 1px 3px rgb(0 0 0 / .08); transition: transform .15s var(--ease);
+}
+.feed svg { width: 20px; height: 20px; }
+.feed:active { transform: scale(.94); }
+.feed:disabled { cursor: default; color: var(--ink-3); }
+.feed:disabled svg { opacity: .45; }
+.growth { display: flex; align-items: center; gap: 10px; margin: 10px 4px 0; font-size: 14px; color: var(--ink-2); }
+.growth i { flex: 1; height: 3px; border-radius: 2px; background: var(--rule); overflow: hidden; }
+.growth b { display: block; height: 100%; width: 0; background: var(--accent); transition: width .8s var(--ease); }
+#toward { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* Paisano. Growth is set on the wrapper groups from paisano.js; its moves are classes on #bird. */
+.bird { cursor: pointer; }
+.bird:not(.hatched) .chick, .bird.hatched .egg { display: none; }
+.bird :is(.shell, .torso, .skull, .tail, .crest, .wing, .beak) { stroke: #4d3a30; stroke-width: 1; stroke-linejoin: round; paint-order: stroke; }
+.shell { fill: #f8efe0; }
+.speck { fill: #dcb48a; }
+.shadow { fill: rgb(0 0 0 / .1); }
+.leg { fill: none; stroke: #6f93b6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform-origin: 0 -11px; }
+.leg.far { stroke: #5a7c9e; }
+.tail { fill: #9c7b5b; }
+.tail-tip { fill: #f6eadb; }
+.torso, .skull { fill: #bd9672; }
+.belly { fill: #f6eadb; }
+.wing { fill: #8a6a4e; }
+.dots { stroke: #f6eadb; stroke-width: 1.8; stroke-linecap: round; }
+.crest { fill: #574335; transform-origin: 4px -45px; transition: scale .3s var(--ease); }
+.beak { fill: #4b3b33; }
+.patch.blue { fill: #5b8ac0; }
+.patch.red { fill: #e2704a; }
+.white { fill: #fff; }
+.pupil { fill: #2a221d; }
+.glint { fill: #fff; }
+.shut { fill: none; stroke: #2a221d; stroke-width: 1.3; stroke-linecap: round; display: none; }
+.blink .open, .asleep .open { display: none; }
+.blink .shut, .asleep .shut { display: inline; }
+.trunk { animation: breathe 2.8s ease-in-out infinite; }
+@keyframes breathe { 50% { translate: 0 .6px; } }
+.wag { transform-origin: -9px -19px; animation: wag 3.4s ease-in-out infinite; }
+@keyframes wag { 0%, 70%, 100% { rotate: 0deg; } 80% { rotate: 6deg; } 88% { rotate: -3deg; } }
+.nod { transform-origin: 6px -27px; transition: rotate .12s; }
+.peck .nod { rotate: 34deg; }
+.tilt .nod { rotate: -14deg; }
+.walking .leg.near { animation: stride .26s ease-in-out infinite alternate; }
+.walking .leg.far { animation: stride .26s ease-in-out infinite alternate-reverse; }
+@keyframes stride { from { rotate: -22deg; } to { rotate: 18deg; } }
+.hop { animation: hop .5s var(--ease); }
+@keyframes hop { 40% { translate: 0 -10px; } }
+.proud .crest { scale: 1.1 1.4; }
+.wobble .egg, .wobble .chick { animation: wobble .3s ease-in-out 3; }
+@keyframes wobble { 25% { rotate: -9deg; } 75% { rotate: 9deg; } }
+.asleep .trunk { animation-duration: 4.4s; }
+
+/* The emotion ball over Paisano's head, as a Chao has, which turns into how it feels */
+.mood { pointer-events: none; }
+.ball { fill: #f1d48c; animation: float 2.4s ease-in-out infinite; }
+@keyframes float { 50% { translate: 0 -1.5px; } }
+.emote { font: 15px var(--serif); fill: var(--accent); text-anchor: middle; dominant-baseline: central; opacity: 0; }
+.mood.on .ball { opacity: 0; }
+.mood.on .emote { animation: pop 1.6s var(--ease); }
+@keyframes pop { 0% { opacity: 0; scale: .5; } 15%, 80% { opacity: 1; scale: 1; } 100% { opacity: 0; } }
+
+/* Today's body, front and back, each area shaded by its sets so far */
+
+.today { margin: auto 0; padding: 22px 0 6px; }
+.bodies { display: flex; justify-content: center; gap: 8%; }
+.body { width: 36%; max-width: 172px; height: auto; }
+.skin { fill: var(--skin); }
+.area {
+  fill: color-mix(in oklab, var(--accent) calc(var(--x, 0) * 100%), var(--muscle));
+  transition: fill 1.2s var(--ease);
+}
+.tally { margin: 14px 0 0; text-align: center; color: var(--ink-2); font-size: 16px; font-variant-numeric: tabular-nums; }
+
+.home footer { display: grid; justify-items: center; gap: 10px; padding-top: 18px; }
+.spin {
+  height: 54px; padding: 0 54px; border-radius: 27px; background: var(--ink); color: var(--bg); font-size: 19px; letter-spacing: .02em;
+  transition: transform .15s var(--ease), opacity .2s;
+}
+.spin:active { transform: scale(.97); }
+.spin:disabled { opacity: .3; }
+.since { margin: 0; min-height: 1.4em; font-size: 14px; color: var(--ink-3); }
+
+/* The wheel: each slice is an exercise's chance */
+
+.wheel { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; background: var(--bg); padding: 24px; }
+.dial { position: relative; width: min(88vw, 60dvh, 460px); aspect-ratio: 1; }
+.dial > svg:first-child { width: 100%; height: 100%; display: block; overflow: visible; }
+#disc path { fill: var(--surface); stroke: var(--rule); stroke-width: .8; }
+#disc path:nth-child(4n+3) { fill: var(--tint); }
+#disc path.won { fill: var(--accent); }
+#disc text { font: 8px var(--serif); fill: var(--ink); dominant-baseline: central; }
+#disc text.won { fill: #fff; }
+.rim { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.hub { fill: var(--ink); }
+.pointer { position: absolute; left: 50%; top: -10px; width: 22px; height: 24px; translate: -50% 0; fill: var(--accent); }
+.landed { margin: 0; min-height: 1.3em; font-size: clamp(26px, 7vw, 32px); text-align: center; }
+.odds { margin: 0; max-width: 300px; text-align: center; font-size: 14px; color: var(--ink-3); }
+
+/* A snack: what to do, the two minutes, and how hard it was */
+
+.snack {
+  position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; overflow-y: auto; background: var(--bg);
+  padding: calc(env(safe-area-inset-top) + 12px) 22px calc(env(safe-area-inset-bottom) + 18px);
+}
+.snack header { align-self: stretch; display: flex; justify-content: flex-end; max-width: 560px; width: 100%; margin: 0 auto; }
+.snack h2 { margin-top: -4px; font-size: clamp(30px, 8vw, 38px); line-height: 1.1; text-align: center; }
+.dose { margin: 6px 0 0; font-size: 20px; color: var(--accent); text-align: center; font-variant-numeric: tabular-nums; }
+.ring { position: relative; width: min(80vw, 37dvh, 320px); aspect-ratio: 1; margin: 16px 0 6px; flex: none; }
+.ring > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.spot { fill: var(--tint); }
+.track { fill: none; stroke: var(--rule); stroke-width: 2.4; }
+.elapsed { fill: none; stroke: var(--accent); stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; rotate: -90deg; transform-origin: 100px 100px; }
+.tick { fill: var(--bg); stroke: var(--ink-3); stroke-width: 1.2; }
+.figure { padding: 9%; }
+.figure line { stroke-linecap: round; }
+.figure .skin { stroke: var(--tone); fill: var(--tone); }
+.figure .shirt { stroke: var(--shirt); }
+.figure .shorts { stroke: var(--shorts); }
+.figure .shoe { stroke: var(--shoe); }
+.figure .far .skin { stroke: var(--tone-2); fill: var(--tone-2); }
+.figure .far .shirt { stroke: var(--shirt-2); }
+.figure .far .shorts { stroke: var(--shorts-2); }
+.figure .far .shoe { stroke: var(--shoe-2); }
+.figure .hair { fill: var(--hair); }
+.figure .block { fill: var(--block); }
+.figure .band { fill: var(--accent); }
+.figure .mat { fill: var(--mat); }
+.figure .wall { fill: var(--rule); }
+.figure .bar { stroke: var(--ink-3); stroke-linecap: round; }
+.ring .buddy { inset: auto -10% -4% auto; width: 30%; height: auto; overflow: visible; }
+.clock { display: flex; align-items: baseline; gap: 12px; margin: 0; }
+#clock { font-size: 34px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.phase { font-size: 16px; color: var(--ink-2); }
+.cues { max-width: 460px; margin: 10px 0 0; padding: 0 0 0 1.2em; color: var(--ink-2); font-size: 16px; line-height: 1.4; }
+.cues li { margin: 3px 0; }
+.feel { width: 100%; max-width: 560px; margin-top: auto; padding-top: 18px; }
+.feel p { margin: 0 0 10px; text-align: center; color: var(--ink-3); font-size: 15px; }
+.feel div { display: flex; gap: 10px; }
+.feel button {
+  flex: 1; display: grid; justify-items: center; padding: 9px 4px 10px; border: 1px solid var(--rule); border-radius: 14px;
+  font-size: 15px; line-height: 1.25; color: var(--ink-2); transition: background .15s, color .15s, border-color .15s;
+}
+.feel b { font-weight: 400; font-size: 24px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.feel button:active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.feel button:active b { color: var(--bg); }
+.snack.over .feel button { border-color: var(--ink-3); }
+
+/* History */
+
+.history { position: fixed; inset: 0; overflow-y: auto; background: var(--bg); padding: env(safe-area-inset-top) 22px calc(env(safe-area-inset-bottom) + 40px); }
+.column { max-width: 560px; margin: 0 auto; }
+.history header { position: sticky; top: 0; z-index: 1; display: flex; align-items: baseline; justify-content: space-between; padding: 18px 0 8px; background: var(--bg); }
+.history h2 { font-size: 28px; }
+.history h3 { margin: 32px 0 12px; font-size: 15px; color: var(--accent); font-variant-caps: all-small-caps; letter-spacing: .1em; }
+.totals { margin: 4px 0 18px; color: var(--ink-2); }
+.calendar { display: grid; grid-auto-flow: column; grid-template-rows: auto repeat(7, 1fr); gap: 3px; justify-content: start; overflow-x: auto; padding-bottom: 4px; }
+.calendar span { font-size: 11px; color: var(--ink-3); white-space: nowrap; width: 0; }
+.calendar button { width: 15px; height: 15px; border-radius: 3px; background: color-mix(in oklab, var(--accent) calc(var(--x) * 100%), var(--muscle)); }
+.calendar button[data-x="0"] { background: var(--rule); }
+.calendar button.on { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+.day { min-height: 1.4em; margin: 10px 0 0; font-size: 15px; color: var(--ink-2); }
+.volume { display: grid; grid-template-columns: auto 1fr 3.2em; align-items: center; gap: 7px 12px; font-size: 15px; }
+.volume span { color: var(--ink-2); }
+.volume i { position: relative; height: 8px; border-radius: 4px; background: var(--rule); }
+.volume b { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--accent); }
+.volume i::after { content: ""; position: absolute; top: -3px; bottom: -3px; left: var(--ten); width: 1.5px; background: var(--ink-2); }
+.volume em { font-style: normal; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.note { margin: 10px 0 0; font-size: 14px; color: var(--ink-3); line-height: 1.45; }
+.lifts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.lifts li { display: grid; grid-template-columns: 1fr 84px 3.6em; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.lifts b { font-weight: 400; }
+.lifts small { grid-row: 2; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.lifts svg { grid-row: 1 / 3; grid-column: 2; width: 84px; height: 28px; overflow: visible; }
+.lifts polyline { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.lifts em { grid-row: 1 / 3; grid-column: 3; font-style: normal; text-align: right; font-size: 15px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+.toast {
+  position: fixed; inset: calc(env(safe-area-inset-top) + 14px) auto auto 50%; translate: -50% 0; margin: 0; border: 0;
+  width: max-content; max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 20px;
+  background: var(--ink); color: var(--bg); font-size: 15px; text-align: center; transition: opacity .2s, translate .25s var(--ease);
+}
+@starting-style { .toast:popover-open { opacity: 0; translate: -50% -12px; } }
+
+@media (hover: hover) {
+  .quiet:hover { color: var(--ink); }
+  .x:hover { color: var(--ink); background: var(--shade); }
+  .feel button:hover { background: var(--shade); }
+  .feed:not(:disabled):hover { background: var(--bg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+}
