@@ -1,3 +1,5 @@
+import Anthropic from '@anthropic-ai/sdk';
+
 // ebis sync, on Paul's own Cloudflare account. One library, opened by one password: the KEY secret.
 // Records (books, reading positions, highlights, margin notes, tabs) replicate last-write-wins through
 // D1; book packages live in R2; /fetch reads web pages for the reader, which browsers can't do
@@ -100,72 +102,65 @@ async function proxy(target) {
   });
 }
 
-// Margin notes, written by Claude. A passage arrives in numbered pieces of a sentence or few; the
-// notes go back as runs of them, each with what it says.
+// Margin notes, written by Claude to help a reader understand what they read. A passage arrives in
+// numbered pieces of a sentence or few, after the text around it for context (the same for every
+// passage of a chapter, so Claude keeps it cached); the notes go back as runs of pieces, each with
+// what it means.
 const MODEL = 'claude-haiku-5-5';
 const SPAN = 700; // characters of text a note sums up, at least on average: room in the margin beside them
-const NOTE = `You write the margin notes in someone's copy of a book, paper or article: brackets beside the text, each with a note saying what that stretch says, so they can take it in at a glance.
+const NOTE = `You write the margin notes in one reader's copy of a book, paper or article: brackets beside the text, each with a note that helps them understand that stretch at a glance.
 
-The passage comes one paragraph to a line, each paragraph in numbered pieces: a short paragraph is one piece, a longer one a few pieces of a couple of sentences or more. A line starting with # is a heading; one starting with "Formula:" is a displayed formula.
+You get the text first (all of it, or as much as leads up to the passage and around it), then one passage of it to note. The passage comes one paragraph to a line, each paragraph in numbered pieces: a short paragraph is one piece, a longer one a few pieces of a couple of sentences or more. A line starting with # is a heading; one starting with "Formula:" is a displayed formula.
 
-Bracket the whole passage into runs of consecutive pieces, in order, each making one point. Think in paragraphs: a run is a whole paragraph, or several paragraphs that make one point together (as a stretch of dialogue usually does). Only a long paragraph that makes two or three separate points is split.
+Bracket the passage into runs of consecutive pieces, in order, each making one point. Think in paragraphs: a run is a whole paragraph, or several that make one point together (as a stretch of dialogue usually does). Split a paragraph only when it is long and makes separate points.
 
-Beside each run, write the note a sharp reader would scribble there:
-- The substance itself: the claim, the reason, how it works, the result, with the names and numbers that matter (in a story: what happens, to whom, and what it shows). Never describe the text ("The author argues…", "This section discusses…").
-- Direct and plain, in quick shorthand: short sentences, everyday words, abbreviations, lists like (1), (2). Say things in words rather than symbols.
-- One to three short sentences, at most 45 words, and much shorter than the run it notes.
-- Only what this passage says, nothing from beyond it.
+Beside each run, write what a knowledgeable friend reading over the reader's shoulder would say to make it click:
+- Explain it, in your own plain words, for a smart reader new to the subject. Don't reuse the text's phrasing (beyond names and numbers): someone it lost needs it said another way. Assume they don't know the field's terms; when one can't be avoided, say in a few words what it is or does.
+- Explain the run's main point well rather than list everything in it. If a run packs in more than one note can explain, split it.
+- Make it make sense: the reason behind a claim, how a mechanism works, what a number implies, or why this matters to what the piece is arguing. Use the rest of the text for this (what its terms mean, what this run sets up or answers) and your own knowledge of the subject, but only to explain what the text says, never to add claims of your own.
+- Keep the substance: the claim, the result, with the names and numbers that matter (in a story: what happens, to whom, and what it reveals). Never describe the text ("The author argues…", "This section discusses…").
+- Two or three short sentences, about 40 words at most.
+- In a story, give nothing away from later in it.
 
-For instance, beside two paragraphs on test-time scaling: "Test-time scaling, using more inference to reason better before the final output, matters most for math, where one early mistake in reasoning screws up the final answer."
+For instance, beside "fUSI transmits unfocused plane waves with flat wavefronts that insonify the whole imaging plane at once, so a single pulse can produce a whole image", not "fUSI sends unfocused plane waves that insonify the whole plane", which only shortens it, but "Ordinary ultrasound sweeps a narrow beam across, one line at a time. fUSI fires one broad, flat pulse that hits the whole slice at once, so each echo is already a full image, which is what makes it so fast." And beside "We freeze the pretrained weights and inject trainable rank-decomposition matrices into each layer", not "LoRA freezes weights and injects low-rank matrices" but "Instead of retraining the whole model, they leave it untouched and train small add-on pieces in each layer, so fine-tuning needs a sliver of the memory and storage."
 
 Mark each run as part of the work (any prose written to be read, prefaces, introductions, notes and appendices included) or as apparatus, which no one reads for what it says, however long it runs: licences and legal terms (a Project Gutenberg licence, say), copyright and publication details, title pages, bylines, tables of contents, reference lists, acknowledgments, captions, code, and lead-ins like "Our contributions are threefold." Apparatus gets no note. Write in English.`;
 const NOTES = {
-  type: 'object', required: ['notes'],
+  type: 'object', additionalProperties: false, required: ['notes'],
   properties: {
     notes: {
       type: 'array',
       items: {
-        type: 'object', required: ['from', 'to', 'part', 'note'],
+        type: 'object', additionalProperties: false, required: ['from', 'to', 'part', 'note'],
         properties: {
           from: { type: 'integer', description: 'first piece of the run' },
           to: { type: 'integer', description: 'last piece of the run' },
-          part: { enum: ['work', 'apparatus'] },
-          note: { type: 'string', description: 'for the work, what the run says; for apparatus, empty' },
+          part: { type: 'string', enum: ['work', 'apparatus'] },
+          note: { type: 'string', description: 'for the work, what the run means; for apparatus, empty' },
         },
       },
     },
   },
 };
 
-async function annotate({ title, author, before, text }, env) {
+async function annotate({ title, author, text, context = text }, env) {
   if (!env.ANTHROPIC_API_KEY) return new Response('The worker has no ANTHROPIC_API_KEY.', { status: 503 });
-  const res = await busy('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json',
-      ...env.ANTHROPIC_WORKSPACE && { 'anthropic-workspace-id': env.ANTHROPIC_WORKSPACE }, // a personal key spanning workspaces names one
-    },
-    body: JSON.stringify({
-      model: MODEL, max_tokens: 4096, system: NOTE,
-      messages: [{
-        role: 'user',
-        content: `${title ? `From ${title}${author ? `, by ${author}` : ''}. ` : ''}At most ${Math.ceil(text.length / SPAN)} notes.\n\n`
-          + `${before ? `Just before the passage, for context only (no notes): "…${before}"\n\n` : ''}${text}`,
-      }],
-      tools: [{ name: 'notes', description: 'The margin notes for this passage.', input_schema: NOTES }],
-      tool_choice: { type: 'tool', name: 'notes' },
-    }),
+  const claude = new Anthropic({
+    apiKey: env.ANTHROPIC_API_KEY,
+    defaultHeaders: env.ANTHROPIC_WORKSPACE ? { 'anthropic-workspace-id': env.ANTHROPIC_WORKSPACE } : {}, // a personal key spanning workspaces names one
   });
-  if (!res.ok) return new Response(`Claude answered ${res.status}: ${((await res.json().catch(() => null))?.error?.message || 'no reason given').replace(/\.$/, '')}.`, { status: 502 });
-  const notes = (await res.json()).content.find(c => c.type === 'tool_use')?.input.notes;
-  return Response.json({ notes: Array.isArray(notes) ? notes.filter(n => n.part === 'work').map(({ from, to, note }) => ({ from, to, note })) : null });
-}
-
-// Claude answers 429, 529 or another 5xx when it's busy, which usually passes within seconds.
-async function busy(url, init) {
-  for (let tries = 1; ; tries++) {
-    const res = await fetch(url, init);
-    if (res.ok || tries === 3 || (res.status !== 429 && res.status < 500)) return res;
-    await new Promise(resolve => setTimeout(resolve, 2000 * tries));
-  }
+  const message = await claude.messages.create({
+    model: MODEL, max_tokens: 16000, system: NOTE,
+    output_config: { effort: 'medium', format: { type: 'json_schema', schema: NOTES } },
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: `<text${title ? ` title="${title}"` : ''}${author ? ` author="${author}"` : ''}>\n${context}\n</text>`, cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: `<passage>\n${text}\n</passage>\n\nNote this passage, in at most ${Math.ceil(text.length / SPAN)} notes.` },
+      ],
+    }],
+  }).catch(e => { throw new Error(`Claude answered ${e.status ?? 'nothing'}: ${(e.error?.error?.message ?? e.message).replace(/\.$/, '')}.`); });
+  if (message.stop_reason !== 'end_turn') throw new Error(`Claude stopped early (${message.stop_reason}).`);
+  const { notes } = JSON.parse(message.content.find(b => b.type === 'text').text);
+  return Response.json({ notes: notes.filter(n => n.part === 'work').map(({ from, to, note }) => ({ from, to, note })) });
 }

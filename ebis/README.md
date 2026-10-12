@@ -24,8 +24,9 @@ that ebis typesets itself.
   only what a reader notices: structure, emphasis, alignment, images, links.
 - `js/reader.js` lays out one chapter at a time as a single page you scroll. A position is
   `[chapter, block, character]`, so it survives any device, type size or theme.
-- `js/notes.js` writes margin notes: Claude Haiku, through the worker, brackets each passage
-  into runs that make one point and says beside each what it says. All of an article (the
+- `js/notes.js` writes margin notes: Claude Haiku, through the worker, reads each passage with
+  the text around it (its chapter, or all of a paper) and brackets it into runs that make one
+  point, explaining each in plain words, jargon unpacked, rather than shortening it. All of an article (the
   start of a book) is noted as it's added, and while reading, the next twenty minutes or so.
   Where the window has room, notes stand in a column beside the text, each staying in view
   while its run is; on a phone, the note of the run being read stands at the foot of the page.
@@ -52,7 +53,7 @@ records replicate last-write-wins through D1, book packages live in R2, and
 
 ```
 cd worker
-npx wrangler deploy              # after changing src/index.js
+npm install && npx wrangler deploy   # after changing src/index.js (it uses Anthropic's SDK)
 npx wrangler secret put KEY      # to change the password
 npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_WORKSPACE,
                                              # for a personal key that spans workspaces)

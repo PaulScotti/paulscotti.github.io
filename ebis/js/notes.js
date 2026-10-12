@@ -1,6 +1,7 @@
-// Margin notes: beside each stretch of the text, what it says, in a line or two, as a sharp reader
-// would note it. Claude writes them, through the worker, from passages of a few pages in numbered
-// pieces of a sentence or few: it brackets runs of pieces that make one point and notes each.
+// Margin notes: beside each stretch of the text, what it means, in a line or two, as a knowledgeable
+// friend would note it. Claude writes them, through the worker, from passages of a few pages in
+// numbered pieces of a sentence or few, read with the text around them: it brackets runs of pieces
+// that make one point and notes each.
 // They're records, so they sync like highlights. They're written ahead of the reader: as much as
 // an article (the start of a book) when it's added, and while reading, the next stretch on.
 
@@ -15,10 +16,12 @@ const AHEAD = 24000;  // how far past the reader's place notes are kept written:
 export const FIRST = 60000; // how much is noted as soon as it's added: all of most articles and papers
 const AT_ONCE = 3;    // passages being noted at the same time
 const RETRY = 3 * 60000; // a passage that couldn't be noted waits this long to be tried again
+const CONTEXT = 120000; // characters of the text around a passage that Claude reads with it: its chapter, and what comes before
+const V = 2; // how notes are written now; notes written otherwise are written again
 const PROSE = 'p, li, dt, dd';
 const APART = 'figure, table, aside, pre'; // captions, tables, footnotes, code: words beside the text's own
 
-const books = new Map(); // id → each chapter's passages, worked out once
+const books = new Map(); // id → { passages, texts } of each chapter, worked out once
 const queues = new Map(); // id → passages waiting to be noted, the book asked for last first
 const busy = new Map(), failed = new Map(), told = new Set(); // busy: key → passage being noted now
 const watchers = new Set();
@@ -26,22 +29,25 @@ const watchers = new Set();
 // The reader shows where notes are still being written, or waiting to be.
 export const onWriting = fn => watchers.add(fn);
 export const writing = (id, c) => [...busy.values(), ...(queues.get(id) ?? []).map(q => q.p)]
-  .filter(p => p.id === id && p.c === c && !store.get('notes', p.key));
+  .filter(p => p.id === id && p.c === c && !written(p.key));
+const written = key => store.get('notes', key)?.v === V;
 
-// A chapter in passages: { key, c, b, b1 (its blocks), size, text (what the model reads), said
-// (where each numbered piece is), before (the end of the paragraph before it) }. Each starts a new
-// section where it can, and is told the sections it begins inside of.
+// A chapter in passages: { key, c, b, b1 (its blocks), size, text (what the model notes), said
+// (where each numbered piece is) }. Each starts a new section where it can, and is told the
+// sections it begins inside of. The chapter's whole text is kept too, for context.
 export function passages(id, data, c) {
-  const chapters = books.get(id) ?? books.set(id, []).get(id);
-  if (chapters[c]) return chapters[c];
+  const book = books.get(id) ?? books.set(id, { passages: [], texts: [] }).get(id);
+  if (book.passages[c]) return book.passages[c];
   const section = new DOMParser().parseFromString(data.chapters[c], 'text/html').body.firstElementChild;
-  const out = [], trail = [];
-  let p = null, last = '';
+  const out = [], trail = [], all = [];
+  let p = null;
   blocks(section).forEach((el, b) => {
     const text = el.textContent, level = +el.localName.match(/^h([234])$/)?.[1] || 0;
+    const plain = level ? `${'#'.repeat(level - 1)} ${clean(text)}` : el.matches('.eq') ? `Formula: ${el.querySelector('math')?.getAttribute('alttext') || clean(text)}` : clean(text);
+    if (plain) all.push(plain);
     if (!p || p.weight >= PASSAGE || (level && p.weight >= PASSAGE * 0.6)) {
       const within = trail.slice(0, level ? level - 2 : trail.length).filter(Boolean);
-      p = { key: `${id}.${c}.${out.length}`, id, c, b, size: 0, weight: 0, lines: within.map((t, i) => `${'#'.repeat(i + 1)} ${t}`), said: [], before: clean(last).slice(-600).replace(/^\S*\s/, '') };
+      p = { key: `${id}.${c}.${out.length}`, id, c, b, size: 0, weight: 0, lines: within.map((t, i) => `${'#'.repeat(i + 1)} ${t}`), said: [] };
       out.push(p);
     }
     p.b1 = b + 1;
@@ -49,9 +55,9 @@ export function passages(id, data, c) {
     if (level) {
       trail.length = level - 2;
       trail[level - 2] = clean(text);
-      p.lines.push('', `${'#'.repeat(level - 1)} ${clean(text)}`);
+      p.lines.push('', plain);
     } else if (el.matches('.eq')) {
-      p.lines.push('', `Formula: ${el.querySelector('math')?.getAttribute('alttext') || clean(text)}`);
+      p.lines.push('', plain);
     } else if (el.matches(PROSE) && !el.closest(APART) && text.trim()) {
       const line = pieces(sentences(text, data.lang)).map(([s, e]) => {
         p.said.push({ b, o: s, e });
@@ -59,14 +65,24 @@ export function passages(id, data, c) {
       });
       p.lines.push('', `${el.localName === 'li' ? '• ' : ''}${line.join(' ')}`);
       p.weight += text.length;
-      last = text;
     }
   });
   for (const p of out) p.text = p.lines.join('\n').trim(), delete p.lines, delete p.weight;
-  return (chapters[c] = out);
+  book.texts[c] = all.join('\n\n');
+  return (book.passages[c] = out);
 }
 const clean = text => text.replace(/\s+/g, ' ').trim();
 
+// What Claude reads around a passage: its chapter whole, after as much of the chapters before it as
+// fits. The same for every passage of a chapter, so it's read from Claude's cache after the first.
+export function context(id, data, c) {
+  let text = '';
+  for (let k = c; k >= 0 && text.length < CONTEXT; k--) {
+    passages(id, data, k);
+    text = `${books.get(id).texts[k]}\n\n${text}`;
+  }
+  return text.slice(-CONTEXT).trim();
+}
 // [start, end] of each sentence. A segmenter also breaks after abbreviations and initials ("Mr.
 // Darcy", "A. Beirami", "et al. (2024)", "Fig. 3"), so a sentence goes on past one of those (or a
 // stray "1."), and into what follows in lower case or with a number.
@@ -109,7 +125,7 @@ export function prepare(id, data, place = store.get('pos', id) ?? { c: 0, b: 0 }
       if (c === place.c && p.b1 <= place.b) continue;
       if (left <= 0) break;
       left -= p.size;
-      if (p.said.length && !store.get('notes', p.key) && !busy.has(p.key) && Date.now() - (failed.get(p.key) ?? 0) > RETRY) wanted.push(p);
+      if (p.said.length && !written(p.key) && !busy.has(p.key) && Date.now() - (failed.get(p.key) ?? 0) > RETRY) wanted.push(p);
     }
   }
   // These go first; what was asked for before (the start of a book just added) still follows.
@@ -125,7 +141,7 @@ function pump() {
   for (const [id, queue] of [...queues].reverse()) {
     while (busy.size < AT_ONCE && queue.length) {
       const next = queue.shift();
-      if (!busy.has(next.p.key) && !store.get('notes', next.p.key) && store.get('book', id)) write(next);
+      if (!busy.has(next.p.key) && !written(next.p.key) && store.get('book', id)) write(next);
     }
     if (!queue.length) queues.delete(id);
   }
@@ -135,7 +151,7 @@ async function write({ p, data }) {
   busy.set(p.key, p);
   watchers.forEach(fn => fn(p));
   await store.sync(); // another device may have noted it already
-  const notes = !store.get('notes', p.key) && await store.annotate({ title: data.title, author: data.author, before: p.before, text: p.text }).then(r => {
+  const notes = !written(p.key) && await store.annotate({ title: data.title, author: data.author, context: context(p.id, data, p.c), text: p.text }).then(r => {
     if (!Array.isArray(r.notes)) throw new Error('Claude sent no notes.');
     return r.notes;
   }).catch(e => {
@@ -143,7 +159,7 @@ async function write({ p, data }) {
     if (!/can’t reach/.test(e.message) && !told.has(e.message)) told.add(e.message), toast(`Margin notes couldn’t be written. ${e.message}`);
   });
   busy.delete(p.key);
-  if (notes && store.get('book', p.id)) store.put('notes', p.key, { book: p.id, c: p.c, notes: runs(p, notes) }); // (unless it was removed meanwhile)
+  if (notes && store.get('book', p.id)) store.put('notes', p.key, { book: p.id, c: p.c, v: V, notes: runs(p, notes) }); // (unless it was removed meanwhile)
   watchers.forEach(fn => fn(p));
   pump();
 }
@@ -163,5 +179,5 @@ function runs(p, notes) {
 }
 
 // A chapter's notes, in reading order.
-export const of = (id, c) => store.all('notes').filter(n => n.book === id && n.c === c)
+export const of = (id, c) => store.all('notes').filter(n => n.book === id && n.c === c && n.v === V)
   .sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true })).flatMap(n => n.notes);

@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "The ebis worker; deploy with npx wrangler deploy",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0"
+  }
+}
