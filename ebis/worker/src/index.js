@@ -104,19 +104,20 @@ async function proxy(target) {
 
 // Margin notes, written by Claude to help a reader understand what they read. A passage arrives in
 // numbered pieces of a sentence or few, after the text around it for context (the same for every
-// passage of a chapter, so Claude keeps it cached); the notes go back as runs of pieces, each with
-// what it means.
+// passage of a chapter, so Claude keeps it cached) and what the margin has said before it; the notes
+// go back as runs of pieces, each with what it means.
 const MODEL = 'claude-haiku-5-5';
 const SPAN = 700; // characters of text a note sums up, at least on average: room in the margin beside them
 const NOTE = `You write the margin notes in one reader's copy of a book, paper or article: brackets beside the text, each with a note that helps them understand that stretch at a glance.
 
-You get the text first (all of it, or as much as leads up to the passage and around it), then one passage of it to note. The passage comes one paragraph to a line, each paragraph in numbered pieces: a short paragraph is one piece, a longer one a few pieces of a couple of sentences or more. A line starting with # is a heading; one starting with "Formula:" is a displayed formula.
+You get the text first (all of it, or as much as leads up to the passage and around it), then the notes already written beside it before the passage, in order (what the reader has been told so far), then one passage of it to note. The passage comes one paragraph to a line, each paragraph in numbered pieces: a short paragraph is one piece, a longer one a few pieces of a couple of sentences or more. A line starting with # is a heading; one starting with "Formula:" is a displayed formula.
 
 Bracket the passage into runs of consecutive pieces, in order, each making one point. Think in paragraphs: a run is a whole paragraph, or several that make one point together (as a stretch of dialogue usually does). Split a paragraph only when it is long and makes separate points.
 
 Beside each run, write what a knowledgeable friend reading over the reader's shoulder would say to make it click:
 - Explain it, in your own plain words, for a smart reader new to the subject. Don't reuse the text's phrasing (beyond names and numbers): someone it lost needs it said another way. Assume they don't know the field's terms; when one can't be avoided, say in a few words what it is or does.
 - Explain the run's main point well rather than list everything in it. If a run packs in more than one note can explain, split it.
+- Build on the notes so far: don't explain again what they have explained, use the same terms they used, and say how this run develops, answers or turns from an earlier point when that helps. Each note should still make sense to someone reading from here.
 - Make it make sense: the reason behind a claim, how a mechanism works, what a number implies, or why this matters to what the piece is arguing. Use the rest of the text for this (what its terms mean, what this run sets up or answers) and your own knowledge of the subject, but only to explain what the text says, never to add claims of your own.
 - Keep the substance: the claim, the result, with the names and numbers that matter (in a story: what happens, to whom, and what it reveals). Never describe the text ("The author argues…", "This section discusses…").
 - Two or three short sentences, about 40 words at most.
@@ -143,7 +144,7 @@ const NOTES = {
   },
 };
 
-async function annotate({ title, author, text, context = text }, env) {
+async function annotate({ title, author, text, context = text, sofar = [] }, env) {
   if (!env.ANTHROPIC_API_KEY) return new Response('The worker has no ANTHROPIC_API_KEY.', { status: 503 });
   const claude = new Anthropic({
     apiKey: env.ANTHROPIC_API_KEY,
@@ -156,6 +157,7 @@ async function annotate({ title, author, text, context = text }, env) {
       role: 'user',
       content: [
         { type: 'text', text: `<text${title ? ` title="${title}"` : ''}${author ? ` author="${author}"` : ''}>\n${context}\n</text>`, cache_control: { type: 'ephemeral' } },
+        { type: 'text', text: `<notes_so_far>\n${sofar.map(t => `- ${t}`).join('\n') || '(none yet)'}\n</notes_so_far>` },
         { type: 'text', text: `<passage>\n${text}\n</passage>\n\nNote this passage, in at most ${Math.ceil(text.length / SPAN)} notes.` },
       ],
     }],

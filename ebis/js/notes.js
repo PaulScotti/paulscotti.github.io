@@ -1,7 +1,8 @@
 // Margin notes: beside each stretch of the text, what it means, in a line or two, as a knowledgeable
 // friend would note it. Claude writes them, through the worker, from passages of a few pages in
 // numbered pieces of a sentence or few, read with the text around them: it brackets runs of pieces
-// that make one point and notes each.
+// that make one point and notes each. A book's passages are noted one at a time, in order, each
+// knowing what the margin has said before it, so the notes build on one another.
 // They're records, so they sync like highlights. They're written ahead of the reader: as much as
 // an article (the start of a book) when it's added, and while reading, the next stretch on.
 
@@ -17,7 +18,8 @@ export const FIRST = 60000; // how much is noted as soon as it's added: all of m
 const AT_ONCE = 3;    // passages being noted at the same time
 const RETRY = 3 * 60000; // a passage that couldn't be noted waits this long to be tried again
 const CONTEXT = 120000; // characters of the text around a passage that Claude reads with it: its chapter, and what comes before
-const V = 2; // how notes are written now; notes written otherwise are written again
+const V = 3; // how notes are written now; notes written otherwise are written again
+const SOFAR = 30; // notes of what the margin has said before a passage that Claude reads with it
 const PROSE = 'p, li, dt, dd';
 const APART = 'figure, table, aside, pre'; // captions, tables, footnotes, code: words beside the text's own
 
@@ -136,12 +138,13 @@ export function prepare(id, data, place = store.get('pos', id) ?? { c: 0, b: 0 }
   if (wanted.length) watchers.forEach(fn => fn({ id, c: place.c }));
 }
 
+// One passage of a book at a time (several books at once), so each is noted after those before it.
 function pump() {
   if (!settings.notes) return; // (turned off meanwhile: what's waiting waits)
   for (const [id, queue] of [...queues].reverse()) {
-    while (busy.size < AT_ONCE && queue.length) {
+    while (busy.size < AT_ONCE && queue.length && ![...busy.values()].some(p => p.id === id)) {
       const next = queue.shift();
-      if (!busy.has(next.p.key) && !written(next.p.key) && store.get('book', id)) write(next);
+      if (!written(next.p.key) && store.get('book', id)) write(next);
     }
     if (!queue.length) queues.delete(id);
   }
@@ -151,7 +154,7 @@ async function write({ p, data }) {
   busy.set(p.key, p);
   watchers.forEach(fn => fn(p));
   await store.sync(); // another device may have noted it already
-  const notes = !written(p.key) && await store.annotate({ title: data.title, author: data.author, context: context(p.id, data, p.c), text: p.text }).then(r => {
+  const notes = !written(p.key) && await store.annotate({ title: data.title, author: data.author, context: context(p.id, data, p.c), sofar: sofar(p), text: p.text }).then(r => {
     if (!Array.isArray(r.notes)) throw new Error('Claude sent no notes.');
     return r.notes;
   }).catch(e => {
@@ -163,6 +166,11 @@ async function write({ p, data }) {
   watchers.forEach(fn => fn(p));
   pump();
 }
+
+// What the margin has said before a passage, in order: the last of the notes before it.
+const sofar = p => store.all('notes').filter(n => n.book === p.id && n.v === V && n.c <= p.c)
+  .sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }))
+  .flatMap(n => n.notes.filter(x => n.c < p.c || x.b < p.b).map(x => x.t)).slice(-SOFAR);
 
 // The model's runs of numbered pieces, as places in the chapter: in order, apart, each with its note.
 function runs(p, notes) {

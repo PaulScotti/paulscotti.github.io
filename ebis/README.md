@@ -26,7 +26,9 @@ that ebis typesets itself.
   `[chapter, block, character]`, so it survives any device, type size or theme.
 - `js/notes.js` writes margin notes: Claude Haiku, through the worker, reads each passage with
   the text around it (its chapter, or all of a paper) and brackets it into runs that make one
-  point, explaining each in plain words, jargon unpacked, rather than shortening it. All of an article (the
+  point, explaining each in plain words, jargon unpacked, rather than shortening it. A book's
+  passages are noted one at a time, in order, each with the notes before it, so the margin
+  builds on itself rather than repeating. All of an article (the
   start of a book) is noted as it's added, and while reading, the next twenty minutes or so.
   Where the window has room, notes stand in a column beside the text, each staying in view
   while its run is; on a phone, the note of the run being read stands at the foot of the page.
