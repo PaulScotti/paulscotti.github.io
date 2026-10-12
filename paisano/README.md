@@ -40,6 +40,12 @@ Feed seeds to hatch and grow Paisano. Its belly holds three and digests one per 
 step while it looks away and wait while it looks up. Catches feed Paisano and build Speed, Stealth and Nerve.
 The Desert page has the plants, traits and field guide. Rest days never remove growth or earned traits.
 
+The bird, creatures, plants, egg and seed were generated through the OpenAI Images API with
+`gpt-image-2.5-sunburst`, `quality: "max"` and transparent backgrounds. Four bird stages each have idle, running,
+feeding, sleeping and happy poses. The running cycle uses two frames. Small WebP assets in `assets/` are cached
+for offline use. Original PNGs, the full prompts, generation IDs and crop coordinates are in
+[`output/imagegen/manifest.json`](output/imagegen/manifest.json). The app makes no image-generation API calls.
+
 ## Evidence and limits
 
 The [2026 ACSM guidance](https://acsm.org/resistance-training-guidelines-update-2026/) emphasizes regular resistance

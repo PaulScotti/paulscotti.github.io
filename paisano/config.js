@@ -159,5 +159,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 4,
+  version: 5,
 };

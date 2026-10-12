@@ -4,8 +4,8 @@
 // garden for it to stalk. All of it is worked out from one log of snacks, feedings, hunts and plantings, which the
 // worker keeps.
 
-import config from './config.js?v=4';
-import { play } from './figure.js?v=4';
+import config from './config.js?v=5';
+import { play } from './figure.js?v=5';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -209,7 +209,7 @@ function begin(x, saved = null) {
   buddy.removeAttribute('tabindex');
   buddy.removeAttribute('role');
   buddy.setAttribute('class', $('bird').classList.contains('hatched') ? 'bird hatched' : 'bird');
-  buddy.setAttribute('transform', `translate(56 96) scale(${-pet.size} ${pet.size})`);
+  buddy.setAttribute('transform', `translate(56 96) scale(${-pet.scale} ${pet.scale})`);
   $('buddy').replaceChildren(buddy);
   snack.stop = play($('figure'), { ...x, hold: snack.w ? x.hold : 'none' });
   $('snack').classList.toggle('over', snack.review);
@@ -405,7 +405,6 @@ function tick() {
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
   const stage = config.stages[stageOf(st.food)][0], hungry = st.food > 0 && !fullness();
   $('stage').textContent = hungry ? `Hungry ${stage.toLowerCase()}` : stage;
-  $('bird').classList.toggle('hungry', hungry);
   const now = new Date(), day = (now.getHours() + now.getMinutes() / 60 - 6) / 14;
   $('sun').setAttribute('cx', 24 + 312 * day);
   $('sun').setAttribute('cy', 84 - 56 * Math.sin(Math.PI * day));
@@ -538,35 +537,26 @@ function desert() {
   }
 }
 
-// Paisano, in its garden. It grows with each seed it eats, from a hatchling (0) to a roadrunner (1): legs, tail, crest
-// and beak lengthen and its head gets smaller for its body. It wanders, pecks and looks about; it naps at night; and
-// when its belly is empty its crest droops and it asks for a seed, or looks for one in the sand if the sack is empty.
-const pet = { x: 200, face: 1, size: 1, busy: false, flying: 0, strewn: [] }; // flying: seeds tossed, not yet eaten
+// A new sprite row at each growth stage; scale grows continuously between stages.
+const pet = { x: 200, face: 1, size: 1, scale: 1, busy: false, flying: 0, strewn: [] }; // flying: seeds tossed, not yet eaten
 
 function grow() {
   const eaten = Math.max(0, st.food - pet.flying), stages = config.stages, i = stageOf(eaten);
   $('bird').classList.toggle('hatched', i > 0);
-  if (!i) return place();
-  // Growth runs evenly through each stage from the hatchling's to the roadrunner's.
+  if (!i) { pet.size = pet.scale = 1; return place(); }
   const g = i === stages.length - 1 ? 1 : (i - 1 + (eaten - stages[i][1]) / (stages[i + 1][1] - stages[i][1])) / (stages.length - 2);
-  const legs = 0.6 + 0.4 * g, drop = 11 * (1 - legs), head = 1.25 - 0.25 * g, crest = 0.35 + 0.65 * g;
-  $('legs').setAttribute('transform', `scale(1 ${legs})`);
-  $('trunk').setAttribute('transform', `translate(0 ${drop})`);
-  $('torso').setAttribute('transform', `translate(0 -20) scale(${0.88 + 0.12 * g} ${0.92 + 0.08 * g}) translate(0 20)`);
-  $('tail').setAttribute('transform', `translate(-9 -19) scale(${0.08 + 0.92 * g}) translate(9 19)`);
-  $('head').setAttribute('transform', `translate(6 -27) scale(${head}) translate(-6 27)`);
-  $('crest').setAttribute('transform', `translate(4 -45) scale(${crest}) translate(-4 45)`);
-  $('beak').setAttribute('transform', `translate(19.5 -34.6) scale(${0.55 + 0.45 * g}) translate(-19.5 34.6)`);
-  pet.size = 1.1 + 0.6 * g;
-  pet.top = drop - 27 - (20.4 + 12 * crest) * head; // the top of its crest, where the emotion ball floats
+  $('bird').style.setProperty('--row', `${-(i - 1) * 96}px`);
+  pet.size = 1.1 + 0.6 * g; // growth controls hunting stride and reach
+  pet.scale = 0.75 + 0.5 * g; // the artwork has its own proportions
+  pet.top = [-63, -67.5, -70.875, -71.25][i - 1];
   place();
 }
 
 // The emotion ball floats over its head, as a Chao's does, and turns into a sign of how it feels.
 function place() {
   const hatched = $('bird').classList.contains('hatched');
-  $('bird').setAttribute('transform', `translate(${pet.x} ${GROUND}) scale(${pet.face * pet.size} ${pet.size})`);
-  $('mood').setAttribute('transform', `translate(${pet.x + (hatched ? pet.face * 4 * pet.size : 0)} ${GROUND + (hatched ? pet.top * pet.size - 8 : -38)})`);
+  $('bird').setAttribute('transform', `translate(${pet.x} ${GROUND}) scale(${pet.face * pet.scale} ${pet.scale})`);
+  $('mood').setAttribute('transform', `translate(${pet.x + (hatched ? pet.face * 4 * pet.scale : 0)} ${GROUND + (hatched ? pet.top * pet.scale - 8 : -38)})`);
 }
 
 function emote(sign) {
@@ -618,8 +608,8 @@ function feed() {
   }
   pet.flying++;
   record('feed', { n: 1 });
-  const seed = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  seed.setAttribute('d', 'M0 -2.6 C1.5 -2.6 2.2 -0.6 2.2 1 C2.2 2.8 1.3 3.4 0 3.4 S-2.2 2.8 -2.2 1 C-2.2 -0.6 -1.5 -2.6 0 -2.6 Z');
+  const seed = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  seed.setAttribute('href', '#grain');
   $('strewn').append(seed);
   const hatched = $('bird').classList.contains('hatched');
   const x = hatched ? Math.max(90, Math.min(300, pet.x + (Math.random() - 0.5) * 140)) : pet.x + 16;
@@ -639,7 +629,7 @@ async function eat() {
   while (pet.strewn.length) {
     const { x, seed } = pet.strewn.shift();
     if ($('bird').classList.contains('hatched')) {
-      const reach = 34 * pet.size;
+      const reach = 22 * pet.scale; // the feeding sprite's beak, measured from its feet
       await walk(x - (x < pet.x ? -reach : reach));
       pet.face = x < pet.x ? -1 : 1;
       place();

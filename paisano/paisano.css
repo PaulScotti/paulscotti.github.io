@@ -9,7 +9,7 @@
   --bg: #f6f3ee; --surface: #fdfbf8; --tint: #efeae2; --ink: #22201c; --ink-2: #5d5750; --ink-3: #8e877d;
   --rule: #e4ded4; --accent: #bf5f38; --shade: rgb(34 32 28 / .05);
   --skin: #ebe6de; --muscle: #d9d1c4;
-  --sky: #e9eef0; --sand: #ece2d1; --dune: #e5d7bf; --sage: #9db79a; --sage-2: #7e9b7b;
+  --sky: #e9eef0; --sand: #ece2d1; --dune: #e5d7bf;
   --tone: #e5bf9f; --tone-2: #cfa684; --hair: #3f322a; --shirt: #56697d; --shirt-2: #46586b;
   --shorts: #34312d; --shorts-2: #272522; --shoe: #f3efe8; --shoe-2: #d9d2c7; --block: #44403b; --mat: #e2dbcf;
   --puddle: #a9bfcd; --rainfall: #8fa6b6; --silhouette: brightness(0);
@@ -80,10 +80,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 @keyframes fall { to { translate: -14px 150px; } }
 .dune { fill: var(--dune); }
 .dune.far { fill: var(--sand); }
-.cactus { fill: var(--sage); stroke: var(--sage-2); stroke-width: 1; stroke-linejoin: round; }
-.bloom { fill: #e9a3a6; }
 .pebbles ellipse { fill: var(--dune); stroke: color-mix(in oklab, var(--dune), #000 8%); stroke-width: .6; }
-#strewn path { fill: #8a6f55; }
 .feed {
   position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 3px; height: 36px; padding: 0 12px 0 8px;
   font-size: 16px; font-variant-numeric: tabular-nums; border-radius: 18px; background: var(--surface); color: var(--ink);
@@ -98,60 +95,38 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .growth b { display: block; height: 100%; width: 0; background: var(--accent); transition: width .8s var(--ease); }
 #toward { color: var(--ink-3); font-variant-numeric: tabular-nums; }
 
-/* Paisano. Growth is set on the wrapper groups from paisano.js; its moves are classes on #bird. */
-.bird { cursor: pointer; }
+/* Six poses per row. A fixed viewport keeps the sprite sheet out of the bird's focus bounds. */
+.bird { cursor: pointer; --row: 0px; }
 .bird:not(.hatched) .chick, .bird.hatched .egg { display: none; }
-.bird :is(.shell, .torso, .skull, .tail, .crest, .wing, .beak) { stroke: #4d3a30; stroke-width: 1; stroke-linejoin: round; paint-order: stroke; }
-.shell { fill: #f8efe0; }
-.speck { fill: #dcb48a; }
-.shadow { fill: rgb(0 0 0 / .1); }
-.leg { fill: none; stroke: #6f93b6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform-origin: 0 -11px; }
-.leg.far { stroke: #5a7c9e; }
-.tail { fill: #9c7b5b; }
-.tail-tip { fill: #f6eadb; }
-.torso, .skull { fill: #bd9672; }
-.belly { fill: #f6eadb; }
-.wing { fill: #8a6a4e; }
-.dots { stroke: #f6eadb; stroke-width: 1.8; stroke-linecap: round; }
-.crest { fill: #574335; transform-origin: 4px -45px; transition: scale .3s var(--ease); }
-.beak { fill: #4b3b33; }
-.patch.blue { fill: #5b8ac0; }
-.patch.red { fill: #e2704a; }
-.white { fill: #fff; }
-.pupil { fill: #2a221d; }
-.glint { fill: #fff; }
-.shut { fill: none; stroke: #2a221d; stroke-width: 1.3; stroke-linecap: round; display: none; }
-.blink .open, .asleep .open { display: none; }
-.blink .shut, .asleep .shut { display: inline; }
-.trunk { animation: breathe 2.8s ease-in-out infinite; }
-@keyframes breathe { 50% { translate: 0 .6px; } }
-.wag { transform-origin: -9px -19px; animation: wag 3.4s ease-in-out infinite; }
-@keyframes wag { 0%, 70%, 100% { rotate: 0deg; } 80% { rotate: 6deg; } 88% { rotate: -3deg; } }
-.nod { transform-origin: 6px -27px; transition: rotate .12s; }
-.peck .nod { rotate: 34deg; }
-.tilt .nod { rotate: -14deg; }
-.walking .leg.near { animation: stride .26s ease-in-out infinite alternate; }
-.walking .leg.far { animation: stride .26s ease-in-out infinite alternate-reverse; }
-@keyframes stride { from { rotate: -22deg; } to { rotate: 18deg; } }
+.pet-hit { fill: transparent; pointer-events: all; }
+.bird .sprite, .bird .egg use { pointer-events: none; }
+.shadow { fill: rgb(0 0 0 / .08); }
+.sprite { overflow: hidden; }
+.frames { width: 100%; height: 100%; background: url('assets/birds.webp') 0 var(--row) / 576px 384px; }
+.chick { animation: breathe 2.8s ease-in-out infinite; transform-origin: 0 0; }
+@keyframes breathe { 50% { translate: 0 -.5px; } }
+.tilt .chick { rotate: -4deg; }
+.stalk .frames { background-position: -96px var(--row); }
+.asleep .frames { background-position: -384px var(--row); }
+.asleep .chick { animation-duration: 4.4s; }
+.blink .frames, .proud .frames { background-position: -480px var(--row); }
+.walking .frames { animation: stride .3s steps(1) infinite; }
+@keyframes stride { 0%, 100% { background-position: -96px var(--row); } 50% { background-position: -192px var(--row); } }
+.peck .frames { background-position: -288px var(--row); animation: none; }
 .hop { animation: hop .5s var(--ease); }
 @keyframes hop { 40% { translate: 0 -10px; } }
-.hungry .crest { scale: .9 .6; }
-.proud .crest { scale: 1.1 1.4; }
 .wobble .egg, .wobble .chick { animation: wobble .3s ease-in-out 3; }
 @keyframes wobble { 25% { rotate: -9deg; } 75% { rotate: 9deg; } }
-.asleep .trunk { animation-duration: 4.4s; }
 
 /* The visitor from the last snack: named until the hunt, with a ! while it looks at Paisano */
 .visitor { cursor: pointer; }
 .visitor .hit { fill: transparent; }
-.visitor .label { font: 9px var(--serif); fill: var(--ink-2); text-anchor: middle; transition: opacity .3s; }
+.visitor .label { font: 9px var(--serif); fill: var(--ink-2); stroke: var(--sky); stroke-width: 2; stroke-linejoin: round; paint-order: stroke; text-anchor: middle; transition: opacity .3s; }
 .visitor.hunted .label { opacity: 0; }
 .visitor .alert { font: 17px var(--serif); fill: var(--accent); text-anchor: middle; opacity: 0; }
 .visitor.looking .alert { opacity: 1; }
 .visitor.twitch use { animation: twitch .35s; }
 @keyframes twitch { 25% { translate: 0 -3px; rotate: -4deg; } 50% { translate: 0 0; rotate: 0deg; } 75% { translate: 0 -1.6px; rotate: 3deg; } }
-.stalk .nod { rotate: 16deg; }
-.stalk .crest { scale: 1 .5; }
 
 /* The emotion ball over Paisano's head, as a Chao has, which turns into how it feels */
 .mood { pointer-events: none; }
@@ -230,7 +205,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .figure .mat { fill: var(--mat); }
 .figure .wall { fill: var(--rule); }
 .figure .bar { stroke: var(--ink-3); stroke-linecap: round; }
-.ring .buddy { inset: auto -10% -4% auto; width: 30%; height: auto; overflow: visible; }
+.ring .buddy { inset: auto 0 -4% auto; width: 30%; height: auto; overflow: visible; }
 .clock { display: flex; align-items: baseline; gap: 12px; margin: 0; }
 #clock { font-size: 34px; font-variant-numeric: tabular-nums; line-height: 1.2; }
 .phase { font-size: 16px; color: var(--ink-2); }
