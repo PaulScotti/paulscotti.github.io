@@ -1140,6 +1140,16 @@
    "status": "contacted",
    "requested": "Leased to another tenant (Oct 6); removed from shortlist.",
    "hidden": true
+  },
+  {
+   "id": "1740-nw-63rd-st",
+   "name": "1740 NW 63rd St",
+   "address": "1740 NW 63rd St, Seattle, WA 98107",
+   "neighborhood": "Ballard",
+   "available": "Unavailable for tours or leasing; owner is listing the home for sale",
+   "status": "contacted",
+   "hidden": true,
+   "requested": "Owner replied on Zillow (Oct 5) that the home is being listed for sale, so it's no longer available to tour or lease. Removed from shortlist."
   }
  ]
 }
