@@ -561,15 +561,21 @@ function withoutDate(byline, when) {
 // Text only screen readers are meant to hear, by its conventional classes: it never shows on the page.
 const HIDDEN = ['sr-only', 'visually-hidden', 'screen-reader-text'];
 
-// What Readability keeps that a reader of the article doesn't need: the title, byline and date, which
-// ebis sets itself; blocks laid out twice in a row (once for phones, once for desktops); text only
-// screen readers hear; pictures of people beside their names (the author's portrait, avatars); lists
-// of links that lead to other pages (related stories) with the heading over them, and headings left
-// with nothing under them; and a link that skips to the article itself.
+// What Readability keeps that a reader of the article doesn't need: what it set beside the page's
+// own <article> (where that holds nearly all the text) because the site gives its sections one class,
+// like an archive's "No posts" (pictures there stay: a lead image, say); the title, byline and date,
+// which ebis sets itself; blocks laid out twice in a row (once for phones, once for desktops); text
+// only screen readers hear; pictures of people beside their names (the author's portrait, avatars);
+// lists of links that lead to other pages (related stories) with the heading over them, and headings
+// left with nothing under them; and a link that skips to the article itself.
 function prune(root, { title, author }, when, url) {
   const text = el => tidy(el.textContent);
   const is = (s, what) => !!what && s.toLowerCase() === what.toLowerCase();
   const here = a => a.href.split('#')[0] === url.split('#')[0]; // Readability makes every link absolute
+  const own = [...root.querySelectorAll('article')].find(a => text(a).length > text(root).length * 0.9);
+  for (let el = own; el && el !== root; el = el.parentElement) {
+    for (const beside of [...el.parentElement.children]) if (beside !== el && !beside.matches('img, picture, figure, video') && !beside.querySelector('img, picture, video')) beside.remove();
+  }
   let previous = '';
   for (const el of root.querySelectorAll('p, h1, h2, h3, h4, h5, h6')) {
     const t = text(el);
