@@ -124,6 +124,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 @keyframes stride { from { rotate: -22deg; } to { rotate: 18deg; } }
 .hop { animation: hop .5s var(--ease); }
 @keyframes hop { 40% { translate: 0 -10px; } }
+.hungry .crest { scale: .9 .6; }
 .proud .crest { scale: 1.1 1.4; }
 .wobble .egg, .wobble .chick { animation: wobble .3s ease-in-out 3; }
 @keyframes wobble { 25% { rotate: -9deg; } 75% { rotate: 9deg; } }

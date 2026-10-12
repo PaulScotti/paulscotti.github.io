@@ -18,20 +18,24 @@ Named for the roadrunner, el paisano, which also means a companion.
   3, or none. The belief is multiplied by how likely that answer was at each strength, allowing 1.5 reps of error, and
   it widens between snacks as strength drifts (QUEST, Watson & Pelli 1983). The next dose is aimed at the belief's mean:
   of the settings PowerBlock has and the reps that fit the minute at the exercise's tempo, the one most likely to leave
-  1 to 3 in reserve, less its chance of leaving none.
+  1 to 3 in reserve. Aimed at the middle of 1 to 3, an answer of 1 to 3 keeps the next dose where it was.
 - **Why that learner.** In simulation (lifters from 0.75 to 2 times the first dose's strength, answers off by 1.5
-  reps, strength growing 0.3% a snack), snacks 21 to 60 landed at 1 to 3 in reserve 57% of the time and failed 10%;
-  the first ten failed 17%. A PEST staircase (Taylor & Creelman 1967) in the same simulation landed as often but
-  failed 17% (23% of the first ten). With 1.5 reps of error, about 68% is the most any learner could land.
+  reps, strength growing 0.3% a snack), sets from the 21st snack of an exercise on truly left 1 to 3 in reserve 84% of
+  the time and none 1%; the first ten truly left none 10%. Answers, being off by 1.5 reps, said 1 to 3 for 56% and
+  none for 12%; with that error about 68% is the most any learner could have said 1 to 3. An answer of 1 to 3 never
+  made the next dose lighter; v1, which also docked a dose's chance of leaving none, made it lighter 15% of the time.
 - **The body.** Thirteen areas, each done for the day at two sets. A set counts in full for the areas an exercise
   works most and half for those it assists, the "fractional" counting best supported in Pelland et al.'s dose-response
   meta-regression (SportRxiv preprint). Two a day is fourteen a week; meta-analysis finds 10 or more weekly sets per
   muscle build more than fewer (Schoenfeld, Ogborn & Krieger 2017). History shows each area's sets over the last week
-  against that line, and each exercise's estimated strength over time.
+  against that line, and each exercise's estimated strength over time. Each point is estimated from every answer since,
+  forward and back (a smoother), so the guesses of the first snacks don't set the trend: in simulation the error of the
+  first point fell from 16% to 4%.
 - **Paisano** gets a seed for every snack, two more for a new best (a heavier dose by Epley than any finished before)
   and three for the snack that completes the whole body. Tap the sack to feed it; it hatches and grows from a
-  hatchling to a chick (15 seeds), a fledgling (80) and a roadrunner (300). It naps at night, wants seeds when there are
-  some, and grows restless when it has been more than an hour since a snack.
+  hatchling to a chick (15 seeds), a fledgling (80) and a roadrunner (300). Its belly holds three seeds and digests one
+  an hour, so a seed a snack keeps it fed: when the belly is empty its crest droops and it asks for a seed, or pecks the
+  sand for one if the sack is empty, and a full belly has no room for another. It naps at night.
 - **Why snacks.** Breaking up sitting with two minutes of walking every 20 minutes lowered glucose and insulin after a
   meal in 19 adults with overweight or obesity (Dunstan et al. 2012). Short bursts of vigorous exercise spread through
   the day are a proposed way to build fitness, so far supported by small studies (Islam, Gibala & Little 2022).

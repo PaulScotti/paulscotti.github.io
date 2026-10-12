@@ -16,6 +16,13 @@ const GROUND = 118; // the garden's ground line
 // What an exercise knows of your strength is a belief: chances over a grid of log strengths around its first dose's,
 // from about a quarter to four and a half times it (QUEST, Watson & Pelli 1983).
 const GRID = Array.from({ length: 101 }, (_, i) => -1.5 + i * 0.03);
+const mean = p => p.reduce((sum, v, i) => sum + v * GRID[i], 0);
+const norm = p => { const total = p.reduce((a, b) => a + b); return p.map(v => v / total); };
+// A belief widened by k grid steps, as strength may drift between snacks: each chance spread over its neighbors.
+function blur(p, k) {
+  const n = Math.ceil(3 * k), kernel = Array.from({ length: 2 * n + 1 }, (_, j) => Math.exp(-0.5 * ((j - n) / k) ** 2));
+  return n ? p.map((_, i) => kernel.reduce((sum, v, j) => sum + v * (p[i + j - n] ?? 0), 0)) : p;
+}
 // The chances of each answer for a set that truly leaves m reps in reserve, when answers are off by config.noise reps
 // (a normal spread, by its logistic approximation): 4 or more is easy, 1 to 3 good, none hard.
 function likely(m) {
@@ -37,15 +44,20 @@ const done = sets => AREAS.filter(a => sets[a] >= config.sets).length;
 let st = replay(), snack = null, spun = null, toasting = 0;
 
 // Everything Paisano knows, from the log in time order: each exercise's belief about your strength, each day's
-// snacks, sets per area and seeds, and the seeds eaten.
+// snacks, sets per area and seeds, the seeds eaten and what's in Paisano's belly.
 function replay() {
-  const s = { ex: {}, days: {}, earned: 0, eaten: 0, last: 0 };
+  const s = { ex: {}, days: {}, earned: 0, eaten: 0, belly: 0, fed: 0 };
   for (const x of config.exercises) {
     const [r, w] = x.start;
-    s.ex[x.id] = { c0: Math.log(w ? load(x, w) * (1 + (r + config.reserve) / 30) : r + config.reserve), p: GRID.map(g => Math.exp(-0.5 * (g / config.spread) ** 2)), last: 0, best: 0, trace: [] };
+    s.ex[x.id] = { c0: Math.log(w ? load(x, w) * (1 + (r + config.reserve) / 30) : r + config.reserve), p: norm(GRID.map(g => Math.exp(-0.5 * (g / config.spread) ** 2))), last: 0, best: 0, steps: [] };
   }
   for (const e of [...log, ...pending].sort((a, b) => a.at - b.at)) {
-    if (e.kind === 'feed') { s.eaten += e.data.n; continue; }
+    if (e.kind === 'feed') {
+      s.belly = Math.max(0, s.belly - (e.at - s.fed) / 3600e3) + e.data.n; // it digests a seed an hour
+      s.fed = e.at;
+      s.eaten += e.data.n;
+      continue;
+    }
     const { x: id, w, r, feel } = e.data, x = X[id], m = s.ex[id];
     const d = s.days[dayOf(e.at)] ??= { snacks: [], sets: {}, seeds: 0 };
     const before = done(d.sets);
@@ -58,30 +70,39 @@ function replay() {
     d.snacks.push({ ...e.data, at: e.at, seeds, best, whole });
     d.seeds += seeds;
     s.earned += seeds;
-    s.last = e.at;
     // The belief widens with the days since this exercise's last snack, as strength may have moved, then each strength
     // is weighed by how likely it made the answer.
-    const k = m.last && config.drift * Math.sqrt((e.at - m.last) / 864e5) / 0.03, n = Math.ceil(3 * k);
-    const kernel = Array.from({ length: 2 * n + 1 }, (_, j) => Math.exp(-0.5 * ((j - n) / k) ** 2));
-    if (n) m.p = m.p.map((_, i) => kernel.reduce((sum, v, j) => sum + v * (m.p[i + j - n] ?? 0), 0));
-    m.p = m.p.map((v, i) => v * likely(most(x, Math.exp(m.c0 + GRID[i]), w) - r)[feel]);
-    const total = m.p.reduce((a, b) => a + b);
-    m.p = m.p.map(v => v / total);
+    const k = m.last && config.drift * Math.sqrt((e.at - m.last) / 864e5) / 0.03, prior = blur(m.p, k);
+    m.p = norm(prior.map((v, i) => v * likely(most(x, Math.exp(m.c0 + GRID[i]), w) - r)[feel]));
+    m.steps.push({ k, prior, post: m.p });
     m.last = e.at;
-    m.trace.push(m.p.reduce((sum, v, i) => sum + v * GRID[i], m.c0)); // the mean log strength
+  }
+  // Each exercise's mean log strength at every snack of it, knowing all the answers since (a forward-backward
+  // smoother), so the guesses of its first few snacks don't set its trend.
+  for (const m of Object.values(s.ex)) {
+    m.trace = [];
+    for (let t = m.steps.length - 1, g = m.p; t >= 0; t--) {
+      const next = m.steps[t + 1];
+      if (next) {
+        const back = blur(g.map((v, i) => next.prior[i] && v / next.prior[i]), next.k);
+        g = norm(m.steps[t].post.map((v, i) => v * back[i]));
+      }
+      m.trace.unshift(m.c0 + mean(g));
+    }
   }
   return s;
 }
 
 // An exercise's next dose, aimed at the belief's mean strength as QUEST does: of the settings (none, for an exercise
 // that moves the body) and rep counts that fit in its minute, at least 5 with dumbbells, the one most likely to leave 1
-// to 3 reps in reserve less its chance of leaving none; among near-equals, the one nearest the exercise's usual reps.
+// to 3 reps in reserve; among near-equals, the one nearest the exercise's usual reps. Aimed at the middle of 1 to 3, an
+// answer of 1 to 3 keeps the dose where it was.
 function dose(x) {
   const m = st.ex[x.id], cap = Math.floor(config.work / (x.tempo * (x.sides ? 2 : 1))), body = x.hold === 'none';
-  const strength = Math.exp(m.p.reduce((sum, v, i) => sum + v * GRID[i], m.c0));
+  const strength = Math.exp(m.c0 + mean(m.p));
   let best = { u: -Infinity };
   for (const w of body ? [null] : x.share ? [0, ...config.weights] : config.weights) for (let r = body ? 1 : 5; r <= cap; r++) {
-    const o = likely(most(x, strength, w) - r), u = o.good - o.hard - (body ? 0 : 0.01 * Math.abs(r - x.reps));
+    const u = likely(most(x, strength, w) - r).good - (body ? 0 : 0.01 * Math.abs(r - x.reps));
     if (u > best.u) best = { w, r, u };
   }
   return { w: best.w, r: best.r };
@@ -257,10 +278,9 @@ function render() {
   $('feed').disabled = !seeds;
   $('spin').disabled = !loaded;
   const i = config.stages.findLastIndex(([, k]) => st.eaten >= k), next = config.stages[i + 1];
-  $('stage').textContent = config.stages[i][0];
   $('grown').style.width = `${next ? (st.eaten - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
   $('toward').textContent = next ? `${next[1] - st.eaten} to ${next[0].toLowerCase()}` : '';
-  ago();
+  tick();
   grow();
   if (!$('history').hidden) chronicle();
 }
@@ -269,10 +289,17 @@ const shade = (bodies, of) => {
   for (const path of bodies.querySelectorAll('.area')) path.style.setProperty('--x', Math.min(1, of(path.dataset.area)));
 };
 
-function ago() {
+// What's in Paisano's belly now, in seeds: what it last had, less one an hour since.
+const fullness = () => Math.max(0, st.belly - (Date.now() - st.fed) / 3600e3);
+
+// What changes as time passes: how long since the last snack, and whether Paisano is hungry.
+function tick() {
   const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4);
   $('since').textContent = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
+  const stage = config.stages.findLast(([, k]) => st.eaten >= k)[0], hungry = st.eaten > 0 && !fullness();
+  $('stage').textContent = hungry ? `Hungry ${stage.toLowerCase()}` : stage;
+  $('bird').classList.toggle('hungry', hungry);
 }
 
 // History: every day as a square shaded by the areas it did, the last week's sets per area, and each exercise's strength.
@@ -315,11 +342,13 @@ function chronicle() {
     bar.append(Object.assign(document.createElement('b'), { style: `width: ${(week[a] || 0) / top * 100}%` }));
     return [Object.assign(document.createElement('span'), { textContent: config.areas[a] }), bar, Object.assign(document.createElement('em'), { textContent: +(week[a] || 0).toFixed(1) })];
   }));
-  // Each exercise's estimated strength after every snack of it, and how far it has come since the first.
+  // Each exercise's estimated strength after every snack of it, and how far it has come since the first. The lines share
+  // one scale, at least a tenth of log strength (about 10%) tall, so a small wobble looks small.
+  const span = Math.max(0.1, ...config.exercises.map(x => Math.max(...st.ex[x.id].trace) - Math.min(...st.ex[x.id].trace)));
   $('lifts').replaceChildren(...config.exercises.map(x => {
     const m = st.ex[x.id], li = document.createElement('li'), lo = Math.min(...m.trace), hi = Math.max(...m.trace);
     const C = Math.exp(m.trace.at(-1)), max = Math.round(x.hold === 'none' ? C : (C - (x.share ?? 0) * config.body) / (x.hold === 'pair' ? 2 : 1)); // a one-rep max on the dumbbells alone
-    li.innerHTML = `<b></b><small></small><svg viewBox="0 0 84 28" preserveAspectRatio="none"><polyline points="${m.trace.map((c, k) => `${m.trace.length > 1 ? k / (m.trace.length - 1) * 84 : 42},${hi > lo ? 26 - (c - lo) / (hi - lo) * 24 : 14}`).join(' ')}"/></svg><em></em>`;
+    li.innerHTML = `<b></b><small></small><svg viewBox="0 0 84 28" preserveAspectRatio="none"><polyline points="${m.trace.map((c, k) => `${m.trace.length > 1 ? k / (m.trace.length - 1) * 84 : 42},${14 - (c - (lo + hi) / 2) / span * 24}`).join(' ')}"/></svg><em></em>`;
     li.querySelector('b').textContent = x.name;
     li.querySelector('small').textContent = m.trace.length ? `Next ${said(x, dose(x))} · ${x.hold === 'none' ? `most ≈ ${max} reps` : `1RM ≈ ${max} lb${x.hold === 'pair' ? ' each' : ''}`}` : `First ${said(x, dose(x))}`;
     const change = Math.round((Math.exp(m.trace.at(-1) - m.trace[0]) - 1) * 100);
@@ -343,8 +372,8 @@ function route() {
 }
 
 // Paisano, in its garden. It grows with each seed it eats, from a hatchling (0) to a roadrunner (1): legs, tail, crest
-// and beak lengthen and its head gets smaller for its body. It wanders, pecks and looks about; it naps at night; it
-// wants seeds when you have some, and grows restless when it has been more than an hour since a snack.
+// and beak lengthen and its head gets smaller for its body. It wanders, pecks and looks about; it naps at night; and
+// when its belly is empty its crest droops and it asks for a seed, or looks for one in the sand if the sack is empty.
 const pet = { x: 200, face: 1, size: 1, busy: false, flying: 0, strewn: [] }; // flying: seeds tossed, not yet eaten
 
 function grow() {
@@ -412,10 +441,14 @@ async function peck(times) {
   }
 }
 
-// A seed is tossed from the sack and Paisano goes to eat it; the first one hatches the egg.
+// A seed is tossed from the sack and Paisano goes to eat it; the first one hatches the egg. A full belly has no room.
 function feed() {
   audio.resume();
   if (st.earned - st.eaten <= 0) return;
+  if (st.eaten && fullness() > config.belly - 1) {
+    emote('…');
+    return toast(`Paisano is full. Room for another in ${Math.ceil((fullness() - config.belly + 1) * 60)} min.`);
+  }
   pet.flying++;
   record('feed', { n: 1 });
   const seed = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -467,16 +500,15 @@ async function idle() {
   $('bird').classList.toggle('asleep', night);
   if (pet.busy || !$('bird').classList.contains('hatched') || document.hidden) return;
   if (night) return Math.random() < 0.5 && emote('z');
-  const seeds = st.earned - st.eaten, last = Date.now() - st.last;
-  const r = Math.random();
+  const hungry = !fullness(), r = Math.random();
   pet.busy = true;
-  if (seeds && r < 0.3) {
+  if (hungry && st.earned > st.eaten && r < 0.4) { // asks for a seed from the sack
     pet.face = 1;
     place();
     emote('!');
-  } else if (st.last && last > 3600e3 && last < 12 * 3600e3 && r < 0.35) {
+  } else if (hungry && r < 0.4) { // looks for one in the sand
     emote('?');
-    await walk(90 + Math.random() * 200);
+    await peck(3);
   } else if (r < 0.45) await walk(90 + Math.random() * 200);
   else if (r < 0.7) await peck(1 + Math.floor(Math.random() * 3));
   else if (r < 0.85) await flash('tilt', 1300);
@@ -550,7 +582,7 @@ async function fresh() {
   } else if (password) sync();
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) fresh(); });
-setInterval(ago, 30e3);
+setInterval(tick, 30e3);
 
 history.replaceState(null, '', location.pathname);
 addEventListener('hashchange', route);

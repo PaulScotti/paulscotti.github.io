@@ -33,6 +33,9 @@ export default {
   // Paisano grows as it eats: the seeds eaten by each stage.
   stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
 
+  // Paisano's belly holds this many seeds and digests one an hour: fed a seed a snack, it's hungry when the next is due.
+  belly: 3,
+
   areas: {
     chest: 'Chest', shoulders: 'Shoulders', biceps: 'Biceps', triceps: 'Triceps', forearms: 'Forearms', upper: 'Upper back',
     lats: 'Lats', core: 'Core', lower: 'Lower back', glutes: 'Glutes', quads: 'Quads', hamstrings: 'Hamstrings', calves: 'Calves',
@@ -120,5 +123,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 1,
+  version: 2,
 };
