@@ -527,7 +527,7 @@ function route() {
   $('snack').hidden = hash !== 'snack';
   $('history').hidden = hash !== 'history' || !password;
   $('desert').hidden = hash !== 'desert' || !password;
-  if (hash === 'pachinko') $('aim').focus({ preventScroll: true });
+  if (hash === 'pachinko') { $('pachinko').scrollTop = 0; $('aim').focus({ preventScroll: true }); }
   if (hash === 'snack') $('name').focus({ preventScroll: true });
   if (hash === 'history') { chronicle(); $('history').querySelector('.x').focus(); }
   if (hash === 'desert') { desert(); $('desert').querySelector('.x').focus(); }
