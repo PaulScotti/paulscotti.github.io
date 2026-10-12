@@ -1,0 +1,2963 @@
+{
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "max",
+  "api": "OpenAI Images API",
+  "generated": "2026-10-12",
+  "background": "transparent",
+  "layout": {
+    "columns": 4,
+    "rows": 2,
+    "cell": 384,
+    "assembly_cell": 512
+  },
+  "playback": [
+    0,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+    0
+  ],
+  "sources": {
+    "calf": {
+      "file": "calf.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: WALL-SUPPORTED SINGLE-LEG CALF RAISE from FLOOR level. Left-side three-quarter view, face toward image right. Standing on LEFT foot, which is near the viewer, knee straight but not locked. RIGHT knee bent gently so RIGHT foot is completely off floor behind the working ankle. One PowerBlock dumbbell hangs in the LEFT hand beside LEFT thigh. RIGHT palm rests lightly against a simple thin vertical wall segment on image right at shoulder height. No step, platform, bench or chair. Frame 1 LEFT heel and ball of foot both on floor. Frames 2-7 plantarflex LEFT ankle to raise LEFT heel progressively higher while LEFT toes/ball stay glued to the exact same floor position. Entire body and dumbbell rise together, left knee remains straight, left leg does NOT bend into a squat. Frame 8 tall on the ball of LEFT foot with visibly elevated heel, not on tips of toes. Supporting right wrist/palm stays fixed at wall, right elbow accommodates the small body rise. The raised right foot never touches the floor. No switching feet or weight hand. Wall and toe contact are fixed in all eight frames. Make heel lift unambiguous and anatomically modest (about 6-8 cm), not a jump.\n",
+      "reference": "rdl.png",
+      "generation_id": "34dd6ded-4ac3-45d9-88f4-17c81d1d2494",
+      "usage": {
+        "input_tokens": 2089,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 631
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6809
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 153,
+            "top": 12,
+            "width": 237,
+            "height": 492
+          },
+          "anchor": [
+            299,
+            500
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 217,
+            "height": 451,
+            "left": 145,
+            "top": 33
+          }
+        },
+        {
+          "crop": {
+            "left": 669,
+            "top": 11,
+            "width": 233,
+            "height": 492
+          },
+          "anchor": [
+            812,
+            499
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 213,
+            "height": 451,
+            "left": 148,
+            "top": 33
+          }
+        },
+        {
+          "crop": {
+            "left": 1181,
+            "top": 12,
+            "width": 233,
+            "height": 490
+          },
+          "anchor": [
+            1323,
+            499
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 213,
+            "height": 449,
+            "left": 149,
+            "top": 34
+          }
+        },
+        {
+          "crop": {
+            "left": 1693,
+            "top": 11,
+            "width": 233,
+            "height": 491
+          },
+          "anchor": [
+            1836,
+            499
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 213,
+            "height": 450,
+            "left": 148,
+            "top": 33
+          }
+        },
+        {
+          "crop": {
+            "left": 158,
+            "top": 524,
+            "width": 232,
+            "height": 488
+          },
+          "anchor": [
+            299,
+            1008
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 212,
+            "height": 447,
+            "left": 150,
+            "top": 37
+          }
+        },
+        {
+          "crop": {
+            "left": 671,
+            "top": 520,
+            "width": 231,
+            "height": 491
+          },
+          "anchor": [
+            810,
+            1007
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 212,
+            "height": 450,
+            "left": 152,
+            "top": 34
+          }
+        },
+        {
+          "crop": {
+            "left": 1183,
+            "top": 516,
+            "width": 231,
+            "height": 495
+          },
+          "anchor": [
+            1321,
+            1007
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 212,
+            "height": 453,
+            "left": 153,
+            "top": 31
+          }
+        },
+        {
+          "crop": {
+            "left": 1695,
+            "top": 513,
+            "width": 231,
+            "height": 498
+          },
+          "anchor": [
+            1830,
+            1007
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 212,
+            "height": 456,
+            "left": 155,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/calf.webp"
+    },
+    "curl": {
+      "file": "curl.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: SIMULTANEOUS HAMMER CURL. Front-left three-quarter view, both arms and dumbbells clearly visible. Stand tall, feet hip-width and fixed, soft knees, shoulders relaxed. Exactly two PowerBlock dumbbells, one in each hand with palms facing inward toward each other for ENTIRE movement and thumbs toward shoulders on ascent. Frame 1 both arms down almost straight alongside thighs. Frames 2-7 bend ONLY elbows to curl both weights toward front of shoulders, elbows fixed beside ribs, upper arms still vertical. Frame 8 elbows fully flexed with weights near shoulders and wrists straight. No rotating to palms up, no elbows moving forward, no lifting upper arms, no swinging or back lean. Body, head, feet, shoulders and elbows remain at exactly same locations through frames; only forearms/hands/dumbbells rotate around fixed elbow joints. Natural contact and enclosed central handles.\n",
+      "reference": "rdl.png",
+      "generation_id": "c976a2a9-4de5-4a2e-9d94-3e30071c5463",
+      "usage": {
+        "input_tokens": 2016,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 558
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6736
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 194,
+            "top": 9,
+            "width": 171,
+            "height": 529
+          },
+          "anchor": [
+            251.47272727272727,
+            534
+          ],
+          "measure": 523,
+          "scale": 1,
+          "render": {
+            "width": 147,
+            "height": 456,
+            "left": 164,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 705,
+            "top": 9,
+            "width": 190,
+            "height": 529
+          },
+          "anchor": [
+            763.0184254606365,
+            534
+          ],
+          "measure": 523,
+          "scale": 1,
+          "render": {
+            "width": 164,
+            "height": 456,
+            "left": 163,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1216,
+            "top": 9,
+            "width": 198,
+            "height": 529
+          },
+          "anchor": [
+            1274.858347386172,
+            534
+          ],
+          "measure": 523,
+          "scale": 1,
+          "render": {
+            "width": 171,
+            "height": 456,
+            "left": 163,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1728,
+            "top": 9,
+            "width": 198,
+            "height": 529
+          },
+          "anchor": [
+            1787.0788590604027,
+            534
+          ],
+          "measure": 523,
+          "scale": 1,
+          "render": {
+            "width": 171,
+            "height": 456,
+            "left": 163,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 193,
+            "top": 542,
+            "width": 205,
+            "height": 482
+          },
+          "anchor": [
+            249.87982195845697,
+            1023
+          ],
+          "measure": 479,
+          "scale": 1.091858037578288,
+          "render": {
+            "width": 193,
+            "height": 453,
+            "left": 160,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 705,
+            "top": 542,
+            "width": 201,
+            "height": 482
+          },
+          "anchor": [
+            761.6776119402984,
+            1023
+          ],
+          "measure": 479,
+          "scale": 1.091858037578288,
+          "render": {
+            "width": 189,
+            "height": 453,
+            "left": 160,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1216,
+            "top": 542,
+            "width": 197,
+            "height": 482
+          },
+          "anchor": [
+            1273.686567164179,
+            1023
+          ],
+          "measure": 479,
+          "scale": 1.091858037578288,
+          "render": {
+            "width": 185,
+            "height": 453,
+            "left": 159,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1729,
+            "top": 542,
+            "width": 173,
+            "height": 482
+          },
+          "anchor": [
+            1785.9127819548871,
+            1023
+          ],
+          "measure": 479,
+          "scale": 1.091858037578288,
+          "render": {
+            "width": 163,
+            "height": 453,
+            "left": 160,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/curl.webp"
+    },
+    "floor": {
+      "file": "floor.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: DUMBBELL FLOOR PRESS, performed lying directly on the floor, NO BENCH. Slightly elevated three-quarter SIDE view, head toward image left and feet toward image right, showing BOTH elbows, forearms and weights. Person lies supine, head/back/butt on floor, knees bent, both feet flat. Exactly two PowerBlock dumbbells with neutral/diagonal grip, palms facing inward toward each other, wrists straight. Frame 1 bottom position: upper arms gently touch floor, elbows about 30-45 degrees from torso, elbows bent 90 degrees and forearms VERTICAL, dumbbells directly above elbows beside chest. Frames 2-7 press both dumbbells straight up toward the ceiling over the chest while extending elbows. Frame 8 arms straight above shoulders/chest, separated dumbbells never collide. Nothing passes over the face or stomach. Head, hips, knee angle and feet NEVER move. Upper arms NEVER pass through floor. NOT a chest fly: elbows straighten during press. NOT a bridge. Human body has exactly two arms and two legs, far arm visible apart from near arm.\n",
+      "reference": "rdl.png",
+      "generation_id": "58ac4696-2704-4649-ac83-b54b24c4b9a1",
+      "usage": {
+        "input_tokens": 2059,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 601
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6779
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 19,
+            "top": 253,
+            "width": 488,
+            "height": 209
+          },
+          "anchor": [
+            21,
+            429
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 452,
+            "height": 194,
+            "left": 28,
+            "top": 223
+          }
+        },
+        {
+          "crop": {
+            "left": 533,
+            "top": 235,
+            "width": 486,
+            "height": 219
+          },
+          "anchor": [
+            535,
+            429
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 450,
+            "height": 203,
+            "left": 28,
+            "top": 206
+          }
+        },
+        {
+          "crop": {
+            "left": 1046,
+            "top": 201,
+            "width": 484,
+            "height": 251
+          },
+          "anchor": [
+            1048,
+            429
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 449,
+            "height": 233,
+            "left": 28,
+            "top": 175
+          }
+        },
+        {
+          "crop": {
+            "left": 1554,
+            "top": 169,
+            "width": 492,
+            "height": 284
+          },
+          "anchor": [
+            1556,
+            428
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 456,
+            "height": 263,
+            "left": 28,
+            "top": 146
+          }
+        },
+        {
+          "crop": {
+            "left": 20,
+            "top": 646,
+            "width": 488,
+            "height": 290
+          },
+          "anchor": [
+            22,
+            918
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 452,
+            "height": 269,
+            "left": 28,
+            "top": 134
+          }
+        },
+        {
+          "crop": {
+            "left": 532,
+            "top": 612,
+            "width": 488,
+            "height": 318
+          },
+          "anchor": [
+            534,
+            918
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 452,
+            "height": 295,
+            "left": 28,
+            "top": 103
+          }
+        },
+        {
+          "crop": {
+            "left": 1044,
+            "top": 611,
+            "width": 488,
+            "height": 318
+          },
+          "anchor": [
+            1046,
+            917
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 452,
+            "height": 295,
+            "left": 28,
+            "top": 103
+          }
+        },
+        {
+          "crop": {
+            "left": 1557,
+            "top": 604,
+            "width": 488,
+            "height": 325
+          },
+          "anchor": [
+            1559,
+            918
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 452,
+            "height": 301,
+            "left": 28,
+            "top": 95
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/floor.webp"
+    },
+    "fly": {
+      "file": "fly.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: STANDING BENT-OVER DUMBBELL REVERSE FLY. Elevated front-left three-quarter view so BOTH arms' lateral arcs are visible as well as the clear forward hip hinge. Torso hinged forward about 65 degrees from vertical, long flat back, neck in line with spine and gaze toward floor, knees softly bent, feet hip-width and flat. Two LIGHT compact PowerBlock dumbbells held by central handles. Keep feet, knees, hips, torso and head completely fixed across all eight frames. Frame 1 both arms hang down under the shoulders, elbows only softly bent about 15 degrees. Frames 2-7 spread BOTH arms out to the sides in broad shoulder-driven arcs, maintaining the SAME slight elbow bend. Frame 8 upper arms level with shoulders/torso, forming a wide T relative to the back, wrists neutral, weights below/level with shoulders, never raised above torso. This is NOT a row (elbows never curl to 90 degrees), NOT a standing lateral raise (torso stays hinged), NOT a shrug. Do not lift the face toward the viewer. Fit whole outstretched wingspan within each square cell at a fixed body scale.\n",
+      "reference": "rdl.png",
+      "generation_id": "c19b9754-1de6-4f75-a22e-1040227a0f94",
+      "usage": {
+        "input_tokens": 2075,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 617
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6795
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 128,
+            "top": 73,
+            "width": 249,
+            "height": 414
+          },
+          "anchor": [
+            228.39830508474577,
+            483
+          ],
+          "measure": 408,
+          "scale": 1,
+          "render": {
+            "width": 239,
+            "height": 397,
+            "left": 132,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 649,
+            "top": 72,
+            "width": 260,
+            "height": 415
+          },
+          "anchor": [
+            747.6627118644068,
+            483
+          ],
+          "measure": 409,
+          "scale": 0.9975550122249389,
+          "render": {
+            "width": 249,
+            "height": 397,
+            "left": 134,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 1154,
+            "top": 73,
+            "width": 309,
+            "height": 413
+          },
+          "anchor": [
+            1257.7621621621622,
+            483
+          ],
+          "measure": 408,
+          "scale": 1,
+          "render": {
+            "width": 297,
+            "height": 396,
+            "left": 129,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 1662,
+            "top": 72,
+            "width": 341,
+            "height": 415
+          },
+          "anchor": [
+            1774.4063604240282,
+            483
+          ],
+          "measure": 409,
+          "scale": 0.9975550122249389,
+          "render": {
+            "width": 326,
+            "height": 397,
+            "left": 121,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 77,
+            "top": 564,
+            "width": 400,
+            "height": 414
+          },
+          "anchor": [
+            231.5276292335116,
+            974
+          ],
+          "measure": 408,
+          "scale": 1,
+          "render": {
+            "width": 384,
+            "height": 397,
+            "left": 80,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 578,
+            "top": 565,
+            "width": 422,
+            "height": 412
+          },
+          "anchor": [
+            751.1586073500966,
+            974
+          ],
+          "measure": 407,
+          "scale": 1.0024570024570025,
+          "render": {
+            "width": 406,
+            "height": 396,
+            "left": 62,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 1052,
+            "top": 565,
+            "width": 474,
+            "height": 412
+          },
+          "anchor": [
+            1260.610586011342,
+            974
+          ],
+          "measure": 407,
+          "scale": 1.0024570024570025,
+          "render": {
+            "width": 456,
+            "height": 396,
+            "left": 28,
+            "top": 57
+          }
+        },
+        {
+          "crop": {
+            "left": 1571,
+            "top": 564,
+            "width": 457,
+            "height": 413
+          },
+          "anchor": [
+            1775.638888888889,
+            973
+          ],
+          "measure": 407,
+          "scale": 1.0024570024570025,
+          "render": {
+            "width": 440,
+            "height": 397,
+            "left": 32,
+            "top": 57
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/fly.webp"
+    },
+    "goblet-body": {
+      "file": "goblet-body.png",
+      "prompt": "Use case: precise-object-edit. The input image is the EDIT TARGET. Create its BODYWEIGHT exercise variant. Remove the dumbbell completely. Bring both EMPTY hands together in front of the chest, fingers loosely clasped. Keep elbows pointing down. Preserve every squat depth, foot position, face, clothing and body scale. Keep the SAME eight frames, four columns by two rows, transparent background, same cell registration and drawing style. Make only the equipment and hand edits, do not change the movement, anatomy, camera, layout, relative scale or poses. No equipment, text, labels or background. 2048 x 1024 PNG.\n",
+      "reference": "goblet.png",
+      "generation_id": "f35541f2-e9d3-40e1-b8b9-1db91d460885",
+      "usage": {
+        "input_tokens": 1604,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 146
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6324
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 188,
+            "top": 7,
+            "width": 177,
+            "height": 543
+          },
+          "anchor": [
+            237.0965058236273,
+            546
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 149,
+            "height": 456,
+            "left": 189,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 697,
+            "top": 19,
+            "width": 179,
+            "height": 531
+          },
+          "anchor": [
+            749.334470989761,
+            546
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 150,
+            "height": 446,
+            "left": 186,
+            "top": 38
+          }
+        },
+        {
+          "crop": {
+            "left": 1195,
+            "top": 47,
+            "width": 192,
+            "height": 502
+          },
+          "anchor": [
+            1266.079207920792,
+            545
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 161,
+            "height": 422,
+            "left": 171,
+            "top": 62
+          }
+        },
+        {
+          "crop": {
+            "left": 1697,
+            "top": 78,
+            "width": 201,
+            "height": 471
+          },
+          "anchor": [
+            1776.0663349917081,
+            545
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 169,
+            "height": 396,
+            "left": 164,
+            "top": 88
+          }
+        },
+        {
+          "crop": {
+            "left": 168,
+            "top": 597,
+            "width": 209,
+            "height": 402
+          },
+          "anchor": [
+            246.32838283828383,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 176,
+            "height": 338,
+            "left": 165,
+            "top": 146
+          }
+        },
+        {
+          "crop": {
+            "left": 670,
+            "top": 629,
+            "width": 222,
+            "height": 370
+          },
+          "anchor": [
+            752.3822075782537,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 186,
+            "height": 311,
+            "left": 161,
+            "top": 173
+          }
+        },
+        {
+          "crop": {
+            "left": 1186,
+            "top": 643,
+            "width": 222,
+            "height": 356
+          },
+          "anchor": [
+            1265.5811965811965,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 186,
+            "height": 299,
+            "left": 164,
+            "top": 185
+          }
+        },
+        {
+          "crop": {
+            "left": 1697,
+            "top": 641,
+            "width": 223,
+            "height": 358
+          },
+          "anchor": [
+            1776.6888519134775,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 187,
+            "height": 301,
+            "left": 163,
+            "top": 183
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/goblet-body.webp"
+    },
+    "goblet": {
+      "file": "goblet.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: GOBLET SQUAT. Front-left three-quarter view, facing slightly toward image right, both knees and heels clearly visible. One rectangular PowerBlock held upright close against the upper chest, both hands securely cupping/supporting the upper ends from underneath, palms facing inward/up and fingers wrapping the block. Elbows point DOWN, weight stays against chest, never held by a selector pin or dangling from one finger. Feet a little wider than hip width, toes slightly outward, soles fully planted. Frame 1 tall standing with soft knees. Frames 2-7 progressively lower hips BACK AND DOWN between heels while bending both knees; chest upright, neutral long spine. Frame 8 comfortable squat with thighs approximately parallel to floor, heels grounded, knees tracking in the same direction as toes, elbows between knees. No forced extra-deep squat, heel rise or collapsing knees. Feet stay fixed at local floor y=474, use same body scale in every frame. Both arms, both thighs and both lower legs remain readable.\n",
+      "reference": "rdl.png",
+      "generation_id": "5fba199f-a5a2-4a8c-bfd5-5adc8158e323",
+      "usage": {
+        "input_tokens": 2040,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 582
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6760
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 189,
+            "top": 7,
+            "width": 176,
+            "height": 542
+          },
+          "anchor": [
+            236.9212730318258,
+            545
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 148,
+            "height": 456,
+            "left": 190,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 697,
+            "top": 18,
+            "width": 178,
+            "height": 530
+          },
+          "anchor": [
+            748.2205882352941,
+            544
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 150,
+            "height": 446,
+            "left": 187,
+            "top": 38
+          }
+        },
+        {
+          "crop": {
+            "left": 1197,
+            "top": 46,
+            "width": 190,
+            "height": 502
+          },
+          "anchor": [
+            1265.8384353741496,
+            544
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 160,
+            "height": 422,
+            "left": 172,
+            "top": 62
+          }
+        },
+        {
+          "crop": {
+            "left": 1697,
+            "top": 77,
+            "width": 201,
+            "height": 471
+          },
+          "anchor": [
+            1776.2237061769615,
+            544
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 169,
+            "height": 396,
+            "left": 163,
+            "top": 88
+          }
+        },
+        {
+          "crop": {
+            "left": 169,
+            "top": 597,
+            "width": 208,
+            "height": 401
+          },
+          "anchor": [
+            246.28662420382165,
+            994
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 175,
+            "height": 337,
+            "left": 165,
+            "top": 147
+          }
+        },
+        {
+          "crop": {
+            "left": 671,
+            "top": 629,
+            "width": 221,
+            "height": 369
+          },
+          "anchor": [
+            752.0439024390244,
+            994
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 186,
+            "height": 310,
+            "left": 162,
+            "top": 174
+          }
+        },
+        {
+          "crop": {
+            "left": 1188,
+            "top": 643,
+            "width": 219,
+            "height": 355
+          },
+          "anchor": [
+            1264.4600326264274,
+            994
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 184,
+            "height": 299,
+            "left": 166,
+            "top": 185
+          }
+        },
+        {
+          "crop": {
+            "left": 1699,
+            "top": 642,
+            "width": 220,
+            "height": 356
+          },
+          "anchor": [
+            1777.2739212007505,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 185,
+            "height": 300,
+            "left": 164,
+            "top": 184
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/goblet.webp"
+    },
+    "knees": {
+      "file": "knees.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: HANGING KNEE RAISE on a fixed horizontal pull-up bar. Left-side three-quarter view, face toward image right so hip/knee flexion is clear and both hands remain visible. Fixed bar at local y=44 in every frame, overhand palms-away grips approximately shoulder width. Hands and bar remain fixed, arms stay STRAIGHT throughout, this is NOT a pull-up. Frame 1 controlled still hang, body long and vertical, feet off floor, legs together and knees slightly soft. Frames 2-7 bend both knees and raise the thighs forward toward chest, with no swinging or backward leg kick. Frame 8 thighs above horizontal, knees toward lower chest, gently curl pelvis upward so tailbone rolls forward, slight controlled abdominal rounding, shoulders and arms unchanged. Ankles stay below bent knees, shins approximately vertical, NOT a straight-legged L sit or toes-to-bar. Body never touches floor, no chair, bench or ab slings. Reserve width in front of person for both lifted knees.\n",
+      "reference": "rdl.png",
+      "generation_id": "207ffc5f-60c5-4100-ad8e-861923ac2e5c",
+      "usage": {
+        "input_tokens": 2044,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 586
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6764
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 120,
+            "top": 15,
+            "width": 248,
+            "height": 525
+          },
+          "anchor": [
+            243.5,
+            28
+          ],
+          "measure": 243,
+          "scale": 1,
+          "render": {
+            "width": 215,
+            "height": 456,
+            "left": 148,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 636,
+            "top": 15,
+            "width": 262,
+            "height": 500
+          },
+          "anchor": [
+            766.5,
+            27
+          ],
+          "measure": 255,
+          "scale": 0.9529411764705882,
+          "render": {
+            "width": 217,
+            "height": 413,
+            "left": 148,
+            "top": 30
+          }
+        },
+        {
+          "crop": {
+            "left": 1153,
+            "top": 16,
+            "width": 259,
+            "height": 488
+          },
+          "anchor": [
+            1282,
+            27
+          ],
+          "measure": 252,
+          "scale": 0.9642857142857143,
+          "render": {
+            "width": 217,
+            "height": 408,
+            "left": 148,
+            "top": 31
+          }
+        },
+        {
+          "crop": {
+            "left": 1684,
+            "top": 15,
+            "width": 245,
+            "height": 415
+          },
+          "anchor": [
+            1806.5,
+            28
+          ],
+          "measure": 239,
+          "scale": 1.0167364016736402,
+          "render": {
+            "width": 216,
+            "height": 366,
+            "left": 147,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 120,
+            "top": 552,
+            "width": 263,
+            "height": 400
+          },
+          "anchor": [
+            251,
+            563
+          ],
+          "measure": 256,
+          "scale": 0.94921875,
+          "render": {
+            "width": 217,
+            "height": 329,
+            "left": 148,
+            "top": 31
+          }
+        },
+        {
+          "crop": {
+            "left": 641,
+            "top": 551,
+            "width": 257,
+            "height": 362
+          },
+          "anchor": [
+            769.5,
+            565
+          ],
+          "measure": 251,
+          "scale": 0.9681274900398407,
+          "render": {
+            "width": 216,
+            "height": 304,
+            "left": 148,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1162,
+            "top": 551,
+            "width": 241,
+            "height": 325
+          },
+          "anchor": [
+            1281.5,
+            564
+          ],
+          "measure": 235,
+          "scale": 1.0340425531914894,
+          "render": {
+            "width": 216,
+            "height": 292,
+            "left": 148,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1688,
+            "top": 551,
+            "width": 251,
+            "height": 309
+          },
+          "anchor": [
+            1813.5,
+            564
+          ],
+          "measure": 245,
+          "scale": 0.9918367346938776,
+          "render": {
+            "width": 216,
+            "height": 266,
+            "left": 148,
+            "top": 29
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/knees.webp"
+    },
+    "press": {
+      "file": "press.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: STANDING DUMBBELL OVERHEAD PRESS. Front-left three-quarter view with both arms visible. Two PowerBlock dumbbells, neutral grip with palms facing inward. Feet hip-width apart, whole feet planted. Frame 1 weights at shoulder height beside head, elbows bent below wrists, forearms almost vertical, elbows slightly forward of torso. Frames 2-7 smoothly extend both arms and raise dumbbells overhead, wrists stacked over elbows. Frame 8 arms extended overhead with biceps near ears and weights balanced over shoulders/midfoot. Allow natural shoulder-blade upward rotation. Head stays neutral, chin gently tucked only to clear path. Body stays tall, ribs stacked over pelvis, no lumbar arch, backward lean, knee dip, jumping or thrusting. Feet and pelvis stay fixed in every cell. Reserve generous space ABOVE head for raised weights in every frame; never shrink the body as arms rise.\n",
+      "reference": "rdl.png",
+      "generation_id": "43658f2a-d62b-4eb5-b7af-ff8b8bfcc60a",
+      "usage": {
+        "input_tokens": 2017,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 559
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6737
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 154,
+            "top": 69,
+            "width": 196,
+            "height": 460
+          },
+          "anchor": [
+            242.46511627906978,
+            525
+          ],
+          "measure": 454,
+          "scale": 1,
+          "render": {
+            "width": 156,
+            "height": 367,
+            "left": 167,
+            "top": 116
+          }
+        },
+        {
+          "crop": {
+            "left": 684,
+            "top": 69,
+            "width": 192,
+            "height": 461
+          },
+          "anchor": [
+            756.5309917355372,
+            526
+          ],
+          "measure": 455,
+          "scale": 0.9978021978021978,
+          "render": {
+            "width": 153,
+            "height": 367,
+            "left": 180,
+            "top": 116
+          }
+        },
+        {
+          "crop": {
+            "left": 1186,
+            "top": 68,
+            "width": 215,
+            "height": 461
+          },
+          "anchor": [
+            1266.867924528302,
+            526
+          ],
+          "measure": 455,
+          "scale": 0.9978021978021978,
+          "render": {
+            "width": 171,
+            "height": 367,
+            "left": 174,
+            "top": 116
+          }
+        },
+        {
+          "crop": {
+            "left": 1707,
+            "top": 21,
+            "width": 193,
+            "height": 508
+          },
+          "anchor": [
+            1792.8041237113403,
+            526
+          ],
+          "measure": 455,
+          "scale": 0.9978021978021978,
+          "render": {
+            "width": 154,
+            "height": 405,
+            "left": 170,
+            "top": 78
+          }
+        },
+        {
+          "crop": {
+            "left": 178,
+            "top": 547,
+            "width": 170,
+            "height": 476
+          },
+          "anchor": [
+            253.07560137457045,
+            1019
+          ],
+          "measure": 391,
+          "scale": 1.1611253196930946,
+          "render": {
+            "width": 158,
+            "height": 441,
+            "left": 168,
+            "top": 43
+          }
+        },
+        {
+          "crop": {
+            "left": 696,
+            "top": 539,
+            "width": 166,
+            "height": 484
+          },
+          "anchor": [
+            772.5378006872852,
+            1019
+          ],
+          "measure": 391,
+          "scale": 1.1611253196930946,
+          "render": {
+            "width": 154,
+            "height": 449,
+            "left": 167,
+            "top": 35
+          }
+        },
+        {
+          "crop": {
+            "left": 1207,
+            "top": 532,
+            "width": 160,
+            "height": 491
+          },
+          "anchor": [
+            1278.419080068143,
+            1019
+          ],
+          "measure": 391,
+          "scale": 1.1611253196930946,
+          "render": {
+            "width": 148,
+            "height": 455,
+            "left": 172,
+            "top": 29
+          }
+        },
+        {
+          "crop": {
+            "left": 1726,
+            "top": 531,
+            "width": 158,
+            "height": 492
+          },
+          "anchor": [
+            1799.449744463373,
+            1019
+          ],
+          "measure": 391,
+          "scale": 1.1611253196930946,
+          "render": {
+            "width": 146,
+            "height": 456,
+            "left": 170,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/press.webp"
+    },
+    "pullup": {
+      "file": "pullup.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: STRICT OVERHAND PULL-UP on one fixed horizontal dark pull-up bar. Rear-left three-quarter view makes BOTH palms-away grips and shoulder blades clear, some left side profile visible. Bar across each cell at local y=122. Hands slightly wider than shoulders, thumbs wrapped around bar, palms away from face. Both hands stay welded to EXACT SAME bar positions throughout eight frames; bar NEVER moves. Frame 1 full hang with elbows straight and controlled shoulders, body below bar, feet off floor and knees bent slightly backward to keep feet clear. Frames 2-7 lift the entire body by bending elbows DOWN and toward the ribs. Frame 8 chin just above bar without craning neck, elbows down, chest lifted naturally, no extreme arch. Reserve room above bar for the entire head in final frame. Same modest bend in knees in every frame, no swinging, kicking, leg cycling, kipping, or foot support. Exactly two arms, both connected to the same two grip points in every frame. Whole body and bar visible inside each cell.\n",
+      "reference": "rdl.png",
+      "generation_id": "0c781ce4-e469-4b50-81f4-94d5053d01a4",
+      "usage": {
+        "input_tokens": 2046,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 588
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6766
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 87,
+            "top": 65,
+            "width": 340,
+            "height": 468
+          },
+          "anchor": [
+            257,
+            75
+          ],
+          "measure": 334,
+          "scale": 1,
+          "render": {
+            "width": 287,
+            "height": 396,
+            "left": 112,
+            "top": 88
+          }
+        },
+        {
+          "crop": {
+            "left": 605,
+            "top": 64,
+            "width": 344,
+            "height": 457
+          },
+          "anchor": [
+            777,
+            75
+          ],
+          "measure": 338,
+          "scale": 0.9881656804733728,
+          "render": {
+            "width": 287,
+            "height": 382,
+            "left": 112,
+            "top": 88
+          }
+        },
+        {
+          "crop": {
+            "left": 1104,
+            "top": 64,
+            "width": 354,
+            "height": 451
+          },
+          "anchor": [
+            1281,
+            81
+          ],
+          "measure": 348,
+          "scale": 0.9597701149425287,
+          "render": {
+            "width": 287,
+            "height": 366,
+            "left": 112,
+            "top": 83
+          }
+        },
+        {
+          "crop": {
+            "left": 1620,
+            "top": 64,
+            "width": 347,
+            "height": 438
+          },
+          "anchor": [
+            1792.5,
+            82
+          ],
+          "measure": 341,
+          "scale": 0.9794721407624634,
+          "render": {
+            "width": 287,
+            "height": 363,
+            "left": 113,
+            "top": 82
+          }
+        },
+        {
+          "crop": {
+            "left": 87,
+            "top": 584,
+            "width": 340,
+            "height": 399
+          },
+          "anchor": [
+            257,
+            608
+          ],
+          "measure": 334,
+          "scale": 1,
+          "render": {
+            "width": 287,
+            "height": 337,
+            "left": 112,
+            "top": 76
+          }
+        },
+        {
+          "crop": {
+            "left": 605,
+            "top": 571,
+            "width": 344,
+            "height": 396
+          },
+          "anchor": [
+            777,
+            606
+          ],
+          "measure": 338,
+          "scale": 0.9881656804733728,
+          "render": {
+            "width": 287,
+            "height": 331,
+            "left": 112,
+            "top": 67
+          }
+        },
+        {
+          "crop": {
+            "left": 1104,
+            "top": 551,
+            "width": 354,
+            "height": 407
+          },
+          "anchor": [
+            1280.5,
+            605
+          ],
+          "measure": 347,
+          "scale": 0.962536023054755,
+          "render": {
+            "width": 288,
+            "height": 331,
+            "left": 112,
+            "top": 53
+          }
+        },
+        {
+          "crop": {
+            "left": 1620,
+            "top": 522,
+            "width": 348,
+            "height": 422
+          },
+          "anchor": [
+            1793.5,
+            605
+          ],
+          "measure": 341,
+          "scale": 0.9794721407624634,
+          "render": {
+            "width": 288,
+            "height": 349,
+            "left": 112,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/pullup.webp"
+    },
+    "pushup": {
+      "file": "pushup.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: STANDARD FLOOR PUSH-UP. Three-quarter left-side view, head toward image right, feet toward image left. No weights or equipment. Full body comfortably fits inside each square cell. Hands flat on floor slightly wider than shoulders, fingers forward and spread, toes on floor. Frame 1 a high plank, elbows extended but not hyperextended, head/spine/hips/heels in a straight line. Frames 2-7 bend both elbows to lower the whole rigid body as one unit. Elbows travel diagonally BACK about 30-45 degrees away from ribs, never flared sideways into a T. Frame 8 chest just above floor, forearms approximately vertical and wrists under elbows. Face looks down, neck neutral. Hips stay aligned with shoulders and heels at ALL depths, no sagging or piking, knees never touch ground. The hands and toe tips stay in exactly the same locations in all eight frames. Show BOTH arms with anatomically credible elbows and palm contact.\n",
+      "reference": "rdl.png",
+      "generation_id": "b0b89fb2-23bb-4cba-b65e-42e57b7beb99",
+      "usage": {
+        "input_tokens": 2033,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 575
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6753
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 34,
+            "top": 133,
+            "width": 447,
+            "height": 299
+          },
+          "anchor": [
+            36,
+            390
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 432,
+            "height": 289,
+            "left": 28,
+            "top": 111
+          }
+        },
+        {
+          "crop": {
+            "left": 545,
+            "top": 155,
+            "width": 450,
+            "height": 277
+          },
+          "anchor": [
+            547,
+            391
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 435,
+            "height": 268,
+            "left": 28,
+            "top": 131
+          }
+        },
+        {
+          "crop": {
+            "left": 1058,
+            "top": 176,
+            "width": 453,
+            "height": 256
+          },
+          "anchor": [
+            1060,
+            391
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 438,
+            "height": 247,
+            "left": 28,
+            "top": 151
+          }
+        },
+        {
+          "crop": {
+            "left": 1561,
+            "top": 227,
+            "width": 465,
+            "height": 203
+          },
+          "anchor": [
+            1563,
+            391
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 449,
+            "height": 196,
+            "left": 28,
+            "top": 200
+          }
+        },
+        {
+          "crop": {
+            "left": 33,
+            "top": 723,
+            "width": 460,
+            "height": 185
+          },
+          "anchor": [
+            35,
+            865
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 444,
+            "height": 179,
+            "left": 28,
+            "top": 222
+          }
+        },
+        {
+          "crop": {
+            "left": 542,
+            "top": 749,
+            "width": 472,
+            "height": 158
+          },
+          "anchor": [
+            544,
+            865
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 456,
+            "height": 153,
+            "left": 28,
+            "top": 247
+          }
+        },
+        {
+          "crop": {
+            "left": 1061,
+            "top": 770,
+            "width": 469,
+            "height": 139
+          },
+          "anchor": [
+            1063,
+            866
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 453,
+            "height": 134,
+            "left": 28,
+            "top": 266
+          }
+        },
+        {
+          "crop": {
+            "left": 1563,
+            "top": 778,
+            "width": 470,
+            "height": 131
+          },
+          "anchor": [
+            1565,
+            865
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 454,
+            "height": 127,
+            "left": 28,
+            "top": 275
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/pushup.webp"
+    },
+    "rdl-body": {
+      "file": "rdl-body.png",
+      "prompt": "Use case: precise-object-edit. The input image is the EDIT TARGET. Create its BODYWEIGHT exercise variant. Remove BOTH dumbbells completely. Hands hang empty and relaxed, fingers loosely extended, arms hanging vertically at the same shoulder/elbow angles. Preserve the exact hip hinge depths, flat back and feet. Keep the SAME eight frames, four columns by two rows, transparent background, same cell registration and drawing style. Make only the equipment and hand edits, do not change the movement, anatomy, camera, layout, relative scale or poses. No equipment, text, labels or background. 2048 x 1024 PNG.\n",
+      "reference": "rdl.png",
+      "generation_id": "1c31f56e-7daf-4730-9877-2e56258bf197",
+      "usage": {
+        "input_tokens": 1601,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 143
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6321
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 196,
+            "top": 6,
+            "width": 132,
+            "height": 502
+          },
+          "anchor": [
+            251.89384615384614,
+            505
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 120,
+            "height": 455,
+            "left": 174,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 692,
+            "top": 13,
+            "width": 148,
+            "height": 495
+          },
+          "anchor": [
+            763.6870109546167,
+            505
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 134,
+            "height": 449,
+            "left": 159,
+            "top": 34
+          }
+        },
+        {
+          "crop": {
+            "left": 1186,
+            "top": 31,
+            "width": 170,
+            "height": 477
+          },
+          "anchor": [
+            1273.4269819193323,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 154,
+            "height": 432,
+            "left": 145,
+            "top": 52
+          }
+        },
+        {
+          "crop": {
+            "left": 1697,
+            "top": 54,
+            "width": 198,
+            "height": 454
+          },
+          "anchor": [
+            1787.4364640883978,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 179,
+            "height": 412,
+            "left": 142,
+            "top": 72
+          }
+        },
+        {
+          "crop": {
+            "left": 156,
+            "top": 569,
+            "width": 218,
+            "height": 430
+          },
+          "anchor": [
+            251.88702928870293,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 198,
+            "height": 390,
+            "left": 137,
+            "top": 94
+          }
+        },
+        {
+          "crop": {
+            "left": 669,
+            "top": 590,
+            "width": 239,
+            "height": 409
+          },
+          "anchor": [
+            763.9507042253522,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 217,
+            "height": 371,
+            "left": 138,
+            "top": 113
+          }
+        },
+        {
+          "crop": {
+            "left": 1179,
+            "top": 607,
+            "width": 249,
+            "height": 392
+          },
+          "anchor": [
+            1275.3300699300698,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 226,
+            "height": 355,
+            "left": 137,
+            "top": 129
+          }
+        },
+        {
+          "crop": {
+            "left": 1693,
+            "top": 623,
+            "width": 261,
+            "height": 376
+          },
+          "anchor": [
+            1787.4564606741574,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 237,
+            "height": 341,
+            "left": 139,
+            "top": 143
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/rdl-body.webp"
+    },
+    "rdl": {
+      "file": "rdl.png",
+      "prompt": "Use case: scientific-educational.\nAsset type: production exercise animation sprite sheet for Paisano, a quiet, elegant fitness app. This is an anatomical movement demonstration, not a poster.\n\nCreate EXACTLY EIGHT sequential full-body drawings of the SAME adult male exercise demonstrator, in exactly FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Read order is left to right, top row then bottom row. Each cell must have one complete person, no overlaps with neighboring cells, no text, labels, arrows, borders, panels, or background. Clear transparent margins. Fixed orthographic camera, fixed magnification and registration throughout. Both feet stay in EXACTLY the same positions within every cell. Floor contact at local y=466. The standing figure is about 405px tall. Do not resize the figure to fill the space when bent over.\n\nArt direction: exceptionally clear, refined hand-painted editorial fitness illustration. Natural adult human anatomy, realistic hands and joints, modest athletic build, short dark brown hair, light-medium warm skin, muted slate-blue short sleeve T-shirt, charcoal shorts above knees, plain ivory training shoes. Soft painted shading with restrained pencil contours. Crisp silhouette and identifiable body parts at 250px. No exaggerated muscles, skeleton, stick figure, faceless mannequin, 3D toy, glossy plastic, or decorative strokes.\n\nMovement: DUMBBELL ROMANIAN DEADLIFT. Fixed left-side three-quarter view, facing toward image right, near and far legs and BOTH weights readable. Exactly two compact rectangular PowerBlock Elite-style adjustable dumbbells, dark squared nested metal blocks with central hand openings. Hands grasp the enclosed central handles normally, thumb wrapped, neutral wrists, one weight per hand. No round dumbbells, barbell, kettlebell, bench, chair, or accessories. Each hand always stays attached to the same dumbbell. The weights hang vertically, close in front of the thighs/shins, arms extended naturally.\n\nThe EIGHT cells depict ONLY the lowering half of ONE repetition at increasing depths. The app reverses the sequence for the return. Frame 1: stand tall, feet hip-width apart, knees already softly unlocked, weights just in front of upper thighs. Frame 2: slight 10-degree hip hinge. Frame 3: 20-degree hinge. Frame 4: 30-degree hinge. Frame 5: 40-degree hinge. Frame 6: 50-degree hinge. Frame 7: 60-degree hinge. Frame 8: deepest controlled 70-degree hinge, dumbbells near upper-to-mid shins, clearly ABOVE the floor. Hips travel BACK toward image left, back remains one long neutral line, head in line with torso, gaze goes down as torso inclines. Knees stay only slightly bent with near-vertical shins throughout. This is NOT a squat: no deep knee bending, no rounded spine, no upright chest at bottom, no weight touching floor. Heels and toes remain grounded in the exact same screen locations in all eight cells. Same limb lengths, clothing, face, feet, proportions, dumbbell shape and camera in every frame.\n",
+      "reference": null,
+      "generation_id": "48d33f1d-05a8-4d82-b2ce-d84e6d96ba82",
+      "usage": {
+        "input_tokens": 652,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 652
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 5372
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 197,
+            "top": 6,
+            "width": 139,
+            "height": 501
+          },
+          "anchor": [
+            252.3542944785276,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 126,
+            "height": 455,
+            "left": 175,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 696,
+            "top": 13,
+            "width": 144,
+            "height": 494
+          },
+          "anchor": [
+            763.8992248062016,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 131,
+            "height": 449,
+            "left": 164,
+            "top": 34
+          }
+        },
+        {
+          "crop": {
+            "left": 1190,
+            "top": 32,
+            "width": 164,
+            "height": 475
+          },
+          "anchor": [
+            1276.108695652174,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 149,
+            "height": 431,
+            "left": 147,
+            "top": 52
+          }
+        },
+        {
+          "crop": {
+            "left": 1700,
+            "top": 54,
+            "width": 194,
+            "height": 453
+          },
+          "anchor": [
+            1788.3707692307692,
+            504
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 176,
+            "height": 411,
+            "left": 145,
+            "top": 72
+          }
+        },
+        {
+          "crop": {
+            "left": 160,
+            "top": 571,
+            "width": 211,
+            "height": 428
+          },
+          "anchor": [
+            252.12555391432792,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 192,
+            "height": 389,
+            "left": 142,
+            "top": 95
+          }
+        },
+        {
+          "crop": {
+            "left": 673,
+            "top": 590,
+            "width": 231,
+            "height": 409
+          },
+          "anchor": [
+            764.3896296296297,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 210,
+            "height": 372,
+            "left": 142,
+            "top": 112
+          }
+        },
+        {
+          "crop": {
+            "left": 1183,
+            "top": 608,
+            "width": 241,
+            "height": 391
+          },
+          "anchor": [
+            1276.4726735598229,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 219,
+            "height": 355,
+            "left": 140,
+            "top": 129
+          }
+        },
+        {
+          "crop": {
+            "left": 1697,
+            "top": 624,
+            "width": 253,
+            "height": 375
+          },
+          "anchor": [
+            1788.7411764705882,
+            995
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 230,
+            "height": 341,
+            "left": 142,
+            "top": 143
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/rdl.webp"
+    },
+    "row": {
+      "file": "row.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: THIGH-SUPPORTED ONE-ARM DUMBBELL ROW, no bench, chair or furniture. Fixed left-side three-quarter view, face toward image right, near working LEFT arm completely visible. RIGHT foot forward with knee bent and RIGHT hand planted on that forward RIGHT thigh above the knee for support. LEFT foot back on floor and LEFT hand holds one PowerBlock. Hinge torso forward to about 35 degrees above horizontal with a long neutral spine, gaze down and slightly forward. Keep feet, right support hand, torso and head fixed in every cell. Frame 1 working LEFT arm hangs straight downward from shoulder, dumbbell below shoulder. Frames 2-7 bend the LEFT elbow and draw it BACK, close beside ribs, pulling weight toward LEFT hip. Frame 8 dumbbell beside waist/lower ribs, LEFT elbow just past torso, forearm nearly vertical under elbow. NOT a biceps curl: elbow moves backward as upper arm comes alongside torso. NOT a torso rotation: shoulders/hips remain square to floor. Same supported split stance throughout.\n",
+      "reference": "rdl.png",
+      "generation_id": "6ce25f6c-d1ba-44c9-954d-3da8f87c8491",
+      "usage": {
+        "input_tokens": 2048,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 590
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6768
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 88,
+            "top": 39,
+            "width": 322,
+            "height": 466
+          },
+          "anchor": [
+            149.29945054945054,
+            502
+          ],
+          "measure": 461,
+          "scale": 1,
+          "render": {
+            "width": 315,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 602,
+            "top": 40,
+            "width": 324,
+            "height": 465
+          },
+          "anchor": [
+            663.2448132780083,
+            502
+          ],
+          "measure": 460,
+          "scale": 1.0021739130434784,
+          "render": {
+            "width": 318,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1115,
+            "top": 40,
+            "width": 324,
+            "height": 465
+          },
+          "anchor": [
+            1176.229711141678,
+            502
+          ],
+          "measure": 460,
+          "scale": 1.0021739130434784,
+          "render": {
+            "width": 318,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1627,
+            "top": 40,
+            "width": 325,
+            "height": 465
+          },
+          "anchor": [
+            1687.9326923076924,
+            502
+          ],
+          "measure": 460,
+          "scale": 1.0021739130434784,
+          "render": {
+            "width": 319,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 88,
+            "top": 532,
+            "width": 326,
+            "height": 463
+          },
+          "anchor": [
+            149.61626248216834,
+            992
+          ],
+          "measure": 458,
+          "scale": 1.0065502183406114,
+          "render": {
+            "width": 321,
+            "height": 456,
+            "left": 95,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 602,
+            "top": 532,
+            "width": 325,
+            "height": 463
+          },
+          "anchor": [
+            662.75,
+            992
+          ],
+          "measure": 458,
+          "scale": 1.0065502183406114,
+          "render": {
+            "width": 320,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1115,
+            "top": 533,
+            "width": 325,
+            "height": 462
+          },
+          "anchor": [
+            1175.2295302013422,
+            992
+          ],
+          "measure": 457,
+          "scale": 1.0087527352297594,
+          "render": {
+            "width": 321,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1627,
+            "top": 532,
+            "width": 325,
+            "height": 463
+          },
+          "anchor": [
+            1687.4489247311828,
+            992
+          ],
+          "measure": 458,
+          "scale": 1.0065502183406114,
+          "render": {
+            "width": 320,
+            "height": 456,
+            "left": 96,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/row.webp"
+    },
+    "split-body": {
+      "file": "split-body.png",
+      "prompt": "Use case: precise-object-edit. The input image is the EDIT TARGET. Create its BODYWEIGHT exercise variant. Remove BOTH dumbbells completely. Both arms hang loosely at sides with natural empty relaxed hands. Preserve every knee angle and the exact stationary split stance. Keep the SAME eight frames, four columns by two rows, transparent background, same cell registration and drawing style. Make only the equipment and hand edits, do not change the movement, anatomy, camera, layout, relative scale or poses. No equipment, text, labels or background. 2048 x 1024 PNG.\n",
+      "reference": "split.png",
+      "generation_id": "15789fe4-1748-42fa-aa09-35e62245eaac",
+      "usage": {
+        "input_tokens": 1591,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 133
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6311
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 116,
+            "top": 23,
+            "width": 291,
+            "height": 503
+          },
+          "anchor": [
+            402,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 263,
+            "height": 455,
+            "left": 141,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 622,
+            "top": 40,
+            "width": 298,
+            "height": 486
+          },
+          "anchor": [
+            915,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 270,
+            "height": 440,
+            "left": 135,
+            "top": 43
+          }
+        },
+        {
+          "crop": {
+            "left": 1131,
+            "top": 61,
+            "width": 307,
+            "height": 465
+          },
+          "anchor": [
+            1432,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 278,
+            "height": 421,
+            "left": 128,
+            "top": 62
+          }
+        },
+        {
+          "crop": {
+            "left": 1641,
+            "top": 78,
+            "width": 319,
+            "height": 449
+          },
+          "anchor": [
+            1954,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 289,
+            "height": 406,
+            "left": 117,
+            "top": 78
+          }
+        },
+        {
+          "crop": {
+            "left": 107,
+            "top": 570,
+            "width": 315,
+            "height": 416
+          },
+          "anchor": [
+            417,
+            982
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 285,
+            "height": 376,
+            "left": 119,
+            "top": 108
+          }
+        },
+        {
+          "crop": {
+            "left": 616,
+            "top": 591,
+            "width": 321,
+            "height": 395
+          },
+          "anchor": [
+            931,
+            983
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 290,
+            "height": 357,
+            "left": 115,
+            "top": 126
+          }
+        },
+        {
+          "crop": {
+            "left": 1132,
+            "top": 599,
+            "width": 327,
+            "height": 387
+          },
+          "anchor": [
+            1453,
+            983
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 296,
+            "height": 350,
+            "left": 109,
+            "top": 133
+          }
+        },
+        {
+          "crop": {
+            "left": 1648,
+            "top": 615,
+            "width": 330,
+            "height": 371
+          },
+          "anchor": [
+            1972,
+            983
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 299,
+            "height": 336,
+            "left": 107,
+            "top": 147
+          }
+        }
+      ],
+      "mirrored": true,
+      "asset": "../../../assets/exercises/split-body.webp"
+    },
+    "split": {
+      "file": "split.png",
+      "prompt": "Use case: scientific-educational. Create a production exercise-animation sprite sheet.\nInput image 1 is the STYLE AND CHARACTER REFERENCE ONLY: retain this exact adult demonstrator, face, natural proportions, blue short-sleeve T-shirt, charcoal shorts, ivory shoes, hand-painted editorial finish and realistic anatomy. Replace the movement with the one specified below.\nOutput: exactly EIGHT sequential full-body poses in FOUR columns and TWO rows on a 2048 x 1024 transparent PNG. Each cell is 512 x 512. Reading order left to right, top row then bottom row. No text, arrows, numbers, panels, backdrop, cast shadows or decorations. Every body part and equipment fits INSIDE its cell with a clear margin. Fixed orthographic camera, magnification and registration. NO recentering, zooming or re-scaling across poses. Natural joints and consistent limb lengths, hands and grips. Equipment is only the stated equipment, never a bench or chair.\nThese eight frames depict ONLY one direction of a single rep, equally spaced between the start and end positions. The app reverses them for the return. Frame progress: 0%, 14%, 29%, 43%, 57%, 71%, 86%, 100%. Each successive frame must visibly advance that same movement. Keep fixed points in EXACTLY the same position within every cell. Same person and clothing, same stance and equipment, no extra limbs or missing limbs. No text in image.\nFor weighted movements use PowerBlock Elite-style adjustable dumbbells: compact rectangular dark nested steel blocks with central hand openings and enclosed handles, no round plates. Hands grasp central handles with wrapped thumbs and straight wrists unless an explicit two-hand goblet hold is specified. Same dumbbell geometry through every frame.\n\nMovement: STATIONARY DUMBBELL SPLIT SQUAT. Left-side three-quarter view, facing image right. Anatomical LEFT leg is the near leg and forward, its whole foot planted; anatomical RIGHT leg is back, heel elevated and toes on the FLOOR. Feet are hip-width apart laterally, not on a tightrope. Exactly two PowerBlock dumbbells, one in each hand, hanging at the sides with straight arms. Frame 1 tall in a long split stance, both knees softly bent. Frames 2-7 descend straight downward, bending BOTH knees, keeping the torso almost upright. Frame 8 front thigh near parallel to floor, front shin approximately vertical, rear knee just ABOVE floor. Maintain the front heel down and the rear forefoot planted in EXACTLY the same positions through all frames. No stepping, no alternating legs, no rear foot on furniture, no kneeling on floor. Whole front foot pushes into floor on reverse playback. Hands and weights remain next to hips, away from knees.\n",
+      "reference": "rdl.png",
+      "generation_id": "6e83427f-14a9-4acb-9369-d1839844e469",
+      "usage": {
+        "input_tokens": 2040,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 582
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6760
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 118,
+            "top": 22,
+            "width": 289,
+            "height": 504
+          },
+          "anchor": [
+            401,
+            522
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 261,
+            "height": 456,
+            "left": 143,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 624,
+            "top": 40,
+            "width": 296,
+            "height": 486
+          },
+          "anchor": [
+            915,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 268,
+            "height": 440,
+            "left": 136,
+            "top": 43
+          }
+        },
+        {
+          "crop": {
+            "left": 1133,
+            "top": 61,
+            "width": 304,
+            "height": 465
+          },
+          "anchor": [
+            1432,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 275,
+            "height": 421,
+            "left": 128,
+            "top": 62
+          }
+        },
+        {
+          "crop": {
+            "left": 1643,
+            "top": 78,
+            "width": 316,
+            "height": 448
+          },
+          "anchor": [
+            1954,
+            523
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 286,
+            "height": 405,
+            "left": 118,
+            "top": 78
+          }
+        },
+        {
+          "crop": {
+            "left": 109,
+            "top": 571,
+            "width": 313,
+            "height": 414
+          },
+          "anchor": [
+            417,
+            982
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 283,
+            "height": 375,
+            "left": 120,
+            "top": 109
+          }
+        },
+        {
+          "crop": {
+            "left": 618,
+            "top": 591,
+            "width": 318,
+            "height": 395
+          },
+          "anchor": [
+            931,
+            982
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 288,
+            "height": 357,
+            "left": 116,
+            "top": 127
+          }
+        },
+        {
+          "crop": {
+            "left": 1133,
+            "top": 599,
+            "width": 325,
+            "height": 386
+          },
+          "anchor": [
+            1453,
+            982
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 294,
+            "height": 349,
+            "left": 109,
+            "top": 134
+          }
+        },
+        {
+          "crop": {
+            "left": 1650,
+            "top": 616,
+            "width": 327,
+            "height": 370
+          },
+          "anchor": [
+            1972,
+            982
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 296,
+            "height": 335,
+            "left": 108,
+            "top": 149
+          }
+        }
+      ],
+      "mirrored": true,
+      "asset": "../../../assets/exercises/split.webp"
+    },
+    "calf-body": {
+      "file": "calf-body.png",
+      "prompt": "Use case: precise-object-edit. The input is the EDIT TARGET. Create the BODYWEIGHT variant of this wall-supported single-leg calf raise. Remove the single dumbbell from the hanging left hand in every frame and show that hand empty, relaxed beside the thigh. Keep EVERYTHING else unchanged: same eight frames in four columns by two rows, same standing left leg, raised right foot, heel rise, fixed toe contact, straight working knee, right hand on wall, wall location, anatomy, character, clothes, proportions, camera, frame registration and scale. Transparent background, no other equipment, no text, no labels. 2048 x 1024 PNG.\n",
+      "reference": "calf.png",
+      "generation_id": "aa940034-91e8-4135-9ec7-61f1a16cdb64",
+      "usage": {
+        "input_tokens": 1607,
+        "input_tokens_details": {
+          "image_tokens": 1458,
+          "text_tokens": 149
+        },
+        "output_tokens": 4720,
+        "output_tokens_details": {
+          "image_tokens": 4720,
+          "text_tokens": 0
+        },
+        "total_tokens": 6327
+      },
+      "frames": [
+        {
+          "crop": {
+            "left": 153,
+            "top": 11,
+            "width": 247,
+            "height": 493
+          },
+          "anchor": [
+            299,
+            500
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 228,
+            "height": 454,
+            "left": 142,
+            "top": 30
+          }
+        },
+        {
+          "crop": {
+            "left": 668,
+            "top": 11,
+            "width": 244,
+            "height": 492
+          },
+          "anchor": [
+            811,
+            499
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 225,
+            "height": 453,
+            "left": 145,
+            "top": 31
+          }
+        },
+        {
+          "crop": {
+            "left": 1178,
+            "top": 11,
+            "width": 246,
+            "height": 493
+          },
+          "anchor": [
+            1323,
+            500
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 227,
+            "height": 454,
+            "left": 143,
+            "top": 30
+          }
+        },
+        {
+          "crop": {
+            "left": 1692,
+            "top": 10,
+            "width": 244,
+            "height": 493
+          },
+          "anchor": [
+            1835,
+            499
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 225,
+            "height": 454,
+            "left": 145,
+            "top": 30
+          }
+        },
+        {
+          "crop": {
+            "left": 156,
+            "top": 522,
+            "width": 244,
+            "height": 491
+          },
+          "anchor": [
+            300,
+            1009
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 225,
+            "height": 452,
+            "left": 144,
+            "top": 32
+          }
+        },
+        {
+          "crop": {
+            "left": 670,
+            "top": 518,
+            "width": 242,
+            "height": 495
+          },
+          "anchor": [
+            810,
+            1009
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 223,
+            "height": 456,
+            "left": 147,
+            "top": 28
+          }
+        },
+        {
+          "crop": {
+            "left": 1180,
+            "top": 522,
+            "width": 244,
+            "height": 491
+          },
+          "anchor": [
+            1323,
+            1009
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 225,
+            "height": 452,
+            "left": 145,
+            "top": 32
+          }
+        },
+        {
+          "crop": {
+            "left": 1694,
+            "top": 518,
+            "width": 242,
+            "height": 495
+          },
+          "anchor": [
+            1834,
+            1009
+          ],
+          "measure": 1,
+          "scale": 1,
+          "render": {
+            "width": 223,
+            "height": 456,
+            "left": 147,
+            "top": 28
+          }
+        }
+      ],
+      "mirrored": false,
+      "asset": "../../../assets/exercises/calf-body.webp"
+    }
+  },
+  "postprocessing": "Crop each generated pose, register ground contact or bar position, normalize stationary body scale, preserve alpha, pack as WebP. Split squat is mirrored once during packing so the first minute shows the left leg forward. No pose interpolation."
+}
