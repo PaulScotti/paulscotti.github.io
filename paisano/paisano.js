@@ -4,8 +4,7 @@
 // garden for it to stalk. All of it is worked out from one log of snacks, feedings, hunts and plantings, which the
 // worker keeps.
 
-import config from './config.js?v=5';
-import { play } from './figure.js?v=5';
+import config from './config.js?v=6';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -191,12 +190,29 @@ function spin() {
   requestAnimationFrame(frame);
 }
 
+// Eight illustrated poses travel out and back, with a short pause at each end.
+function play(x) {
+  const bodyweight = x.share && snack.w === 0, sprite = $('figure').firstElementChild;
+  $('cues').replaceChildren(...x.cues.map((c, i) => Object.assign(document.createElement('li'), {
+    textContent: bodyweight && i === 0 ? x.bodyCue : c,
+  })));
+  sprite.src = `./assets/exercises/${x.id}${bodyweight ? '-body' : ''}.webp`;
+  sprite.onerror = () => { throw new Error(`Could not load the ${x.name} demonstration.`); };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  sprite.style.transform = reduced ? 'translate(-75%, -50%)' : 'translate(0, 0)';
+  if (reduced) return () => {};
+  const animation = sprite.animate([0, 0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0].map(i => ({
+    transform: `translate(${-(i % 4) * 25}%, ${-Math.floor(i / 4) * 50}%)`,
+    easing: 'steps(1, end)',
+  })), { duration: x.tempo * 1000, iterations: Infinity });
+  return () => animation.cancel();
+}
+
 // Preparation, work and confirmation share one persisted session. Leaving it pauses rather than discarding it.
 function begin(x, saved = null) {
   snack = saved || { id: crypto.randomUUID(), x: x.id, ...dose(x), start: null, elapsed: 0, review: false };
   $('name').textContent = x.name;
   $('dose').textContent = said(x, snack);
-  $('cues').replaceChildren(...x.cues.map(c => Object.assign(document.createElement('li'), { textContent: c })));
   $('plan').textContent = x.sides ? 'One minute per side. Do the reps, then rest until the chime.' : 'One set each minute. Do the reps, then rest until the chime.';
   $('target-reps').value = snack.r;
   $('target-reps').max = Math.floor(config.work / x.tempo);
@@ -211,7 +227,7 @@ function begin(x, saved = null) {
   buddy.setAttribute('class', $('bird').classList.contains('hatched') ? 'bird hatched' : 'bird');
   buddy.setAttribute('transform', `translate(56 96) scale(${-pet.scale} ${pet.scale})`);
   $('buddy').replaceChildren(buddy);
-  snack.stop = play($('figure'), { ...x, hold: snack.w ? x.hold : 'none' });
+  snack.stop = play(x);
   $('snack').classList.toggle('over', snack.review);
   $('setup').hidden = snack.start !== null || snack.elapsed > 0 || snack.review;
   $('controls').hidden = !$('setup').hidden || snack.review;
@@ -871,7 +887,8 @@ $('spin').onclick = () => {
 $('setup').oninput = () => {
   if (!$('setup').checkValidity()) return;
   snack.r = $('target-reps').valueAsNumber;
-  snack.w = X[snack.x].hold === 'none' ? null : +$('target-weight').value;
+  const w = X[snack.x].hold === 'none' ? null : +$('target-weight').value;
+  if (snack.w !== w) { snack.w = w; snack.stop(); snack.stop = play(X[snack.x]); }
   $('dose').textContent = said(X[snack.x], snack);
   saveSession();
 };
@@ -880,7 +897,7 @@ $('setup').onsubmit = e => {
   $('setup').oninput();
   snack.start = Date.now();
   snack.stop();
-  snack.stop = play($('figure'), { ...X[snack.x], hold: snack.w ? X[snack.x].hold : 'none' });
+  snack.stop = play(X[snack.x]);
   $('setup').hidden = true;
   $('controls').hidden = false;
   $('pause').textContent = 'Pause';

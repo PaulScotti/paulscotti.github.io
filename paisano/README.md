@@ -9,6 +9,23 @@ Spin to choose from twelve exercises for a pull-up bar and PowerBlock dumbbells 
 The wheel favors muscles with less work logged today and avoids repeating exercises until the pool is exhausted.
 Change the exercise, reps or weight before starting. Suggestions are starting points, not measured capacity.
 
+Each demonstration loops through eight illustrated poses at the exercise's tempo. The four exercises that allow
+0 lb have separate bodyweight artwork and cues. Single-side movements mirror after the first minute, and reduced
+motion shows a still endpoint. Illustrations use the floor, wall, pull-up bar and block-shaped dumbbells.
+
+The exercise artwork was generated through the OpenAI Images API with `gpt-image-2.5-sunburst` at `quality: "max"`.
+The original PNGs, complete prompts, generation IDs and frame placement are saved in
+[`output/imagegen/exercises/manifest.json`](output/imagegen/exercises/manifest.json). Runtime WebP sheets are in
+`assets/exercises/`; they contain generated poses with position and scale normalized for playback.
+Form references include [PowerBlock's squat and hinge demonstrations](https://powerblock.com/blogs/adjustable-dumbbell-workouts/top-4-exercises-for-a-quick-home-workout),
+[floor press instructions](https://powerblock.com/blogs/adjustable-kettlebell-workouts/chest-day-home-gym-edition),
+[exercise videos](https://powerblock.com/pages/dumbbell-exercise-videos),
+NASM's [push-up](https://www.nasm.org/resource-center/exercise-library/push-up) and
+[pull-up](https://www.nasm.org/resource-center/exercise-library/pull-up),
+ACE's [hammer curl](https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/) and
+[wall calf raise](https://www.acefitness.org/resources/everyone/exercise-library/73/standing-calf-raises-wall/), and
+the [hanging knee raise demonstration](https://www.muscleandstrength.com/exercises/hanging-knee-raise.html).
+
 Each snack lasts two minutes. Bilateral exercises have one set each minute; unilateral exercises have one minute
 per side, which counts as one set per muscle. Finish the prescribed reps, then rest until the next minute.
 Pause or finish early whenever needed. Closing the workout saves it for later on that tab; reloading restores it.
@@ -59,8 +76,8 @@ simulation percentages are not evidence of real-world fitness outcomes and are n
 
 ## Storage and development
 
-`config.js` holds the exercises, weights, timings, animals and plants. `figure.js` animates the exercise poses at
-their configured tempos. The interface uses Libron from `../ebis/fonts` and respects reduced motion.
+`config.js` holds the exercises, weights, timings, animals and plants. `paisano.js` plays the exercise sprite sheets
+with the browser's animation API. The interface uses Libron from `../ebis/fonts` and respects reduced motion.
 
 The Worker stores an append-only D1 event log. Each unsent event has its own localStorage key; acknowledged events
 are cached before the outbox is cleared. A Web Lock serializes same-browser sync, and event IDs deduplicate retries.
