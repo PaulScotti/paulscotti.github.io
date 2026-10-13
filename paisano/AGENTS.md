@@ -1,7 +1,7 @@
 ## Work
 - Don't wander beyond what I asked. If you spot something else worth doing, tell me.
 - Don't make things up. If you can't source a date, number, or fact, say it's unknown.
-- Commit often, but never push or deploy anything live unless I say so.
+- Commit, push and deploy completed Paisano changes after checks pass, unless I explicitly ask to keep them local. Verify the live app before calling a release complete.
 - Keep replies short and plain: what you changed, how you checked it, and anything still broken. No em dashes or AI-isms.
 - My guiding light towards function apps are: simple, minimalist, elegant, robust, and a delight to interact with.
 
@@ -24,4 +24,3 @@
 - After big changes, look again with fresh eyes and try to break it.
 - Back up claims with experiments. A difference within noise isn't an improvement.
 - Only write tests that check something meaningful, most unit tests are wasteful code
-
