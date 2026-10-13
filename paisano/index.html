@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="assets/mark.png" type="image/png">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css?v=9">
-<script type="module" src="paisano.js?v=9"></script>
+<link rel="stylesheet" href="paisano.css?v=10">
+<script type="module" src="paisano.js?v=10"></script>
 </head>
 <body>
 
@@ -96,14 +96,12 @@
       </svg>
     </div>
     <p id="tally" class="tally"></p>
-    <details class="coverage"><summary>Today’s muscle coverage</summary><ul id="coverage"></ul><p>Full color marks two sets. This is a record of your day, not a daily quota. Rest sore muscles.</p></details>
   </section>
 
   <footer>
     <button id="choose" class="primary" disabled>Choose a snack</button>
     <p id="since" class="since"></p>
-    <p id="daily" class="since"></p>
-    <div class="status"><button id="sync" type="button">Connecting…</button><button id="update" type="button" hidden>Update ready</button></div>
+    <div class="status"><button id="sync" type="button" hidden>Connecting…</button><button id="update" type="button" hidden>Update ready</button></div>
   </footer>
 </main>
 
@@ -127,7 +125,6 @@
     <p id="landed" class="landed" aria-live="polite"></p>
     <button id="drop" class="primary">Drop ball</button>
     <p id="prize-note" class="prize-note" aria-live="polite"></p>
-    <p class="board-context">Five choices, favoring muscles you’ve worked less today.</p>
   </div>
 </section>
 
@@ -147,14 +144,14 @@
     <svg id="buddy" class="buddy" viewBox="0 0 100 100" aria-hidden="true"></svg>
   </div>
   <p class="clock"><span id="clock">2:00</span><span id="phase" class="phase"></span></p>
-  <ol id="cues" class="cues"></ol>
-  <p id="plan" class="plan"></p>
   <form id="setup" class="setup">
     <div class="targets"><label>Reps<input id="target-reps" type="number" min="1" max="30" step="1" inputmode="numeric" required></label><label id="weight-label">Weight<select id="target-weight"></select></label></div>
     <button class="primary">Start two minutes</button>
     <select id="swap" aria-label="Choose another exercise"></select>
   </form>
   <div id="controls" class="controls" hidden><button id="pause">Pause</button><button id="finish-early">Finish early</button></div>
+  <ol id="cues" class="cues"></ol>
+  <p id="plan" class="plan"></p>
   <form id="result" class="feel" hidden>
     <p>Confirm the reps and weight you actually did. Use 0 for a skipped set.</p>
     <div id="actual" class="actual"></div>
@@ -180,7 +177,7 @@
     <p class="note">Approximate sets: primary muscles count fully; assisting muscles count half. A left/right pair counts once. Older entries used prescribed sets.</p>
     <h3>Logged performance</h3>
     <ul id="lifts" class="lifts"></ul>
-    <p class="note">Lines show weight on a 0–80 lb scale, or bodyweight reps. Weights are per dumbbell. Easy adds a rep, then a weight step; hard lowers the next target.</p>
+    <p class="note">Each line is the weight per dumbbell, up to the heaviest you’ve used, or the reps of a bodyweight exercise. Easy adds a rep, then a weight step; hard lowers the next target.</p>
   </div>
 </section>
 

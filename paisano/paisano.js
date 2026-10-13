@@ -1,8 +1,8 @@
 // Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=9';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=9';
+import config from './config.js?v=10';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=10';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -301,7 +301,8 @@ function review(completed = false) {
   snack.lock?.release();
   snack.stop();
   const x = X[snack.x];
-  snack.rounds ??= Array.from({ length: config.minutes }, () => ({ r: completed ? snack.r : 0, w: snack.w }));
+  // Sets whose minute began start at the target, to be confirmed; the rest start at zero.
+  snack.rounds ??= Array.from({ length: config.minutes }, (_, i) => ({ r: completed || i < Math.ceil(snack.elapsed / 60000) ? snack.r : 0, w: snack.w }));
   $('setup').hidden = $('controls').hidden = true;
   $('result').hidden = false;
   $('snack').classList.add('over');
@@ -363,7 +364,6 @@ function record(kind, data, id = crypto.randomUUID(), at = Date.now()) {
 
 function sync() {
   const run = () => navigator.locks.request('paisano-sync', async () => {
-    $('sync').textContent = 'Syncing…';
     log = JSON.parse(localStorage.getItem('paisano.log') || '[]');
     do {
       // Workouts must arrive before their hunts, even when the outbox spans several batches.
@@ -378,10 +378,14 @@ function sync() {
     loaded = true;
     st = replay();
     render();
-    $('sync').textContent = pending.length ? 'Saved on this device · Retry sync' : 'Saved';
+    $('sync').hidden = true; // shown only when something is waiting
   });
   syncing = syncing.then(run, run);
-  syncing.catch(e => { $('sync').textContent = loaded ? 'Saved on this device · Retry sync' : 'Could not load log · Retry'; toast(e.message); });
+  syncing.catch(e => {
+    $('sync').textContent = loaded ? 'Saved on this device · Retry sync' : 'Could not load log · Retry';
+    $('sync').hidden = false;
+    toast(e.message);
+  });
   return syncing;
 }
 
@@ -408,11 +412,6 @@ function render() {
   $('choose').disabled = !loaded;
   $('choose').textContent = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Choose a snack';
   renderedDay = dayOf(Date.now());
-  $('coverage').replaceChildren(...AREAS.map(a => {
-    const n = +(t.sets[a] || 0).toFixed(1);
-    return Object.assign(document.createElement('li'), { textContent: `${config.areas[a]} · ${n} set${n === 1 ? '' : 's'}` });
-  }));
-  $('daily').textContent = t.rain ? 'Rain in the garden. A good day to move.' : `${Math.min(n, config.rainAt)} of ${config.rainAt} snacks for rain`;
   const i = stageOf(st.food), next = config.stages[i + 1];
   $('grown').style.width = `${next ? (st.food - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
   $('toward').textContent = next ? `${next[1] - st.food} to ${next[0].toLowerCase()}` : '';
@@ -432,13 +431,14 @@ const shade = (bodies, of) => {
 // What's in Paisano's belly now, in seeds: what it last had, less one an hour since.
 const fullness = () => Math.max(0, st.belly - (Date.now() - st.ate) / 3600e3);
 
-// What changes as time passes: how long since the last snack, whether Paisano is hungry, and where the sun is (it
-// crosses the garden from 6 am to 8 pm, and is below the dunes at night).
+// What changes as time passes: how long since the last snack and how many more bring rain, whether Paisano is hungry,
+// and where the sun is (it crosses the garden from 6 am to 8 pm, and is below the dunes at night).
 function tick() {
   if (renderedDay !== dayOf(Date.now())) return render();
-  const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4);
-  $('since').textContent = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
+  const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4), more = config.rainAt - t.snacks.length;
+  const last = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
+  $('since').textContent = [last, t.rain ? 'It rained today' : `${more} more snack${more > 1 ? 's' : ''} for rain`].filter(Boolean).join(' · ');
   const stage = config.stages[stageOf(st.food)][0], hungry = st.food > 0 && !fullness();
   $('stage').textContent = hungry ? `Hungry ${stage.toLowerCase()}` : stage;
   const now = new Date(), day = (now.getHours() + now.getMinutes() / 60 - 6) / 14;
@@ -505,7 +505,7 @@ function chronicle() {
       const completed = s.rounds.filter(v => v.r > 0);
       return x.hold === 'none' ? Math.min(...completed.map(v => v.r)) : Math.max(...completed.map(v => v.w));
     });
-    const top = x.hold === 'none' ? Math.max(config.maxReps, ...values) : 80;
+    const top = Math.max(x.hold === 'none' ? config.maxReps : 1, ...values);
     li.querySelector('polyline').setAttribute('points', values.map((v, i) => `${values.length > 1 ? i / (values.length - 1) * 84 : 42},${26 - v / top * 24}`).join(' '));
     return li;
   }));
@@ -979,6 +979,7 @@ $('lock').onsubmit = e => {
   sync();
 };
 $('version').textContent = `v${config.version}`;
+$('sync').hidden = loaded; // until the log first loads
 
 // Sync on reconnect and tab return. Never replace a running workout with an automatic reload.
 document.addEventListener('visibilitychange', () => {
