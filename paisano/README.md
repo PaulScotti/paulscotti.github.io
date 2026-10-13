@@ -53,6 +53,10 @@ everywhere, while the earlier events stay in D1.
   creosote, prickly pear and mesquite, each bringing its own visitor once grown. Whole-body and best rewards from
   versions 1 to 3 replay as they were earned.
 - Feed seeds to hatch and grow Paisano. Its belly holds three and digests one an hour.
+- Each planted variety invites another friend, starting with none in an empty garden. Pip the quail whistles with
+  Paisano, Juniper the jackrabbit hops, Pebble the tortoise plays peekaboo, and Sombra the kit fox bows and naps.
+  Sprouts count immediately. Friends play on their own or when tapped; their games use no seeds. The Desert page
+  shows who is visiting and how to invite the next friend. Visits follow the saved plants across devices and resets.
 - Each snack brings a creature that's out at that hour, a rarer one with the rain. Tap it to stalk: step while it
   looks away, wait while it looks up. Escape, another screen or another tab ends the hunt, and the visitor waits to
   be tried again. Catches feed Paisano and build Speed, Stealth and Nerve. The Desert page has the plants, traits and
@@ -62,6 +66,11 @@ The bird, creatures, plants, egg and seed were generated the same way, with tran
 stages each have idle, running (two frames), feeding, sleeping and happy poses. Original PNGs, the full prompts,
 generation IDs and crop coordinates are in [`output/imagegen/manifest.json`](output/imagegen/manifest.json). The
 app makes no image-generation calls.
+
+The friends use a separate three-pose atlas generated with the built-in imagegen tool, using the bird as a style
+reference. Its original is `output/imagegen/friends.png`, with frame coordinates in `output/imagegen/friends.json`;
+`assets/friends.webp` is the compressed sheet. Reduced motion keeps the friends still and shows their greeting pose
+when tapped. Leaving the garden ends a game.
 
 ## Evidence
 
@@ -73,7 +82,7 @@ map, progression rules and garden are design choices, not tested ones.
 
 ## Storage and development
 
-`config.js` holds the exercises, weights, timings, creatures and plants. The interface uses Libron from
+`config.js` holds the exercises, weights, timings, creatures, friends and plants. The interface uses Libron from
 `../ebis/fonts`.
 
 The Worker keeps an append-only D1 event log and rejects malformed events. Each unsent event waits under its own

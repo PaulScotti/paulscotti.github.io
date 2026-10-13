@@ -42,6 +42,14 @@ export default {
     { id: 'mesquite', name: 'Mesquite', cost: 25, rains: 4, x: 116 },
   ],
 
+  // Each distinct planted variety invites the next friend, including while the plant is still a sprout.
+  friends: [
+    { id: 'quail', name: 'Pip', kind: 'Quail', x: 58, y: 140, action: 'Whistle with Pip', greeting: 'Pip whistles a hello.', habit: 'Whistles, then waits for Paisano to answer.' },
+    { id: 'rabbit', name: 'Juniper', kind: 'Jackrabbit', x: 304, y: 140, action: 'Hop with Juniper', greeting: 'Juniper invites Paisano to hop along.', habit: 'Shows off three hops. Paisano joins in.' },
+    { id: 'tortoise', name: 'Pebble', kind: 'Desert tortoise', x: 139, y: 143, action: 'Play peekaboo with Pebble', greeting: 'Pebble hides, then peeks out at Paisano.', habit: 'Tucks into its shell for a game of peekaboo.' },
+    { id: 'fox', name: 'Sombra', kind: 'Kit fox', x: 230, y: 145, action: 'Relax with Sombra', greeting: 'Sombra takes a bow, then curls up beside Paisano.', habit: 'A playful bow, then a little nap together.' },
+  ],
+
   // Paisano stalks a visitor by stepping closer while it looks away: it looks away for `busy` seconds at a time,
   // twitches, then looks up for `look` seconds (1 to 2 if not given), buzzing while it's busy or rattling while it looks
   // if it has a `sound`. Catching one is a meal of its size and builds a trait: Speed for longer, quicker steps,
@@ -143,5 +151,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 11,
+  version: 12,
 };

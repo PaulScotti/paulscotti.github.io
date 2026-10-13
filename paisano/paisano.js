@@ -1,8 +1,8 @@
 // Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=11';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=11';
+import config from './config.js?v=12';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=12';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -411,6 +411,16 @@ function render() {
   $('grown').style.width = `${next ? (st.food - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
   $('toward').textContent = next ? `${next[1] - st.food} to ${next[0].toLowerCase()}` : '';
   $('plants').innerHTML = config.plants.filter(p => p.id in st.plants).map(p => `<use href="#${st.plants[p.id] >= p.rains ? `p-${p.id}` : 'sprout'}" x="${p.x}" y="${GROUND}"/>`).join('');
+  const friends = config.friends.slice(0, Object.keys(st.plants).length);
+  if ($('friends').childElementCount !== friends.length) {
+    goodbye();
+    $('friends').innerHTML = friends.map((f, i) => `<g class="friend" data-friend="${f.id}" transform="translate(${f.x} ${f.y})" style="--friend-row: ${-i * 64}px">
+      <title>${f.name} · ${f.kind}</title><ellipse class="shadow" rx="15" ry="2"/>
+      <g class="friend-motion"><foreignObject class="friend-art" x="-32" y="-59" width="64" height="64"><div xmlns="http://www.w3.org/1999/xhtml" class="friend-frames"></div></foreignObject></g>
+      <rect class="pet-hit" x="-25" y="-44" width="50" height="48" rx="12" role="button" tabindex="0" aria-label="${f.action}"/>
+    </g>`).join('');
+  }
+  $('company').textContent = friends.length ? `${friends.length} friend${friends.length === 1 ? '' : 's'} visiting` : 'Plant to invite friends';
   $('puddle').classList.toggle('on', !!t.rain);
   visitor();
   tick();
@@ -511,6 +521,7 @@ function route() {
   const hash = location.hash.slice(1);
   if (!password && hash) { history.replaceState(null, '', location.pathname); return route(); }
   if (hunt && (!password || hash)) end();
+  if (!password || hash) goodbye();
   if (hash !== 'pachinko' && board) { cancelAnimationFrame(board.frame); board = null; }
   if (hash !== 'snack' && snack) stop();
   if ((hash === 'pachinko' && !board) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
@@ -552,9 +563,26 @@ function desert() {
     if (rains === undefined) {
       const button = Object.assign(document.createElement('button'), { textContent: `Plant · ${p.cost}`, disabled: seeds < p.cost });
       button.setAttribute('aria-label', `Plant ${p.name.toLowerCase()} for ${p.cost} seeds`);
-      button.onclick = () => { record('plant', { p: p.id }); toast(`Planted ${p.name.toLowerCase()}. It grows with each rain.`); };
+      button.onclick = () => {
+        const before = Object.keys(st.plants).length;
+        record('plant', { p: p.id });
+        if (Object.keys(st.plants).length > before) toast(`Planted ${p.name.toLowerCase()}. ${config.friends[before].name} is visiting!`);
+      };
       li.querySelector('em').replaceWith(button);
     }
+    return li;
+  }));
+  const variety = Object.keys(st.plants).length;
+  $('friends-note').textContent = `${variety} of ${config.plants.length} plant varieties. ${variety === config.plants.length ? 'All your friends are here.' : 'Each new variety invites another friend, even as a sprout.'} Tap a friend in the garden to play.`;
+  $('friend-guide').replaceChildren(...config.friends.map((f, i) => {
+    const li = row('', i >= variety), svg = li.querySelector('svg');
+    svg.classList.add('friend-portrait');
+    svg.setAttribute('viewBox', '0 0 64 64');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = `<foreignObject width="64" height="64"><div xmlns="http://www.w3.org/1999/xhtml" class="friend-frames" style="--friend-row: ${-i * 64}px"></div></foreignObject>`;
+    li.querySelector('b').textContent = `${f.name} · ${f.kind}`;
+    li.querySelector('small').textContent = i < variety ? f.habit : `Visits with ${i + 1} plant ${i ? 'varieties' : 'variety'}`;
+    li.querySelector('em').textContent = i < variety ? 'Here' : '';
     return li;
   }));
   const when = c => {
@@ -570,7 +598,7 @@ function desert() {
     return li;
   }));
   // Each drawing fits its box.
-  for (const svg of $('desert').querySelectorAll('.rows svg')) {
+  for (const svg of $('desert').querySelectorAll('.rows svg:not(.friend-portrait)')) {
     const b = svg.firstChild.getBBox();
     svg.setAttribute('viewBox', `${b.x - 1} ${b.y - 1} ${b.width + 2} ${b.height + 2}`);
   }
@@ -578,6 +606,48 @@ function desert() {
 
 // A new sprite row at each growth stage; scale grows continuously between stages.
 const pet = { x: 200, face: 1, size: 1, scale: 1, busy: false, flying: 0, strewn: [] }; // flying: seeds tossed, not yet eaten
+let company = null;
+
+// Visits are derived from the garden. Playing is cosmetic, so it needs no new saved events or currency.
+function greet(id, quiet = false) {
+  if (hunt || location.hash || document.hidden) return;
+  goodbye();
+  const f = config.friends.find(f => f.id === id), node = $('friends').querySelector(`[data-friend="${id}"]`);
+  const together = !pet.busy;
+  if (together) {
+    pet.busy = true;
+    pet.face = f.x < pet.x ? -1 : 1;
+    place();
+    $('bird').classList.add(`with-${id}`);
+    emote(id === 'quail' ? '♪' : id === 'tortoise' ? '?' : id === 'fox' ? 'z' : '♥');
+  }
+  node.style.setProperty('--face', f.x < pet.x ? 1 : -1);
+  node.classList.add('playing');
+  const sound = audio.createGain();
+  sound.connect(audio.destination);
+  company = { node, id, sound, together, timer: setTimeout(goodbye, 3600) };
+  if (quiet) return;
+  toast(f.greeting);
+  if (id === 'quail') {
+    for (const at of [0, 0.2, 0.4, 1.6, 1.8]) tone(at < 1 ? 1400 : 1900, 0.13, { to: at < 1 ? 2100 : 2500, at, gain: 0.025, out: sound });
+  } else if (id === 'rabbit') {
+    for (const at of [0.4, 1.4, 2.4]) tone(320, 0.12, { to: 600, at, gain: 0.03, out: sound });
+  } else if (id === 'tortoise') tone(600, 0.2, { to: 1100, at: 2.1, gain: 0.025, out: sound });
+  else tone(500, 0.7, { to: 220, gain: 0.02, out: sound });
+}
+
+function goodbye() {
+  if (!company) return;
+  clearTimeout(company.timer);
+  company.sound.disconnect();
+  company.node.classList.remove('playing');
+  if (company.together) {
+    $('bird').classList.remove(`with-${company.id}`);
+    pet.busy = false;
+  }
+  company = null;
+  if (!pet.busy && pet.strewn.length) eat();
+}
 
 function grow() {
   const eaten = Math.max(0, st.food - pet.flying), stages = config.stages, i = stageOf(eaten);
@@ -694,9 +764,11 @@ async function idle() {
   setTimeout(idle, 2500 + Math.random() * 3500);
   const hour = new Date().getHours(), night = hour >= 22 || hour < 6;
   $('bird').classList.toggle('asleep', night);
-  if (pet.busy || hunt || !$('bird').classList.contains('hatched') || document.hidden || location.hash || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (pet.busy || company || hunt || !$('bird').classList.contains('hatched') || document.hidden || location.hash || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (night) return Math.random() < 0.5 && emote('z');
   const hungry = !fullness(), r = Math.random();
+  const friends = [...$('friends').children];
+  if (friends.length && r < 0.25) return greet(friends[Math.floor(Math.random() * friends.length)].dataset.friend, true);
   pet.busy = true;
   if (hungry && st.earned > st.used && r < 0.4) { // asks for a seed from the sack
     pet.face = 1;
@@ -751,6 +823,7 @@ const aim = () => {
 // it looks up, and for a moment after (longer with Stealth); a step while it's looking sends it running. Close enough,
 // Paisano strikes. Steps are longer and quicker with Speed and size.
 async function stalk() {
+  goodbye();
   const c = C[st.visitor.c], stage = stageOf(st.food);
   if (!stage) return toast('Paisano hasn’t hatched yet. Feed it a seed.');
   if (stage < c.size) return toast(`The ${c.name} is too big for Paisano until it’s a ${config.stages[c.size][0].toLowerCase()}.`);
@@ -855,6 +928,8 @@ $('rain').innerHTML = Array.from({ length: 40 }, (_, i) => `<line x1="${i * 9.5}
 // A tap in the garden: a step on the hunt, the start of one on the visitor, or a pat for Paisano.
 $('garden').onclick = e => {
   audio.resume();
+  const friend = e.target.closest('[data-friend]');
+  if (friend) return greet(friend.dataset.friend);
   if (hunt) return step();
   if (e.target.closest('#visitor') && !prey.fled) return stalk();
   if (!e.target.closest('#bird') || pet.busy) return;
@@ -972,6 +1047,13 @@ $('confirm-reset').querySelector('[value=reset]').onclick = () => {
 };
 for (const x of document.querySelectorAll('.x')) x.onclick = () => { location.hash = ''; };
 for (const id of ['bird', 'visitor']) $(id).onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); $(id).dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
+$('friends').onkeydown = e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    e.stopPropagation();
+    e.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }
+};
 
 addEventListener('keydown', e => {
   if (e.key === 'Escape' && location.hash) location.hash = '';
@@ -991,6 +1073,7 @@ $('sync').hidden = loaded; // until the log first loads
 
 // Sync on reconnect and tab return. Never replace a running workout with an automatic reload.
 document.addEventListener('visibilitychange', () => {
+  if (document.hidden) goodbye();
   if (document.hidden && hunt) end();
   if (!document.hidden && password) { sync(); stayAwake(); }
 });

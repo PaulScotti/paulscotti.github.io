@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="assets/mark.png" type="image/png">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css?v=11">
-<script type="module" src="paisano.js?v=11"></script>
+<link rel="stylesheet" href="paisano.css?v=12">
+<script type="module" src="paisano.js?v=12"></script>
 </head>
 <body>
 
@@ -50,9 +50,11 @@
           </foreignObject>
         </g>
       </g>
+      <g id="friends" aria-label="Garden friends"></g>
       <g id="mood" class="mood"><circle class="ball" r="3.2"/><text class="emote"></text></g>
       <g id="rain" class="rain"></g>
     </svg>
+    <a id="company" class="company" href="#desert"></a>
     <button id="feed" class="feed" aria-label="Feed Paisano a seed">
       <svg aria-hidden="true"><use href="#seed"/></svg><span id="seeds">0</span>
     </button>
@@ -185,6 +187,9 @@
     <h3>Garden</h3>
     <ul id="beds" class="rows"></ul>
     <p class="note">Plant seeds instead of feeding them, and once grown each plant brings its own visitor. Three snacks bring rain once a day, and plants grow with each rain.</p>
+    <h3>Friends</h3>
+    <p id="friends-note" class="note"></p>
+    <ul id="friend-guide" class="rows"></ul>
     <h3>Field guide</h3>
     <ul id="guide" class="rows"></ul>
     <p class="note">Each snack brings a visitor that’s out at that hour, so snacks spread through the day meet more of the desert. The snack that brings rain draws a rarer visitor.</p>
