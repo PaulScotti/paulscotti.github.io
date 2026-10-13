@@ -1,8 +1,8 @@
 // Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=12';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=12';
+import config from './config.js?v=13';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=13';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -230,7 +230,7 @@ function begin(x, saved = null, prize) {
   $('snack-prize').textContent = `Pachinko seed · +${config.seeds.pachinko} when you log this snack`;
   $('dose').textContent = said(x, snack);
   $('plan').textContent = `${x.sides ? 'Each minute, one side' : 'Each minute'}: as many reps as you can, to failure with good form. Then rest until the chime.`;
-  $('target-weight').replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(`${w} lb${x.hold === 'pair' ? ' each' : ''}`, w)));
+  $('target-weight').replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(w ? `${w} lb${x.hold === 'pair' ? ' each' : ''}` : `No dumbbell${x.hold === 'pair' ? 's' : ''}`, w)));
   $('target-weight').value = snack.w;
   $('weight-label').hidden = x.hold === 'none';
   $('swap').replaceChildren(new Option('Choose another exercise', ''), ...config.exercises.filter(v => v.id !== x.id).map(v => new Option(v.name, v.id)));
@@ -420,7 +420,6 @@ function render() {
       <rect class="pet-hit" x="-25" y="-44" width="50" height="48" rx="12" role="button" tabindex="0" aria-label="${f.action}"/>
     </g>`).join('');
   }
-  $('company').textContent = friends.length ? `${friends.length} friend${friends.length === 1 ? '' : 's'} visiting` : 'Plant to invite friends';
   $('puddle').classList.toggle('on', !!t.rain);
   visitor();
   tick();
@@ -610,7 +609,6 @@ let company = null;
 
 // Visits are derived from the garden. Playing is cosmetic, so it needs no new saved events or currency.
 function greet(id, quiet = false) {
-  if (hunt || location.hash || document.hidden) return;
   goodbye();
   const f = config.friends.find(f => f.id === id), node = $('friends').querySelector(`[data-friend="${id}"]`);
   const together = !pet.busy;
@@ -925,13 +923,15 @@ function rain() {
 }
 $('rain').innerHTML = Array.from({ length: 40 }, (_, i) => `<line x1="${i * 9.5}" x2="${i * 9.5 - 2.5}" y1="-14" y2="-4" style="animation-delay: -${Math.random().toFixed(2)}s"/>`).join('');
 
-// A tap in the garden: a step on the hunt, the start of one on the visitor, or a pat for Paisano.
+// A tap in the garden: a step on the hunt, the start of one on the visitor (even behind a friend), a game with a
+// friend, or a pat for Paisano.
 $('garden').onclick = e => {
   audio.resume();
+  if (hunt) return step();
+  const under = [e.target, ...document.elementsFromPoint(e.clientX, e.clientY)];
+  if (under.some(el => el.closest('#visitor')) && !prey.fled) return stalk();
   const friend = e.target.closest('[data-friend]');
   if (friend) return greet(friend.dataset.friend);
-  if (hunt) return step();
-  if (e.target.closest('#visitor') && !prey.fled) return stalk();
   if (!e.target.closest('#bird') || pet.busy) return;
   tone(1900, 0.12, { to: 2900, gain: 0.05 });
   emote('♥');
@@ -1046,14 +1046,7 @@ $('confirm-reset').querySelector('[value=reset]').onclick = () => {
   toast('Progress reset. Paisano is an egg again.');
 };
 for (const x of document.querySelectorAll('.x')) x.onclick = () => { location.hash = ''; };
-for (const id of ['bird', 'visitor']) $(id).onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); $(id).dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
-$('friends').onkeydown = e => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    e.stopPropagation();
-    e.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  }
-};
+for (const id of ['bird', 'visitor', 'friends']) $(id).onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
 
 addEventListener('keydown', e => {
   if (e.key === 'Escape' && location.hash) location.hash = '';

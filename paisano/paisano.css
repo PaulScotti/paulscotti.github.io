@@ -33,6 +33,7 @@ body {
 button, input, select { font: inherit; color: inherit; }
 button { background: none; border: 0; padding: 0; cursor: pointer; }
 :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+:focus:not(:focus-visible) { outline: none; } /* a tap on the garden's creatures leaves no ring */
 [hidden] { display: none !important; }
 .mark { width: 34px; height: 34px; color: var(--ink); }
 .quiet { color: var(--ink-2); font-size: 15px; text-decoration: none; }
@@ -127,7 +128,6 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 @keyframes twitch { 25% { translate: 0 -3px; rotate: -4deg; } 50% { translate: 0 0; rotate: 0deg; } 75% { translate: 0 -1.6px; rotate: 3deg; } }
 
 /* Friends live in the foreground. A shared sheet gives each a still and two expressive poses. */
-.company { position: absolute; top: 14px; left: 14px; font-size: 12px; color: var(--ink-2); text-decoration: none; }
 .friend { cursor: pointer; --face: 1; }
 .friend[data-friend=rabbit], .friend[data-friend=fox] { --face: -1; }
 .friend-art { pointer-events: none; transform: scaleX(var(--face)); overflow: hidden; }
