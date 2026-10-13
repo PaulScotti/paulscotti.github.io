@@ -1,8 +1,8 @@
-// Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
+// One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=13';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=13';
+import config from './config.js?v=14';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=14';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -80,9 +80,10 @@ function replay() {
     if (!rounds && feel !== 'hard') m.best = Math.max(m.best, lift);
     const whole = before < AREAS.length && done(d.sets) === AREAS.length;
     const watered = rounds ? !d.rain && d.snacks.length + 1 >= config.rainAt : whole;
-    const seeds = rounds ? config.seeds.snack + (watered ? config.seeds.day : 0) + (e.data.prize === 'seed' ? config.seeds.pachinko : 0)
+    const beat = !!e.data.expect?.some((r, i) => rounds[i].r > r); // more reps than expected; snacks since v14
+    const seeds = rounds ? config.seeds.snack + (watered ? config.seeds.day : 0) + (beat ? config.seeds.beat : 0) + (e.data.prize === 'seed' ? config.seeds.pachinko : 0)
       : config.seeds.snack + (best ? config.seeds.best : 0) + (whole ? config.seeds.whole : 0);
-    const entry = { ...e.data, id: e.id, at: e.at, seeds, best, whole, watered };
+    const entry = { ...e.data, id: e.id, at: e.at, seeds, best, whole, watered, beat };
     d.snacks.push(entry);
     m.sessions.push(entry);
     d.seeds += seeds;
@@ -92,15 +93,15 @@ function replay() {
       for (const p in s.plants) s.plants[p]++;
     }
     // The visitor this snack brings: a creature out at this hour, at a plant that's grown, or out after today's rain,
-    // drawn by its odds from the snack's id so every device draws the same; the rain bonus draws twice
-    // and keeps the rarer. It stays until Paisano tries for it or the next snack.
+    // drawn by its odds from the snack's id so every device draws the same; the snack that brings rain or beats the
+    // reps expected draws twice and keeps the rarer. It stays until Paisano tries for it or the next snack.
     const hour = e.data.hour ?? new Date(e.at).getHours(), time = Object.keys(config.times).find(t => hour >= config.times[t][0] && hour < config.times[t][1]);
     const pool = config.creatures.filter(c => c.times.includes(time) && (!c.plant || s.plants[c.plant] >= P[c.plant].rains) && (!c.rain || d.rain));
     const total = pool.reduce((sum, c) => sum + config.odds[c.odds], 0), draw = k => {
       let u = parseInt(e.id.replace(/-/g, '').slice(k, k + 8), 16) / 2 ** 32 * total;
       return pool.find(c => (u -= config.odds[c.odds]) < 0);
     };
-    const c = !pool.length ? null : best || watered ? [draw(0), draw(20)].sort((p, q) => config.odds[p.odds] - config.odds[q.odds])[0] : draw(0);
+    const c = !pool.length ? null : best || watered || beat ? [draw(0), draw(20)].sort((p, q) => config.odds[p.odds] - config.odds[q.odds])[0] : draw(0);
     s.visitor = c && { id: e.id, c: c.id };
     if (c) {
       s.visits[e.id] = c.id;
@@ -114,7 +115,7 @@ function replay() {
 // lands in the rep range, else the nearest weight expected to bring it back (never heavier after discomfort). Reps at
 // another weight come from Epley's formula on the load: the dumbbells and any share of bodyweight.
 function dose(x, weight) {
-  const low = config.reps[0], high = Math.min(config.reps[1], Math.floor(config.work / x.tempo));
+  const [low, high] = config.reps;
   const last = st.ex[x.id].sessions.filter(s => s.rounds).at(-1), prior = st.ex[x.id].sessions.at(-1);
   const sets = last ? last.rounds.filter(v => v.r > 0) : [prior ? { r: prior.r, w: prior.w } : { r: x.start[0], w: x.start[1] ?? null }];
   const load = v => (x.share ?? 0) * config.body + (x.hold === 'pair' ? 2 : 1) * v;
@@ -133,7 +134,7 @@ const said = (x, { w, r, then }) => `${w === null ? '' : `${w ? `${w} lb${x.hold
 function pachinko() {
   const t = today(), had = new Set(t.snacks.map(s => s.x));
   const choices = config.exercises.map(x => {
-    const gain = Object.entries(x.areas).reduce((g, [a, k]) => g + Math.min((x.sides ? 1 : config.minutes) * k, Math.max(0, config.sets - (t.sets[a] || 0))), 0);
+    const gain = Object.entries(x.areas).reduce((g, [a, k]) => g + Math.min(k, Math.max(0, config.sets - (t.sets[a] || 0))), 0);
     return [x, -Math.log(1 - Math.random()) / ((had.has(x.id) ? 0.2 : 1) * (1 + gain))];
   }).sort((a, b) => a[1] - b[1]).slice(0, 5).map(([x]) => x);
   for (let i = choices.length - 1; i > 0; i--) {
@@ -222,17 +223,32 @@ function play(x) {
   return () => animation.cancel();
 }
 
-// Preparation, work and confirmation share one persisted session. Leaving it pauses rather than discarding it.
+// A snack is one set, as many reps as you can (a set a side for one-sided exercises), with its reps entered after,
+// starting at those expected. Closing it keeps it for later in this tab.
+const expected = (x, d) => x.sides ? [d.r, d.then ?? d.r] : [d.r];
 function begin(x, saved = null, prize) {
-  snack = saved || { id: crypto.randomUUID(), x: x.id, ...dose(x), start: null, elapsed: 0, review: false, prize };
+  snack = saved || { id: crypto.randomUUID(), x: x.id, ...dose(x), prize };
+  snack.expect ??= expected(x, snack);
+  snack.counts ??= [...snack.expect];
   $('name').textContent = x.name;
   $('snack-prize').hidden = snack.prize !== 'seed';
   $('snack-prize').textContent = `Pachinko seed · +${config.seeds.pachinko} when you log this snack`;
   $('dose').textContent = said(x, snack);
-  $('plan').textContent = `${x.sides ? 'Each minute, one side' : 'Each minute'}: as many reps as you can, to failure with good form. Then rest until the chime.`;
+  $('plan').textContent = `${x.sides ? 'One set a side, left then right' : 'One set'}: as many reps as you can, to failure with good form.`;
   $('target-weight').replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(w ? `${w} lb${x.hold === 'pair' ? ' each' : ''}` : `No dumbbell${x.hold === 'pair' ? 's' : ''}`, w)));
   $('target-weight').value = snack.w;
   $('weight-label').hidden = x.hold === 'none';
+  $('counts').replaceChildren(...snack.counts.map((r, i) => {
+    const row = document.createElement('div'), name = x.sides ? i ? 'Right' : 'Left' : 'Reps';
+    row.innerHTML = `<span>${name}</span><button type="button" aria-label="One fewer">−</button><input type="number" min="0" max="99" step="1" inputmode="numeric" required aria-label="${name}"><button type="button" aria-label="One more">+</button>`;
+    const input = row.querySelector('input'), [less, more] = row.querySelectorAll('button');
+    const update = () => { snack.counts[i] = Math.max(0, input.valueAsNumber || 0); reach(); saveSession(); };
+    input.value = r;
+    input.oninput = update;
+    less.onclick = () => { input.value = Math.max(0, snack.counts[i] - 1); update(); };
+    more.onclick = () => { input.value = snack.counts[i] + 1; update(); };
+    return row;
+  }));
   $('swap').replaceChildren(new Option('Choose another exercise', ''), ...config.exercises.filter(v => v.id !== x.id).map(v => new Option(v.name, v.id)));
   const buddy = $('bird').cloneNode(true);
   for (const node of [buddy, ...buddy.querySelectorAll('[id]')]) node.removeAttribute('id');
@@ -242,110 +258,67 @@ function begin(x, saved = null, prize) {
   buddy.setAttribute('transform', `translate(56 96) scale(${-pet.scale} ${pet.scale})`);
   $('buddy').replaceChildren(buddy);
   snack.stop = play(x);
-  $('snack').classList.toggle('over', snack.review);
-  $('setup').hidden = snack.start !== null || snack.elapsed > 0 || snack.review;
-  $('controls').hidden = !$('setup').hidden || snack.review;
-  $('pause').textContent = snack.start === null ? 'Resume' : 'Pause';
-  $('result').hidden = !snack.review;
-  if (snack.review) review();
+  $('snack').classList.remove('beat');
+  reach();
   saveSession();
   location.hash = 'snack';
   $('snack').scrollTop = 0;
   $('name').focus();
-  snack.frame = requestAnimationFrame(clock);
   stayAwake();
 }
 
+// The ring is full at the reps expected, short of it below them, and gold past them, when Paisano cheers.
+function reach() {
+  const done = snack.counts.reduce((a, b) => a + b), aim = snack.expect.reduce((a, b) => a + b);
+  const beat = snack.counts.some((r, i) => r > snack.expect[i]);
+  $('reached').style.strokeDashoffset = 1 - Math.min(done / aim, 1);
+  if (beat && !$('snack').classList.contains('beat')) {
+    cheer();
+    [784, 1047].forEach((f, k) => tone(f, 0.25, { at: k * 0.08, gain: 0.06 }));
+  }
+  $('snack').classList.toggle('beat', beat);
+}
+
+// The screen stays on while a snack is open, so it hasn't locked when the weights go down.
 async function stayAwake() {
-  if (!navigator.wakeLock || !snack || snack.start === null || document.hidden || (snack.lock && !snack.lock.released)) return;
+  if (!navigator.wakeLock || !snack || document.hidden || (snack.lock && !snack.lock.released)) return;
   const current = snack, lock = await navigator.wakeLock.request('screen');
-  if (snack === current && snack.start !== null && !document.hidden) snack.lock = lock;
+  if (snack === current && !document.hidden) snack.lock = lock;
   else lock.release();
 }
 
 function saveSession() {
-  const { stop, lock, frame, ...data } = snack;
+  const { stop, lock, ...data } = snack;
   sessionStorage.setItem('paisano.snack', JSON.stringify(data));
 }
 
-function clock() {
-  if (!snack) return;
-  const t = snack.elapsed + (snack.start === null ? 0 : Date.now() - snack.start), total = config.minutes * 60000;
-  const left = Math.ceil(Math.max(0, total - t) / 1000), set = Math.min(Math.floor(t / 60000), config.minutes - 1);
-  $('elapsed').style.strokeDashoffset = 1 - Math.min(t / total, 1);
-  $('clock').textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
-  $('phase').textContent = snack.review ? 'Confirm your sets' : snack.start === null ? t ? 'Paused' : 'Get ready' : X[snack.x].sides ? `${set ? 'Right' : 'Left'} side` : `Set ${set + 1} of ${config.minutes}`;
-  $('figure').classList.toggle('right', !!set && X[snack.x].sides);
-  if (t >= total && !snack.review) {
-    [523, 659, 784].forEach((f, k) => tone(f, 0.3, { at: k * 0.1, gain: 0.08 }));
-    review(true);
-  } else if (snack.start !== null && set !== snack.set) {
-    if (snack.set !== undefined) { tone(880, 0.3); navigator.vibrate?.([200, 120, 200]); }
-    snack.set = set;
-  }
-  snack.frame = requestAnimationFrame(clock);
-}
-
-function review(completed = false) {
-  snack.at ??= completed && snack.start !== null ? snack.start + Math.max(0, config.minutes * 60000 - snack.elapsed) : Date.now();
-  snack.day ??= dayOf(snack.at);
-  snack.hour ??= new Date(snack.at).getHours();
-  snack.elapsed += snack.start === null ? 0 : Date.now() - snack.start;
-  snack.start = null;
-  snack.review = true;
-  snack.lock?.release();
-  snack.stop();
-  const x = X[snack.x];
-  // Sets whose minute began start at the target, to be confirmed; the rest start at zero.
-  snack.rounds ??= Array.from({ length: config.minutes }, (_, i) => ({ r: completed || i < Math.ceil(snack.elapsed / 60000) ? i ? snack.then ?? snack.r : snack.r : 0, w: snack.w }));
-  $('setup').hidden = $('controls').hidden = true;
-  $('result').hidden = false;
-  $('snack').classList.add('over');
-  $('actual').replaceChildren(...snack.rounds.map((v, i) => {
-    const row = document.createElement('div');
-    row.innerHTML = `<span>${x.sides ? i ? 'Right' : 'Left' : `Set ${i + 1}`}</span><label>Reps<input type="number" min="0" max="99" step="1" inputmode="numeric" required aria-label="${x.sides ? i ? 'Right' : 'Left' : `Set ${i + 1}`} reps"></label>`;
-    const reps = row.querySelector('input');
-    reps.value = v.r;
-    reps.oninput = () => { v.r = reps.valueAsNumber; saveSession(); };
-    if (x.hold !== 'none') {
-      const label = document.createElement('label');
-      label.textContent = x.hold === 'pair' ? 'lb each' : 'lb';
-      const weight = label.appendChild(document.createElement('select'));
-      weight.setAttribute('aria-label', `${x.sides ? i ? 'Right' : 'Left' : `Set ${i + 1}`} weight`);
-      weight.replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(w, w)));
-      weight.value = v.w;
-      weight.onchange = () => { v.w = +weight.value; saveSession(); };
-      row.append(label);
-    }
-    return row;
-  }));
-  saveSession();
-}
+const cheer = () => {
+  const buddy = $('buddy').firstChild;
+  buddy.classList.add('hop', 'proud');
+  setTimeout(() => buddy.classList.remove('hop', 'proud'), 900);
+};
 
 function stop() {
-  snack.elapsed += snack.start === null ? 0 : Date.now() - snack.start;
-  snack.start = null;
   saveSession();
-  cancelAnimationFrame(snack.frame);
   snack.stop();
   snack.lock?.release();
   snack = null;
 }
 
 function finish(feel) {
-  if (!snack) return; // the first tap already saved this session
+  if (!snack) return; // the first tap already saved this snack
   if (!$('result').reportValidity()) return;
-  if (!snack.rounds.some(v => v.r > 0)) return toast('Enter the reps you did, or discard this snack.');
-  const { x: id, rounds, id: eventId, at, day, hour, prize } = snack, x = X[id];
-  record('snack', { x: id, rounds, feel, day, hour, prize }, eventId, at);
+  if (!snack.counts.some(r => r > 0)) return toast('Enter the reps you did, or discard this snack.');
+  const { x: id, id: eventId, w, counts, expect, prize } = snack, x = X[id], now = new Date();
+  record('snack', { x: id, rounds: counts.map(r => ({ r, w })), expect, feel, day: dayOf(+now), hour: now.getHours(), prize }, eventId);
   stop();
   sessionStorage.removeItem('paisano.snack');
   location.hash = '';
   const last = st.ex[id].sessions.find(s => s.id === eventId);
-  toast(`+${last.seeds} seed${last.seeds > 1 ? 's' : ''}.${last.watered ? ' Three snacks bring rain.' : ''} Next time: ${said(x, dose(x))}.`);
+  toast(`+${last.seeds} seed${last.seeds > 1 ? 's' : ''}${last.beat ? ', one for beating the reps expected' : ''}.${last.watered ? ' Three snacks bring rain.' : ''} Next time: ${said(x, dose(x))}.`);
   hop();
-  emote(last.watered ? '♥' : '!');
-  if (last.watered && day === dayOf(Date.now())) rain();
+  emote(last.watered || last.beat ? '♥' : '!');
+  if (last.watered) rain();
 }
 
 // The log, kept on the worker. Events wait in this device's storage until it has them, so none are lost offline.
@@ -1002,35 +975,20 @@ $('board').onpointerdown = e => {
 };
 $('board').onlostpointercapture = () => { $('board').onpointermove = null; };
 $('drop').onclick = drop;
-// Another weight changes the reps to expect, and at 0 lb the bodyweight demonstration.
-$('setup').oninput = () => {
-  const x = X[snack.x], w = x.hold === 'none' ? null : +$('target-weight').value;
-  if (snack.w === w) return;
-  Object.assign(snack, dose(x, w));
+// Another weight changes the reps to expect, and the counts with them until they're edited; at 0 lb the
+// demonstration is the bodyweight one.
+$('target-weight').onchange = () => {
+  const x = X[snack.x], was = snack.expect;
+  Object.assign(snack, dose(x, +$('target-weight').value));
+  snack.expect = expected(x, snack);
+  if (snack.counts.every((r, i) => r === was[i])) snack.counts = [...snack.expect];
+  for (const [i, input] of $('counts').querySelectorAll('input').entries()) input.value = snack.counts[i];
+  $('dose').textContent = said(x, snack);
   snack.stop();
   snack.stop = play(x);
-  $('dose').textContent = said(x, snack);
+  reach();
   saveSession();
 };
-$('setup').onsubmit = e => {
-  e.preventDefault();
-  $('setup').oninput();
-  snack.start = Date.now();
-  snack.stop();
-  snack.stop = play(X[snack.x]);
-  $('setup').hidden = true;
-  $('controls').hidden = false;
-  $('pause').textContent = 'Pause';
-  audio.resume();
-  saveSession();
-  stayAwake();
-};
-$('pause').onclick = () => {
-  if (snack.start === null) { audio.resume(); snack.start = Date.now(); $('pause').textContent = 'Pause'; stayAwake(); }
-  else { snack.elapsed += Date.now() - snack.start; snack.start = null; $('pause').textContent = 'Resume'; snack.lock?.release(); }
-  saveSession();
-};
-$('finish-early').onclick = () => review();
 $('swap').onchange = () => { const x = X[$('swap').value], prize = snack.prize; stop(); begin(x, null, prize); };
 $('discard').onclick = () => { stop(); sessionStorage.removeItem('paisano.snack'); location.hash = ''; };
 $('result').onsubmit = e => { e.preventDefault(); finish(e.submitter.dataset.feel); };

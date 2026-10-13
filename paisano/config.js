@@ -1,25 +1,24 @@
 // Paisano's knobs and exercises, all in one place.
 
 export default {
-  // Two minutes: one set each minute, or one minute per side, each as many reps as you can, to failure with good form.
-  // The weight is kept where that's 8 to 15 reps, and no more than fit 40 seconds of work at the exercise's tempo.
-  minutes: 2,
-  work: 40,
+  // A snack is one set (a set a side for one-sided exercises), as many reps as you can, to failure with good form.
+  // The weight is kept where that's 8 to 15 reps.
   reps: [8, 15],
 
   // A rough bodyweight in pounds, never logged: a squat, split squat, deadlift or calf raise also moves a share of it,
   // which keeps the reps to expect after a weight change sensible (Epley: load x (1 + reps / 30) is the same strength).
   body: 170,
 
-  // The body's color scale is a record of today's work, not a daily training requirement.
-  sets: 2,
+  // The sets that color an area fully on the day's body: a record of today's work, not a requirement.
+  sets: 1,
 
   // The dumbbell's settings in pounds per hand: a PowerBlock Elite EXP, stages 1 to 3, up to the 80 lb band.
   weights: [5, 7.5, 10, 15, 17.5, 20, 25, 27.5, 30, 35, 37.5, 40, 45, 47.5, 50, 55, 57.5, 60, 65, 67.5, 70, 75, 77.5, 80],
 
-  // Three snacks bring rain once a day. best and whole preserve rewards from versions 1–3.
+  // Seeds: one a snack, three more with the day's rain (its third snack), one for more reps than expected and one for
+  // the pachinko seed. best and whole preserve rewards from versions 1 to 3.
   rainAt: 3,
-  seeds: { snack: 1, day: 3, pachinko: 1, best: 2, whole: 3 },
+  seeds: { snack: 1, day: 3, beat: 1, pachinko: 1, best: 2, whole: 3 },
 
   // Paisano grows as it eats: the food eaten by each stage, a seed being one and a creature its size.
   stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
@@ -27,9 +26,9 @@ export default {
   // Paisano's belly holds this many seeds and digests one an hour: fed a seed a snack, it's hungry when the next is due.
   belly: 3,
 
-  // Each snack brings a visitor to the garden: a creature that's out at that hour, drawn by its odds; the rain bonus
-  // draws twice and keeps the rarer. Some come only to a plant that's grown, some only on a day it rained,
-  // and three snacks bring rain once a day.
+  // Each snack brings a visitor to the garden: a creature that's out at that hour, drawn by its odds; the snack that
+  // brings rain or beats the reps expected draws twice and keeps the rarer. Some come only to a plant that's grown,
+  // some only on a day it rained.
   times: { morning: [6, 11], midday: [11, 15], afternoon: [15, 18], evening: [18, 22] },
   odds: { common: 4, uncommon: 2, rare: 1 },
 
@@ -151,5 +150,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 13,
+  version: 14,
 };

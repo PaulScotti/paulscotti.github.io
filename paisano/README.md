@@ -1,6 +1,6 @@
 # Paisano
 
-Two minutes of exercise for a day at a desk, with a roadrunner to keep you company.
+One set at a time, as many reps as you can, for a day at a desk, with a roadrunner to keep you company.
 Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscotti.com/paisano/).
 
 ## Workouts
@@ -12,22 +12,22 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
   `pachinko.js` holds the board and its fixed-timestep physics for both the drawing and
   `node --test pachinko.test.js`, which drops 3,942 balls to check that each settles, every pocket can be reached,
   aim matters, and the seed can be caught and missed.
-- **A snack** is two minutes: a set each minute, or a minute per side for one-sided exercises, each as many reps as
-  you can, to failure with good form, then rest until the chime. The weight is suggested along with the reps to
-  expect at it; change it or swap the exercise before starting. Each exercise loops eight illustrated
-  poses at its tempo; the four that work without weight have their own bodyweight artwork, one-sided ones mirror
-  for the second side, and reduced motion shows a still. Pause, finish early, or close it to come back later in that
-  tab; a reload restores it, and the clock keeps counting in the background.
-- **Logging.** Confirm the reps and weight of each set, 0 for one skipped, then save it or mark that it stopped with
-  discomfort. After the full two minutes every set starts at the reps expected; after finishing early, the sets
-  whose minute began do.
-- **The suggestion** keeps the weight while the first set lands in 8 to 15 reps, or fewer when 15 won't fit 40
-  seconds of work at the exercise's tempo. Past the range it moves to the lightest PowerBlock weight expected to
-  bring it back, short of it to the heaviest, and after discomfort it never goes heavier. Reps at another weight
-  come from Epley's formula, load × (1 + reps / 30), where the load includes a rough share of a 170 lb bodyweight
-  for squats, split squats, deadlifts and calf raises; bodyweight exercises expect last time's reps.
+- **A snack** is one set, or a set a side for one-sided exercises, as many reps as you can, to failure with good
+  form. There is no timer: the screen shows the weight and the reps to expect at it, and stays awake while it's
+  open. Each exercise loops eight illustrated poses at its tempo; the four that work without weight have their own
+  bodyweight artwork, and reduced motion shows a still. Change the weight or swap the exercise first; close it to
+  come back later in that tab, and a reload restores it.
+- **Logging.** After the set, nudge the rep counter, which starts at the reps expected, or type the number, then
+  save it or mark that it stopped with discomfort. The ring is full at the reps expected and turns gold past them,
+  which earns an extra seed and draws a rarer visitor. A new weight moves the expected reps, and the counter with
+  them until it's been changed.
+- **The suggestion** keeps the weight while the set lands in 8 to 15 reps. Past the range it moves to the lightest
+  PowerBlock weight expected to bring it back, short of it to the heaviest, and after discomfort it never goes
+  heavier. Reps at another weight come from Epley's formula, load × (1 + reps / 30), where the load includes a rough
+  share of a 170 lb bodyweight for squats, split squats, deadlifts and calf raises; bodyweight exercises expect last
+  time's reps.
 - **The body.** An area gets a set for each set of an exercise that works it most and half for one that assists;
-  a one-sided pair counts once. Two sets is full color. History shows every day, the last seven days' sets per area,
+  a one-sided pair counts once. One set is full color. History shows every day, the last seven days' sets per area,
   and each exercise's sets with a line of its weight, or reps for bodyweight. Entries from before sets were
   confirmed kept only their target and are labeled so.
 
@@ -49,9 +49,9 @@ everywhere, while the earlier events stay in D1.
 
 ## Paisano's garden
 
-- Each snack earns a seed, and the day's third brings rain and three more. Rain grows planted wildflowers,
-  creosote, prickly pear and mesquite, each bringing its own visitor once grown. Whole-body and best rewards from
-  versions 1 to 3 replay as they were earned.
+- Each snack earns a seed, beating the reps expected earns one more, and the day's third snack brings rain and three
+  more. Rain grows planted wildflowers, creosote, prickly pear and mesquite, each bringing its own visitor once grown.
+  Whole-body and best rewards from versions 1 to 3 replay as they were earned.
 - Feed seeds to hatch and grow Paisano. Its belly holds three and digests one an hour.
 - Each planted variety invites another friend, starting with none in an empty garden. Pip the quail whistles with
   Paisano, Juniper the jackrabbit hops, Pebble the tortoise plays peekaboo, and Sombra the kit fox bows and naps.

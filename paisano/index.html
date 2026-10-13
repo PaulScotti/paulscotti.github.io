@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="assets/mark.png" type="image/png">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css?v=13">
-<script type="module" src="paisano.js?v=13"></script>
+<link rel="stylesheet" href="paisano.css?v=14">
+<script type="module" src="paisano.js?v=14"></script>
 </head>
 <body>
 
@@ -139,26 +139,19 @@
     <svg viewBox="0 0 200 200" aria-hidden="true">
       <circle class="spot" cx="100" cy="100" r="90"/>
       <circle class="track" cx="100" cy="100" r="97"/>
-      <circle id="elapsed" class="elapsed" cx="100" cy="100" r="97" pathLength="1"/>
-      <circle class="tick" cx="100" cy="3" r="2.4"/><circle class="tick" cx="100" cy="197" r="2.4"/>
+      <circle id="reached" class="reached" cx="100" cy="100" r="97" pathLength="1"/>
     </svg>
     <div id="figure" class="figure" aria-hidden="true"><img alt="" draggable="false"></div>
     <svg id="buddy" class="buddy" viewBox="0 0 100 100" aria-hidden="true"></svg>
   </div>
-  <p class="clock"><span id="clock">2:00</span><span id="phase" class="phase"></span></p>
-  <form id="setup" class="setup">
-    <div class="targets"><label id="weight-label">Weight<select id="target-weight"></select></label></div>
-    <button class="primary">Start two minutes</button>
-    <select id="swap" aria-label="Choose another exercise"></select>
-  </form>
-  <div id="controls" class="controls" hidden><button id="pause">Pause</button><button id="finish-early">Finish early</button></div>
-  <ol id="cues" class="cues"></ol>
-  <form id="result" class="feel" hidden>
-    <p>Confirm the reps you did and the weight. Use 0 for a skipped set.</p>
-    <div id="actual" class="actual"></div>
+  <form id="result" class="result">
+    <label id="weight-label">Weight<select id="target-weight"></select></label>
+    <div id="counts" class="counts"></div>
     <button class="primary" data-feel="hard">Save</button>
     <button class="pain" data-feel="pain">Stopped with discomfort</button>
   </form>
+  <ol id="cues" class="cues"></ol>
+  <select id="swap" aria-label="Choose another exercise"></select>
   <button id="discard" class="discard">Discard snack</button>
 </section>
 
@@ -173,7 +166,7 @@
     <p class="note">Approximate sets: primary muscles count fully; assisting muscles count half. A left/right pair counts once. Older entries used prescribed sets.</p>
     <h3>Logged performance</h3>
     <ul id="lifts" class="lifts"></ul>
-    <p class="note">Each line is the weight per dumbbell, up to the heaviest you’ve used, or the reps of a bodyweight exercise. Every set goes to failure: when the first set runs past the rep range, the next weight goes up a setting, and when it falls short, down one.</p>
+    <p class="note">Each line is the weight per dumbbell, up to the heaviest you’ve used, or the reps of a bodyweight exercise. Every set goes to failure; when one runs past 8 to 15 reps or falls short, the next weight changes to bring it back.</p>
   </div>
 </section>
 
