@@ -1,10 +1,15 @@
 // Paisano's knobs and exercises, all in one place.
 
 export default {
-  // Two minutes: one set each minute, or one minute per side. Rest after the prescribed reps.
+  // Two minutes: one set each minute, or one minute per side, each as many reps as you can, to failure with good form.
+  // The weight is kept where that's 8 to 15 reps, and no more than fit 40 seconds of work at the exercise's tempo.
   minutes: 2,
   work: 40,
-  maxReps: 12,
+  reps: [8, 15],
+
+  // A rough bodyweight in pounds, never logged: a squat, split squat, deadlift or calf raise also moves a share of it,
+  // which keeps the reps to expect after a weight change sensible (Epley: load x (1 + reps / 30) is the same strength).
+  body: 170,
 
   // The body's color scale is a record of today's work, not a daily training requirement.
   sets: 2,
@@ -79,8 +84,9 @@ export default {
     lats: 'Lats', core: 'Core', lower: 'Lower back', glutes: 'Glutes', quads: 'Quads', hamstrings: 'Hamstrings', calves: 'Calves',
   },
 
-  // Twelve exercises using the available equipment. hold is one dumbbell, a pair, or none. share preserves old rewards
-  // and identifies exercises that also work without dumbbells. tempo is seconds per rep; start is the initial suggestion [reps, pounds].
+  // Twelve exercises using the available equipment. hold is one dumbbell, a pair, or none. share is the rough share of
+  // bodyweight moved; exercises with one also work without dumbbells. tempo is seconds per rep; start is the first
+  // suggestion, as [reps to expect, pounds].
   exercises: [
     {
       id: 'goblet', name: 'Goblet squat', hold: 'one', share: 0.85, tempo: 3, start: [10, 20], areas: { quads: 1, glutes: 0.5, core: 0.5 },
@@ -137,5 +143,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 10,
+  version: 11,
 };

@@ -1,8 +1,8 @@
 // Two minutes of exercise, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=10';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=10';
+import config from './config.js?v=11';
+import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=11';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -31,8 +31,8 @@ const level = points => Math.floor((Math.sqrt(8 * points + 1) - 1) / 2); // leve
 const levels = () => Object.fromEntries(Object.keys(config.traits).map(t => [t, level(st.traits[t])]));
 let st = replay(), snack = null, board = null, toasting = 0, renderedDay = dayOf(Date.now());
 
-// Everything Paisano knows, from the log in time order: each exercise's recorded work, each day's
-// snacks, sets per area, seeds and rain; and Paisano's food, belly, traits, garden, field guide and visitor.
+// Everything Paisano knows, from the log in time order since the last reset: each exercise's recorded work, each
+// day's snacks, sets per area, seeds and rain; and Paisano's food, belly, traits, garden, field guide and visitor.
 function replay() {
   const s = { ex: {}, days: {}, earned: 0, used: 0, food: 0, belly: 0, ate: 0, plants: {}, guide: {}, visits: {}, visitor: null };
   s.traits = Object.fromEntries(Object.keys(config.traits).map(t => [t, 0]));
@@ -43,7 +43,8 @@ function replay() {
     s.ate = at;
     s.food += n;
   };
-  for (const e of [...new Map([...log, ...pending].map(e => [e.id, e])).values()].sort((a, b) => a.at - b.at)) {
+  const events = [...new Map([...log, ...pending].map(e => [e.id, e])).values()].sort((a, b) => a.at - b.at);
+  for (const e of events.slice(events.findLastIndex(e => e.kind === 'reset') + 1)) {
     if (e.kind === 'feed') {
       if (s.earned - s.used < e.data.n) continue; // another device spent these seeds first
       eat(e.data.n, e.at);
@@ -74,7 +75,7 @@ function replay() {
     const count = rounds ? rounds.filter(v => v.r > 0).length / (x.sides ? 2 : 1) : 2;
     for (const [a, k] of Object.entries(x.areas)) d.sets[a] = (d.sets[a] || 0) + count * k;
     // Old entries stored targets only. Reproduce their earned seeds without calling them measured performance.
-    const lift = rounds ? 0 : x.hold === 'none' ? r : ((x.share ?? 0) * 170 + (x.hold === 'pair' ? 2 : 1) * w) * (1 + r / 30);
+    const lift = rounds ? 0 : x.hold === 'none' ? r : ((x.share ?? 0) * config.body + (x.hold === 'pair' ? 2 : 1) * w) * (1 + r / 30);
     const best = !rounds && m.best > 0 && lift > m.best && feel !== 'hard';
     if (!rounds && feel !== 'hard') m.best = Math.max(m.best, lift);
     const whole = before < AREAS.length && done(d.sets) === AREAS.length;
@@ -109,28 +110,24 @@ function replay() {
   return s;
 }
 
-// Progress from confirmed work: repeat a comfortable dose, add a rep after an easy session, then a weight step.
-// A missed set or discomfort never increases the target. No bodyweight or one-rep max is inferred.
-function dose(x) {
-  const cap = Math.min(config.maxReps, Math.floor(config.work / x.tempo));
-  const last = st.ex[x.id].sessions.filter(s => s.rounds).at(-1);
-  if (!last) {
-    const prior = st.ex[x.id].sessions.at(-1); // retain the last legacy prescription as a starting suggestion
-    return prior ? { r: Math.min(cap, prior.r), w: prior.w } : { r: x.start[0], w: x.start[1] ?? null };
-  }
-  const completed = last.rounds.filter(v => v.r > 0), actual = Math.min(...completed.map(v => v.r));
-  let w = x.hold === 'none' ? null : Math.min(...completed.map(v => v.w)), r = Math.max(1, Math.min(cap, actual));
-  const weights = x.share ? [0, ...config.weights] : config.weights, i = weights.indexOf(w);
-  if (last.feel === 'hard') {
-    if (w !== null && i > 0) w = weights[i - 1];
-    else r = Math.max(1, r - 1);
-  } else if (last.feel === 'easy' && completed.length === config.minutes) {
-    if (r < cap) r++;
-    else if (w !== null && i < weights.length - 1) { w = weights[i + 1]; r = x.start[0]; }
-  }
-  return { w, r };
+// The weight to use and the reps to expect at it, from the last confirmed sets: the same weight while the first set
+// lands in the rep range, else the nearest weight expected to bring it back (never heavier after discomfort). Reps at
+// another weight come from Epley's formula on the load: the dumbbells and any share of bodyweight.
+function dose(x, weight) {
+  const low = config.reps[0], high = Math.min(config.reps[1], Math.floor(config.work / x.tempo));
+  const last = st.ex[x.id].sessions.filter(s => s.rounds).at(-1), prior = st.ex[x.id].sessions.at(-1);
+  const sets = last ? last.rounds.filter(v => v.r > 0) : [prior ? { r: prior.r, w: prior.w } : { r: x.start[0], w: x.start[1] ?? null }];
+  const load = v => (x.share ?? 0) * config.body + (x.hold === 'pair' ? 2 : 1) * v;
+  const at = (v, w) => w === null ? v.r : Math.max(1, Math.round(30 * (load(v.w) * (1 + v.r / 30) / load(w) - 1)));
+  const weights = x.share ? [0, ...config.weights] : config.weights, [first] = sets;
+  const w = weight !== undefined ? weight : x.hold === 'none' ? null
+    : first.r > high && last?.feel !== 'pain' ? weights.find(v => v > first.w && at(first, v) <= high) ?? weights.at(-1)
+    : first.r < low ? weights.findLast(v => v < first.w && at(first, v) >= low) ?? weights[0]
+    : first.w;
+  const [r, then] = sets.map(v => at(v, w));
+  return { w, r, then };
 }
-const said = (x, { w, r }) => `${r} reps${x.sides ? ' per side' : ' per set'}${w === null ? '' : w ? ` · ${w} lb${x.hold === 'pair' ? ' each' : ''}` : ` · no dumbbell${x.hold === 'pair' ? 's' : ''}`}`;
+const said = (x, { w, r, then }) => `${w === null ? '' : `${w ? `${w} lb${x.hold === 'pair' ? ' each' : ''}` : `no dumbbell${x.hold === 'pair' ? 's' : ''}`} · `}expect about ${r} reps${x.sides ? ' a side' : ''}${then && then !== r && !x.sides ? `, then ${then}` : ''}`;
 
 // Coverage affects which five exercises appear. Only the ball's landing chooses between them.
 function pachinko() {
@@ -232,9 +229,7 @@ function begin(x, saved = null, prize) {
   $('snack-prize').hidden = snack.prize !== 'seed';
   $('snack-prize').textContent = `Pachinko seed · +${config.seeds.pachinko} when you log this snack`;
   $('dose').textContent = said(x, snack);
-  $('plan').textContent = x.sides ? 'One minute per side. Do the reps, then rest until the chime.' : 'One set each minute. Do the reps, then rest until the chime.';
-  $('target-reps').value = snack.r;
-  $('target-reps').max = Math.floor(config.work / x.tempo);
+  $('plan').textContent = `${x.sides ? 'Each minute, one side' : 'Each minute'}: as many reps as you can, to failure with good form. Then rest until the chime.`;
   $('target-weight').replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(`${w} lb${x.hold === 'pair' ? ' each' : ''}`, w)));
   $('target-weight').value = snack.w;
   $('weight-label').hidden = x.hold === 'none';
@@ -302,7 +297,7 @@ function review(completed = false) {
   snack.stop();
   const x = X[snack.x];
   // Sets whose minute began start at the target, to be confirmed; the rest start at zero.
-  snack.rounds ??= Array.from({ length: config.minutes }, (_, i) => ({ r: completed || i < Math.ceil(snack.elapsed / 60000) ? snack.r : 0, w: snack.w }));
+  snack.rounds ??= Array.from({ length: config.minutes }, (_, i) => ({ r: completed || i < Math.ceil(snack.elapsed / 60000) ? i ? snack.then ?? snack.r : snack.r : 0, w: snack.w }));
   $('setup').hidden = $('controls').hidden = true;
   $('result').hidden = false;
   $('snack').classList.add('over');
@@ -500,12 +495,12 @@ function chronicle() {
     const sessions = st.ex[x.id].sessions.filter(s => s.rounds), li = document.createElement('li'), last = sessions.at(-1);
     li.innerHTML = '<b></b><small></small><svg viewBox="0 0 84 28" preserveAspectRatio="none" aria-hidden="true"><polyline/></svg>';
     li.querySelector('b').textContent = x.name;
-    li.querySelector('small').textContent = last ? `Last ${last.rounds.map(v => v.r ? `${v.r}${v.w === null ? '' : ` × ${v.w} lb`}` : 'skipped').join(' / ')} · Next ${said(x, dose(x))}` : `${st.ex[x.id].sessions.length ? 'Next' : 'First'} ${said(x, dose(x))}`;
+    li.querySelector('small').textContent = last ? `Last ${last.rounds.map(v => v.r ? `${v.r}${v.w === null ? '' : ` × ${v.w} lb`}` : 'skipped').join(' / ')} · Next: ${said(x, dose(x))}` : `${st.ex[x.id].sessions.length ? 'Next' : 'First'}: ${said(x, dose(x))}`;
     const values = sessions.map(s => {
       const completed = s.rounds.filter(v => v.r > 0);
       return x.hold === 'none' ? Math.min(...completed.map(v => v.r)) : Math.max(...completed.map(v => v.w));
     });
-    const top = Math.max(x.hold === 'none' ? config.maxReps : 1, ...values);
+    const top = Math.max(x.hold === 'none' ? config.reps[1] : 1, ...values);
     li.querySelector('polyline').setAttribute('points', values.map((v, i) => `${values.length > 1 ? i / (values.length - 1) * 84 : 42},${26 - v / top * 24}`).join(' '));
     return li;
   }));
@@ -521,16 +516,18 @@ function route() {
   if ((hash === 'pachinko' && !board) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
   $('lock').hidden = !!password;
   $('home').hidden = !password;
-  $('home').inert = ['pachinko', 'snack', 'history', 'desert'].includes(hash);
+  $('home').inert = ['pachinko', 'snack', 'history', 'desert', 'settings'].includes(hash);
   if (!hash && password) { render(); $('choose').focus({ preventScroll: true }); }
   $('pachinko').hidden = hash !== 'pachinko';
   $('snack').hidden = hash !== 'snack';
   $('history').hidden = hash !== 'history' || !password;
   $('desert').hidden = hash !== 'desert' || !password;
+  $('settings').hidden = hash !== 'settings' || !password;
   if (hash === 'pachinko') { $('pachinko').scrollTop = 0; $('aim').focus({ preventScroll: true }); }
   if (hash === 'snack') $('name').focus({ preventScroll: true });
   if (hash === 'history') { chronicle(); $('history').querySelector('.x').focus(); }
   if (hash === 'desert') { desert(); $('desert').querySelector('.x').focus(); }
+  if (hash === 'settings') $('settings').querySelector('.x').focus();
 }
 
 // The desert: Paisano's traits, the garden's plants, and the field guide of every creature, a silhouette and a hint
@@ -930,12 +927,14 @@ $('board').onpointerdown = e => {
 };
 $('board').onlostpointercapture = () => { $('board').onpointermove = null; };
 $('drop').onclick = drop;
+// Another weight changes the reps to expect, and at 0 lb the bodyweight demonstration.
 $('setup').oninput = () => {
-  if (!$('setup').checkValidity()) return;
-  snack.r = $('target-reps').valueAsNumber;
-  const w = X[snack.x].hold === 'none' ? null : +$('target-weight').value;
-  if (snack.w !== w) { snack.w = w; snack.stop(); snack.stop = play(X[snack.x]); }
-  $('dose').textContent = said(X[snack.x], snack);
+  const x = X[snack.x], w = x.hold === 'none' ? null : +$('target-weight').value;
+  if (snack.w === w) return;
+  Object.assign(snack, dose(x, w));
+  snack.stop();
+  snack.stop = play(x);
+  $('dose').textContent = said(x, snack);
   saveSession();
 };
 $('setup').onsubmit = e => {
@@ -960,8 +959,17 @@ $('finish-early').onclick = () => review();
 $('swap').onchange = () => { const x = X[$('swap').value], prize = snack.prize; stop(); begin(x, null, prize); };
 $('discard').onclick = () => { stop(); sessionStorage.removeItem('paisano.snack'); location.hash = ''; };
 $('result').onsubmit = e => { e.preventDefault(); finish(e.submitter.dataset.feel); };
-$('result').onkeydown = e => { if (e.key === 'Enter' && e.target.matches('input, select')) { e.preventDefault(); $('result').querySelector('[data-feel=good]').focus(); } };
+$('result').onkeydown = e => { if (e.key === 'Enter' && e.target.matches('input, select')) { e.preventDefault(); $('result').querySelector('[data-feel=hard]').focus(); } };
 $('sync').onclick = () => sync();
+// A reset is an event like any other, so every device starts over from it; the log before it stays in D1.
+$('reset').onclick = () => $('confirm-reset').showModal();
+$('confirm-reset').querySelector('[value=reset]').onclick = () => {
+  if (snack) stop();
+  sessionStorage.removeItem('paisano.snack');
+  record('reset', {});
+  location.hash = '';
+  toast('Progress reset. Paisano is an egg again.');
+};
 for (const x of document.querySelectorAll('.x')) x.onclick = () => { location.hash = ''; };
 for (const id of ['bird', 'visitor']) $(id).onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); $(id).dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
 

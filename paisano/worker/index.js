@@ -1,5 +1,5 @@
-// Paisano's worker, on Paul's own Cloudflare: the log of snacks and feedings, in D1. One password opens it, the KEY
-// secret, the same as ebis and myna. The app works out everything else from the log.
+// Paisano's worker, on Paul's own Cloudflare: the log of snacks, feedings, hunts, plantings and resets, in D1. One
+// password opens it, the KEY secret, the same as ebis and myna. The app works out everything else from the log.
 
 import config from '../config.js';
 
@@ -51,6 +51,7 @@ async function route(request, env) {
       }
     } else if (e.kind === 'feed') valid = d.n === 1;
     else if (e.kind === 'plant') valid = config.plants.some(p => p.id === d.p);
+    else if (e.kind === 'reset') valid = true; // the app replays only what comes after the last one
     else if (e.kind === 'hunt') valid = typeof d.v === 'string' && typeof d.ok === 'boolean' && (d.c === undefined || config.creatures.some(c => c.id === d.c));
     if (!valid) return new Response('Invalid ' + e.kind + ' event.', { status: 400 });
   }

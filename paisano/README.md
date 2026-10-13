@@ -12,18 +12,20 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
   `pachinko.js` holds the board and its fixed-timestep physics for both the drawing and
   `node --test pachinko.test.js`, which drops 3,942 balls to check that each settles, every pocket can be reached,
   aim matters, and the seed can be caught and missed.
-- **A snack** is two minutes: a set each minute, or a minute per side for one-sided exercises. Set the reps and
-  weight or swap the exercise, start, do the reps and rest until the chime. Each exercise loops eight illustrated
+- **A snack** is two minutes: a set each minute, or a minute per side for one-sided exercises, each as many reps as
+  you can, to failure with good form, then rest until the chime. The weight is suggested along with the reps to
+  expect at it; change it or swap the exercise before starting. Each exercise loops eight illustrated
   poses at its tempo; the four that work without weight have their own bodyweight artwork, one-sided ones mirror
   for the second side, and reduced motion shows a still. Pause, finish early, or close it to come back later in that
   tab; a reload restores it, and the clock keeps counting in the background.
-- **Logging.** Confirm the reps and weight of each set, 0 for one skipped. After the full two minutes every set
-  starts at the target; after finishing early, the sets whose minute began do. Then say how many more reps the last
-  set had in it: 4+ (easy), 1 to 3 (good), 0 (hard), or that it stopped with discomfort.
-- **The next dose** starts from the fewest reps and lightest weight done last time. Good repeats it. Easy, with
-  both sets done, adds a rep, up to 12 or what fits the exercise's 40 seconds of work, then moves to the next
-  PowerBlock weight at the starting reps. Hard drops a weight setting, or a rep when no lighter weight exists.
-  Discomfort and skipped sets never raise it, and every suggestion can be changed before starting.
+- **Logging.** Confirm the reps and weight of each set, 0 for one skipped, then save it or mark that it stopped with
+  discomfort. After the full two minutes every set starts at the reps expected; after finishing early, the sets
+  whose minute began do.
+- **The suggestion** keeps the weight while the first set lands in 8 to 15 reps, or fewer when 15 won't fit 40
+  seconds of work at the exercise's tempo. Past the range it moves to the lightest PowerBlock weight expected to
+  bring it back, short of it to the heaviest, and after discomfort it never goes heavier. Reps at another weight
+  come from Epley's formula, load × (1 + reps / 30), where the load includes a rough share of a 170 lb bodyweight
+  for squats, split squats, deadlifts and calf raises; bodyweight exercises expect last time's reps.
 - **The body.** An area gets a set for each set of an exercise that works it most and half for one that assists;
   a one-sided pair counts once. Two sets is full color. History shows every day, the last seven days' sets per area,
   and each exercise's sets with a line of its weight, or reps for bodyweight. Entries from before sets were
@@ -40,6 +42,10 @@ NASM's [push-up](https://www.nasm.org/resource-center/exercise-library/push-up) 
 ACE's [hammer curl](https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/) and
 [wall calf raise](https://www.acefitness.org/resources/everyone/exercise-library/73/standing-calf-raises-wall/), and
 a [hanging knee raise demonstration](https://www.muscleandstrength.com/exercises/hanging-knee-raise.html).
+
+Settings, under the gear, can reset all progress. The reset is an event in the log like any other: every device
+replays only what comes after it, so Paisano, the garden, the field guide, History and every suggestion start over
+everywhere, while the earlier events stay in D1.
 
 ## Paisano's garden
 

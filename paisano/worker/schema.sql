@@ -1,9 +1,9 @@
--- Paisano's log: every snack (an exercise, its dose, how it felt), seed fed, hunt and planting, in the order the worker
--- got them.
+-- Paisano's log: every snack (an exercise, its sets, how it went), seed fed, hunt, planting and reset, in the order
+-- the worker got them. Since v11 every set goes to failure, logged with feel 'hard'.
 CREATE TABLE IF NOT EXISTS events (
   seq INTEGER PRIMARY KEY AUTOINCREMENT,
   id TEXT NOT NULL UNIQUE,  -- made by the device, so an event sent twice is kept once
   at INTEGER NOT NULL,      -- when it happened, in ms
-  kind TEXT NOT NULL,       -- snack, feed, hunt or plant
-  data TEXT NOT NULL        -- snack: {x, rounds: [{r,w}, {r,w}], feel, day, hour, prize?}; legacy: {x,w,r,feel}; feed: {n}; hunt: {v,c,ok}; plant: {p}
+  kind TEXT NOT NULL,       -- snack, feed, hunt, plant or reset
+  data TEXT NOT NULL        -- snack: {x, rounds: [{r,w}, {r,w}], feel, day, hour, prize?}; legacy: {x,w,r,feel}; feed: {n}; hunt: {v,c,ok}; plant: {p}; reset: {}
 );
