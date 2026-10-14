@@ -1,8 +1,8 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=17';
-import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=17';
+import config from './config.js?v=18';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=18';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -132,7 +132,7 @@ function pachinko() {
   }
   board = { choices, pegs: layout(Math.floor(Math.random() * 2 ** 32), ripeness() >= 1), angle: 0, power: 0.4, ball: null };
   $('pegs').innerHTML = board.pegs.map(p => p.seed
-    ? `<g class="seed-peg" transform="translate(${p.x} ${p.y})"><circle r="${p.r}"/><image href="assets/seed.webp" x="-6" y="-6" width="12" height="12"/></g>`
+    ? `<g class="seed-peg" transform="translate(${p.x} ${p.y})"><circle r="${p.r}"/><image href="assets/seed.webp" x="-4.5" y="-4.5" width="9" height="9"/></g>`
     : `<circle${p.r > 4 ? ' class="bumper"' : ''} cx="${p.x}" cy="${p.y}" r="${p.r}"/>`).join('');
   $('pockets').replaceChildren(...choices.map(x => Object.assign(document.createElement('span'), { textContent: x.name })));
   $('marble').setAttribute('cx', 180);
@@ -283,7 +283,7 @@ function reach() {
     [784, 1047].forEach((f, k) => tone(f, 0.25, { at: k * 0.08, gain: 0.06 }));
   }
   $('snack').classList.toggle('beat', beat);
-  ripen($('reward'), beat + (snack.prize === 'seed'));
+  ripen($('reward'), done ? ripeness() : 0, beat + (snack.prize === 'seed')); // no reps, no seeds
 }
 
 // The screen stays on while a snack is open, so it hasn't locked when the weights go down.
@@ -409,8 +409,8 @@ const fullness = () => Math.max(0, st.belly - (Date.now() - st.ate) / 3600e3);
 const ripeness = () => Math.min(config.seeds.snack, (Date.now() - st.last) / (config.ripen * 6e4));
 
 // Those seeds drawn filling up as they ripen, with any bonus seeds, which fill only once a seed is ripe; full ones first.
-function ripen(el, bonus = 0) {
-  const r = ripeness(), fills = [...Array.from({ length: config.seeds.snack }, (_, i) => r - i), ...Array(bonus).fill(+(r >= 1))].sort((a, b) => b - a);
+function ripen(el, r = ripeness(), bonus = 0) {
+  const fills = [...Array.from({ length: config.seeds.snack }, (_, i) => r - i), ...Array(bonus).fill(+(r >= 1))].sort((a, b) => b - a);
   if (el.childElementCount !== fills.length) el.replaceChildren(...fills.map(() => document.createElement('i')));
   fills.forEach((f, i) => {
     el.children[i].style.setProperty('--fill', Math.max(0, Math.min(1, f)));

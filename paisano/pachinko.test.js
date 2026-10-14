@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { dt, launch, layout, step } from './pachinko.js';
 
-test('on every board each shot settles, every pocket can be reached, aim matters, and the seed can be hit or missed', () => {
+test('on every board each shot settles, every pocket can be reached, aim matters, and the seed can be hit or missed without turning the ball', () => {
   const left = [], right = [];
   for (let seed = 1; seed <= 40; seed++) {
     const pegs = layout(seed, true), reached = new Set();
@@ -17,7 +17,12 @@ test('on every board each shot settles, every pocket can be reached, aim matters
         assert.notEqual(ball.slot, null, `Ball stuck on board ${seed}, ${degrees}°, power ${power}`);
         assert(ball.slot >= 0 && ball.slot < 5);
         reached.add(ball.slot);
-        seeded += ball.hits.some(i => pegs[i].seed);
+        if (ball.hits.some(i => pegs[i].seed)) {
+          const bare = launch(degrees * Math.PI / 180, power), others = pegs.filter(p => !p.seed);
+          while (bare.slot === null) step(bare, others);
+          assert.equal(bare.x, ball.x, `The seed turned the ball on board ${seed}`);
+          seeded++;
+        }
         shots++;
         if (Math.abs(degrees) >= 60) (degrees < 0 ? left : right).push(ball.slot);
       }

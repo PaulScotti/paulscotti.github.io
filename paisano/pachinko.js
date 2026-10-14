@@ -10,8 +10,8 @@ export const launch = (angle, power) => {
   return { x: 180, y: 30, vx: speed * Math.sin(angle), vy: speed * Math.cos(angle), slot: null, hits: [] };
 };
 
-// One of a few patterns, with the odd bumper and, when there's a seed to win, a seed to hit. Pegs keep more than a
-// ball's width apart, from each other, the walls and the pockets, so a ball can always pass between them.
+// One of a few patterns, with the odd bumper and, when there's a seed to win, a seed low on the board. Pegs keep more
+// than a ball's width apart, from each other, the walls and the pockets, so a ball can always pass between them.
 export function layout(seed, prize) {
   const rand = () => { // mulberry32, so neighbouring seeds still make unrelated boards
     let t = seed = (seed + 0x6d2b79f5) | 0;
@@ -24,7 +24,7 @@ export function layout(seed, prize) {
     if (x >= 26 + r && x <= 334 - r && y >= 84 && y <= 284 && pegs.every(p => Math.hypot(p.x - x, p.y - y) >= p.r + r + 2 * BALL + 4))
       pegs.push({ x, y, r, e: r > 4 ? 0.85 : 0.58, ...more });
   };
-  if (prize) add(60 + rand() * 240, 150 + rand() * 100, 8, { seed: true, e: 0.58 });
+  if (prize) add(60 + rand() * 240, 210 + rand() * 66, 6, { seed: true });
   if (kind === 0) { // staggered rows, with gaps
     const dx = 30 + rand() * 12, dy = 28 + rand() * 8;
     for (let y = 88, row = 0; y < 284; y += dy, row++) for (let x = 28 + (row % 2) * dx / 2; x < 334; x += dx) if (rand() > 0.12) spots.push([x, y]);
@@ -50,8 +50,8 @@ export function layout(seed, prize) {
   return pegs;
 }
 
-// Moves the ball one step, off pegs, walls and pocket dividers, and notes each peg it touches in ball.hits. Returns
-// how hard it struck.
+// Moves the ball one step, off pegs, walls and pocket dividers, and notes each peg it touches in ball.hits. The seed
+// is caught only when the ball rolls over it, and doesn't turn it. Returns how hard it struck.
 export function step(ball, pegs) {
   ball.vy += 520 * dt;
   ball.vx *= Math.exp(-0.35 * dt);
@@ -60,8 +60,10 @@ export function step(ball, pegs) {
   let impact = 0;
   const walls = dividers.map(x => ({ x, y: Math.max(312, Math.min(354, ball.y)), r: 3, e: 0.58 }));
   for (const [i, peg] of [...pegs, ...walls].entries()) {
-    const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.hypot(dx, dy), reach = peg.r + BALL;
+    const dx = ball.x - peg.x, dy = ball.y - peg.y, distance = Math.hypot(dx, dy), reach = peg.seed ? peg.r : peg.r + BALL;
     if (distance >= reach) continue;
+    if (i < pegs.length && !ball.hits.includes(i)) ball.hits.push(i);
+    if (peg.seed) continue;
     const nx = dx / distance, ny = dy / distance, speed = ball.vx * nx + ball.vy * ny;
     ball.x = peg.x + nx * reach;
     ball.y = peg.y + ny * reach;
@@ -70,7 +72,6 @@ export function step(ball, pegs) {
       ball.vy -= (1 + peg.e) * speed * ny;
       impact = Math.max(impact, -speed);
     }
-    if (i < pegs.length && !ball.hits.includes(i)) ball.hits.push(i);
   }
   if (ball.x < 16) { ball.x = 16; ball.vx = Math.abs(ball.vx) * 0.58; }
   if (ball.x > 344) { ball.x = 344; ball.vx = -Math.abs(ball.vx) * 0.58; }

@@ -10,10 +10,12 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
   pegs: staggered rows, mirrored rings, waves or chevrons, or a mirrored scatter, with a few bouncier bumpers. Aim
   the launcher like Peggle: point or drag on the board, farther from it for a harder shot, and let go (or use the
   arrow keys and Enter). A dotted guide shows the start of the shot. Pegs light up with rising notes as they're hit,
-  and the pocket it lands in is the exercise. While a snack would earn seeds the board holds a seed; hitting it
-  earns one more. `pachinko.js` holds the layouts and the fixed-timestep physics for both the drawing and
+  and the pocket it lands in is the exercise. While a snack would earn seeds the board holds a small seed low down;
+  the marble catches it only by rolling right over it, without being turned, which about 6% of shots do.
+  `pachinko.js` holds the layouts and the fixed-timestep physics for both the drawing and
   `node --test pachinko.test.js`, which fires 5,280 shots across 40 boards to check that each settles, every pocket
-  can be reached on every board, aiming hard left or right moves the landing, and the seed can be hit and missed.
+  can be reached on every board, aiming hard left or right moves the landing, and the seed can be caught and missed
+  without changing the marble's path.
 - **A snack** is one set, or a set a side for one-sided exercises, as many reps as you can, to failure with good
   form. There is no timer: the screen shows the weight and the reps to expect at it, and stays awake while it's
   open. Each exercise loops eight illustrated poses at its tempo; the four that work without weight have their own
@@ -50,9 +52,10 @@ everywhere, while the earlier events stay in D1.
 ## Paisano's garden
 
 - **Seeds ripen between snacks.** A snack earns one seed for each half hour since the last one, up to two, so one
-  right after another earns nothing. Two seeds on **Choose a snack** fill from the bottom as they ripen, and the same
-  seeds sit on **Save**, joined by the bonus seeds for beating the reps expected and hitting the pachinko seed,
-  which count only once a seed is ripe. The day's third snack brings rain, which grows the garden.
+  right after another earns nothing. Two seeds on **Choose a snack** fill from the bottom as they ripen, and the
+  same seeds sit on **Save**, joined by the bonus seeds for beating the reps expected and hitting the pachinko seed,
+  which count only once a seed is ripe and only for a snack with reps. The day's third snack brings rain, which
+  grows the garden.
 - Feed seeds to hatch and grow Paisano, to a chick at 20, a fledgling at 150 and a roadrunner at 600. Its belly
   holds three and digests one an hour.
 - Eight plants, from wildflowers at 6 seeds to a palo verde at 140, each grow with rain and bring someone.
