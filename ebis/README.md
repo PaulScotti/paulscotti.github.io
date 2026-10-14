@@ -16,7 +16,8 @@ that ebis typesets itself.
   LaTeXML made from its LaTeX, so its tables are tables and its formulas MathML. PDFs go
   through `js/pdf.js`, which rebuilds paragraphs from PDF.js's positioned text and cuts
   figures, tables and displayed equations from the rendered page, each with its caption or
-  number; line art cut in gray is drawn as ink, so it follows the theme.
+  number; line art cut in gray is drawn as ink, so it follows the theme. A tagged PDF (a page
+  a browser printed) is read in the order its tags give, its paragraphs and captions as such.
 - Formulas are MathML, set in [Latin Modern Math](https://www.gust.org.pl/projects/e-foundry/lm-math).
   TeX that a page leaves for MathJax or KaTeX to typeset in the browser is typeset as it is
   read, by [Temml](https://temml.org).

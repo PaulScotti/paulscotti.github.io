@@ -30,14 +30,19 @@ export async function pdfSource(file) {
     pages.push(...await Promise.all(batch));
   }
 
-  // What the book is set in, and which lines are furniture rather than text.
-  const body = mode(pages.flatMap(p => p.lines.map(l => [l.size, l.text.length])));
-  const leading = mode(pages.flatMap(p => p.lines.slice(1).map((l, i) => [Math.round(l.y - p.lines[i].y), +(l.size === body)])).filter(([d]) => d > 0));
-  const key = l => l.text.replace(/\d+/g, '#').trim();
+  // Which lines are furniture rather than text: found as they are drawn, before a line takes in the
+  // scripts set against it, so that none joins the text it lies over (a site's buttons, printed
+  // from a browser, on every page).
+  const key = l => l.runs.map(r => r.str).join('').replace(/\d+/g, '#').trim();
   const banded = pages.flatMap(p => p.lines.filter(l => l.y < p.height * 0.09 || l.y > p.height * 0.91));
   const seen = new Map();
   for (const l of banded) seen.set(key(l), (seen.get(key(l)) || 0) + 1);
-  const furniture = new Set(banded.filter(l => seen.get(key(l)) >= 3 || /^(page )?[\divxlc]+$/i.test(l.text.trim())));
+  const furniture = new Set(banded.filter(l => seen.get(key(l)) >= 3 || /^(page )?[#ivxlc]+$/i.test(key(l))));
+  for (const p of pages) [p.heads, p.lines] = [p.lines.filter(l => furniture.has(l)), settle(p.lines.filter(l => !furniture.has(l)))];
+
+  // What the book is set in.
+  const body = mode(pages.flatMap(p => p.lines.map(l => [l.size, l.text.length])));
+  const leading = mode(pages.flatMap(p => p.lines.slice(1).map((l, i) => [Math.round(l.y - p.lines[i].y), +(l.size === body)])).filter(([d]) => d > 0));
 
   // The PDF's own outline gives the contents. Each entry points at a place on a page, and
   // chapters begin at the entries of the outline's first level that has more than one (but not
@@ -76,7 +81,7 @@ export async function pdfSource(file) {
   const columns = [...edges].filter(([, k]) => k > [...edges.values()].reduce((a, b) => a + b, 0) * 0.1).map(([x]) => x);
   const stats = { body, leading, compounds, columns, span: measureOf(pages, body) || pages[0]?.width * 0.7 };
   const arranged = new Map(); // page → its lines, figures and outline places in reading order, worked out once
-  const itemsOf = n => arranged.get(n) || arranged.set(n, arrange(pdf, n, pages[n], furniture, stats, places)).get(n);
+  const itemsOf = n => arranged.get(n) || arranged.set(n, arrange(pdf, n, pages[n], stats, places)).get(n);
   const sectionOf = new Map(); // outline id → the chapter it landed in
   const first = pages[0]?.lines || [];
   const biggest = Math.max(...first.map(l => l.size));
@@ -117,18 +122,32 @@ async function placeOf(pdf, dest) {
 }
 
 // The text of a page as lines, in the order the PDF draws them (which is reading order). A
-// formula's scripts are set smaller, a step above or below their line, sometimes one under
-// the other (r with ⁽⁰⁾ over ᵢ) and sometimes drawn after the rest of it: each joins the line
-// it belongs to. What can't be part of a line — a rotated run (an axis title), a glyph with
-// no letters (a tall bracket) — is kept as a box, so a picture beside it can take it in.
+// tagged PDF (a page a browser printed, a word processor's export) says the order it is read in
+// itself, which needn't be the order it is drawn in (a headline drawn after the paragraphs under
+// it), and what each part of it is: what it marks as an artifact (a running head, the browser's
+// header and footer) isn't read. What can't be part of a line — a rotated run (an axis title), a
+// glyph with no letters (a tall bracket) — is kept as a box, so a picture beside it can take it in.
 async function readPage(page) {
   const vp = page.getViewport({ scale: 1 });
-  const [, { items }] = await Promise.all([page.getOperatorList(), page.getTextContent()]); // the operators load the page's fonts, whose names say what their glyphs are
+  const [, { items }, tree] = await Promise.all([page.getOperatorList(), page.getTextContent({ includeMarkedContent: true }), page.getStructTree()]); // the operators load the page's fonts, whose names say what their glyphs are
+  const tags = new Map(); // marked content → the place in reading order of the block it is in (a paragraph, a figure), and the elements it lies in
+  const walk = (node, within, at) => {
+    if (node.type === 'content') return tags.set(node.id, { at: at ?? tags.size, within });
+    const block = TEXT.test(node.role) || PICTURE.test(node.role) ? tags.size : at;
+    for (const c of node.children || []) walk(c, [...within, node], block);
+  };
+  if (tree) walk(tree, []);
+  const open = [], texts = [];
+  for (const it of items) {
+    if (it.type?.startsWith('beginMarkedContent')) open.push(it);
+    else if (it.type === 'endMarkedContent') open.pop();
+    else if (!open.some(m => m.tag === 'Artifact')) texts.push(Object.assign(it, { tag: tags.get(open.findLast(m => m.id)?.id) }));
+  }
   const fonts = new Map();
   const font = id => fonts.get(id) || fonts.set(id, styleOf(page.commonObjs.has(id) ? page.commonObjs.get(id) : {})).get(id);
   const lines = [], marks = [];
   let line = null;
-  for (const it of items) {
+  for (const it of texts) {
     if (!it.str?.trim() && !it.str?.includes(' ')) continue;
     const [a, b, c, d, x, y] = Util.transform(vp.transform, it.transform);
     const size = Math.round(Math.hypot(c, d) * 2) / 2, style = font(it.fontName);
@@ -150,7 +169,7 @@ async function readPage(page) {
     let at = x;
     for (const part of str.length > 1 ? str.split(ACCENTS) : [str]) {
       if (!part) continue;
-      const run = { str: part, x: at, y, w: it.width * part.length / str.length, size, style };
+      const run = { str: part, x: at, y, w: it.width * part.length / str.length, size, style, tag: it.tag };
       at += run.w;
       const ink = !!run.str.trim();
       if (!line || !joins(line, run)) {
@@ -164,6 +183,17 @@ async function readPage(page) {
       line.x1 = Math.max(line.x1, run.x + run.w);
     }
   }
+  // Where the tags account for all of a page's text, it is read in their order (a block's own lines
+  // as drawn); where some is untagged (a formula's glyphs, drawn twice), the drawing's order holds.
+  if (lines.every(l => l.runs[0].tag)) lines.sort((a, b) => a.runs[0].tag.at - b.runs[0].tag.at);
+  return { width: vp.width, height: vp.height, lines, marks };
+}
+
+// A page's lines, settled. A formula's scripts are set smaller, a step above or below their line,
+// sometimes one under the other (r with ⁽⁰⁾ over ᵢ) and sometimes drawn after the rest of it: each
+// joins the line it belongs to. In a tagged PDF, a line of a paragraph, heading, list or caption
+// is the page's text, and a caption's first line begins one.
+function settle(lines) {
   const into = (host, l) => {
     host.runs.push(...l.runs);
     host.x0 = Math.min(host.x0, l.x0);
@@ -191,6 +221,7 @@ async function readPage(page) {
     l.x1 = Math.max(...l.runs.filter(r => r.str.trim()).map(r => r.x + r.w));
     lines.splice(k + 1, 0, { runs: tail, x0: tail[0].x, x1: tail.at(-1).x + tail.at(-1).w, y: tail[0].y, size: tail[0].size, page: l.page });
   }
+  const captions = new Set();
   for (const l of lines) {
     if (!l.runs.length) continue;
     for (let i = 1; i < l.runs.length; i++) { // scripts stacked on one symbol read subscript first, as TeX writes them (x_i^2)
@@ -215,8 +246,11 @@ async function readPage(page) {
     l.runs = l.runs.filter(r => r.str.trim() || Math.abs(r.y - main.y) < main.size * 0.25); // a space off the baseline only trails a script
     Object.assign(l, { size: Math.max(main.size, ...caps.map(r => r.size)), y: main.y, text: l.runs.map(r => r.str).join('') });
     Object.assign(l, { math: mathShare(l), bold: l.runs.every(r => !r.str.trim() || r.style.bold), mono: l.runs.every(r => (r.style.mono && !r.style.math) || !r.str.trim()) }); // (TeX's math extension font calls itself fixed-pitch)
+    const within = l.runs.find(r => r.str.trim())?.tag?.within || [], caption = within.find(n => n.role === 'Caption');
+    l.told = within.some(n => TEXT.test(n.role)) && !within.some(n => PICTURE.test(n.role));
+    l.caption = caption && !captions.has(caption) && !!captions.add(caption);
   }
-  return { width: vp.width, height: vp.height, lines: lines.filter(l => l.text?.trim()), marks };
+  return lines.filter(l => l.text?.trim());
 }
 
 // Whether a run continues a line: along its baseline, just after it; as a script, smaller and a
@@ -322,6 +356,8 @@ const EQNO = /^\(\s*[A-Z]?\d{1,3}(\.\d{1,3})?[a-z]?\s*\)$/; // an equation's num
 const RELATION = /[=≤≥≈≜≡∈∉→←⇒⇔∼≃≅<>≠⊂⊆∝]/;
 const BULLET = /^\s*[•◦▪▫▸►‣∙⁃]\s/; // a list's item, however much mathematics it holds
 const LEADER = /\p{L}.*(\.\s?){4,}\s*[\divxlc]+\s*$/iu; // a line of contents: its title, dots, a page number
+const TEXT = /^(P|H\d?|LI|LBody|BlockQuote|Caption)$/; // a tagged PDF's elements of text…
+const PICTURE = /^(Figure|Formula|Table|THead|TBody|TFoot|TR|TH|TD)$/; // …and of what is cut from the page to be looked at
 
 // A page's lines of text, its pictures and the outline's places on it, in reading order.
 //
@@ -334,11 +370,11 @@ const LEADER = /\p{L}.*(\.\s?){4,}\s*[\divxlc]+\s*$/iu; // a line of contents: i
 // - a displayed formula: what is set level with an equation's number at the margin, and lines
 //   of mathematics set apart from the text, with their fraction bars, limits and brackets.
 // Each is cut from the page as one picture; a figure or table keeps its caption with it.
-async function arrange(pdf, n, data, furniture, stats, places) {
+async function arrange(pdf, n, data, stats, places) {
   const page = await pdf.getPage(n + 1);
   const { shapes, rules } = await drawings(page, data);
   const s = stats.body || 10, lead = stats.leading || s * 1.2; // (a scanned page has no text to measure)
-  const text = data.lines.filter(l => !furniture.has(l));
+  const text = data.lines;
 
   // A full line is as long as most of the page's lines of prose (a column's measure, or the page's).
   const span = measureOf([data], s) || stats.span;
@@ -359,7 +395,7 @@ async function arrange(pdf, n, data, furniture, stats, places) {
 
   // Drawn shapes in clusters; a cluster with passages of text in it (not a caption) is only their
   // background, a box around an example; and a picture is larger than a mark in the margin.
-  const cap = l => CAPTION.test(l.text) || (LABEL.test(l.text) && l.runs.find(r => r.str.trim())?.style.bold); // "Table 1:", or a bold "Algorithm 1"
+  const cap = l => l.caption || CAPTION.test(l.text) || (LABEL.test(l.text) && l.runs.find(r => r.str.trim())?.style.bold); // "Table 1:", or a bold "Algorithm 1"
   const captionLines = new Set();
   text.forEach((l, i) => {
     const p = text[i - 1];
@@ -387,9 +423,8 @@ async function arrange(pdf, n, data, furniture, stats, places) {
   // a cell at a time; rules within a drawing are a plot's grid. (A fraction's bar is as long as
   // its numerator, which no other bar is.)
   const passage = l => full(l) && (l.text.match(/(?<!\S)\p{Ll}{2,}/gu) || []).length > 3; // a line of sentences (its words in lower case), as a table's rows never are
-  const heads = data.lines.filter(l => furniture.has(l)); // a running head's rule is the page's, not a table's
-  const whole = [];
-  for (const r of rules.filter(r => !art.some(b => meets(r, b, -2)) && !heads.some(l => Math.abs(l.y - r[1]) < l.size * 1.6)).sort((a, b) => a[1] - b[1] || a[0] - b[0])) {
+  const whole = []; // (a running head's rule is the page's, not a table's)
+  for (const r of rules.filter(r => !art.some(b => meets(r, b, -2)) && !data.heads.some(l => Math.abs(l.y - r[1]) < l.size * 1.6)).sort((a, b) => a[1] - b[1] || a[0] - b[0])) {
     const last = whole.at(-1);
     if (last && Math.abs(last[1] - r[1]) < 1 && r[0] - last[2] < s * 0.5) last.splice(0, 4, ...join(last, r));
     else whole.push([...r]);
@@ -451,7 +486,7 @@ async function arrange(pdf, n, data, furniture, stats, places) {
   const kept = new Set();
   text.forEach((l, i) => {
     const p = text[i - 1], words = /\p{L}{2}/u.test(l.text) && l.math < 0.4;
-    if (cap(l)) kept.add(l);
+    if (cap(l) || l.told) kept.add(l);
     else if (inside(l)) return;
     else if (full(l) || justified(l) || (l.mono && l.size > s * 0.7) || LEADER.test(l.text) || (words && (l.size > s * 1.12 || (l.bold && l.size >= s * 0.95)))) kept.add(l);
     else if (wordsIn(l) > 3 && l.math < 0.5 && l.size > s * 0.75 && cellsOf(l).length < 3 && !art.some(b => meets(boxOf(l), b, s * 1.5, s * 1.3))) kept.add(l); // a line of words, away from any drawing
@@ -875,6 +910,7 @@ class Flow {
     this.para.pre.push([l.x0, l.size * 0.55, html]);
   }
   continues(a, b) {
+    if (a.told !== b.told) return false; // (in a tagged PDF, the text never runs on into what lies around it)
     if (Math.abs(a.size - b.size) > a.size * 0.1 || a.center !== b.center) return false;
     const below = b.page === a.page && b.y > a.y && b.x0 < a.x1 && b.x1 > a.x0; // further down the same column
     const leading = this.stats.leading * a.size / this.stats.body;
