@@ -151,7 +151,7 @@ class Writer {
   }
 
   span(el, cs, look, parent) {
-    look = { ...look, fs: parseFloat(cs.fontSize) };
+    look = { ...look, fs: MONO.test(cs.fontFamily) ? look.fs : parseFloat(cs.fontSize) }; // (browsers set a bare monospace a size smaller, which says nothing of the text's rank)
     const wraps = [];
     if (el.localName === 'a' && el.hasAttribute('href')) wraps.push(h('a', { 'data-href': el.getAttribute('href') }));
     if ((cs.fontStyle === 'italic') !== (parent.fontStyle === 'italic')) wraps.push(h('em'));
@@ -177,11 +177,14 @@ class Writer {
       : el.localName === 'image' ? href(el)
       : href(el.querySelector('image'));
     const src = link ? URL.parse(link, el.baseURI)?.href ?? link : el.localName === 'svg' && svgURL(el);
-    // A picture cut from a PDF page says its width in the text's ems; one of set type (a formula,
-    // a table) is ink, and takes the theme's colors. A displayed formula, drawn, is a paragraph of
-    // its own, as one set in MathML is.
+    // A picture keeps the width its page set it at, in the text's ems (a chart beside a paper's text
+    // at half the column); one cut from a PDF page says the width it had there. One of set type (a
+    // formula, a table) is ink, and takes the theme's colors. A displayed formula, drawn, is a
+    // paragraph of its own, as one set in MathML is.
     if (!src) return;
-    const img = h('img', { alt: el.getAttribute('alt') || '', 'data-src': src, ...el.dataset?.em && { 'data-em': el.dataset.em }, ...el.classList?.contains('ink') && { class: 'ink' } });
+    const set = /^\d+(\.\d+)?(px)?$/.test(el.getAttribute('width')) && parseFloat(el.getAttribute('width'));
+    const em = el.dataset?.em || (set && (set / look.fs).toFixed(2));
+    const img = h('img', { alt: el.getAttribute('alt') || '', 'data-src': src, ...em && { 'data-em': em }, ...el.classList?.contains('ink') && { class: 'ink' } });
     if (!el.classList?.contains('formula')) return this.add(img, look);
     this.startLeaf('p', { ...look, cls: 'eq' });
     this.inline.append(img);
@@ -225,7 +228,8 @@ function lookOf(cs, parent, pre) {
 }
 
 function trim(leaf) {
-  for (const side of ['firstChild', 'lastChild']) while (leaf[side]?.localName === 'br') leaf[side].remove();
+  const edge = side => { let n = leaf[side]; while (n?.[side] && n.localName !== 'br') n = n[side]; return n; }; // (a break at its end, however deep: <b>title<br></b>)
+  for (const side of ['firstChild', 'lastChild']) for (let n = edge(side); n?.localName === 'br'; n = edge(side)) n.remove();
   if (leaf.localName === 'pre') return;
   const walker = document.createTreeWalker(leaf, NodeFilter.SHOW_TEXT);
   const texts = [];
@@ -254,7 +258,7 @@ function cloneMath(node, variant) {
     } else if (!/^(on|xmlns|xlink:)|^(href|src|id|mathcolor|mathbackground|color|background|mathvariant)$/i.test(name)) out.setAttribute(name, value);
   }
   for (const child of node.childNodes) {
-    if (child.nodeType === 3 && TOKEN.test(node.localName)) out.append(styled(child.data.replace(/\s+/g, ' ').trim(), variant));
+    if (child.nodeType === 3 && TOKEN.test(node.localName)) out.append(styled(child.data.replace(/[ \t\n\r\f]+/g, ' ').replace(/^ | $/g, ''), variant)); // (a no-break space is the text's: \text{ and })
     else if (child.localName === 'semantics') child.firstElementChild && out.append(cloneMath(child.firstElementChild, variant));
     else if (child.namespaceURI === MATHML && !/^annotation/.test(child.localName)) out.append(cloneMath(child, variant));
   }
@@ -511,8 +515,21 @@ export async function build(source, { fetcher, progress = () => {} }) {
   }));
   for (const el of sections.flatMap(s => [...s.querySelectorAll('[id]')])) {
     if (targets.has(el.id)) continue;
-    if (el.localName === 'a' && !el.hasAttribute('href') && !el.childNodes.length) el.remove();
-    else el.removeAttribute('id');
+    if (el.localName !== 'a' || el.hasAttribute('href') || el.childNodes.length) { el.removeAttribute('id'); continue; }
+    const host = el.parentElement;
+    el.remove();
+    if (host.localName === 'p' && !host.childNodes.length) host.remove(); // a paragraph that held only the anchor
+  }
+  // A formula in a sentence keeps the punctuation set against it on its line: (x), never x / ),.
+  for (const math of sections.flatMap(s => [...s.querySelectorAll('math')]).filter(m => !m.parentElement.classList.contains('eq'))) {
+    const [before, after] = [math.previousSibling, math.nextSibling].map(n => n?.nodeType === 3 ? n : null);
+    const open = before?.data.match(/[([{“‘"']+$/)?.[0] || '', close = after?.data.match(/^[)\]}.,;:!?”’"'%]+/)?.[0] || '';
+    if (!open && !close) continue;
+    const span = h('span', { class: 'nobr' });
+    math.replaceWith(span);
+    span.append(...[open, math, close].filter(Boolean));
+    if (open) before.data = before.data.slice(0, -open.length);
+    if (close) after.data = after.data.slice(close.length);
   }
 
   const images = await storeImages(sections, fetcher);

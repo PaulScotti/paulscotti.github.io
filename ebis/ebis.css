@@ -213,7 +213,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow h3 { font-size: 1.18em; margin: 1.5em 0 .8em; }
 .flow h4 { font-size: 1em; margin: 1.4em 0 .5em; font-variant-caps: all-small-caps; letter-spacing: .08em; }
 .flow section > :first-child:is(h2, h3, h4) { margin-top: 2.2em; }
-.flow section > :is(h2, h3, h4):first-child + p::first-line { font-variant-caps: small-caps; letter-spacing: .02em; }
+.flow section > :is(h2, h3, h4):first-child + p:not(.c)::first-line { font-variant-caps: small-caps; letter-spacing: .02em; }
 .flow .c { text-align: center; hyphens: manual; }
 .flow .r { text-align: right; hyphens: manual; }
 .flow .sc { font-variant-caps: small-caps; }
@@ -235,7 +235,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
 .flow figure { margin: 1.2em 0; text-align: center; break-inside: avoid; }
 .flow img { max-width: 100%; height: auto; max-height: calc(var(--page-h) * .86); vertical-align: middle; cursor: zoom-in; }
 .flow figure img { display: block; margin: 0 auto; }
-.flow figure img[data-k$=".svg"] { width: 100%; } /* a drawing scales without loss, so it takes the figure's width */
+.flow figure img[data-k$=".svg"]:not([style*="--w"]) { width: 100%; } /* a drawing its page set no size for scales without loss, so it takes the figure's width */
 /* A picture cut from a PDF page keeps the size it had beside the page's text: a figure fits the
    page; type (a formula, a table) stays readable, shrinking a little to fit and otherwise
    scrolling sideways. */
@@ -274,6 +274,7 @@ input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius
    displayed one is a paragraph of its own, its number at the margin; an aligned group is a table
    of cells, and when several of its lines are numbered, each number stays on its line. */
 .flow math { font-family: "Latin Modern Math", math; font-size: 1.1em; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.flow .nobr { white-space: nowrap; }
 .flow p.eq { display: flex; align-items: center; gap: .6em; margin: .7em 0; text-indent: 0; hyphens: manual; }
 .flow p.eq > :is(math, .wide) { flex: 1; min-width: 0; padding: .1em 0; }
 .flow p.eq > .wide { display: block; margin: 0; text-align: center; } /* a formula drawn from a PDF page */

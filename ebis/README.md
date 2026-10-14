@@ -13,7 +13,8 @@ that ebis typesets itself.
   and a paywalled page usually still ships its whole article in the raw HTML (a schema.org
   `articleBody` block, or the JSON state its app boots from), in which case that is read
   instead of the taste the page shows. An arXiv link opens the paper's HTML edition, which
-  LaTeXML made from its LaTeX, so its tables are tables and its formulas MathML. PDFs go
+  LaTeXML made from its LaTeX, so its tables are tables and its formulas MathML; its authors
+  and date are those on its arXiv abstract page. PDFs go
   through `js/pdf.js`, which rebuilds paragraphs from PDF.js's positioned text and cuts
   figures, tables and displayed equations from the rendered page, each with its caption or
   number; line art cut in gray is drawn as ink, so it follows the theme. A tagged PDF (a page

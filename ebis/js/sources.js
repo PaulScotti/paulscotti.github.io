@@ -71,7 +71,7 @@ const parse = html => new DOMParser().parseFromString(html, 'text/html');
 const arxiv = url => {
   const m = /^https?:\/\/(?:www\.|export\.)?arxiv\.org\/(?:abs|pdf|html)\/(?:(\d{4}\.\d{4,5})|([a-z-]+)(?:\.[a-z]{2})?\/(\d{7}))(v\d+)?(?:\.pdf)?\/?(?:[?#].*)?$/i.exec(url);
   const id = m && `${m[1] || `${m[2]}/${m[3]}`}${m[4] || ''}`;
-  return id ? { html: `https://arxiv.org/html/${id}`, pdf: `https://arxiv.org/pdf/${id}` } : null;
+  return id ? { html: `https://arxiv.org/html/${id}`, pdf: `https://arxiv.org/pdf/${id}`, abs: `https://arxiv.org/abs/${id}` } : null;
 };
 
 // How much article a page shows, measured on a throwaway copy (Readability rearranges its input).
@@ -234,16 +234,34 @@ function webSource(doc, url, fetcher, shown) {
     // shows, it is read instead — unless the page is as its reader saw it, the whole article.
     // It has to be found before Readability rearranges the document.
     const embedded = declaresArticle && !paper && !shown ? embeddedArticle(doc) : '';
+    // The standfirst under the headline (a newsletter's subtitle, a newspaper's dek) is the page's
+    // own description where the page shows it; the article as read may leave it out.
+    const description = tidy(metaOf('og:description', 'description'));
+    const standfirst = !paper && [...doc.querySelectorAll('p, h2, h3, h4')].some(el => tidy(el.textContent) === description) ? description : '';
+    // So is its lead picture, where the article shows the one the page shares itself with (above its
+    // text, which may be all that Readability keeps).
+    const path = image && new URL(image, url).pathname, shows = img => `${img.getAttribute('src')} ${img.getAttribute('srcset')}`.includes(path);
+    const lead = path && !paper && [...doc.querySelectorAll('article img, main img')].find(shows)?.cloneNode();
     const walled = botWall(doc);
     const { Readability } = await import('../vendor/readability.js');
     const article = paper ? latexml(paper)
       : new Readability(asSet(doc), { serializer: el => el, classesToPreserve: HIDDEN }).parse() ?? { textContent: '', content: doc.createElement('div') };
     if (paper) await sharpen(article.content, arxiv(url)?.pdf, fetcher);
+    // An arXiv paper's authors and date are arXiv's own record of it (its abstract page's citation
+    // metadata): its LaTeX can set authors where the page can't tell them apart (as an affiliation,
+    // say), and never says when it was posted.
+    const abs = paper && arxiv(url)?.abs;
+    if (abs) {
+      const record = new DOMParser().parseFromString(await (await fetcher(abs)).text(), 'text/html');
+      const names = [...record.querySelectorAll('meta[name="citation_author"]')].map(m => m.content.replace(/^([^,]+),\s*(.+)$/, '$2 $1'));
+      Object.assign(article, { byline: names.join(', '), publishedTime: record.querySelector('meta[name="citation_date"]').content });
+    }
     const fuller = embedded.length > article.textContent.length * 1.25 + 500 && sameText(embedded, article.textContent, metaOf('og:description', 'description'));
     if ((fuller ? embedded : article.textContent).trim().length < 500) {
       throw new Error(walled ? 'The site only shows its pages to a real browser.' : 'That page has no article ebis can find.');
     }
     if (fuller) article.content.innerHTML = looksLikeMarkup(embedded) ? embedded : asParagraphs(embedded);
+    if (lead && ![...article.content.querySelectorAll('img')].some(shows)) article.content.prepend(Object.assign(doc.createElement('figure'), { innerHTML: lead.outerHTML }));
     const when = new Date(article.publishedTime || published);
     const site = tidy(article.siteName) || new URL(url).hostname.replace(/^www\./, '');
     const meta = source.meta = {
@@ -251,13 +269,31 @@ function webSource(doc, url, fetcher, shown) {
       author: withoutDate(tidy(article.byline).replace(/^by\b:?\s*/i, ''), when),
       site, lang: article.lang || lang, published: isNaN(when) ? '' : when.toISOString(),
     };
-    prune(article.content, meta, when, url);
+    if (!paper) prune(article.content, meta, when, url); // (a paper has none of a web page's clutter)
+    // A link to a place in the article that links back to it refers to a note: its number is a
+    // superscript, as the site's style set it, and the note's own number, set apart, runs into its text.
+    const inPage = a => a.hash && a.href.split('#')[0] === url.split('#')[0]; // (Readability makes every link absolute)
+    const backs = new Set();
+    for (const ref of paper ? [] : [...article.content.querySelectorAll('a[href*="#"]')].filter(inPage)) {
+      const note = article.content.querySelector(`[id="${CSS.escape(decodeURIComponent(ref.hash.slice(1)))}"]`), id = ref.closest('[id]')?.id;
+      const back = note && id && !backs.has(ref) && [note, ...note.querySelectorAll('a')].find(a => inPage(a) && a.hash === `#${id}`);
+      if (!back) continue;
+      backs.add(back);
+      if (!ref.closest('sup') && !ref.querySelector('sup')) {
+        const sup = doc.createElement('sup');
+        ref.replaceWith(sup);
+        sup.append(ref);
+      }
+      const box = back.parentElement.textContent.trim() === back.textContent.trim() ? back.parentElement : back; // (alone in a paragraph of its own)
+      const text = back === note && box.nextElementSibling, p = text && (text.localName === 'p' ? text : text.querySelector('p'));
+      if (p) p.prepend(back, ' '), box !== back && box.remove();
+    }
     const date = isNaN(when) ? '' : when.toLocaleDateString(meta.lang || undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const line = (text, style) => text ? `<p style="text-align:center;${style}">${escape(text)}</p>` : '';
     return {
       html: '<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src blob: data:; style-src \'unsafe-inline\'">' +
         `<base href="${escape(url)}"></head><body><h1>${escape(meta.title)}</h1>` +
-        line(meta.author, 'font-variant-caps:small-caps') + line([meta.site, date].filter(Boolean).join(' · '), 'font-style:italic') +
+        (tidy(article.content.textContent).includes(standfirst) ? '' : line(standfirst, '')) + line(meta.author, 'font-variant-caps:small-caps') + line([meta.site, date].filter(Boolean).join(' · '), 'font-style:italic') +
         `${article.content.innerHTML}</body></html>`,
     };
   }
@@ -361,17 +397,41 @@ function latexml(root) {
   for (const el of root.querySelectorAll('.ltx_ERROR, annotation, annotation-xml')) el.remove(); // a command it couldn't convert, shown raw; a formula's TeX
   for (const [cls, style] of Object.entries(LTX_STYLES)) for (const el of root.getElementsByClassName(cls)) el.style.cssText += `;${style}`;
 
-  // A tabular set in a paragraph (in a minipage, say) is spans, which become a table like the
-  // others; one in a table's cell only breaks the cell into lines, and stays as it is.
-  const TABULAR = { ltx_tabular: 'table', ltx_thead: 'thead', ltx_tbody: 'tbody', ltx_tfoot: 'tfoot', ltx_tr: 'tr', ltx_td: 'td' };
-  const spans = [...root.querySelectorAll(Object.keys(TABULAR).map(c => `span.${c}`).join())]
-    .filter(span => !span.closest('.ltx_tabular').parentElement.closest('.ltx_td'));
-  for (const span of spans) {
-    const el = doc.createElement(TABULAR[span.classList[0]]);
-    for (const { name, value } of span.attributes) el.setAttribute(name, value);
-    el.append(...span.childNodes);
-    span.replaceWith(el);
+  // A tabular in a table's cell only breaks the cell into lines.
+  for (const inner of [...root.querySelectorAll('.ltx_td .ltx_tabular')].reverse()) {
+    const rows = [...inner.querySelectorAll('.ltx_tr')].filter(tr => tr.closest('.ltx_tabular') === inner);
+    inner.replaceWith(...rows.flatMap((tr, i) => [...i ? [doc.createElement('br')] : [], ...[...tr.children].flatMap((td, j) => [...j ? [' '] : [], ...td.childNodes])]));
   }
+
+  // A table set in a paragraph (a minipage's tabular, an equation in a box) is spans, which become
+  // a table like the others.
+  const TABLE = { ltx_tabular: 'table', ltx_eqn_table: 'table', ltx_thead: 'thead', ltx_tbody: 'tbody', ltx_tfoot: 'tfoot', ltx_tr: 'tr', ltx_eqn_row: 'tr', ltx_td: 'td', ltx_eqn_cell: 'td' };
+  const tag = el => TABLE[[...el.classList].find(c => c in TABLE)];
+  const outer = '.ltx_tabular, .ltx_eqn_table';
+  const retag = (el, to) => {
+    const out = doc.createElement(to);
+    for (const { name, value } of el.attributes) out.setAttribute(name, value);
+    out.append(...el.childNodes);
+    el.replaceWith(out);
+  };
+  for (const t of [...root.querySelectorAll('span.ltx_tabular, span.ltx_eqn_table')].filter(t => !t.parentElement.closest('.ltx_td, .ltx_eqn_cell'))) {
+    for (const span of [t, ...[...t.querySelectorAll('span')].filter(s => tag(s) && !s.matches(outer) && s.parentElement.closest(outer) === t)]) retag(span, tag(span));
+  }
+
+  // A list's labels are its own text. A list of bullets, or numbered 1., 2., …, becomes a list ebis
+  // marks itself; one labeled otherwise ((a), iv., from 5.) keeps its labels, each run into its item.
+  for (const list of root.querySelectorAll('ul.ltx_itemize, ol.ltx_enumerate')) {
+    const items = [...list.children].filter(li => li.localName === 'li');
+    const tags = items.map(li => li.querySelector(':scope > .ltx_tag_item'));
+    const own = tags.every((t, i) => !t || (list.localName === 'ul' ? /^[•◦∙‣⁃–—∗*·-]$/ : new RegExp(`^${i + 1}\\.$`)).test(t.textContent.trim()));
+    items.forEach((li, i) => own ? tags[i]?.remove() : tags[i] && li.querySelector('.ltx_p')?.prepend(tags[i], ' '));
+    if (!own) [list, ...items].forEach(el => retag(el, 'div'));
+  }
+
+  // References and appendices stand at the level of the paper's sections (LaTeXML may set them a
+  // level above, which would leave the sections out of the contents).
+  const level = root.querySelector('.ltx_title_section')?.localName;
+  for (const h of level ? root.querySelectorAll('.ltx_title_bibliography, .ltx_title_appendix') : []) if (h.localName !== level) retag(h, level);
 
   // Displayed equations are tables: a row per line, its parts in cells aligned right and left
   // (an align environment), its number at the edge. Each becomes one formula of the same rows
@@ -410,11 +470,12 @@ function latexml(root) {
     table.replaceWith(p);
   }
 
-  // A paragraph's heading (LaTeX's \\paragraph) runs into its paragraph, in bold, as on the page.
-  for (const head of root.querySelectorAll('.ltx_title_paragraph')) {
+  // A run-in heading (LaTeX's \\paragraph, a theorem's name, a proof's) runs into its paragraph, as
+  // on the page, in bold (a proof's, italic).
+  for (const head of root.querySelectorAll('.ltx_runin')) {
     const p = head.parentElement.querySelector('.ltx_para .ltx_p');
     if (!p || head.nextElementSibling !== p.closest('.ltx_para')) continue;
-    const b = doc.createElement('b');
+    const b = doc.createElement(head.classList.contains('ltx_font_italic') ? 'i' : 'b');
     b.append(...head.childNodes);
     p.prepend(b, ' ');
     head.remove();
@@ -443,14 +504,15 @@ function latexml(root) {
   // after the paragraph it belongs to (where ebis shows it when the number is touched).
   let n = 0;
   for (const note of root.querySelectorAll('.ltx_note')) {
-    const mark = note.classList.contains('ltx_role_footnotetext') ? '' : note.querySelector('.ltx_note_mark')?.textContent.trim() || '';
+    const own = note.querySelector('.ltx_note_mark')?.textContent.trim() || ''; // (a note's text set apart from its mark, \footnotetext, keeps it, but not where it is)
+    const mark = note.classList.contains('ltx_role_footnotetext') ? '' : own;
     const body = note.querySelector('.ltx_note_content');
     body?.querySelectorAll('.ltx_note_mark, .ltx_note_type, .ltx_tag_note').forEach(el => el.remove());
     const sup = doc.createElement('sup');
     if (body?.textContent.trim()) {
       const aside = doc.createElement('aside');
       aside.id = note.id || `ltx-note-${n++}`;
-      aside.append(mark ? `${mark} ` : '', ...body.childNodes);
+      aside.append(own ? `${own} ` : '', ...body.childNodes);
       let after = note.closest('.ltx_para, figure, li, table') || note.parentElement;
       while (after.nextElementSibling?.localName === 'aside') after = after.nextElementSibling;
       after.after(aside);
@@ -462,6 +524,7 @@ function latexml(root) {
   // The title and authors are set on ebis's own title page. Each author is the first line of a
   // name (the rest is where they work), or of each cell of a table of them, without its marks (*, ¹).
   const title = tidy(root.querySelector('.ltx_title_document')?.textContent);
+  root.querySelector('.ltx_title_document')?.remove();
   const firstLine = el => {
     const line = doc.createRange();
     line.selectNodeContents(el);
@@ -481,9 +544,10 @@ function latexml(root) {
 // into a blur (Figure 3 of arXiv's 2608.05643 is 397 pixels wide). The paper's PDF has them sharp,
 // so each such figure is cut from there instead: the PDF's picture that looks like it, shrunk to a
 // few gray squares, and that carries its label as well unless the likeness is unmistakable. (The
-// PDF's labels can sit under the wrong picture, and its pictures can lack them.) A figure drawn as
-// SVG, or at twice its printed size or more, is sharp already; one with no likeness in the PDF
-// stays as it is.
+// PDF's labels can sit under the wrong picture, and its pictures can lack them.) The cut has the
+// figure's shape, to within its edges: one of another shape has lost a part (the panels' titles, read
+// as headings) or gained one. A figure drawn as SVG, or at twice its printed size or more, is sharp
+// already; one with no likeness in the PDF stays as it is.
 async function sharpen(root, pdf, fetcher) {
   const label = s => s?.match(/^\s*Fig(?:ure|\.)\s*([A-Z]?[\d.]*\d)/i)?.[1];
   const figures = [...root.querySelectorAll('figure.ltx_figure')] // a float, or one of two set side by side
@@ -503,7 +567,7 @@ async function sharpen(root, pdf, fetcher) {
   }
   for (const f of blurred) f.look = likeness(f.bitmaps, f.imgs.map(img => [img.width, img.height]));
   const pairs = blurred.flatMap(f => cuts.map(cut => ({ f, cut, alike: f.look.v.reduce((sum, x, i) => sum + x * cut.look.v[i], 0) })))
-    .filter(({ f, cut, alike }) => Math.max(f.look.shape / cut.look.shape, cut.look.shape / f.look.shape) < 1.25 && (alike > 0.9 || (alike > 0.6 && cut.name === f.name)))
+    .filter(({ f, cut, alike }) => Math.max(f.look.shape / cut.look.shape, cut.look.shape / f.look.shape) < 1.03 && (alike > 0.9 || (alike > 0.6 && cut.name === f.name)))
     .sort((a, b) => b.alike - a.alike);
   for (const { f, cut } of pairs) {
     if (f.done || cut.done || !f.figure.isConnected) continue;
@@ -548,7 +612,10 @@ const tidy = s => (s || '').replace(/\s+/g, ' ').trim();
 // and a page's indentation would count: a byline of 34 characters set across indented lines
 // measures 115, and is passed over for the "By" inside it.
 // Readability knows MathML as inline only by an HTML element's name, which MathML elements
-// don't have; in a span, a formula stays in its sentence.
+// don't have; in a span, a formula stays in its sentence. It judges a block by its class and its
+// links, which can cost the article its own parts: a heading keeps only the classes that hide it
+// (a site may class its headings "header-anchor", which reads as a page's header), and a figure
+// leaves the box around it (whose caption, a credit link, reads as a block of links).
 function asSet(doc) {
   const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
   for (let text = walker.nextNode(); text; text = walker.nextNode()) {
@@ -559,6 +626,8 @@ function asSet(doc) {
     math.replaceWith(span);
     span.append(math);
   }
+  for (const h of doc.querySelectorAll('h1, h2, h3, h4, h5, h6')) h.className = [...h.classList].filter(c => HIDDEN.includes(c)).join(' ');
+  for (const figure of doc.querySelectorAll('div > figure:only-child')) figure.parentElement.replaceWith(figure);
   return doc;
 }
 
