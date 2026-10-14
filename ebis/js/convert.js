@@ -48,7 +48,11 @@ class Writer {
     return el;
   }
   open(tag) { this.close(); const el = this.place(h(tag)); this.box.append(el); this.stack.push(el); return el; }
-  end() { this.close(); this.stack.pop(); }
+  end() { // a box left empty (a spacer, a rule) goes; an empty cell keeps its column
+    this.close();
+    const box = this.stack.pop();
+    if (!/^t[dh]$/.test(box.localName) && !box.textContent.trim() && !box.querySelector('img, math, hr, a[id]')) box.remove();
+  }
   startLeaf(tag, look) {
     this.close();
     this.leaf = this.inline = this.place(h(tag, { 'data-fs': look.fs }));
@@ -313,7 +317,7 @@ function finish(sections) {
     for (const p of section.querySelectorAll('p')) {
       const text = textOf(p);
       const media = p.querySelectorAll('img');
-      if (!media.length && !p.querySelector('math') && /^[*∗⁂·•.\-–—~#❦❧✻✽○◦ ]{1,24}$/u.test(text)) p.replaceWith(h('hr')); // a dinkus: * * *
+      if (!media.length && !p.querySelector('math') && !p.closest('td, th') && /^[*∗⁂·•.\-–—~#❦❧✻✽○◦ ]{1,24}$/u.test(text)) p.replaceWith(h('hr')); // a dinkus: * * *
       else if (media.length && !text && !p.classList.contains('eq')) { // a paragraph holding only images is a figure
         const keep = [...p.querySelectorAll('img, a[id]')];
         if (p.parentElement.localName === 'figure') p.replaceWith(...keep);

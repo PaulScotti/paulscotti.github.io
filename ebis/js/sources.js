@@ -346,13 +346,6 @@ async function mathify(doc) {
       run.forEach(n => n.remove());
     }
   }
-  // Readability knows MathML as inline only by an HTML element's name, which MathML elements
-  // don't have; in a span, a formula stays in its sentence.
-  for (const math of doc.querySelectorAll('math')) {
-    const span = doc.createElement('span');
-    math.replaceWith(span);
-    span.append(math);
-  }
 }
 
 // A paper LaTeXML made from its LaTeX source (arXiv's HTML papers) is an article already: its
@@ -365,8 +358,20 @@ const LTX_STYLES = {
 };
 function latexml(root) {
   const doc = root.ownerDocument;
-  for (const el of root.querySelectorAll('.ltx_ERROR')) el.remove(); // a command it couldn't convert, shown raw
+  for (const el of root.querySelectorAll('.ltx_ERROR, annotation, annotation-xml')) el.remove(); // a command it couldn't convert, shown raw; a formula's TeX
   for (const [cls, style] of Object.entries(LTX_STYLES)) for (const el of root.getElementsByClassName(cls)) el.style.cssText += `;${style}`;
+
+  // A tabular set in a paragraph (in a minipage, say) is spans, which become a table like the
+  // others; one in a table's cell only breaks the cell into lines, and stays as it is.
+  const TABULAR = { ltx_tabular: 'table', ltx_thead: 'thead', ltx_tbody: 'tbody', ltx_tfoot: 'tfoot', ltx_tr: 'tr', ltx_td: 'td' };
+  const spans = [...root.querySelectorAll(Object.keys(TABULAR).map(c => `span.${c}`).join())]
+    .filter(span => !span.closest('.ltx_tabular').parentElement.closest('.ltx_td'));
+  for (const span of spans) {
+    const el = doc.createElement(TABULAR[span.classList[0]]);
+    for (const { name, value } of span.attributes) el.setAttribute(name, value);
+    el.append(...span.childNodes);
+    span.replaceWith(el);
+  }
 
   // Displayed equations are tables: a row per line, its parts in cells aligned right and left
   // (an align environment), its number at the edge. Each becomes one formula of the same rows
@@ -379,7 +384,7 @@ function latexml(root) {
     return el;
   };
   const formula = cell => [...cell.childNodes].flatMap(n => n.localName === 'math'
-    ? [...(n.querySelector('semantics') || n).children].filter(c => !/^annotation/.test(c.localName))
+    ? [...(n.querySelector('semantics') || n).children]
     : n.textContent.trim() ? [M('mtext', {}, n.textContent.trim())] : []);
   const align = td => /ltx_align_right/.test(td.className) ? 'r' : /ltx_align_left/.test(td.className) ? 'l' : 'c';
   for (const table of root.querySelectorAll('table.ltx_equation, table.ltx_equationgroup')) {
@@ -454,9 +459,20 @@ function latexml(root) {
     note.replaceWith(...mark ? [sup] : []);
   }
 
-  // The title and authors are set on ebis's own title page.
+  // The title and authors are set on ebis's own title page. Each author is the first line of a
+  // name (the rest is where they work), or of each cell of a table of them, without its marks (*, ¹).
   const title = tidy(root.querySelector('.ltx_title_document')?.textContent);
-  const authors = [...root.querySelectorAll('.ltx_personname')].map(p => tidy(p.firstChild?.textContent)).filter(Boolean);
+  const firstLine = el => {
+    const line = doc.createRange();
+    line.selectNodeContents(el);
+    const br = el.querySelector('br');
+    if (br) line.setEndBefore(br);
+    const name = line.cloneContents();
+    name.querySelectorAll('sup').forEach(sup => sup.remove());
+    return tidy(name.textContent);
+  };
+  const authors = [...root.querySelectorAll('.ltx_personname')]
+    .flatMap(p => p.querySelector('.ltx_td') ? [...p.querySelectorAll('.ltx_td')].map(firstLine) : firstLine(p)).filter(Boolean);
   root.querySelector('.ltx_authors')?.remove();
   return { title, byline: authors.join(', '), content: root, textContent: root.textContent, siteName: '' };
 }
@@ -531,10 +547,17 @@ const tidy = s => (s || '').replace(/\s+/g, ' ').trim();
 // one space. Readability measures some things as written (a byline is under 100 characters),
 // and a page's indentation would count: a byline of 34 characters set across indented lines
 // measures 115, and is passed over for the "By" inside it.
+// Readability knows MathML as inline only by an HTML element's name, which MathML elements
+// don't have; in a span, a formula stays in its sentence.
 function asSet(doc) {
   const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
   for (let text = walker.nextNode(); text; text = walker.nextNode()) {
     if (!text.parentElement.closest('pre, textarea, code, script, style')) text.data = text.data.replace(/[ \t\n\r\f]+/g, ' ');
+  }
+  for (const math of doc.querySelectorAll('math')) {
+    const span = doc.createElement('span');
+    math.replaceWith(span);
+    span.append(math);
   }
   return doc;
 }
