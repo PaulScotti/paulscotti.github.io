@@ -6,12 +6,14 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
 ## Workouts
 
 - **Pachinko** picks from twelve exercises for a pull-up bar and PowerBlock dumbbells up to 80 lb each. Each board
-  has five, drawn with more weight for muscles less worked today and exercises not yet done. Slide the ball along
-  the top with a finger, mouse or arrow keys and drop it: the pegs decide where it lands, and starting nearer a
-  pocket makes that pocket likelier. Catch the seed among the pegs for an extra seed when the snack is logged.
-  `pachinko.js` holds the board and its fixed-timestep physics for both the drawing and
-  `node --test pachinko.test.js`, which drops 3,942 balls to check that each settles, every pocket can be reached,
-  aim matters, and the seed can be caught and missed.
+  has five, drawn with more weight for muscles less worked today and exercises not yet done, and a new layout of
+  pegs: staggered rows, mirrored rings, waves or chevrons, or a mirrored scatter, with a few bouncier bumpers. Aim
+  the launcher like Peggle: point or drag on the board, farther from it for a harder shot, and let go (or use the
+  arrow keys and Enter). A dotted guide shows the start of the shot. Pegs light up with rising notes as they're hit,
+  and the pocket it lands in is the exercise. While a snack would earn seeds the board holds a seed; hitting it
+  earns one more. `pachinko.js` holds the layouts and the fixed-timestep physics for both the drawing and
+  `node --test pachinko.test.js`, which fires 5,280 shots across 40 boards to check that each settles, every pocket
+  can be reached on every board, aiming hard left or right moves the landing, and the seed can be hit and missed.
 - **A snack** is one set, or a set a side for one-sided exercises, as many reps as you can, to failure with good
   form. There is no timer: the screen shows the weight and the reps to expect at it, and stays awake while it's
   open. Each exercise loops eight illustrated poses at its tempo; the four that work without weight have their own
@@ -19,7 +21,7 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
   come back later in that tab, and a reload restores it.
 - **Logging.** After the set, nudge the rep counter, which starts at the reps expected, or type the number, then
   save it or mark that it stopped with discomfort. The ring is full at the reps expected and turns gold past them,
-  which earns an extra seed and draws a rarer visitor. A new weight moves the expected reps, and the counter with
+  which earns a bonus seed and draws a rarer visitor. A new weight moves the expected reps, and the counter with
   them until it's been changed.
 - **The suggestion** is the PowerBlock weight expected to land nearest 8 to 15 reps, the closest to the last one
   among equals, so it stays while the set lands in range. After discomfort it never goes heavier. Reps at another
@@ -47,13 +49,18 @@ everywhere, while the earlier events stay in D1.
 
 ## Paisano's garden
 
-- Each snack earns a seed, beating the reps expected earns one more, and the day's third snack brings rain and three
-  more. Rain grows planted wildflowers, creosote, prickly pear and mesquite, each bringing its own visitor once grown.
-- Feed seeds to hatch and grow Paisano. Its belly holds three and digests one an hour.
-- Each planted variety invites another friend, starting with none in an empty garden. Pip the quail whistles with
+- **Seeds ripen between snacks.** A snack earns one seed for each half hour since the last one, up to two, so one
+  right after another earns nothing. Two seeds on **Choose a snack** fill from the bottom as they ripen, and the same
+  seeds sit on **Save**, joined by the bonus seeds for beating the reps expected and hitting the pachinko seed,
+  which count only once a seed is ripe. The day's third snack brings rain, which grows the garden.
+- Feed seeds to hatch and grow Paisano, to a chick at 20, a fledgling at 150 and a roadrunner at 600. Its belly
+  holds three and digests one an hour.
+- Eight plants, from wildflowers at 6 seeds to a palo verde at 140, each grow with rain and bring someone.
+  Wildflowers, creosote, prickly pear and mesquite each bring their own visitor once grown. Desert marigold,
+  brittlebush, ocotillo and palo verde each bring a friend as soon as they're planted: Pip the quail whistles with
   Paisano, Juniper the jackrabbit hops, Pebble the tortoise plays peekaboo, and Sombra the kit fox bows and naps.
-  Sprouts count immediately. Friends play on their own or when tapped; their games use no seeds. The Desert page
-  shows who is visiting and how to invite the next friend. Visits follow the saved plants across devices and resets.
+  Friends play on their own or when tapped; their games use no seeds. With snacks about an hour apart on weekdays,
+  a simulated player grows the garden over about eleven weeks and raises a roadrunner in about five.
 - Each snack brings a creature that's out at that hour, a rarer one with the rain. Tap it to stalk: step while it
   looks away, wait while it looks up. Escape, another screen or another tab ends the hunt, and the visitor waits to
   be tried again. Catches feed Paisano and build Speed, Stealth and Nerve. The Desert page has the plants, traits and
@@ -63,6 +70,9 @@ The bird, creatures, plants, egg and seed were generated the same way, with tran
 stages each have idle, running (two frames), feeding, sleeping and happy poses. Original PNGs, the full prompts,
 generation IDs and crop coordinates are in [`output/imagegen/manifest.json`](output/imagegen/manifest.json). The
 app makes no image-generation calls.
+
+The desert marigold, brittlebush, ocotillo and palo verde are simple SVG placeholders in `index.html` until their
+artwork is drawn; replacing each `<g id="p-…">` with an image keeps everything else working.
 
 The friends use a separate three-pose atlas generated with the built-in imagegen tool, using the bird as a style
 reference. Its original is `output/imagegen/friends.png`, with frame coordinates in `output/imagegen/friends.json`;

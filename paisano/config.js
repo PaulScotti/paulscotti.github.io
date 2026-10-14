@@ -15,13 +15,16 @@ export default {
   // The dumbbell's settings in pounds per hand: a PowerBlock Elite EXP, stages 1 to 3, up to the 80 lb band.
   weights: [5, 7.5, 10, 15, 17.5, 20, 25, 27.5, 30, 35, 37.5, 40, 45, 47.5, 50, 55, 57.5, 60, 65, 67.5, 70, 75, 77.5, 80],
 
-  // Seeds: one a snack, three more with the day's rain (its third snack), one for more reps than expected and one for
-  // the pachinko seed.
+  // Seeds: a snack's ripen one every `ripen` minutes after the last snack, up to `snack`, so one right after another
+  // earns none. A ripe snack earns one more for more reps than expected and one for hitting the pachinko seed.
+  ripen: 30,
+  seeds: { snack: 2, beat: 1, pachinko: 1 },
+
+  // The day's third snack brings rain, and plants grow with each rain.
   rainAt: 3,
-  seeds: { snack: 1, day: 3, beat: 1, pachinko: 1 },
 
   // Paisano grows as it eats: the food eaten by each stage, a seed being one and a creature its size.
-  stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
+  stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 20], ['Fledgling', 150], ['Roadrunner', 600]],
 
   // Paisano's belly holds this many seeds and digests one an hour: fed a seed a snack, it's hungry when the next is due.
   belly: 3,
@@ -32,21 +35,26 @@ export default {
   times: { morning: [6, 11], midday: [11, 15], afternoon: [15, 18], evening: [18, 22] },
   odds: { common: 4, uncommon: 2, rare: 1 },
 
-  // Seeds can be planted instead of fed: a plant costs seeds, grows with each rain, and once grown brings its visitor.
-  // x is where it grows in the garden.
+  // Seeds can be planted instead of fed: a plant costs seeds and grows with each rain. Each brings someone: a creature
+  // to stalk once it's grown, or a friend as soon as it's planted. x is where it grows; later plants stand behind. With
+  // snacks about an hour apart on weekdays, a simulated player grows them around days 1, 2, 6, 12, 21, 34, 54 and 78.
   plants: [
-    { id: 'flowers', name: 'Wildflowers', cost: 5, rains: 1, x: 182 },
-    { id: 'creosote', name: 'Creosote bush', cost: 10, rains: 2, x: 318 },
-    { id: 'prickly', name: 'Prickly pear', cost: 15, rains: 3, x: 252 },
-    { id: 'mesquite', name: 'Mesquite', cost: 25, rains: 4, x: 116 },
+    { id: 'flowers', name: 'Wildflowers', cost: 6, rains: 1, x: 182 },
+    { id: 'marigold', name: 'Desert marigold', cost: 12, rains: 1, x: 72 },
+    { id: 'creosote', name: 'Creosote bush', cost: 20, rains: 2, x: 318 },
+    { id: 'brittlebush', name: 'Brittlebush', cost: 32, rains: 2, x: 284 },
+    { id: 'prickly', name: 'Prickly pear', cost: 48, rains: 3, x: 252 },
+    { id: 'ocotillo', name: 'Ocotillo', cost: 70, rains: 3, x: 212 },
+    { id: 'mesquite', name: 'Mesquite', cost: 100, rains: 4, x: 116 },
+    { id: 'paloverde', name: 'Palo verde', cost: 140, rains: 5, x: 346 },
   ],
 
-  // Each distinct planted variety invites the next friend, including while the plant is still a sprout.
+  // Each friend comes with its plant, even while it's a sprout.
   friends: [
-    { id: 'quail', name: 'Pip', kind: 'Quail', x: 58, y: 140, action: 'Whistle with Pip', greeting: 'Pip whistles a hello.', habit: 'Whistles, then waits for Paisano to answer.' },
-    { id: 'rabbit', name: 'Juniper', kind: 'Jackrabbit', x: 304, y: 140, action: 'Hop with Juniper', greeting: 'Juniper invites Paisano to hop along.', habit: 'Shows off three hops. Paisano joins in.' },
-    { id: 'tortoise', name: 'Pebble', kind: 'Desert tortoise', x: 139, y: 143, action: 'Play peekaboo with Pebble', greeting: 'Pebble hides, then peeks out at Paisano.', habit: 'Tucks into its shell for a game of peekaboo.' },
-    { id: 'fox', name: 'Sombra', kind: 'Kit fox', x: 230, y: 145, action: 'Relax with Sombra', greeting: 'Sombra takes a bow, then curls up beside Paisano.', habit: 'A playful bow, then a little nap together.' },
+    { id: 'quail', name: 'Pip', kind: 'Quail', plant: 'marigold', x: 58, y: 140, action: 'Whistle with Pip', greeting: 'Pip whistles a hello.', habit: 'Whistles, then waits for Paisano to answer.' },
+    { id: 'rabbit', name: 'Juniper', kind: 'Jackrabbit', plant: 'brittlebush', x: 304, y: 140, action: 'Hop with Juniper', greeting: 'Juniper invites Paisano to hop along.', habit: 'Shows off three hops. Paisano joins in.' },
+    { id: 'tortoise', name: 'Pebble', kind: 'Desert tortoise', plant: 'ocotillo', x: 139, y: 143, action: 'Play peekaboo with Pebble', greeting: 'Pebble hides, then peeks out at Paisano.', habit: 'Tucks into its shell for a game of peekaboo.' },
+    { id: 'fox', name: 'Sombra', kind: 'Kit fox', plant: 'paloverde', x: 230, y: 145, action: 'Relax with Sombra', greeting: 'Sombra takes a bow, then curls up beside Paisano.', habit: 'A playful bow, then a little nap together.' },
   ],
 
   // Paisano stalks a visitor by stepping closer while it looks away: it looks away for `busy` seconds at a time,
@@ -150,5 +158,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 15,
+  version: 16,
 };

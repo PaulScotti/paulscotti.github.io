@@ -186,40 +186,52 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   transition: transform .15s var(--ease), opacity .2s;
 }
 .primary:active { transform: scale(.97); }
+/* Seeds that ripen as time passes since the last snack, filling from the bottom, with a pop when one is ripe. */
+.ripe { display: inline-flex; gap: 1px; margin: 0 -8px 0 10px; vertical-align: -3px; }
+.ripe i { position: relative; width: 19px; height: 19px; }
+.ripe i::before, .ripe i::after { content: ''; position: absolute; inset: 0; background: url(assets/seed.webp) center / contain no-repeat; }
+.ripe i::before { background: currentColor; mask: url(assets/seed.webp) center / contain no-repeat; opacity: .3; }
+.ripe i::after { clip-path: inset(calc((1 - var(--fill, 0)) * 100%) 0 0); }
+.ripe .full::after { animation: ripe .5s var(--ease); }
+@keyframes ripe { 40% { scale: 1.4; } }
 .primary:disabled { opacity: .3; cursor: default; }
 .since { margin: 0; min-height: 1.4em; font-size: 14px; color: var(--ink-3); }
 
-/* Pachinko: the launcher, physical pegs, a seed to catch, and five exercise pockets. */
+/* Pachinko: a launcher to aim, a new board each time whose pegs light when hit, a seed to hit, and five pockets. */
 
 .pachinko { position: fixed; inset: 0; overflow-y: auto; background: var(--bg); padding: calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 22px); }
 .pachinko-column { width: 100%; max-width: 440px; margin: 0 auto; text-align: center; }
 .pachinko header { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; }
 .pachinko h2 { font-size: clamp(22px, 6vw, 28px); line-height: 1.2; }
 .pachinko .x { flex: none; margin-right: -6px; }
-.board-hint { margin: 12px auto 18px; max-width: 320px; color: var(--ink-2); font-size: 15px; }
-.machine { position: relative; border: 1px solid var(--rule); border-radius: 24px; background: var(--surface); padding-bottom: 14px; overflow: hidden; }
+.board-hint { margin: 12px auto 18px; max-width: 340px; color: var(--ink-2); font-size: 15px; }
+.machine {
+  position: relative; border: 1px solid var(--rule); border-radius: 24px; padding-bottom: 14px; overflow: hidden;
+  background: linear-gradient(var(--surface) 35%, color-mix(in oklab, var(--surface), var(--sand) 60%));
+}
 #board { display: block; width: 100%; touch-action: none; cursor: crosshair; }
+#board:focus-visible { outline-offset: -6px; border-radius: 20px; }
 .board-wall, .dividers { fill: none; stroke: var(--ink-3); stroke-width: 6; stroke-linecap: round; }
-.board-wall { stroke: var(--rule); stroke-width: 2; }
-.pegs { fill: var(--ink-3); }
-.drop-rail { stroke: var(--rule); stroke-width: 1; }
-.aim-line { fill: none; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 4; }
+.board-wall { stroke: var(--rule); stroke-width: 1.5; }
+.pegs circle { fill: var(--ink-3); transform-box: fill-box; transform-origin: center; transition: fill .3s; }
+.pegs .bumper { fill: var(--surface); stroke: var(--ink-3); stroke-width: 2; }
+.pegs .lit { fill: var(--accent); animation: lit .3s var(--ease); }
+.pegs .bumper.lit { fill: color-mix(in oklab, var(--accent) 25%, var(--surface)); stroke: var(--accent); }
+@keyframes lit { 40% { scale: 1.7; } }
+.pegs .seed-peg circle { fill: var(--sand); stroke: #d9a43a; stroke-width: 1.5; }
+.pegs .seed-peg.lit { transform-box: fill-box; transform-origin: center; animation: caught .7s var(--ease) forwards; }
+@keyframes caught { 40% { scale: 1.6; } 100% { opacity: .25; } }
+.launcher path { stroke: var(--ink-2); stroke-width: 7; stroke-linecap: round; }
+.launcher circle { fill: var(--ink-2); }
+.aim { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 0 7; opacity: .7; }
+.trail { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; opacity: .16; }
 .marble { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; }
-.prize circle { fill: var(--sand); stroke: var(--dune); stroke-width: 1; }
-.prize.caught { opacity: .15; }
-.launcher { position: absolute; z-index: 1; top: 0; left: 0; width: 100%; aspect-ratio: 360 / 52; }
-.launcher input { appearance: none; display: block; background: transparent; width: 100%; height: 100%; margin: 0; padding: 0 2.8%; cursor: ew-resize; }
-.launcher input::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; background: var(--accent); border: 1.5px solid var(--surface); border-radius: 50%; }
-.launcher input::-moz-range-thumb { width: 11px; height: 11px; background: var(--accent); border: 1.5px solid var(--surface); border-radius: 50%; }
-.launcher input:focus-visible { outline-offset: -5px; border-radius: 20px; }
-.dropped .launcher { visibility: hidden; }
-.dropped .aim-line { visibility: hidden; }
+.dropped .aim { visibility: hidden; }
 .dropped #board { cursor: default; }
 .pockets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0 2.78%; }
 .pockets span { display: grid; align-items: center; min-height: 48px; padding: 5px 1px; font-size: clamp(11px, 3.2vw, 14px); line-height: 1.12; border-radius: 8px; color: var(--ink-2); hyphens: auto; overflow-wrap: anywhere; }
 .pockets .won { background: var(--accent); color: var(--surface); }
 .landed { margin: 12px 0 8px; min-height: 1.35em; font-size: 23px; }
-.prize-note { margin: 12px 0 0; color: var(--accent); font-size: 14px; }
 
 /* A snack: the exercise, the weight and reps to expect, and the reps done */
 
@@ -233,7 +245,6 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .dose { margin: 6px 0 0; font-size: 20px; color: var(--accent); text-align: center; font-variant-numeric: tabular-nums; text-wrap: balance; }
 .dose::first-letter { text-transform: uppercase; }
 .plan { max-width: 380px; text-align: center; margin: 6px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.35; text-wrap: balance; }
-.snack-prize { margin: 5px 0 0; color: var(--accent); text-align: center; font-size: 13px; }
 .ring { position: relative; width: min(80vw, 37dvh, 320px); aspect-ratio: 1; margin: 14px 0 4px; flex: none; }
 .ring > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .spot { fill: var(--tint); }

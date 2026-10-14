@@ -1,8 +1,8 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=15';
-import { pegs, dividers, dt, step as bounce } from './pachinko.js?v=15';
+import config from './config.js?v=16';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=16';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -29,10 +29,11 @@ const levels = () => Object.fromEntries(Object.keys(config.traits).map(t => [t, 
 let st = replay(), snack = null, board = null, toasting = 0, renderedDay = dayOf(Date.now());
 
 // Everything Paisano knows, from the log in time order since the last reset: each exercise's recorded work, each
-// day's snacks, sets per area, seeds and rain; and Paisano's food, belly, traits, garden, field guide and visitor.
+// day's snacks, sets per area and rain, when the last snack was; and Paisano's food, belly, traits, garden, field
+// guide and visitor.
 function replay() {
   const s = {
-    ex: Object.fromEntries(config.exercises.map(x => [x.id, []])), days: {}, earned: 0, used: 0, food: 0, belly: 0, ate: 0,
+    ex: Object.fromEntries(config.exercises.map(x => [x.id, []])), days: {}, last: -Infinity, earned: 0, used: 0, food: 0, belly: 0, ate: 0,
     traits: Object.fromEntries(Object.keys(config.traits).map(t => [t, 0])), plants: {}, guide: {}, visitor: null,
   };
   const hunted = new Set();
@@ -72,8 +73,10 @@ function replay() {
     for (const [a, k] of Object.entries(x.areas)) d.sets[a] = (d.sets[a] || 0) + count * k;
     const watered = !d.rain && d.snacks.length + 1 >= config.rainAt;
     const beat = !!expect?.some((r, i) => rounds[i].r > r); // more reps than expected, since v14
-    const seeds = config.seeds.snack + (watered ? config.seeds.day : 0) + (beat ? config.seeds.beat : 0) + (prize === 'seed' ? config.seeds.pachinko : 0);
+    const ripe = Math.min(config.seeds.snack, Math.floor((e.at - s.last) / (config.ripen * 6e4)));
+    const seeds = ripe && ripe + (beat ? config.seeds.beat : 0) + (prize === 'seed' ? config.seeds.pachinko : 0);
     const entry = { ...e.data, id: e.id, at: e.at, seeds, watered, beat };
+    s.last = e.at;
     d.snacks.push(entry);
     s.ex[id].push(entry);
     s.earned += seeds;
@@ -115,7 +118,8 @@ function dose(x, weight) {
 }
 const said = (x, { w, expect }) => `${w === null ? '' : `${w ? `${w} lb${x.hold === 'pair' ? ' each' : ''}` : `no dumbbell${x.hold === 'pair' ? 's' : ''}`} · `}expect about ${expect[0]} rep${expect[0] === 1 ? '' : 's'}${x.sides ? ' a side' : ''}`;
 
-// Coverage affects which five exercises appear. Only the ball's landing chooses between them.
+// Coverage affects which five exercises appear. Only the ball's landing chooses between them. The board is new each
+// time, and holds a seed to hit only while a snack would earn seeds.
 function pachinko() {
   const t = today(), had = new Set(t.snacks.map(s => s.x));
   const choices = config.exercises.map(x => {
@@ -126,21 +130,33 @@ function pachinko() {
     const j = Math.floor(Math.random() * (i + 1));
     [choices[i], choices[j]] = [choices[j], choices[i]];
   }
-  board = { choices, prize: { x: 44 + 68 * Math.floor(Math.random() * 5), y: 197 }, ball: null };
-  $('pegs').innerHTML = pegs.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3"/>`).join('');
-  $('dividers').innerHTML = dividers.map(x => `<path d="M${x} 312V354"/>`).join('');
+  board = { choices, pegs: layout(Math.floor(Math.random() * 2 ** 32), ripeness() >= 1), angle: 0, power: 0.4, ball: null };
+  $('pegs').innerHTML = board.pegs.map(p => p.seed
+    ? `<g class="seed-peg" transform="translate(${p.x} ${p.y})"><circle r="${p.r}"/><image href="assets/seed.webp" x="-6" y="-6" width="12" height="12"/></g>`
+    : `<circle${p.r > 4 ? ' class="bumper"' : ''} cx="${p.x}" cy="${p.y}" r="${p.r}"/>`).join('');
   $('pockets').replaceChildren(...choices.map(x => Object.assign(document.createElement('span'), { textContent: x.name })));
-  $('prize').setAttribute('transform', `translate(${board.prize.x} ${board.prize.y})`);
-  $('prize').classList.remove('caught');
-  $('aim').value = 180;
-  $('aim').disabled = $('drop').disabled = false;
-  $('aim').oninput();
-  $('marble').setAttribute('cy', 26);
-  $('drop').textContent = 'Drop ball';
+  $('marble').setAttribute('cx', 180);
+  $('marble').setAttribute('cy', 30);
+  $('trail').setAttribute('points', '');
+  $('drop').disabled = false;
+  $('drop').textContent = 'Shoot';
   $('landed').textContent = '';
-  $('prize-note').textContent = `Catch the seed for +${config.seeds.pachinko} when you log your snack.`;
   $('pachinko').classList.remove('dropped');
+  sight();
   location.hash = 'pachinko';
+}
+
+// The launcher turns toward the shot, longer for a harder one, and a dotted guide traces its first third of a second,
+// up to the first peg it meets.
+function sight() {
+  const { angle, power, pegs } = board, ball = launch(angle, power), path = [];
+  for (let k = 0; k < 40 && !ball.hits.length; k++) {
+    bounce(ball, pegs);
+    if (k % 3 === 2) path.push(`${ball.x.toFixed(1)} ${ball.y.toFixed(1)}`);
+  }
+  $('aim').setAttribute('d', `M180 30L${path.join('L')}`);
+  $('launcher').setAttribute('transform', `translate(180 30) rotate(${-angle * 180 / Math.PI})`);
+  $('launcher').firstChild.setAttribute('d', `M0 0V${14 + 12 * power}`);
 }
 
 function drop() {
@@ -148,40 +164,46 @@ function drop() {
   if (current.ball) {
     if (current.ball.slot !== null) {
       $('drop').disabled = true;
-      begin(current.choices[current.ball.slot], null, current.ball.prize);
+      begin(current.choices[current.ball.slot], null, current.ball.hits.some(i => current.pegs[i].seed) ? 'seed' : undefined);
     }
     return;
   }
   audio.resume();
-  const ball = current.ball = { x: +$('aim').value, y: 26, vx: (Math.random() < 0.5 ? -1 : 1) * (4 + Math.random() * 4), vy: 0, slot: null };
+  const ball = current.ball = launch(current.angle, current.power), trail = [];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  $('aim').disabled = $('drop').disabled = true;
-  $('drop').textContent = 'Dropping…';
+  $('drop').disabled = true;
   $('pachinko').classList.add('dropped');
-  let previous = performance.now(), carry = 0, lastTone = 0;
+  let previous = performance.now(), carry = 0, lit = 0, lastTone = 0;
   const frame = now => {
     if (board !== current) return;
     carry += Math.min((now - previous) / 1000, 0.05);
     previous = now;
     let impact = 0;
     while ((reduced || carry >= dt) && ball.slot === null) {
-      impact = Math.max(impact, bounce(ball, current.prize));
+      impact = Math.max(impact, bounce(ball, current.pegs));
       carry -= dt;
     }
     $('marble').setAttribute('cx', ball.x);
     $('marble').setAttribute('cy', ball.y);
-    if (ball.prize && !$('prize').classList.contains('caught')) {
-      $('prize').classList.add('caught');
-      $('prize-note').textContent = `Seed caught · +${config.seeds.pachinko} when you log your snack.`;
+    trail.push(`${ball.x.toFixed(1)},${ball.y.toFixed(1)}`);
+    $('trail').setAttribute('points', trail.slice(-8).join(' '));
+    // Each new peg lights up with a note higher than the last; the seed chirps.
+    for (const fresh = lit; lit < ball.hits.length; lit++) {
+      const peg = current.pegs[ball.hits[lit]], n = Math.min(lit, 11);
+      $('pegs').children[ball.hits[lit]].classList.add('lit');
+      if (reduced || lit > fresh + 1) continue;
+      if (peg.seed) tone(1900, 0.12, { to: 2900, gain: 0.05 });
+      else tone(440 * 2 ** (([0, 2, 4, 7, 9][n % 5] + 12 * Math.floor(n / 5)) / 12), 0.14, { type: 'triangle', gain: 0.03 });
+      lastTone = now;
     }
     if (!reduced && impact > 45 && now - lastTone > 65) {
       tone(1000 + ball.y * 2, 0.025, { type: 'triangle', gain: 0.025 });
       lastTone = now;
     }
     if (ball.slot === null) { current.frame = requestAnimationFrame(frame); return; }
+    $('trail').setAttribute('points', '');
     $('pockets').children[ball.slot].classList.add('won');
     $('landed').textContent = current.choices[ball.slot].name;
-    if (!ball.prize) $('prize-note').textContent = 'No bonus this time.';
     $('drop').textContent = 'Do this exercise';
     $('drop').disabled = false;
     $('drop').focus({ preventScroll: true });
@@ -215,8 +237,6 @@ function begin(x, saved = null, prize) {
   snack.expect ??= dose(x, snack.w).expect; // a snack left open by v13
   snack.counts ??= [...snack.expect];
   $('name').textContent = x.name;
-  $('snack-prize').hidden = snack.prize !== 'seed';
-  $('snack-prize').textContent = `Pachinko seed · +${config.seeds.pachinko} when you log this snack`;
   $('dose').textContent = said(x, snack);
   $('plan').textContent = `${x.sides ? 'One set a side, left then right' : 'One set'}: as many reps as you can, to failure with good form.`;
   $('target-weight').replaceChildren(...(x.share ? [0, ...config.weights] : config.weights).map(w => new Option(w ? `${w} lb${x.hold === 'pair' ? ' each' : ''}` : `No dumbbell${x.hold === 'pair' ? 's' : ''}`, w)));
@@ -263,6 +283,7 @@ function reach() {
     [784, 1047].forEach((f, k) => tone(f, 0.25, { at: k * 0.08, gain: 0.06 }));
   }
   $('snack').classList.toggle('beat', beat);
+  ripen($('reward'), beat + (snack.prize === 'seed'));
 }
 
 // The screen stays on while a snack is open, so it hasn't locked when the weights go down.
@@ -295,7 +316,7 @@ function finish(feel) {
   sessionStorage.removeItem('paisano.snack');
   location.hash = '';
   const last = st.ex[id].find(s => s.id === eventId);
-  toast(`+${last.seeds} seed${last.seeds > 1 ? 's' : ''}${last.beat ? ', one for beating the reps expected' : ''}.${last.watered ? ' Three snacks bring rain.' : ''} Next time: ${said(x, dose(x))}.`);
+  toast(`${last.seeds ? `+${last.seeds} seed${last.seeds > 1 ? 's' : ''}` : 'No seeds: too soon after the last snack'}.${last.watered ? ' Three snacks bring rain.' : ''} Next time: ${said(x, dose(x))}.`);
   hop();
   emote(last.watered || last.beat ? '♥' : '!');
   if (last.watered) {
@@ -356,16 +377,17 @@ function render() {
   $('seeds').textContent = seeds;
   $('feed').disabled = !loaded || seeds <= 0;
   $('choose').disabled = !loaded;
-  $('choose').textContent = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Choose a snack';
+  $('choose').firstChild.data = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Choose a snack';
+  ripen($('ripe'));
   renderedDay = dayOf(Date.now());
   const i = stageOf(st.food), next = config.stages[i + 1];
   $('grown').style.width = `${next ? (st.food - config.stages[i][1]) / (next[1] - config.stages[i][1]) * 100 : 100}%`;
   $('toward').textContent = next ? `${next[1] - st.food} to ${next[0].toLowerCase()}` : '';
-  $('plants').innerHTML = config.plants.filter(p => p.id in st.plants).map(p => `<use href="#${st.plants[p.id] >= p.rains ? `p-${p.id}` : 'sprout'}" x="${p.x}" y="${GROUND}"/>`).join('');
-  const friends = config.friends.slice(0, Object.keys(st.plants).length);
-  if ($('friends').childElementCount !== friends.length) {
+  $('plants').innerHTML = config.plants.filter(p => p.id in st.plants).reverse().map(p => `<use href="#${st.plants[p.id] >= p.rains ? `p-${p.id}` : 'sprout'}" x="${p.x}" y="${GROUND}"/>`).join('');
+  const friends = config.friends.filter(f => f.plant in st.plants);
+  if ([...$('friends').children].map(n => n.dataset.friend).join() !== friends.map(f => f.id).join()) {
     goodbye();
-    $('friends').innerHTML = friends.map((f, i) => `<g class="friend" data-friend="${f.id}" transform="translate(${f.x} ${f.y})" style="--friend-row: ${-i * 64}px">
+    $('friends').innerHTML = friends.map(f => `<g class="friend" data-friend="${f.id}" transform="translate(${f.x} ${f.y})" style="--friend-row: ${-config.friends.indexOf(f) * 64}px">
       <title>${f.name} · ${f.kind}</title><ellipse class="shadow" rx="15" ry="2"/>
       <g class="friend-motion"><foreignObject class="friend-art" x="-32" y="-59" width="64" height="64"><div xmlns="http://www.w3.org/1999/xhtml" class="friend-frames"></div></foreignObject></g>
       <rect class="pet-hit" x="-25" y="-44" width="50" height="48" rx="12" role="button" tabindex="0" aria-label="${f.action}"/>
@@ -382,10 +404,26 @@ function render() {
 // What's in Paisano's belly now, in seeds: what it last had, less one an hour since.
 const fullness = () => Math.max(0, st.belly - (Date.now() - st.ate) / 3600e3);
 
+// The seeds a snack logged now would earn before its bonuses, as a fraction: one ripens every half hour since the last
+// snack, up to two.
+const ripeness = () => Math.min(config.seeds.snack, (Date.now() - st.last) / (config.ripen * 6e4));
+
+// Those seeds drawn filling up as they ripen, with any bonus seeds, which fill only once a seed is ripe; full ones first.
+function ripen(el, bonus = 0) {
+  const r = ripeness(), fills = [...Array.from({ length: config.seeds.snack }, (_, i) => r - i), ...Array(bonus).fill(+(r >= 1))].sort((a, b) => b - a);
+  if (el.childElementCount !== fills.length) el.replaceChildren(...fills.map(() => document.createElement('i')));
+  fills.forEach((f, i) => {
+    el.children[i].style.setProperty('--fill', Math.max(0, Math.min(1, f)));
+    el.children[i].classList.toggle('full', f >= 1);
+  });
+}
+
 // What changes as time passes: how long since the last snack and how many more bring rain, whether Paisano is hungry,
 // and where the sun is (it crosses the garden from 6 am to 8 pm, and is below the dunes at night).
 function tick() {
   if (renderedDay !== dayOf(Date.now())) return render();
+  ripen($('ripe'));
+  if (snack) reach();
   const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4), more = config.rainAt - t.snacks.length;
   const last = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
@@ -480,7 +518,7 @@ function route() {
   $('history').hidden = hash !== 'history' || !password;
   $('desert').hidden = hash !== 'desert' || !password;
   $('settings').hidden = hash !== 'settings' || !password;
-  if (hash === 'pachinko') { $('pachinko').scrollTop = 0; $('aim').focus({ preventScroll: true }); }
+  if (hash === 'pachinko') { $('pachinko').scrollTop = 0; $('board').focus({ preventScroll: true }); }
   if (hash === 'snack') $('name').focus({ preventScroll: true });
   if (hash === 'history') { chronicle(); $('history').querySelector('.x').focus(); }
   if (hash === 'desert') { desert(); $('desert').querySelector('.x').focus(); }
@@ -503,32 +541,33 @@ function desert() {
     return li;
   };
   $('beds').replaceChildren(...config.plants.map(p => {
-    const li = row(`p-${p.id}`), rains = st.plants[p.id], c = config.creatures.find(c => c.plant === p.id), brings = st.guide[c.id] ? `the ${c.name}` : 'its visitor';
+    const li = row(`p-${p.id}`), rains = st.plants[p.id], rain = `${p.rains} rain${p.rains > 1 ? 's' : ''}`;
+    const c = config.creatures.find(c => c.plant === p.id), f = config.friends.find(f => f.plant === p.id), sprout = `A sprout: ${rains} of ${rain}`;
     li.querySelector('b').textContent = p.name;
-    li.querySelector('small').textContent = rains === undefined ? `Grows with ${p.rains} rain${p.rains > 1 ? 's' : ''}, then brings a visitor` : rains < p.rains ? `A sprout: ${rains} of ${p.rains} rain${p.rains > 1 ? 's' : ''}` : `Grown, and brings ${brings}`;
+    li.querySelector('small').textContent = rains === undefined ? f ? `Brings ${f.name} the ${f.kind.toLowerCase()} as soon as it’s planted` : `Grows with ${rain}, then brings a visitor`
+      : f ? `${rains < p.rains ? sprout : 'Grown'}. ${f.name} is here.` : rains < p.rains ? sprout : `Grown, and brings ${st.guide[c.id] ? `the ${c.name}` : 'its visitor'}`;
     if (rains === undefined) {
       const button = Object.assign(document.createElement('button'), { textContent: `Plant · ${p.cost}`, disabled: seeds < p.cost });
       button.setAttribute('aria-label', `Plant ${p.name.toLowerCase()} for ${p.cost} seeds`);
       button.onclick = () => {
-        const before = Object.keys(st.plants).length;
         record('plant', { p: p.id });
-        if (Object.keys(st.plants).length > before) toast(`Planted ${p.name.toLowerCase()}. ${config.friends[before].name} is visiting!`);
+        if (p.id in st.plants) toast(`Planted ${p.name.toLowerCase()}.${f ? ` ${f.name} is visiting!` : ''}`);
       };
       li.querySelector('em').replaceWith(button);
     }
     return li;
   }));
-  const variety = Object.keys(st.plants).length;
-  $('friends-note').textContent = `${variety} of ${config.plants.length} plant varieties. ${variety === config.plants.length ? 'All your friends are here.' : 'Each new variety invites another friend, even as a sprout.'} Tap a friend in the garden to play.`;
+  const here = config.friends.filter(f => f.plant in st.plants).length;
+  $('friends-note').textContent = `${here === config.friends.length ? 'All your friends are here.' : `${here} of ${config.friends.length} friends visit. Each comes with its own plant, even as a sprout.`} Tap a friend in the garden to play.`;
   $('friend-guide').replaceChildren(...config.friends.map((f, i) => {
-    const li = row('', i >= variety), svg = li.querySelector('svg');
+    const visiting = f.plant in st.plants, li = row('', !visiting), svg = li.querySelector('svg');
     svg.classList.add('friend-portrait');
     svg.setAttribute('viewBox', '0 0 64 64');
     svg.setAttribute('aria-hidden', 'true');
     svg.innerHTML = `<foreignObject width="64" height="64"><div xmlns="http://www.w3.org/1999/xhtml" class="friend-frames" style="--friend-row: ${-i * 64}px"></div></foreignObject>`;
     li.querySelector('b').textContent = `${f.name} · ${f.kind}`;
-    li.querySelector('small').textContent = i < variety ? f.habit : `Visits with ${i + 1} plant ${i ? 'varieties' : 'variety'}`;
-    li.querySelector('em').textContent = i < variety ? 'Here' : '';
+    li.querySelector('small').textContent = visiting ? f.habit : `Visits once you plant ${P[f.plant].name.toLowerCase()}`;
+    li.querySelector('em').textContent = visiting ? 'Here' : '';
     return li;
   }));
   const when = c => {
@@ -863,6 +902,7 @@ function end() {
   $('visitor').classList.remove('hunted', 'looking', 'twitch');
 }
 
+$('dividers').innerHTML = dividers.map(x => `<path d="M${x} 312V354"/>`).join('');
 // The rain that the day's third snack brings to the garden.
 $('rain').innerHTML = Array.from({ length: 40 }, (_, i) => `<line x1="${i * 9.5}" x2="${i * 9.5 - 2.5}" y1="-14" y2="-4" style="animation-delay: -${Math.random().toFixed(2)}s"/>`).join('');
 
@@ -926,24 +966,30 @@ $('choose').onclick = () => {
   const saved = sessionStorage.getItem('paisano.snack');
   saved ? begin(X[JSON.parse(saved).x], JSON.parse(saved)) : pachinko();
 };
-$('aim').oninput = () => {
-  const x = +$('aim').value;
-  $('marble').setAttribute('cx', x);
-  $('aim-line').setAttribute('d', `M${x} 37V58`);
-  $('aim').setAttribute('aria-valuetext', `Above ${board.choices[Math.floor((x - 10) / 68)].name}`);
+// Point anywhere on the board to aim, farther from the launcher for a harder shot, and let go to shoot. Arrow keys
+// turn the launcher and change the power.
+const aimAt = (angle, power) => {
+  board.angle = Math.max(-1.4, Math.min(1.4, angle));
+  board.power = Math.max(0, Math.min(1, power));
+  sight();
 };
+const point = e => {
+  const rect = $('board').getBoundingClientRect(), dx = (e.clientX - rect.left) / rect.width * 360 - 180, dy = (e.clientY - rect.top) / rect.height * 362 - 30;
+  aimAt(Math.atan2(dx, Math.max(dy, 1)), (Math.hypot(dx, dy) - 30) / 270);
+};
+$('board').onpointermove = e => { if (!board.ball) point(e); };
 $('board').onpointerdown = e => {
   if (board.ball) return;
-  const move = e => {
-    const rect = $('board').getBoundingClientRect();
-    $('aim').value = Math.max(16, Math.min(344, (e.clientX - rect.left) / rect.width * 360));
-    $('aim').oninput();
-  };
-  move(e);
+  point(e);
   $('board').setPointerCapture(e.pointerId);
-  $('board').onpointermove = move;
 };
-$('board').onlostpointercapture = () => { $('board').onpointermove = null; };
+$('board').onpointerup = e => { if (!board.ball && $('board').hasPointerCapture(e.pointerId)) drop(); };
+$('board').onkeydown = e => {
+  const turn = { ArrowLeft: -0.04, ArrowRight: 0.04 }[e.key] ?? 0, push = { ArrowDown: -0.05, ArrowUp: 0.05 }[e.key] ?? 0;
+  if (board.ball || !(turn || push || e.key === 'Enter' || e.key === ' ')) return;
+  e.preventDefault();
+  turn || push ? aimAt(board.angle + turn, board.power + push) : drop();
+};
 $('drop').onclick = drop;
 // Another weight changes the reps to expect, and the counts with them until they're edited; at 0 lb the
 // demonstration is the bodyweight one.

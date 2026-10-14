@@ -1,8 +1,8 @@
 // Bump alongside config.version. Updates wait until the user reloads, preserving an active snack.
-const CACHE = 'paisano-v15';
+const CACHE = 'paisano-v16';
 const ART = ["./assets/c-stink.webp","./assets/c-uta.webp","./assets/c-whiptail.webp","./assets/c-zebra.webp","./assets/c-horned.webp","./assets/c-centipede.webp","./assets/c-scorpion.webp","./assets/c-rattler.webp","./assets/c-clicker.webp","./assets/c-cicada.webp","./assets/c-sphinx.webp","./assets/c-longhorn.webp","./assets/c-spadefoot.webp","./assets/c-paloverde.webp","./assets/egg.webp","./assets/seed.webp","./assets/p-flowers.webp","./assets/p-creosote.webp","./assets/p-prickly.webp","./assets/p-mesquite.webp","./assets/sprout.webp","./assets/saguaro.webp"];
 const EXERCISES = ['goblet', 'rdl', 'split', 'pushup', 'floor', 'press', 'row', 'pullup', 'fly', 'curl', 'knees', 'calf', 'goblet-body', 'rdl-body', 'split-body', 'calf-body'].map(id => `./assets/exercises/${id}.webp`);
-const FILES = [...ART, ...EXERCISES, './', './index.html', './paisano.js?v=15', './pachinko.js?v=15', './config.js?v=15', './paisano.css?v=15', './assets/mark.png', './assets/birds.webp', './assets/friends.webp', '../ebis/fonts/Libron-Regular.woff2'];
+const FILES = [...ART, ...EXERCISES, './', './index.html', './paisano.js?v=16', './pachinko.js?v=16', './config.js?v=16', './paisano.css?v=16', './assets/mark.png', './assets/birds.webp', './assets/friends.webp', '../ebis/fonts/Libron-Regular.woff2'];
 // The HTTP cache may still hold the previous release's HTML.
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(url => new Request(url, { cache: 'reload' }))))));
 self.addEventListener('message', e => { if (e.data === 'activate') self.skipWaiting(); });

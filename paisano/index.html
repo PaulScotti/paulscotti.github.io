@@ -9,8 +9,8 @@
 <title>Paisano</title>
 <link rel="icon" href="assets/mark.png" type="image/png">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="paisano.css?v=15">
-<script type="module" src="paisano.js?v=15"></script>
+<link rel="stylesheet" href="paisano.css?v=16">
+<script type="module" src="paisano.js?v=16"></script>
 </head>
 <body>
 
@@ -100,7 +100,7 @@
   </section>
 
   <footer>
-    <button id="choose" class="primary" disabled>Choose a snack</button>
+    <button id="choose" class="primary" disabled>Choose a snack<span id="ripe" class="ripe" aria-hidden="true"></span></button>
     <p id="since" class="since"></p>
     <div class="status"><button id="sync" type="button" hidden>Connecting…</button><button id="update" type="button" hidden>Update ready</button></div>
   </footer>
@@ -109,23 +109,21 @@
 <section id="pachinko" class="pachinko" aria-labelledby="pachinko-title" hidden>
   <div class="pachinko-column">
     <header><h2 id="pachinko-title">Pachinko</h2><button class="x" aria-label="Close pachinko"><svg><use href="#i-close"/></svg></button></header>
-    <p class="board-hint">Place the ball, then drop. Its landing picks your exercise.</p>
+    <p class="board-hint">Drag to aim, farther for a harder shot, then let go. Where it lands picks your exercise.</p>
     <div class="machine">
-      <div class="launcher"><input id="aim" type="range" min="16" max="344" step="1" value="180" aria-label="Ball drop position"></div>
-      <svg id="board" viewBox="0 0 360 362" aria-hidden="true">
-        <path class="board-wall" d="M10 58V344Q10 354 20 354H340Q350 354 350 344V58"/>
-        <path class="drop-rail" d="M16 26H344"/>
-        <path id="aim-line" class="aim-line" d="M180 37V58"/>
-        <g id="pegs" class="pegs"></g>
+      <svg id="board" viewBox="0 0 360 362" tabindex="0" aria-label="Board: arrow keys aim, Enter shoots">
+        <path class="board-wall" d="M10 12Q10 2 20 2H340Q350 2 350 12V344Q350 354 340 354H20Q10 354 10 344Z"/>
         <g id="dividers" class="dividers"></g>
-        <g id="prize" class="prize"><circle r="17"/><image href="assets/seed.webp" x="-11" y="-11" width="22" height="22"/></g>
-        <circle id="marble" class="marble" cx="180" cy="26" r="6"/>
+        <path id="aim" class="aim"/>
+        <polyline id="trail" class="trail"/>
+        <g id="pegs" class="pegs"></g>
+        <g id="launcher" class="launcher"><path/><circle r="9"/></g>
+        <circle id="marble" class="marble" cx="180" cy="30" r="6"/>
       </svg>
       <div id="pockets" class="pockets" aria-label="Exercise pockets, left to right"></div>
     </div>
     <p id="landed" class="landed" aria-live="polite"></p>
-    <button id="drop" class="primary">Drop ball</button>
-    <p id="prize-note" class="prize-note" aria-live="polite"></p>
+    <button id="drop" class="primary">Shoot</button>
   </div>
 </section>
 
@@ -134,7 +132,6 @@
   <h2 id="name" tabindex="-1"></h2>
   <p id="dose" class="dose"></p>
   <p id="plan" class="plan"></p>
-  <p id="snack-prize" class="snack-prize" hidden></p>
   <div class="ring">
     <svg viewBox="0 0 200 200" aria-hidden="true">
       <circle class="spot" cx="100" cy="100" r="90"/>
@@ -147,7 +144,7 @@
   <form id="result" class="result">
     <label id="weight-label">Weight<select id="target-weight"></select></label>
     <div id="counts" class="counts"></div>
-    <button class="primary" data-feel="hard">Save</button>
+    <button class="primary" data-feel="hard">Save<span id="reward" class="ripe" aria-hidden="true"></span></button>
     <button class="pain" data-feel="pain">Stopped with discomfort</button>
   </form>
   <ol id="cues" class="cues"></ol>
@@ -178,7 +175,7 @@
     <p class="note">What Paisano catches builds its traits. Speed: longer, quicker steps. Stealth: a moment’s grace when prey looks up. Nerve: the courage for stings and fangs.</p>
     <h3>Garden</h3>
     <ul id="beds" class="rows"></ul>
-    <p class="note">Plant seeds instead of feeding them, and once grown each plant brings its own visitor. Three snacks bring rain once a day, and plants grow with each rain.</p>
+    <p class="note">Plant seeds instead of feeding them. Each plant brings someone: a creature to stalk once it’s grown, or a friend as soon as it’s planted. Three snacks bring rain once a day, and plants grow with each rain.</p>
     <h3>Friends</h3>
     <p id="friends-note" class="note"></p>
     <ul id="friend-guide" class="rows"></ul>
@@ -229,6 +226,11 @@
     <image id="p-creosote" href="assets/p-creosote.webp" x="-18.03" y="-34" width="36.06" height="34"/>
     <image id="p-prickly" href="assets/p-prickly.webp" x="-17.795" y="-44" width="35.59" height="44"/>
     <image id="p-mesquite" href="assets/p-mesquite.webp" x="-37.87" y="-57" width="75.74" height="57"/>
+    <!-- Placeholders until their artwork is drawn. -->
+    <g id="p-marigold"><path d="M0 0V-12M-2 0Q-4 -6 -7 -9M2 0Q4 -5 7 -8" stroke="#7f8f5b" fill="none"/><g fill="#e3b53a"><circle cy="-14" r="3"/><circle cx="-7" cy="-10" r="2.6"/><circle cx="7" cy="-9" r="2.6"/></g></g>
+    <g id="p-brittlebush"><ellipse cy="-8" rx="13" ry="8" fill="#a9b39a"/><g fill="#e8c547"><circle cx="-6" cy="-15" r="2.2"/><circle cx="2" cy="-17" r="2.2"/><circle cx="8" cy="-13" r="2.2"/></g></g>
+    <g id="p-ocotillo" fill="none" stroke-linecap="round"><path d="M0 0L-9 -40M0 0L-3 -46M0 0L4 -44M0 0L10 -38" stroke="#6f6a4f" stroke-width="1.6"/><path d="M-9 -40l-1 -5M-3 -46l0 -5M4 -44l1 -5M10 -38l1 -5" stroke="#c4553a" stroke-width="2.4"/></g>
+    <g id="p-paloverde"><path d="M0 0C-1 -12 -2 -20 -9 -30M-1 -14C4 -20 9 -25 15 -31" stroke="#7d9a5a" stroke-width="3" fill="none"/><ellipse cy="-40" rx="26" ry="12" fill="#b7c48a"/></g>
     <image id="sprout" href="assets/sprout.webp" x="-4.085" y="-10" width="8.17" height="10"/>
     <image id="saguaro" href="assets/saguaro.webp" x="-14.59" y="-52" width="29.18" height="52"/>
   </defs>

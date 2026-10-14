@@ -1,25 +1,30 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { dt, step } from './pachinko.js';
+import { dt, launch, layout, step } from './pachinko.js';
 
-test('every drop settles, every pocket is reachable, and aiming changes the outcome', () => {
-  const landings = Array.from({ length: 5 }, () => Array(5).fill(0));
-  let caught = 0;
-  for (let x = 16; x <= 344; x += 0.5) {
-    for (const vx of [-8, -6, -4, 4, 6, 8]) {
-      const ball = { x, y: 26, vx, vy: 0, slot: null };
-      for (let tick = 0; tick < 10 / dt && ball.slot === null; tick++) {
-        step(ball, { x: 180, y: 197 });
-        assert(ball.x >= 16 && ball.x <= 344 && Number.isFinite(ball.y));
+test('on every board each shot settles, every pocket can be reached, aim matters, and the seed can be hit or missed', () => {
+  const left = [], right = [];
+  for (let seed = 1; seed <= 40; seed++) {
+    const pegs = layout(seed, true), reached = new Set();
+    let seeded = 0, shots = 0;
+    for (let degrees = -80; degrees <= 80; degrees += 5) {
+      for (const power of [0, 0.35, 0.7, 1]) {
+        const ball = launch(degrees * Math.PI / 180, power);
+        for (let tick = 0; tick < 12 / dt && ball.slot === null; tick++) {
+          step(ball, pegs);
+          assert(ball.x >= 16 && ball.x <= 344 && ball.y >= 8 && Number.isFinite(ball.y));
+        }
+        assert.notEqual(ball.slot, null, `Ball stuck on board ${seed}, ${degrees}°, power ${power}`);
+        assert(ball.slot >= 0 && ball.slot < 5);
+        reached.add(ball.slot);
+        seeded += ball.hits.some(i => pegs[i].seed);
+        shots++;
+        if (Math.abs(degrees) >= 60) (degrees < 0 ? left : right).push(ball.slot);
       }
-      assert.notEqual(ball.slot, null, `Ball stuck at drop ${x}, velocity ${vx}`);
-      assert(ball.slot >= 0 && ball.slot < 5);
-      landings[Math.min(4, Math.floor((x - 16) / 328 * 5))][ball.slot]++;
-      caught += !!ball.prize;
     }
+    assert.equal(reached.size, 5, `Board ${seed} cannot reach every pocket`);
+    assert(seeded > 0 && seeded < shots, `Board ${seed}'s seed must be catchable and missable`);
   }
-  assert(landings.every(row => row.every(n => n > 0)), 'A pocket cannot be reached');
-  const mean = row => row.reduce((sum, n, i) => sum + n * i, 0) / row.reduce((a, b) => a + b);
-  assert(mean(landings[4]) - mean(landings[0]) > 2, 'Drop position has too little influence');
-  assert(caught > 0 && caught < 3942, 'The prize must be catchable and missable');
+  const mean = xs => xs.reduce((a, b) => a + b) / xs.length;
+  assert(mean(right) - mean(left) > 1.5, 'Aim has too little influence');
 });
