@@ -21,15 +21,13 @@ Plain HTML, CSS and JavaScript at [paulscotti.com/paisano](https://www.paulscott
   save it or mark that it stopped with discomfort. The ring is full at the reps expected and turns gold past them,
   which earns an extra seed and draws a rarer visitor. A new weight moves the expected reps, and the counter with
   them until it's been changed.
-- **The suggestion** keeps the weight while the set lands in 8 to 15 reps. Past the range it moves to the lightest
-  PowerBlock weight expected to bring it back, short of it to the heaviest, and after discomfort it never goes
-  heavier. Reps at another weight come from Epley's formula, load × (1 + reps / 30), where the load includes a rough
-  share of a 170 lb bodyweight for squats, split squats, deadlifts and calf raises; bodyweight exercises expect last
-  time's reps.
+- **The suggestion** is the PowerBlock weight expected to land nearest 8 to 15 reps, the closest to the last one
+  among equals, so it stays while the set lands in range. After discomfort it never goes heavier. Reps at another
+  weight come from Epley's formula, load × (1 + reps / 30), where the load includes a rough share of a 170 lb
+  bodyweight for squats, split squats, deadlifts and calf raises; bodyweight exercises expect last time's reps.
 - **The body.** An area gets a set for each set of an exercise that works it most and half for one that assists;
   a one-sided pair counts once. One set is full color. History shows every day, the last seven days' sets per area,
-  and each exercise's sets with a line of its weight, or reps for bodyweight. Entries from before sets were
-  confirmed kept only their target and are labeled so.
+  and each exercise's sets with a line of its weight, or reps for bodyweight.
 
 The exercise artwork was generated through the OpenAI Images API with `gpt-image-2.5-sunburst` at `quality: "max"`.
 The original PNGs, complete prompts, generation IDs and frame placement are in
@@ -51,7 +49,6 @@ everywhere, while the earlier events stay in D1.
 
 - Each snack earns a seed, beating the reps expected earns one more, and the day's third snack brings rain and three
   more. Rain grows planted wildflowers, creosote, prickly pear and mesquite, each bringing its own visitor once grown.
-  Whole-body and best rewards from versions 1 to 3 replay as they were earned.
 - Feed seeds to hatch and grow Paisano. Its belly holds three and digests one an hour.
 - Each planted variety invites another friend, starting with none in an empty garden. Pip the quail whistles with
   Paisano, Juniper the jackrabbit hops, Pebble the tortoise plays peekaboo, and Sombra the kit fox bows and naps.
@@ -87,10 +84,11 @@ map, progression rules and garden are design choices, not tested ones.
 
 The Worker keeps an append-only D1 event log and rejects malformed events. Each unsent event waits under its own
 localStorage key until the Worker has it; a Web Lock keeps one sync at a time per browser, event IDs make retries
-harmless, and snacks are sent before the hunts that refer to them. A failed sync shows a retry button; reconnecting
-or returning to the tab retries too. New snacks store their local training date (the day turns at 4 am) and hour, so
-a late confirmation or travel doesn't move them or change their visitor; older ones use the viewing device's
-timezone.
+harmless, and snacks are sent before the hunts that refer to them. While a sync can't finish, a retry button under
+**Choose a snack** says so; offline that is all, and a Worker refusal also shows its reason. Reconnecting or
+returning to the tab retries too. Snacks store their local training date (the day turns at 4 am) and hour, so a late
+confirmation or travel doesn't move them or change their visitor. The Worker still takes the two-set snacks of
+versions before 14, in case a device logs one before it updates.
 
 In production a service worker caches the app so it opens offline; a new version waits behind **Update ready**,
 which keeps an active snack. For a release, raise `version` in `config.js`, the `?v=` asset URLs and the service

@@ -2,7 +2,6 @@
    Libron is borrowed from ebis. */
 
 @font-face { font-family: Libron; font-weight: 400; font-style: normal; font-display: block; src: url(../ebis/fonts/Libron-Regular.woff2) format("woff2"); }
-@font-face { font-family: Libron; font-weight: 400; font-style: italic; font-display: block; src: url(../ebis/fonts/Libron-Italic.woff2) format("woff2"); }
 
 :root {
   --serif: Libron, Georgia, serif;
@@ -62,6 +61,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 }
 .home > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; }
 .home nav { display: flex; gap: 16px; margin-left: auto; }
+.home nav a { min-height: 44px; display: flex; align-items: center; }
 .gear svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linejoin: round; }
 .home h1 { display: flex; align-items: center; gap: 8px; font-size: 27px; line-height: 1; }
 .home h1 small { align-self: flex-end; margin: 0 0 3px; font-size: 12px; color: var(--ink-3); letter-spacing: .03em; }
@@ -177,7 +177,10 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 }
 .tally { margin: 14px 0 0; text-align: center; color: var(--ink-2); font-size: 16px; font-variant-numeric: tabular-nums; }
 
-.home footer { display: grid; justify-items: center; gap: 10px; padding-top: 18px; }
+.home footer { display: grid; justify-items: center; gap: 4px; padding-top: 18px; }
+.home footer .primary { margin-bottom: 8px; }
+.status { display: flex; gap: 18px; min-height: 28px; font-size: 12px; color: var(--ink-2); }
+.status button { min-height: 28px; }
 .primary {
   height: 54px; padding: 0 54px; border-radius: 27px; background: var(--ink); color: var(--bg); font-size: 19px; letter-spacing: .02em;
   transition: transform .15s var(--ease), opacity .2s;
@@ -217,11 +220,8 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .pockets .won { background: var(--accent); color: var(--surface); }
 .landed { margin: 12px 0 8px; min-height: 1.35em; font-size: 23px; }
 .prize-note { margin: 12px 0 0; color: var(--accent); font-size: 14px; }
-.snack-prize { margin: 5px 0 0; color: var(--accent); text-align: center; font-size: 13px; }
-@media (max-width: 360px) { .pachinko { padding-inline: 12px; } .pockets span { padding-inline: 0; } }
-@media (max-height: 750px) { .pachinko-column { max-width: 350px; } .board-hint { margin: 8px auto 12px; } .landed { margin: 6px 0; font-size: 21px; } }
 
-/* A snack: what to do, the two minutes, and how hard it was */
+/* A snack: the exercise, the weight and reps to expect, and the reps done */
 
 .snack {
   position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; overflow-y: auto; background: var(--bg);
@@ -229,8 +229,11 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 }
 .snack header { align-self: stretch; display: flex; justify-content: flex-end; max-width: 560px; width: 100%; margin: 0 auto; }
 .snack h2 { margin-top: -4px; font-size: clamp(30px, 8vw, 38px); line-height: 1.1; text-align: center; }
+#name:focus { outline: none; }
 .dose { margin: 6px 0 0; font-size: 20px; color: var(--accent); text-align: center; font-variant-numeric: tabular-nums; text-wrap: balance; }
 .dose::first-letter { text-transform: uppercase; }
+.plan { max-width: 380px; text-align: center; margin: 6px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.35; text-wrap: balance; }
+.snack-prize { margin: 5px 0 0; color: var(--accent); text-align: center; font-size: 13px; }
 .ring { position: relative; width: min(80vw, 37dvh, 320px); aspect-ratio: 1; margin: 14px 0 4px; flex: none; }
 .ring > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .spot { fill: var(--tint); }
@@ -251,6 +254,8 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .counts button { width: 40px; height: 40px; border: 1px solid var(--rule); border-radius: 50%; font-size: 22px; line-height: 1; color: var(--ink-2); }
 .counts input { width: 60px; height: 52px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 28px; text-align: center; font-variant-numeric: tabular-nums; appearance: textfield; }
 .counts input::-webkit-inner-spin-button { appearance: none; }
+.discard, .pain { min-height: 44px; padding: 8px 16px; font-size: 14px; color: var(--ink-2); }
+#swap { max-width: 100%; min-height: 44px; margin-top: 18px; border: 0; background: var(--bg); color: var(--ink-2); font-size: 15px; padding: 8px; }
 
 /* History and the desert */
 
@@ -271,7 +276,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .volume i { position: relative; height: 8px; border-radius: 4px; background: var(--rule); }
 .volume b { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--accent); }
 .volume em { font-style: normal; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.note { margin: 10px 0 0; font-size: 14px; color: var(--ink-3); line-height: 1.45; }
+.note { margin: 10px 0 0; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
 .lifts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .lifts li { display: grid; grid-template-columns: minmax(0, 1fr) 84px; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); }
 .lifts b { font-weight: 400; }
@@ -288,6 +293,16 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .rows em { grid-column: 3; grid-row: 1 / 3; font-style: normal; font-size: 15px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .rows button { grid-column: 3; grid-row: 1 / 3; height: 34px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 17px; font-size: 15px; color: var(--ink); }
 .rows button:disabled { color: var(--ink-3); cursor: default; }
+
+/* Settings: the reset and its confirmation */
+
+.danger { min-height: 44px; padding: 8px 18px; border: 1px solid var(--accent); border-radius: 22px; color: var(--accent); }
+#reset { margin-top: 14px; }
+.confirm { max-width: min(340px, calc(100vw - 40px)); padding: 22px; border: 1px solid var(--rule); border-radius: 18px; background: var(--surface); color: var(--ink); }
+.confirm::backdrop { background: rgb(0 0 0 / .35); }
+.confirm p { margin: 0 0 18px; line-height: 1.4; }
+.confirm div { display: flex; justify-content: flex-end; gap: 10px; }
+.confirm button[value=cancel] { min-height: 44px; padding: 8px 18px; color: var(--ink-2); }
 
 .toast {
   position: fixed; inset: calc(env(safe-area-inset-top) + 14px) auto auto 50%; translate: -50% 0; margin: 0; border: 0;
@@ -306,27 +321,6 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   .friend.playing .friend-frames { background-position-x: -128px; }
 }
 
-/* Workout controls stay comfortably tappable on a phone. */
-#swap { max-width: 100%; min-height: 44px; border: 0; background: var(--bg); color: var(--ink-2); font-size: 15px; padding: 8px; }
-.plan { max-width: 380px; text-align: center; margin: 6px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.35; text-wrap: balance; }
-.discard, .pain { min-height: 44px; padding: 8px 16px; font-size: 14px; color: var(--ink-2); }
-#swap { margin-top: 18px; }
-.danger { min-height: 44px; padding: 8px 18px; border: 1px solid var(--accent); border-radius: 22px; color: var(--accent); }
-#reset { margin-top: 14px; }
-.confirm { max-width: min(340px, calc(100vw - 40px)); padding: 22px; border: 1px solid var(--rule); border-radius: 18px; background: var(--surface); color: var(--ink); }
-.confirm::backdrop { background: rgb(0 0 0 / .35); }
-.confirm p { margin: 0 0 18px; line-height: 1.4; }
-.confirm div { display: flex; justify-content: flex-end; gap: 10px; }
-.confirm button[value=cancel] { min-height: 44px; padding: 8px 18px; color: var(--ink-2); }
-.status { display: flex; gap: 18px; min-height: 28px; font-size: 12px; color: var(--ink-2); }
-.status button { min-height: 28px; }
-.home footer { gap: 4px; }
-.home footer .primary { margin-bottom: 8px; }
-.home nav a { min-height: 44px; display: flex; align-items: center; }
-.note { color: var(--ink-2); }
-@media (max-height: 750px) { .snack .ring { width: min(70vw, 34dvh); } .snack .cues { font-size: 14px; } }
-
-#name:focus { outline: none; }
 @media (max-width: 400px) {
   .home > header { gap: 10px; }
   .home h1 { font-size: 24px; gap: 6px; }
@@ -334,10 +328,19 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   .home nav { gap: 13px; }
   .home nav a { font-size: 14px; }
 }
-@media (max-width: 360px) { .home { padding-inline: 18px; } }
+@media (max-width: 360px) {
+  .home { padding-inline: 18px; }
+  .pachinko { padding-inline: 12px; }
+  .pockets span { padding-inline: 0; }
+}
 @media (max-height: 750px) {
   .home .body { max-height: 26dvh; }
   .today { padding-top: 10px; }
   .tally { margin-top: 10px; }
   .home footer { padding-top: 12px; }
+  .pachinko-column { max-width: 350px; }
+  .board-hint { margin: 8px auto 12px; }
+  .landed { margin: 6px 0; font-size: 21px; }
+  .snack .ring { width: min(70vw, 34dvh); }
+  .snack .cues { font-size: 14px; }
 }

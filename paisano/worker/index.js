@@ -44,17 +44,16 @@ async function route(request, env) {
       if (x) {
         const weights = x.hold === 'none' ? [null] : x.share ? [0, ...config.weights] : config.weights;
         const rep = r => Number.isInteger(r) && r >= 0 && r <= 99;
-        valid = (d.prize === undefined || (d.prize === 'seed' && !!d.rounds)) && ['easy', 'good', 'hard', 'pain'].includes(d.feel) && (d.rounds
-          // One set, or a set a side; two sets each before v14. expect is the reps expected for each, since v14.
-          ? Array.isArray(d.rounds) && [x.sides ? 2 : 1, 2].includes(d.rounds.length) && d.rounds.every(v => v && rep(v.r) && weights.includes(v.w)) && d.rounds.some(v => v.r > 0)
-            && (d.expect === undefined || Array.isArray(d.expect) && d.expect.length === d.rounds.length && d.expect.every(r => rep(r) && r > 0))
-            && /^\d{4}-\d{2}-\d{2}$/.test(d.day) && Number.isFinite(Date.parse(d.day)) && new Date(d.day).toISOString().slice(0, 10) === d.day && Number.isInteger(d.hour) && d.hour >= 0 && d.hour < 24
-          : rep(d.r) && d.r > 0 && weights.includes(d.w));
+        // One set, or a set a side, with the reps expected for each; versions before 14 send two sets and no expect.
+        valid = [undefined, 'seed'].includes(d.prize) && ['hard', 'pain'].includes(d.feel)
+          && Array.isArray(d.rounds) && [x.sides ? 2 : 1, 2].includes(d.rounds.length) && d.rounds.every(v => v && rep(v.r) && weights.includes(v.w)) && d.rounds.some(v => v.r > 0)
+          && (d.expect === undefined || Array.isArray(d.expect) && d.expect.length === d.rounds.length && d.expect.every(r => rep(r) && r > 0))
+          && /^\d{4}-\d{2}-\d{2}$/.test(d.day) && Number.isFinite(Date.parse(d.day)) && new Date(d.day).toISOString().slice(0, 10) === d.day && Number.isInteger(d.hour) && d.hour >= 0 && d.hour < 24;
       }
     } else if (e.kind === 'feed') valid = d.n === 1;
     else if (e.kind === 'plant') valid = config.plants.some(p => p.id === d.p);
     else if (e.kind === 'reset') valid = true; // the app replays only what comes after the last one
-    else if (e.kind === 'hunt') valid = typeof d.v === 'string' && typeof d.ok === 'boolean' && (d.c === undefined || config.creatures.some(c => c.id === d.c));
+    else if (e.kind === 'hunt') valid = typeof d.v === 'string' && typeof d.ok === 'boolean' && config.creatures.some(c => c.id === d.c);
     if (!valid) return new Response('Invalid ' + e.kind + ' event.', { status: 400 });
   }
   // A hunt must reference a real snack, otherwise one malformed event breaks every device's replay.

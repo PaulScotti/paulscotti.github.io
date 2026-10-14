@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS events (
   id TEXT NOT NULL UNIQUE,  -- made by the device, so an event sent twice is kept once
   at INTEGER NOT NULL,      -- when it happened, in ms
   kind TEXT NOT NULL,       -- snack, feed, hunt, plant or reset
-  data TEXT NOT NULL        -- snack: {x, rounds: [{r,w}] or a side each, expect, feel, day, hour, prize?}; legacy: {x,w,r,feel}; feed: {n}; hunt: {v,c,ok}; plant: {p}; reset: {}
+  data TEXT NOT NULL        -- snack: {x, rounds: [{r,w}] or a side each, expect, feel, day, hour, prize?}; feed: {n}; hunt: {v,c,ok}; plant: {p}; reset: {}
 );

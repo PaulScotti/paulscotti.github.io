@@ -2,7 +2,7 @@
 
 export default {
   // A snack is one set (a set a side for one-sided exercises), as many reps as you can, to failure with good form.
-  // The weight is kept where that's 8 to 15 reps.
+  // The next weight is the one expected to land nearest 8 to 15 reps.
   reps: [8, 15],
 
   // A rough bodyweight in pounds, never logged: a squat, split squat, deadlift or calf raise also moves a share of it,
@@ -16,9 +16,9 @@ export default {
   weights: [5, 7.5, 10, 15, 17.5, 20, 25, 27.5, 30, 35, 37.5, 40, 45, 47.5, 50, 55, 57.5, 60, 65, 67.5, 70, 75, 77.5, 80],
 
   // Seeds: one a snack, three more with the day's rain (its third snack), one for more reps than expected and one for
-  // the pachinko seed. best and whole preserve rewards from versions 1 to 3.
+  // the pachinko seed.
   rainAt: 3,
-  seeds: { snack: 1, day: 3, beat: 1, pachinko: 1, best: 2, whole: 3 },
+  seeds: { snack: 1, day: 3, beat: 1, pachinko: 1 },
 
   // Paisano grows as it eats: the food eaten by each stage, a seed being one and a creature its size.
   stages: [['Egg', 0], ['Hatchling', 1], ['Chick', 15], ['Fledgling', 80], ['Roadrunner', 300]],
@@ -150,5 +150,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 14,
+  version: 15,
 };
