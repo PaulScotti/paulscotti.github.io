@@ -117,11 +117,9 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .wobble .egg, .wobble .chick { animation: wobble .3s ease-in-out 3; }
 @keyframes wobble { 25% { rotate: -9deg; } 75% { rotate: 9deg; } }
 
-/* The visitor from the last snack: named until the hunt, with a ! while it looks at Paisano */
+/* The visitor from the last snack, with a ! while it looks at Paisano */
 .visitor { cursor: pointer; }
 .visitor .hit { fill: transparent; }
-.visitor .label { font: 9px var(--serif); fill: var(--ink-2); stroke: var(--sky); stroke-width: 2; stroke-linejoin: round; paint-order: stroke; text-anchor: middle; transition: opacity .3s; }
-.visitor.hunted .label { opacity: 0; }
 .visitor .alert { font: 17px var(--serif); fill: var(--accent); text-anchor: middle; opacity: 0; }
 .visitor.looking .alert { opacity: 1; }
 .visitor.twitch use { animation: twitch .35s; }

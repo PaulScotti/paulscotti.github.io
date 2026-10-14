@@ -1,8 +1,8 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=16';
-import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=16';
+import config from './config.js?v=17';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=17';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -388,7 +388,7 @@ function render() {
   if ([...$('friends').children].map(n => n.dataset.friend).join() !== friends.map(f => f.id).join()) {
     goodbye();
     $('friends').innerHTML = friends.map(f => `<g class="friend" data-friend="${f.id}" transform="translate(${f.x} ${f.y})" style="--friend-row: ${-config.friends.indexOf(f) * 64}px">
-      <title>${f.name} · ${f.kind}</title><ellipse class="shadow" rx="15" ry="2"/>
+      <ellipse class="shadow" rx="15" ry="2"/>
       <g class="friend-motion"><foreignObject class="friend-art" x="-32" y="-59" width="64" height="64"><div xmlns="http://www.w3.org/1999/xhtml" class="friend-frames"></div></foreignObject></g>
       <rect class="pet-hit" x="-25" y="-44" width="50" height="48" rx="12" role="button" tabindex="0" aria-label="${f.action}"/>
     </g>`).join('');
@@ -791,11 +791,8 @@ function visitor() {
   const c = C[v.c], plant = P[c.plant];
   prey.x = plant ? plant.x + (plant.x > 280 ? -30 : 30) : pet.x < 180 ? 270 + Math.random() * 40 : 80 + Math.random() * 30;
   prey.face = prey.x > pet.x ? 1 : -1;
-  $('visitor').innerHTML = `<g class="critter"><circle class="hit" cy="-4" r="11"/><use href="#c-${c.id}"/></g><text class="alert">!</text><text class="label"></text>`;
-  const top = $('visitor').firstChild.getBBox().y * BIG;
-  $('visitor').querySelector('.alert').setAttribute('y', top - 5);
-  $('visitor').querySelector('.label').setAttribute('y', top - 7);
-  $('visitor').querySelector('.label').textContent = c.name;
+  $('visitor').innerHTML = `<g class="critter"><circle class="hit" cy="-4" r="11"/><use href="#c-${c.id}"/></g><text class="alert">!</text>`;
+  $('visitor').querySelector('.alert').setAttribute('y', $('visitor').firstChild.getBBox().y * BIG - 5);
   aim();
 }
 const aim = () => {
@@ -813,7 +810,6 @@ async function stalk() {
   if (stage < c.size) return toast(`The ${c.name} is too big for Paisano until it’s a ${config.stages[c.size][0].toLowerCase()}.`);
   if (levels().nerve < (c.nerve ?? 0)) return toast(`Paisano hasn’t the nerve for the ${c.name} yet: it takes Nerve ${c.nerve}.`);
   const h = hunt = { c, looking: false, since: 0, moving: true, timer: 0, sound: null };
-  $('visitor').classList.add('hunted');
   while (pet.busy) await new Promise(r => setTimeout(r, 100)); // whatever it's doing, it finishes first
   if (h !== hunt) return;
   pet.busy = true;
@@ -899,7 +895,7 @@ function end() {
   hunt = null;
   pet.busy = false;
   $('bird').classList.remove('stalk');
-  $('visitor').classList.remove('hunted', 'looking', 'twitch');
+  $('visitor').classList.remove('looking', 'twitch');
 }
 
 $('dividers').innerHTML = dividers.map(x => `<path d="M${x} 312V354"/>`).join('');
