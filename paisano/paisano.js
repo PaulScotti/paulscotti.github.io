@@ -1,8 +1,8 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=18';
-import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=18';
+import config from './config.js?v=19';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=19';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -377,7 +377,7 @@ function render() {
   $('seeds').textContent = seeds;
   $('feed').disabled = !loaded || seeds <= 0;
   $('choose').disabled = !loaded;
-  $('choose').firstChild.data = sessionStorage.getItem('paisano.snack') ? 'Resume snack' : 'Choose a snack';
+  $('choose').firstChild.data = sessionStorage.getItem('paisano.snack') ? 'Resume exercise' : 'Start exercise';
   ripen($('ripe'));
   renderedDay = dayOf(Date.now());
   const i = stageOf(st.food), next = config.stages[i + 1];
@@ -404,7 +404,7 @@ function render() {
 // What's in Paisano's belly now, in seeds: what it last had, less one an hour since.
 const fullness = () => Math.max(0, st.belly - (Date.now() - st.ate) / 3600e3);
 
-// The seeds a snack logged now would earn before its bonuses, as a fraction: one ripens every half hour since the last
+// The seeds a snack logged now would earn before its bonuses, as a fraction: one ripens every 15 minutes since the last
 // snack, up to two.
 const ripeness = () => Math.min(config.seeds.snack, (Date.now() - st.last) / (config.ripen * 6e4));
 
@@ -424,8 +424,9 @@ function tick() {
   if (renderedDay !== dayOf(Date.now())) return render();
   ripen($('ripe'));
   if (snack) reach();
-  const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4), more = config.rainAt - t.snacks.length;
-  const last = !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
+  // While a seed is ripening, how long until it's ripe; after that, how long since the last snack.
+  const t = today(), minutes = Math.round((Date.now() - (t.snacks.at(-1)?.at ?? 0)) / 6e4), more = config.rainAt - t.snacks.length, r = ripeness();
+  const last = r < config.seeds.snack ? `Next seed in ${Math.ceil((Math.floor(r) + 1 - r) * config.ripen)} min` : !t.snacks.length ? '' : minutes < 1 ? 'Last one just now' : minutes < 60 ? `Last one ${minutes} minute${minutes > 1 ? 's' : ''} ago`
     : `Last one ${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ''} ago`;
   $('since').textContent = [last, t.rain ? 'It rained today' : `${more} more snack${more > 1 ? 's' : ''} for rain`].filter(Boolean).join(' · ');
   const stage = config.stages[stageOf(st.food)][0], hungry = st.food > 0 && !fullness();
@@ -1049,7 +1050,7 @@ addEventListener('storage', e => {
     render();
   }
 });
-setInterval(tick, 30e3);
+setInterval(tick, 10e3);
 
 history.replaceState(null, '', location.pathname);
 addEventListener('hashchange', route);

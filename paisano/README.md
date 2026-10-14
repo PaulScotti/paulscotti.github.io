@@ -51,11 +51,11 @@ everywhere, while the earlier events stay in D1.
 
 ## Paisano's garden
 
-- **Seeds ripen between snacks.** A snack earns one seed for each half hour since the last one, up to two, so one
-  right after another earns nothing. Two seeds on **Choose a snack** fill from the bottom as they ripen, and the
-  same seeds sit on **Save**, joined by the bonus seeds for beating the reps expected and hitting the pachinko seed,
-  which count only once a seed is ripe and only for a snack with reps. The day's third snack brings rain, which
-  grows the garden.
+- **Seeds ripen between snacks.** A snack earns one seed for each 15 minutes since the last one, up to two, so one
+  right after another earns nothing. Two seeds on **Start exercise** fill from the bottom as they ripen, the line
+  below counts down the minutes to the next, and the same seeds sit on **Save**, joined by the bonus seeds for
+  beating the reps expected and hitting the pachinko seed, which count only once a seed is ripe and only for a snack
+  with reps. The day's third snack brings rain, which grows the garden.
 - Feed seeds to hatch and grow Paisano, to a chick at 20, a fledgling at 150 and a roadrunner at 600. Its belly
   holds three and digests one an hour.
 - Eight plants, from wildflowers at 6 seeds to a palo verde at 140, each grow with rain and bring someone.
@@ -63,7 +63,7 @@ everywhere, while the earlier events stay in D1.
   brittlebush, ocotillo and palo verde each bring a friend as soon as they're planted: Pip the quail whistles with
   Paisano, Juniper the jackrabbit hops, Pebble the tortoise plays peekaboo, and Sombra the kit fox bows and naps.
   Friends play on their own or when tapped; their games use no seeds. With snacks about an hour apart on weekdays,
-  a simulated player grows the garden over about eleven weeks and raises a roadrunner in about five.
+  a simulated player grows the garden over about eight weeks and raises a roadrunner in about five.
 - Each snack brings a creature that's out at that hour, a rarer one with the rain. Tap it to stalk: step while it
   looks away, wait while it looks up. Escape, another screen or another tab ends the hunt, and the visitor waits to
   be tried again. Catches feed Paisano and build Speed, Stealth and Nerve. The Desert page has the plants, traits and
@@ -98,7 +98,7 @@ map, progression rules and garden are design choices, not tested ones.
 The Worker keeps an append-only D1 event log and rejects malformed events. Each unsent event waits under its own
 localStorage key until the Worker has it; a Web Lock keeps one sync at a time per browser, event IDs make retries
 harmless, and snacks are sent before the hunts that refer to them. While a sync can't finish, a retry button under
-**Choose a snack** says so; offline that is all, and a Worker refusal also shows its reason. Reconnecting or
+**Start exercise** says so; offline that is all, and a Worker refusal also shows its reason. Reconnecting or
 returning to the tab retries too. Snacks store their local training date (the day turns at 4 am) and hour, so a late
 confirmation or travel doesn't move them or change their visitor. The Worker still takes the two-set snacks of
 versions before 14, in case a device logs one before it updates.

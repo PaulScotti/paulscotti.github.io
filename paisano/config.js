@@ -17,7 +17,7 @@ export default {
 
   // Seeds: a snack's ripen one every `ripen` minutes after the last snack, up to `snack`, so one right after another
   // earns none. A ripe snack earns one more for more reps than expected and one for hitting the pachinko seed.
-  ripen: 30,
+  ripen: 15,
   seeds: { snack: 2, beat: 1, pachinko: 1 },
 
   // The day's third snack brings rain, and plants grow with each rain.
@@ -37,7 +37,7 @@ export default {
 
   // Seeds can be planted instead of fed: a plant costs seeds and grows with each rain. Each brings someone: a creature
   // to stalk once it's grown, or a friend as soon as it's planted. x is where it grows; later plants stand behind. With
-  // snacks about an hour apart on weekdays, a simulated player grows them around days 1, 2, 6, 12, 21, 34, 54 and 78.
+  // snacks about an hour apart on weekdays, a simulated player grows them around days 1, 2, 5, 9, 15, 25, 36 and 55.
   plants: [
     { id: 'flowers', name: 'Wildflowers', cost: 6, rains: 1, x: 182 },
     { id: 'marigold', name: 'Desert marigold', cost: 12, rains: 1, x: 72 },
@@ -158,5 +158,5 @@ export default {
   ],
 
   // Paisano's version, shown beside the logo so each device shows which code it runs. Raised with every update.
-  version: 18,
+  version: 19,
 };

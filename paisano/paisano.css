@@ -180,7 +180,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .status { display: flex; gap: 18px; min-height: 28px; font-size: 12px; color: var(--ink-2); }
 .status button { min-height: 28px; }
 .primary {
-  height: 54px; padding: 0 54px; border-radius: 27px; background: var(--ink); color: var(--bg); font-size: 19px; letter-spacing: .02em;
+  height: 54px; padding: 0 54px; border-radius: 27px; background: var(--ink); color: var(--bg); font-size: 19px; letter-spacing: .02em; white-space: nowrap;
   transition: transform .15s var(--ease), opacity .2s;
 }
 .primary:active { transform: scale(.97); }
@@ -339,6 +339,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 }
 @media (max-width: 360px) {
   .home { padding-inline: 18px; }
+  .home footer .primary { padding-inline: 36px; }
   .pachinko { padding-inline: 12px; }
   .pockets span { padding-inline: 0; }
 }
