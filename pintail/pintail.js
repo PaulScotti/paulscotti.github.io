@@ -4,6 +4,7 @@
 import { parse, prepare, identify, split, join, setPri, setKey, toggleCtx, setText, complete, remove, addChild, quick, merge, next, routine, repeatLabel, iso, addDays, weekday, DAYS, MONTHS } from './todo.js';
 
 const $ = id => document.getElementById(id);
+const desktop = matchMedia('(min-width: 760px)');
 const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const API = (LOCAL ? 'http://localhost:8790' : 'https://pintail.scottibrain.workers.dev') + '/todo.txt';
 
@@ -29,9 +30,12 @@ function edit(f, note, group = null) {
   else if (undos.push({ before, after, group, at: now }) > 20) undos.shift();
   sessionStorage.setItem('pintail.undo', JSON.stringify(undos));
   if (note) toast(note, true);
-  render();
   clearTimeout(saveTimer);
-  if (group) saveTimer = setTimeout(sync, 500); else sync();
+  saveTimer = null;
+  if (group) {
+    for (const b of document.querySelectorAll('[data-undo]')) b.hidden = false;
+    saveTimer = setTimeout(() => { saveTimer = null; render(); sync(); }, 500);
+  } else { render(true); sync(); }
 }
 function undo() {
   const u = undos.pop();
@@ -40,7 +44,7 @@ function undo() {
   keep(result.text);
   sessionStorage.setItem('pintail.undo', JSON.stringify(undos));
   toast(result.conflicts ? 'Undone. Newer edits kept.' : 'Undone');
-  render();
+  render(true);
   sync();
 }
 const find = (i, line) => { const uid = parse(line).uid; return split(text()).findIndex(l => parse(l).uid === uid); };
@@ -133,9 +137,9 @@ const linked = s => s.split(/(https?:\/\/[^\s<>"]*[^\s<>".,;:!?)\]'])/).map((par
 // One task row. Categories already chosen in the filter, or named by its group, aren't repeated on it.
 function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up, hide = [] } = {}) {
   const ctx = t.ctx.filter(c => ![...picked, ...hide].some(p => same(p, c)));
-  const meta = [t.conflict && 'Conflict: review both versions', t.pri && 'Priority ' + t.pri, ...ctx, t.rec && repeatLabel(t), up && '↳ ' + up.text].filter(Boolean);
+  const meta = [t.conflict && 'Conflict: review both versions', ...ctx, t.rec && repeatLabel(t), up && '↳ ' + up.text].filter(Boolean);
   return `<div class="task${t.done ? ' done' : ''}" data-i="${t.i}" data-uid="${esc(t.uid)}" style="--depth:${depth}" tabindex="0">
-    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}" aria-pressed="${t.done}" tabindex="-1"></button>
+    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}${!t.done && t.pri ? ', priority ' + t.pri : ''}" aria-pressed="${t.done}" title="${t.done ? 'Reopen' : t.pri ? 'Priority ' + t.pri : 'Complete'}" tabindex="-1"><span aria-hidden="true">${!t.done && t.pri || ''}</span></button>
     <div class="body"><span class="title">${linked(t.text || t.line.trim())}</span>${meta.length ? `<span class="meta">${esc(meta.join(' · '))}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
     ${label ? `<span class="when${late ? ' late' : ''}">${esc(label)}</span>` : ''}
   </div>`;
@@ -148,12 +152,26 @@ const groups = (items, label) => items.reduce((out, x) => {
 }, []);
 const list = (gs, rows, empty, head = l => l) => gs.length ? gs.map(([l, xs]) => `<div class="group"><h3>${head(l, xs)}</h3>${xs.map(rows).join('')}</div>`).join('') : `<p class="empty">${empty}</p>`;
 
-function render() {
+// Measure only visible rows. The DOM changes synchronously, so keyboard actions keep their place.
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+function rowRects() {
+  const result = new Map();
+  for (const el of document.querySelectorAll('.pins .task, #board .task')) {
+    const rect = el.getBoundingClientRect();
+    if (rect.width && rect.bottom > 0 && rect.top < innerHeight && getComputedStyle(el).visibility !== 'hidden') result.set(el.closest('section').id + ':' + el.dataset.uid, { el, rect });
+  }
+  return result;
+}
+function render(animate = false) {
+  const before = animate && !motion.matches && !document.querySelector('dialog[open]') ? rowRects() : null;
   const raw = text(), focused = document.activeElement.closest('.pins .task, #board .task'), was = focused?.dataset.uid, section = focused?.closest('section');
   for (const b of document.querySelectorAll('[data-undo]')) b.hidden = !undos.length;
   document.body.dataset.view = view;
   document.body.classList.toggle('finding', query !== null);
-  for (const b of $('views').children) b.classList.toggle('on', b.dataset.view === view);
+  for (const b of $('views').children) {
+    const on = b.dataset.view === view || b.dataset.view === 'soon' && view !== 'done' && desktop.matches;
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+  }
   if (raw === null) return;
   today = iso(new Date());
   tasks = split(raw).map((line, i) => line.trim() && Object.assign(parse(line), { i, kids: [], up: null })).filter(Boolean);
@@ -177,23 +195,22 @@ function render() {
   names = ranked.map(k => k.name);
   const chips = ranked.filter(k => k.n || picked.some(p => same(p, k.name)));
   $('chips').hidden = query !== null || !chips.length;
-  $('chips').innerHTML = `<button class="${picked.length ? '' : 'on'}" data-ctx="" aria-pressed="${!picked.length}">All</button>` + chips.map(k => {
+  patch('chips', `<button class="${picked.length ? '' : 'on'}" data-ctx="" aria-pressed="${!picked.length}">All</button>` + chips.map(k => {
     const on = picked.some(p => same(p, k.name));
     return `<button class="${on ? 'on' : ''}" data-ctx="${esc(k.name)}" aria-pressed="${on}">${esc(k.name)}<small>${k.n}</small></button>`;
-  }).join('');
+  }).join(''));
 
   const shown = t => !picked.length || t.ctx.some(c => picked.some(p => same(p, c)));
   const open = t => !t.done;
   const tree = t => [t, ...t.kids.filter(k => open(k) && !k.pin).flatMap(tree)]; // a pinned step shows with the pins
 
-  // Pinned tasks sit above everything, whatever the filter, and the pintail's tail takes the accent while any are.
+  // Pinned tasks sit above everything, whatever the filter.
   const pins = tasks.filter(t => open(t) && t.pin).sort((a, b) => a.pin.localeCompare(b.pin) || a.i - b.i);
-  document.body.classList.toggle('pinned', pins.length > 0);
   $('pins').hidden = !pins.length;
-  $('pins').lastChild.innerHTML = pins.map(t => tree(t).map(m => row(m, {
+  patch('pins-list', pins.map(t => tree(t).map(m => row(m, {
     depth: m.depth - t.depth, late: m.due < today,
     label: m.due ? dayName(m.due) : m === t && /^\d{4}-\d\d-\d\d$/.test(t.pin) ? 'pinned ' + ago(t.pin) : '',
-  })).join('')).join('');
+  })).join('')).join(''));
 
   const tops = tasks.filter(t => open(t) && !t.pin && !(t.up && open(t.up))).map(t => ({ t, members: tree(t) })).filter(x => x.members.some(shown));
   for (const x of tops) x.due = x.members.map(m => m.due).filter(Boolean).sort()[0] || null;
@@ -202,40 +219,62 @@ function render() {
   const soon = tops.filter(x => x.due).sort((a, b) => a.due.localeCompare(b.due) || RANK(a.t.pri) - RANK(b.t.pri) || a.t.i - b.t.i);
   const movable = tasks.filter(t => !t.done && !t.rec && t.due && t.due < today && (t.pin || shown(t) || tops.some(x => x.members.includes(t))));
   $('pins-move').hidden = !pins.some(t => !t.rec && t.due && t.due < today) || soon.some(x => x.due < today);
-  $('soon').lastChild.innerHTML = list(groups(soon, x => soonGroup(x.due)), x => rows(x, m => {
+  patch('soon-list', list(groups(soon, x => soonGroup(x.due)), x => rows(x, m => {
     const g = soonGroup(x.due);
     return { label: !m.due || g === dayName(m.due) ? '' : dayName(m.due), late: m.due < today };
   }), 'Nothing coming up. End a task with a day, like “Call the bank fri”, and it waits here.', (l, xs) =>
-    l === 'Overdue' ? `${l}${movable.length ? `<button class="move" data-move>Move ${movable.length} to today</button>` : ''}` : near(xs[0].due) || xs[0].due === today ? `${l} <small>${short(xs[0].due)}</small>` : l);
+    l === 'Overdue' ? `${l}${movable.length ? `<button class="move" data-move>Move ${movable.length} to today</button>` : ''}` : near(xs[0].due) || xs[0].due === today ? `${l} <small>${short(xs[0].due)}</small>` : l));
+
+  $('soon-count').textContent = soon.reduce((n, x) => n + x.members.length, 0);
 
   // Later: what has no day, by category, the most important and then the newest first.
   const group = x => x.t.ctx.find(c => !picked.length || picked.some(p => same(p, c))) || '';
   const placed = c => c ? names.findIndex(n => same(n, c)) : names.length;
   const later = tops.filter(x => !x.due).sort((a, b) => placed(group(a)) - placed(group(b)) || RANK(a.t.pri) - RANK(b.t.pri) || (b.t.created || '').localeCompare(a.t.created || '') || b.t.i - a.t.i);
-  $('later').lastChild.innerHTML = list(groups(later, x => names[placed(group(x))] || 'No category'), x => rows(x, m => ({ label: m === x.t && m.created ? age(m.created) : '', hide: [group(x)] })),
-    'Nothing without a day. Tasks you add without one wait here, by category.');
+  patch('later-list', list(groups(later, x => names[placed(group(x))] || 'No category'), x => rows(x, m => ({ label: m === x.t && m.created ? age(m.created) : '', hide: [group(x)] })),
+    'Nothing without a day. Tasks you add without one wait here, by category.'));
 
+  $('later-count').textContent = later.reduce((n, x) => n + x.members.length, 0);
   const history = new Map();
   for (const t of tasks) if (t.done && t.rec && t.doneDate) history.set(routine(t), (history.get(routine(t)) || new Set()).add(t.doneDate));
   const routines = tasks.filter(t => open(t) && t.rec && shown(t)).sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999') || a.i - b.i);
   $('routine-toggle').textContent = `Routines · ${routines.length}`;
   $('routine-toggle').setAttribute('aria-expanded', localStorage.getItem('pintail.routines') === 'open');
   $('routines').classList.toggle('collapsed', localStorage.getItem('pintail.routines') !== 'open');
-  $('routines').lastChild.innerHTML = routines.length ? routines.map(t => row(t, {
+  patch('routines-list', routines.length ? routines.map(t => row(t, {
     label: t.due ? dayName(t.due) : '', late: t.due < today, extra: strip(t, history.get(routine(t)) || new Set()),
-  })).join('') : '<p class="empty">Nothing repeats. End a task with how often, like “Journal every weekday” or “Water plants every 3 days”.</p>';
+  })).join('') : '<p class="empty">Nothing repeats. End a task with how often, like “Journal every weekday” or “Water plants every 3 days”.</p>');
 
   const done = tasks.filter(t => t.done && shown(t)).sort((a, b) => (b.doneDate || '').localeCompare(a.doneDate || '') || b.i - a.i);
-  $('done').lastChild.innerHTML = list(groups(done, t => doneGroup(t.doneDate)), t => row(t, { label: t.doneDate && doneGroup(t.doneDate) === month(t.doneDate) ? short(t.doneDate) : '' }), 'Nothing done yet.');
+  patch('done-list', list(groups(done, t => doneGroup(t.doneDate)), t => row(t, { label: t.doneDate && doneGroup(t.doneDate) === month(t.doneDate) ? short(t.doneDate) : '' }), 'Nothing done yet.'));
+
+  $('done-count').textContent = done.length;
 
   if (query !== null) {
     const q = query.toLowerCase(), hit = t => [t.text, t.notes || '', t.conflict ? 'conflict' : '', ...t.ctx].join(' ').toLowerCase().includes(q);
     const found = q ? tasks.filter(hit).sort((a, b) => a.done - b.done || (a.done ? (b.doneDate || '').localeCompare(a.doneDate || '') : (a.due || '9999').localeCompare(b.due || '9999'))) : [];
-    $('found').lastChild.innerHTML = q ? list(groups(found, t => t.done ? 'Done' : 'Open'), t => row(t, { label: t.done ? t.doneDate && short(t.doneDate) : t.due ? dayName(t.due) : '', late: !t.done && t.due < today }), 'No tasks match.') : '';
+    patch('found-list', q ? list(groups(found, t => t.done ? 'Done' : 'Open'), t => row(t, { label: t.done ? t.doneDate && short(t.doneDate) : t.due ? dayName(t.due) : '', late: !t.done && t.due < today }), 'No tasks match.') : '');
   }
   if (editing && $('sheet').open) fill();
   // Redrawing replaces the rows, so the task that had the keyboard's focus gets it back.
   if (was && section) [...section.querySelectorAll('.task')].find(el => el.dataset.uid === was && el.offsetParent)?.focus({ preventScroll: true });
+  if (before) {
+    const after = rowRects(), timing = { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' };
+    for (const [id, { el, rect }] of after) {
+      const old = before.get(id)?.rect;
+      if (!old) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], timing);
+      else if (Math.abs(old.top - rect.top) > 1 || Math.abs(old.left - rect.left) > 1) el.animate([{ transform: `translate(${old.left - rect.left}px, ${old.top - rect.top}px)` }, { transform: 'none' }], timing);
+    }
+    const done = new Set(tasks.filter(t => t.done).map(t => t.uid));
+    for (const [id, { el, rect }] of before) if (!after.has(id) && !el.isConnected) {
+      const ghost = el.cloneNode(true);
+      ghost.classList.add('task-ghost'); ghost.inert = true; ghost.setAttribute('aria-hidden', 'true');
+      if (done.has(el.dataset.uid)) { ghost.classList.add('done'); ghost.querySelector('.check').classList.add('px'); }
+      Object.assign(ghost.style, { left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px', height: rect.height + 'px' });
+      document.body.append(ghost);
+      ghost.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateX(8px)' }], { duration: 160, fill: 'forwards' }).finished.then(() => ghost.remove());
+    }
+  }
 }
 
 // How steady a routine has been: one mark per day for the last two weeks (per week or month for slower ones),
@@ -263,7 +302,7 @@ function open(i) {
   $('new-tag').value = $('kid').value = '';
   editing = { i, line: split(text())[i] };
   if (!$('sheet').open) $('sheet').showModal();
-  $('sheet').focus(); // not the first button, which would show a ring
+  $('sheet').querySelector('.head').focus({ preventScroll: true });
   fill();
 }
 function change(f, note, group) { // the sheet follows the task's new line, so it's set before the list redraws
@@ -286,6 +325,7 @@ function fill() {
   $('sheet-check').setAttribute('aria-label', (t.done ? 'Reopen ' : 'Complete ') + t.text);
   $('sheet-check').setAttribute('aria-pressed', t.done);
   $('sheet-check').className = `check p${t.done ? 'x' : t.pri || ''}`;
+  $('sheet-check').textContent = !t.done && t.pri || '';
   $('pin').setAttribute('aria-pressed', !!t.pin);
   $('pin').setAttribute('aria-label', t.pin ? 'Unpin' : 'Pin');
   if (document.activeElement !== $('title')) $('title').value = t.text;
@@ -317,6 +357,7 @@ const repin = line => setKey(line, 'pin', parse(line).pin ? null : today); // pi
 const fallback = () => picked.slice(0, 1);
 function hint() {
   const value = $('add').task.value, at = value.match(/(?:^|\s)@([\w-]*)$/);
+  $('capture').disabled = !value.trim();
   if (!value.trim()) return $('hint').hidden = true;
   if (at) {
     const matches = names.filter(n => n.toLowerCase().startsWith(at[1].toLowerCase())).slice(0, 6);
@@ -358,9 +399,9 @@ $('lock').onsubmit = e => {
 $('views').onclick = e => {
   const v = e.target.closest('button')?.dataset.view;
   if (!v) return;
-  view = v === view && v === 'done' && matchMedia('(min-width: 760px)').matches ? 'soon' : v;
+  view = v === view && v === 'done' && desktop.matches ? 'soon' : v;
   localStorage.setItem('pintail.view', view);
-  render();
+  render(true);
   scrollTo(0, 0);
 };
 $('chips').onclick = e => {
@@ -369,7 +410,7 @@ $('chips').onclick = e => {
   const c = b.dataset.ctx;
   picked = !c ? [] : picked.some(p => same(p, c)) ? picked.filter(p => !same(p, c)) : [...picked, c];
   localStorage.setItem('pintail.filter', JSON.stringify(picked));
-  render();
+  render(true);
   hint();
 };
 $('app').addEventListener('click', e => { // rows in the pinned band and the columns, and Move to today
@@ -417,7 +458,7 @@ $('find').onclick = () => {
   $('search').hidden = query === null;
   $('search').firstChild.value = '';
   if (query !== null) $('search').firstChild.focus();
-  render();
+  render(true);
 };
 $('search').firstChild.oninput = e => { query = e.target.value; render(); };
 $('search').firstChild.onkeydown = e => { if (e.key === 'Escape') $('find').onclick(); };
@@ -478,9 +519,8 @@ $('help-open').onclick = () => $('help').showModal();
 $('status').onclick = sync;
 
 // In the sheet
-$('sheet').addEventListener('close', () => { editing = null; });
+$('sheet').addEventListener('close', () => { editing = null; if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; render(); sync(); } });
 $('sheet').onclick = e => {
-  if (e.target === $('sheet')) return $('sheet').close(); // a tap outside
   const step = e.target.closest('#kids .task'), b = e.target.closest('button');
   if (step) { // a step: its circle completes it, its words open it
     const k = tasks.find(x => x.i === +step.dataset.i);
@@ -530,7 +570,7 @@ addEventListener('keydown', e => {
   if (e.target.closest('input, textarea') || e.isComposing) return;
   if (e.key === 'z' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); return undo(); }
   if (document.querySelector('dialog[open]') || e.metaKey && e.key !== 'z' || e.ctrlKey && e.key !== 'z' || e.altKey) return;
-  const rows = () => [...document.querySelectorAll('.pins .task, #board .task')].filter(el => el.offsetParent);
+  const rows = () => [...document.querySelectorAll('.pins .task, #board .task')].filter(el => el.offsetParent && getComputedStyle(el).visibility !== 'hidden');
   const row = e.target.closest('.task'), at = rows().indexOf(row), task = row && tasks.find(x => x.i === +row.dataset.i);
   if (e.key === 'j' || e.key === 'k' || row && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
     e.preventDefault();
@@ -559,6 +599,12 @@ setInterval(() => {
   if (iso(new Date()) !== today) render(); // past midnight
   sync();
 }, 30e3);
+
+const sizes = new ResizeObserver(entries => {
+  for (const { target } of entries) document.documentElement.style.setProperty('--' + target.id + '-height', target.getBoundingClientRect().height + 'px');
+});
+for (const id of ['add', 'masthead']) sizes.observe($(id));
+desktop.addEventListener('change', () => render());
 
 // Migrate cached files once, under the same lock as sync. Legacy devices derive the same task IDs.
 await navigator.locks.request('pintail-sync', async () => {

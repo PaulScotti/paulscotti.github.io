@@ -13,15 +13,13 @@ installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Wo
   per day for two weeks, or per week or month for slower ones.
 - **Done** is what's been finished, by day and then by month.
 - **Pinned** tasks sit above all of these, on every view and whatever the categories chosen, with the day each was
-  pinned. A pintail is named for its long pointed tail: while anything is pinned, the tail of the pintail in the
-  masthead turns the accent colour, and the pin itself is drawn as that tail. Done unpins, and a routine's next
-  date comes back unpinned.
+  pinned. Done unpins, and a routine's next date comes back unpinned.
 
 On a laptop Soon and Later sit side by side, with a collapsible Routines history above them. Done replaces them; on a phone each is a tab. The
 categories along the top are the `@contexts`; any number can be chosen. A task added without a category gets the
 first one chosen.
 
-Type a task in the box and press Enter. A date or repeat said at the end becomes its date: "tomorrow", "fri", "next
+Type a task in the box and press Enter or tap the arrow. A date or repeat said at the end becomes its date: "tomorrow", "fri", "next
 week", "oct 20", "in 3 days", "this weekend", "every weekday", "every monday", "monthly on the 1st". What will be
 saved shows under the box as it's typed, and **Keep words** keeps the words as written. `(A)` at the start sets a
 priority, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
@@ -36,6 +34,25 @@ top opens the whole todo.txt for editing by hand, where Tab makes a step and Cmd
 On the Pixel, open the page in Chrome itself, not in another app's in-app browser, and choose **Install app** from
 Chrome's menu. That installs Pintail as an app with its own icon, window and place in the app list. Text or links
 shared from another app open in its add box.
+
+## Appearance
+
+Libron type, warm paper, muted sienna and a feather-shaped pinwheel mark. The phone has a sticky header,
+a floating capture box and a bottom task sheet; desktop keeps Soon and Later side by side. Task movement,
+view changes and sheets use short native animations and respect reduced motion. Typing saves immediately
+on the device; the list redraw and sync wait until typing pauses or the sheet closes.
+
+The mark in `icons/pintail.png` was made with the built-in image-generation tool, then resized for the app.
+The tool does not expose a model selector. App icons render the same silhouette in sienna on warm paper.
+The prompt asked for:
+
+> A single minimal logo symbol for Pintail on a transparent background: six broad, sculptural, tapered
+> feather-like blades forming an elegant sunburst or gently turning pinwheel, subtly recalling a pintail
+> duck's tail. An airy open center, restrained asymmetry, balanced silhouette, clean negative space.
+> Burnt sienna #A94F31, flat shapes, smooth edges, legible at 28px. No lettering, border, literal bird,
+> gradients, shading, texture or background.
+
+The refinement kept the silhouette, simplified thin ends and requested clean transparency and flat colour.
 
 ## The format
 

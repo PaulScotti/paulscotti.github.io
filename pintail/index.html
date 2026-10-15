@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f4ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181714" media="(prefers-color-scheme: dark)">
 <title>Pintail</title>
-<link rel="icon" href="icons/pintail.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/pintail.png?v=6" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="pintail.css">
@@ -17,7 +17,7 @@
 <body>
 
 <form id="lock" class="lock" hidden>
-  <svg class="bird" aria-hidden="true"><use href="#bird"/></svg>
+  <span class="mark" aria-hidden="true"></span>
   <h1>pintail</h1>
   <div class="field">
     <input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required>
@@ -26,10 +26,11 @@
 </form>
 
 <div id="app" class="app" hidden>
+  <div id="masthead" class="masthead">
   <header class="top">
-    <h1><svg class="bird" aria-hidden="true"><use href="#bird"/></svg>pintail</h1>
-    <nav id="views" class="views">
-      <button data-view="soon">Soon</button><button data-view="later">Later</button><button data-view="routines">Routines</button><button data-view="done">Done</button>
+    <h1><span class="mark" aria-hidden="true"></span>pintail</h1>
+    <nav id="views" class="views" aria-label="Task views">
+      <button data-view="soon"><span class="desktop-label">Tasks</span><span class="phone-label">Soon</span></button><button data-view="later">Later</button><button data-view="routines">Routines</button><button data-view="done">Done</button>
     </nav>
     <div class="tools">
       <button id="find" class="icon" aria-label="Search (/)"><svg><use href="#i-search"/></svg></button>
@@ -40,31 +41,36 @@
     <div id="chips" class="chips" hidden></div>
     <div id="search" class="search" hidden><input type="search" placeholder="Search tasks" aria-label="Search tasks" enterkeyhint="search"><button class="icon" aria-label="Close search"><svg><use href="#i-close"/></svg></button></div>
   </div>
+  </div>
   <form id="add" class="add" autocomplete="off">
     <div id="hint" class="hint" hidden></div>
     <div class="line">
+      <svg class="capture-mark" aria-hidden="true"><use href="#i-plus"/></svg>
       <input name="task" placeholder="Add a task" aria-label="Add a task (n)" enterkeyhint="done" autocapitalize="sentences">
+      <button id="capture" class="icon submit" aria-label="Add task" disabled><svg><use href="#i-up"/></svg></button>
+    </div>
+    <div class="capture-tools">
       <button type="button" id="undo" class="status" data-undo hidden>Undo</button>
       <button type="button" id="status" class="status" hidden></button>
       <button type="button" id="update" class="status" hidden>Update</button>
     </div>
   </form>
-  <section id="pins" class="pins" hidden><h2><svg aria-hidden="true"><use href="#tail"/></svg>Pinned<button id="pins-move" data-move hidden>Move overdue to today</button></h2><div class="list"></div></section>
+  <section id="pins" class="pins" hidden><h2><svg aria-hidden="true"><use href="#i-pin"/></svg>Pinned<button id="pins-move" data-move hidden>Move overdue to today</button></h2><div id="pins-list" class="list"></div></section>
   <main id="board" class="board">
-    <section id="soon" class="column"><h2>Soon</h2><div class="list"></div></section>
-    <section id="later" class="column"><h2>Later</h2><div class="list"></div></section>
-    <section id="routines" class="column"><h2><button type="button" id="routine-toggle" aria-expanded="false">Routines</button></h2><div class="list"></div></section>
-    <section id="done" class="column"><h2>Done</h2><div class="list"></div></section>
-    <section id="found" class="column"><h2>Found</h2><div class="list"></div></section>
+    <section id="soon" class="column"><h2>Soon<small id="soon-count"></small></h2><div id="soon-list" class="list"></div></section>
+    <section id="later" class="column"><h2>Later<small id="later-count"></small></h2><div id="later-list" class="list"></div></section>
+    <section id="routines" class="column"><h2><button type="button" id="routine-toggle" aria-expanded="false">Routines</button></h2><div class="routine-body"><div id="routines-list" class="list"></div></div></section>
+    <section id="done" class="column"><h2>Done<small id="done-count"></small></h2><div id="done-list" class="list"></div></section>
+    <section id="found" class="column"><h2>Found</h2><div id="found-list" class="list"></div></section>
   </main>
 </div>
 
-<dialog id="sheet" class="sheet" tabindex="-1">
+<dialog id="sheet" class="sheet" closedby="any" aria-label="Task details">
   <form method="dialog">
-    <div class="head">
+    <div class="head" tabindex="-1">
       <button type="button" id="sheet-check" class="check" aria-label="Done"></button>
       <textarea id="title" rows="1" aria-label="Task" enterkeyhint="done"></textarea>
-      <button type="button" id="pin" class="icon pin" aria-label="Pin" aria-pressed="false"><svg><use href="#tail"/></svg></button>
+      <button type="button" id="pin" class="icon pin" aria-label="Pin" aria-pressed="false"><svg><use href="#i-pin"/></svg></button>
       <button class="icon x" aria-label="Close"><svg><use href="#i-close"/></svg></button>
     </div>
     <p id="parent" class="parent" hidden></p>
@@ -99,12 +105,9 @@
 <div id="toast" class="toast" popover="manual" role="status" aria-live="polite"><span></span><button id="toast-undo" data-undo hidden>Undo</button><button id="toast-open" hidden>Open</button></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <!-- A northern pintail swimming. Its long tail is the pin: it takes the accent colour while a task is pinned. -->
-  <symbol id="bird" viewBox="0 8 60 38">
-    <path fill="var(--tail, currentColor)" d="M23 34C16 30.6 8.6 27 1.6 23.4C7.4 28.4 12.6 33.6 19 38.2Z"/>
-    <path fill="currentColor" fill-rule="evenodd" d="M44.6 15.2C44.4 12.2 46 10.6 48 10.7C49.8 10.8 50.9 11.8 51.4 13.1C53.2 13.6 55.2 14.4 56.6 15.3C56.8 15.6 56.5 15.9 56.1 15.9C54.4 15.8 52.7 15.6 51.4 15.7C50.6 16.6 49.6 17.3 48.6 17.8C47.6 21.6 47.2 26.6 48.4 30.2C50.6 32.6 51.6 35.6 50.8 38.6C50.2 40.6 48.6 42 46.4 42.2C38 42.8 29 42.6 24.6 41.8C21.4 41.2 19.2 39.2 18.4 36.8C18.2 35.8 18.6 35 19.6 34.6C26.6 32.6 36 31.8 42 28.6C43.8 24.6 44.8 19.6 44.6 15.2ZM47.6 13.4a.75 .75 0 1 0 1.5 0a.75 .75 0 1 0-1.5 0Z"/>
-  </symbol>
-  <symbol id="tail" viewBox="0 21 25 19"><path fill="currentColor" d="M23 34C16 30.6 8.6 27 1.6 23.4C7.4 28.4 12.6 33.6 19 38.2Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path transform="rotate(35 12 12)" d="M8 3h8l-1 7 4 4H5l4-4-1-7ZM12 14v7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 11 6-6 6 6M12 5v14"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></symbol>
   <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6.5h14M5 10.5h14M5 14.5h9M8 18.5h11"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11"/></symbol>
