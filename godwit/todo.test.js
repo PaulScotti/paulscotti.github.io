@@ -70,6 +70,8 @@ test('merging two devices keeps both sides, and a lost edit never happens', () =
   // The same task changed two ways keeps both; changed on one device and deleted on the other keeps the change.
   assert.equal(merge(base, 'Alpha due:2026-10-16\nBeta\nGamma\n', 'Alpha due:2026-10-17\nBeta\nGamma\n'), 'Alpha due:2026-10-17\nAlpha due:2026-10-16\nBeta\nGamma\n');
   assert.equal(merge(base, 'Alpha due:2026-10-15\nBeta!\nGamma\n', 'Alpha due:2026-10-15\nGamma\n'), 'Alpha due:2026-10-15\nBeta!\nGamma\n');
+  // A new device that added tasks before its first sync has no base: both lists are kept.
+  assert.equal(merge('', 'Mine\n', base), base + 'Mine\n');
   // Undo is a merge too: it takes back one edit and keeps what changed since.
   const before = base, after = 'Alpha due:2026-10-15\nGamma\n', now = 'Alpha due:2026-10-15\nGamma @Personal\nDelta\n';
   assert.equal(merge(after, now, before), 'Alpha due:2026-10-15\nBeta\nGamma @Personal\nDelta\n');

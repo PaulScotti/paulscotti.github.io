@@ -79,11 +79,9 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 
 .add { display: flex; flex-direction: column; margin: 10px 0 8px; }
 .add .hint { order: 1; }
-.add input {
-  width: 100%; height: 48px; border: 0; border-bottom: 1px solid var(--rule); background: none; outline: none;
-  font-size: 18px; padding: 0 2px;
-}
-.add input:focus { border-color: var(--ink-3); }
+.add .line { display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--rule); }
+.add .line:focus-within { border-color: var(--ink-3); }
+.add input { flex: 1; min-width: 0; height: 48px; border: 0; background: none; outline: none; font-size: 18px; padding: 0 2px; }
 .add input::placeholder { color: var(--ink-3); }
 .hint { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 0 2px; }
 .hint span { border-style: dashed; color: var(--ink-2); }
@@ -168,6 +166,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .danger { color: var(--accent); font-size: 14.5px; }
 .text { width: min(980px, calc(100vw - 32px)); height: 88dvh; }
 .text form { height: 100%; }
+.text .head { display: flex; justify-content: space-between; }
 .text h2 { font-size: 20px; padding-top: 4px; }
 #file {
   flex: 1; margin: 10px 0 12px; padding: 12px; border: 1px solid var(--rule); border-radius: 8px; overflow: auto;
@@ -203,6 +202,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   .top h1 { font-size: 0; gap: 0; margin-right: 4px; }
   .top h1 .bird { width: 28px; height: 28px; }
   .views { gap: 16px; margin-right: auto; }
+  @media (max-width: 379px) { .top h1 { display: none; } }
   .views button { font-size: 16.5px; }
   .chips { margin: 0 -16px; padding: 2px 16px; }
   .board { display: block; }
@@ -218,7 +218,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
     background: var(--bg); border-top: 1px solid var(--rule);
   }
   .add .hint { order: 0; padding: 6px 0 0; }
-  .add input { border-bottom: 0; }
+  .add .line { border-bottom: 0; }
   .toast { bottom: calc(env(safe-area-inset-bottom) + 84px); }
   .sheet { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 16px 16px 0 0; max-height: 92dvh; }
   .sheet form { padding: 16px 16px calc(env(safe-area-inset-bottom) + 14px); }

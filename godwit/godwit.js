@@ -25,7 +25,7 @@ function edit(f, note) {
   const before = text(), after = join(f(split(before)));
   if (after === before) return;
   keep(after);
-  undos.push({ before, after });
+  if (undos.push({ before, after }) > 20) undos.shift(); // each holds two copies of the list
   if (note) toast(note, true);
   render();
   sync();
@@ -52,7 +52,10 @@ function act(i, line, f, note) {
 let syncing = Promise.resolve();
 function sync() {
   if (!password) return syncing;
-  const run = () => navigator.locks.request('godwit-sync', exchange).then(() => status(''), e => status(e.message));
+  const run = () => navigator.locks.request('godwit-sync', exchange).then(() => status(''), e => {
+    status(e.message ? 'Not synced' : 'Offline');
+    if (e.message) toast(e.message);
+  });
   return syncing = syncing.then(run);
 }
 async function exchange() {
@@ -61,7 +64,7 @@ async function exchange() {
     const res = await fetch(API, put
       ? { method: 'PUT', headers: { ...auth, 'if-match': `"${b.v}"`, 'content-type': 'text/plain; charset=utf-8' }, body: mine }
       : { headers: b ? { ...auth, 'if-none-match': `"${b.v}"` } : auth, cache: 'no-store' }).catch(() => null);
-    if (!res) throw new Error(put ? 'Offline · saved here' : 'Offline');
+    if (!res) throw new Error(); // offline: the edits wait here
     if (res.status === 401) return lock();
     if (res.status === 304) return;
     const v = +res.headers.get('etag').slice(1, -1);
@@ -72,7 +75,7 @@ async function exchange() {
     }
     if (res.status !== 200 && res.status !== 412) throw new Error(await res.text());
     const theirs = await res.text(), now = text();
-    keep(b && now !== null ? merge(b.text, now, theirs) : theirs);
+    keep(merge(b ? b.text : '', now ?? '', theirs)); // a new device's first edits merge in too
     localStorage.setItem('godwit.base', JSON.stringify({ v, text: theirs }));
     render();
     if (text() === theirs) return;
@@ -102,10 +105,10 @@ const RANK = p => p === 'W' || p === 'P' ? 5 : p === 'D' ? 4 : 'ABC'.includes(p 
 const LATER = ['Priority A', 'Priority B', 'Priority C', 'Unprioritized', 'Deprioritized', 'Waiting'];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const linked = s => esc(s).replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]/g, u => {
-  const shown = u.replace(/^https?:\/\/(www\.)?/, '');
-  return `<a href="${u}" target="_blank" rel="noopener">${shown.length > 34 ? shown.slice(0, 32) + '…' : shown}</a>`;
-});
+const linked = s => s.split(/(https?:\/\/[^\s<>"]*[^\s<>".,;:!?)\]'])/).map((part, k) => {
+  const shown = part.replace(/^https?:\/\/(www\.)?/, '');
+  return k % 2 ? `<a href="${esc(part)}" target="_blank" rel="noopener">${esc(shown.length > 34 ? shown.slice(0, 32) + '…' : shown)}</a>` : esc(part);
+}).join('');
 
 // One task row. Categories already chosen in the filter aren't repeated on every row.
 function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up } = {}) {
@@ -174,7 +177,7 @@ function render() {
 
   const history = new Map();
   for (const t of tasks) if (t.done && t.rec && t.doneDate) history.set(routine(t), (history.get(routine(t)) || new Set()).add(t.doneDate));
-  const routines = tasks.filter(t => open(t) && t.rec && shown(t)).sort((a, b) => (a.due || '').localeCompare(b.due || '') || a.i - b.i);
+  const routines = tasks.filter(t => open(t) && t.rec && shown(t)).sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999') || a.i - b.i);
   $('routines').lastChild.innerHTML = routines.length ? routines.map(t => row(t, {
     label: t.due ? (t.due < today ? short(t.due) : dayName(t.due)) : '', late: t.due < today, extra: strip(t, history.get(routine(t)) || new Set()),
   })).join('') : '<p class="empty">Nothing repeats. Say how often at the end of a task, like “every weekday” or “every monday”.</p>';
@@ -184,7 +187,7 @@ function render() {
 
   if (query !== null) {
     const q = query.toLowerCase(), hit = t => [t.text, t.notes || '', ...t.ctx].join(' ').toLowerCase().includes(q);
-    const found = q ? tasks.filter(hit).sort((a, b) => a.done - b.done || (a.done ? (b.doneDate || '').localeCompare(a.doneDate || '') : (a.due || '~').localeCompare(b.due || '~'))) : [];
+    const found = q ? tasks.filter(hit).sort((a, b) => a.done - b.done || (a.done ? (b.doneDate || '').localeCompare(a.doneDate || '') : (a.due || '9999').localeCompare(b.due || '9999'))) : [];
     $('found').lastChild.innerHTML = q ? list(groups(found, t => t.done ? 'Done' : 'Open'), t => row(t, { label: t.done ? t.doneDate && short(t.doneDate) : t.due ? dayName(t.due) : '', late: !t.done && t.due < today }), 'No tasks match.') : '';
   }
   if (editing && $('sheet').open) fill();
@@ -274,7 +277,6 @@ function toast(message, undoable = false) {
   const el = $('toast');
   el.firstChild.textContent = message;
   el.lastChild.hidden = !undoable;
-  el.showPopover?.();
   if (!el.matches(':popover-open')) el.showPopover();
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => el.hidePopover(), undoable ? 6000 : 2500);
@@ -352,12 +354,13 @@ $('find').onclick = () => {
 $('search').firstChild.oninput = e => { query = e.target.value; render(); };
 $('search').firstChild.onkeydown = e => { if (e.key === 'Escape') $('find').onclick(); };
 $('search').lastChild.onclick = () => $('find').onclick();
+let opened = ''; // the text as the editor showed it, so changes synced in meanwhile are merged, not overwritten
 $('raw').onclick = () => {
-  $('file').value = text() ?? '';
+  $('file').value = opened = text() ?? '';
   $('text').showModal();
 };
 $('save').onclick = () => {
-  edit(() => split($('file').value), 'Saved todo.txt');
+  edit(lines => split(merge(opened, $('file').value, join(lines))), 'Saved todo.txt');
   $('text').close();
 };
 $('toast').lastChild.onclick = () => { undo(); $('toast').hidePopover(); };
@@ -367,7 +370,13 @@ $('status').onclick = sync;
 $('sheet').addEventListener('close', () => { commit(); editing = null; });
 $('sheet').onclick = e => {
   if (e.target === $('sheet')) return $('sheet').close(); // a tap outside
-  const b = e.target.closest('button, .task');
+  const step = e.target.closest('#kids .task'), b = e.target.closest('button');
+  if (step) { // a step: its circle completes it, its words open it
+    const k = tasks.find(x => x.i === +step.dataset.i);
+    if (b) act(k.i, k.line, (lines, at) => complete(lines, at, today));
+    else { commit(); open(k.i); }
+    return;
+  }
   if (!b || !editing) return;
   const d = b.dataset;
   if (b.id === 'sheet-check') {
@@ -378,10 +387,6 @@ $('sheet').onclick = e => {
   } else if (b.id === 'delete') {
     act(editing.i, editing.line, remove, 'Deleted');
     $('sheet').close();
-  } else if (b.classList.contains('task')) { // a step: its circle completes it, its words open it
-    const k = tasks.find(x => x.i === +d.i);
-    if (e.target.closest('.check')) act(k.i, k.line, (lines, at) => complete(lines, at, today));
-    else { commit(); open(k.i); }
   } else if ('i' in d) { commit(); open(+d.i); }
   else if ('due' in d) change(line => setKey(line, 'due', d.due || null));
   else if ('skip' in d) change(line => setKey(line, 'due', next(parse(line), today)), 'Skipped to ' + dayName(next(parse(editing.line), today)));
