@@ -37,22 +37,17 @@ shared from another app open in its add box.
 
 ## Appearance
 
-Libron type, warm paper, muted sienna and a feather-shaped pinwheel mark. The phone has a sticky header,
+Libron type, warm paper, muted sienna and a colourful feather-shaped pinwheel mark. The phone has a sticky header,
 a floating capture box and a bottom task sheet; desktop keeps Soon and Later side by side. Task movement,
 view changes and sheets use short native animations and respect reduced motion. Typing saves immediately
 on the device; the list redraw and sync wait until typing pauses or the sheet closes.
 
 The mark in `icons/pintail.png` was made with the built-in image-generation tool, then resized for the app.
-The tool does not expose a model selector. App icons render the same silhouette in sienna on warm paper.
-The prompt asked for:
-
-> A single minimal logo symbol for Pintail on a transparent background: six broad, sculptural, tapered
-> feather-like blades forming an elegant sunburst or gently turning pinwheel, subtly recalling a pintail
-> duck's tail. An airy open center, restrained asymmetry, balanced silhouette, clean negative space.
-> Burnt sienna #A94F31, flat shapes, smooth edges, legible at 28px. No lettering, border, literal bird,
-> gradients, shading, texture or background.
-
-The refinement kept the silhouette, simplified thin ends and requested clean transparency and flat colour.
+The tool does not expose a model selector. App icons render the same feather colours on warm paper.
+The colour-edit prompt preserved the six curved blades and negative space, and asked for peacock teal,
+emerald green, kingfisher blue, deep violet, warm copper and golden amber, with subtle tonal variation
+inspired by iridescent bird plumage. The background stays transparent; the header displays the colour
+image directly.
 
 ## The format
 

@@ -29,7 +29,7 @@ button:disabled { cursor: default; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 5px; }
 [hidden] { display: none !important; }
 h1, h2, h3 { margin: 0; font-weight: 400; }
-.mark { display: inline-block; width: 42px; height: 42px; flex: none; background: var(--accent); mask: url(icons/pintail.png) center / contain no-repeat; }
+.mark { display: inline-block; width: 42px; height: 42px; flex: none; background: url(icons/pintail.png) center / contain no-repeat; }
 .icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--ink-2); flex: none; }
 .icon svg, .capture-mark { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 @media (hover: hover) { .icon:hover { background: var(--tint); color: var(--ink); } }
