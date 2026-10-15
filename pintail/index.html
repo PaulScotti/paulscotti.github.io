@@ -28,7 +28,7 @@
 <div id="app" class="app" hidden>
   <div id="masthead" class="masthead">
   <header class="top">
-    <h1><span class="mark" aria-hidden="true"></span>pintail<small id="version">v9</small></h1>
+    <h1><span class="mark" aria-hidden="true"></span>pintail<small id="version">v10</small></h1>
     <nav id="views" class="views" aria-label="Task views">
       <button data-view="soon"><span class="desktop-label">Tasks</span><span class="phone-label">Soon</span></button><button data-view="later">Later</button><button data-view="routines">Routines</button><button data-view="done">Done</button>
     </nav>
@@ -42,6 +42,10 @@
     <div id="search" class="search" hidden><input type="search" placeholder="Search tasks" aria-label="Search tasks" enterkeyhint="search"><button class="icon" aria-label="Close search"><svg><use href="#i-close"/></svg></button></div>
   </div>
   </div>
+  <section id="finished" class="finished" aria-labelledby="finished-heading" hidden>
+    <h2 id="finished-heading">Done today <small id="finished-count"></small></h2>
+    <div id="finished-list"></div>
+  </section>
   <form id="add" class="add" autocomplete="off">
     <div id="hint" class="hint" hidden></div>
     <div class="line">

@@ -60,6 +60,18 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .search input { flex: 1; min-width: 0; height: 38px; border: 0; border-bottom: 1px solid var(--accent); background: none; outline: none; font-size: 18px; padding: 0 3px; }
 .search input::-webkit-search-cancel-button { display: none; }
 
+/* Today's finished tasks stay within one swipeable row. */
+.finished { display: flex; align-items: center; gap: 12px; min-width: 0; margin-top: 6px; border-bottom: 1px solid var(--rule); }
+.finished h2 { flex: none; font: 11px var(--ui); color: var(--sage); white-space: nowrap; }
+.finished h2 small { margin-left: 3px; font-size: inherit; font-variant-numeric: tabular-nums; }
+#finished-list { display: flex; gap: 6px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+#finished-list::-webkit-scrollbar { display: none; }
+#finished-list button { display: flex; align-items: center; gap: 6px; flex: none; max-width: min(260px, 100%); min-height: 44px; padding: 0 8px; border-radius: 6px; color: var(--category); font: 15px var(--serif); }
+#finished-list button span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#finished-list button span:first-child { font: 11px var(--ui); color: var(--sage); }
+#finished-list button:focus-visible { outline-offset: -3px; }
+@media (hover: hover) { #finished-list button:hover { background: var(--shade); } }
+
 /* A single capture surface, with room for the preview and undo. */
 .add { display: flex; flex-direction: column; margin: 20px 0 16px; padding: 4px 10px 4px 14px; border: 1px solid var(--rule); border-radius: 14px; background: var(--surface); box-shadow: 0 2px 5px rgb(35 25 12 / .025); transition: border-color 160ms, box-shadow 160ms; }
 .add:focus-within { border-color: color-mix(in srgb, var(--accent) 50%, var(--rule)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 7%, transparent); }

@@ -13,6 +13,9 @@ installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Wo
   per day for two weeks, or per week or month for slower ones.
 - **Done** is what's been finished, by day and then by month.
 
+Today's completed tasks also appear at the top in one compact, sideways-scrolling row, across all categories.
+Tap a name to open its details or reopen it. The row disappears when there's nothing completed today.
+
 On a laptop Soon and Later sit side by side, with a collapsible Routines history above them. Done replaces them; on a phone each is a tab. The
 categories along the top are the `@contexts`; any number can be chosen. A task added without a category gets the
 first one chosen.

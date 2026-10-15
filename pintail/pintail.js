@@ -170,7 +170,7 @@ function rowRects() {
 }
 function render(animate = false) {
   const before = animate && !motion.matches && !document.querySelector('dialog[open]') ? rowRects() : null;
-  const raw = text(), focused = document.activeElement.closest('#board .task'), was = focused?.dataset.uid, section = focused?.closest('section');
+  const raw = text(), focused = document.activeElement.closest('#board .task, #finished-list button'), was = focused?.dataset.uid, section = focused?.closest('section');
   for (const b of document.querySelectorAll('[data-undo]')) b.hidden = !undos.length;
   document.body.dataset.view = view;
   document.body.classList.toggle('finding', query !== null);
@@ -188,6 +188,11 @@ function render(animate = false) {
     t.up?.kids.push(t);
     stack.push(t);
   }
+
+  const finished = tasks.filter(t => t.done && t.doneDate === today);
+  $('finished').hidden = !finished.length;
+  $('finished-count').textContent = finished.length;
+  patch('finished-list', finished.map(t => `<button data-i="${t.i}" data-uid="${esc(t.uid)}" title="${esc(t.text)}" style="--category:${t.ctx.length ? categoryColor(t.ctx[0]) : 'var(--ink-2)'}"><span aria-hidden="true">✓</span><span>${esc(t.text)}</span></button>`).join(''));
 
   // The categories are the @contexts, most used first, which keeps their order steady as tasks get done.
   const counts = new Map();
@@ -254,7 +259,7 @@ function render(animate = false) {
   }
   if (editing && $('sheet').open) fill();
   // Redrawing replaces the rows, so the task that had the keyboard's focus gets it back.
-  if (was && section) [...section.querySelectorAll('.task')].find(el => el.dataset.uid === was && el.offsetParent)?.focus({ preventScroll: true });
+  if (was && section) [...section.querySelectorAll('[data-uid]')].find(el => el.dataset.uid === was && el.offsetParent)?.focus({ preventScroll: true });
   if (before) {
     const after = rowRects(), timing = { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' };
     for (const [id, { el, rect }] of after) {
@@ -412,7 +417,7 @@ $('app').addEventListener('click', e => { // task rows and Move to today
     const late = new Set([...document.querySelectorAll('#soon .task')].map(row => tasks.find(x => x.i === +row.dataset.i)).filter(t => !t.rec && t.due && t.due < today).map(t => t.line));
     return edit(lines => lines.map(l => late.has(l) ? setKey(l, 'due', today) : l), `Moved ${late.size} to today`);
   }
-  const el = e.target.closest('#board .task');
+  const el = e.target.closest('#board .task, #finished-list button');
   if (!el || e.target.closest('a')) return;
   const t = tasks.find(x => x.i === +el.dataset.i);
   if (!e.target.closest('.check')) return open(t.i);
