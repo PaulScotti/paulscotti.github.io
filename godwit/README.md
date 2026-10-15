@@ -23,8 +23,9 @@ priority, and `@` suggests the categories that exist.
 
 Tap a task to open it: its words, notes, date, repeat, priority, categories and steps (subtasks), each changed in
 place. **Skip** moves a routine to its next date without marking it done. Every change can be undone from the note
-at the bottom, or with Cmd/Ctrl+Z. On a laptop, `n` goes to the add box and `/` searches every task, open or done.
-The lines button at the top opens the whole todo.txt for editing by hand.
+at the bottom, or with Cmd/Ctrl+Z. On a laptop, `n` goes to the add box, `/` searches every task, open or done, `j`
+and `k` move between tasks, Enter opens one and `x` marks it done. The lines button at the top opens the whole
+todo.txt for editing by hand.
 
 On the Pixel, Chrome's **Install app** puts Godwit on the home screen. Its icon's long-press has **Add task**, and
 text or links shared from another app open in the add box.
