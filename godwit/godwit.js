@@ -115,8 +115,8 @@ function row(t, { depth = 0, label = '', late = false, extra = '', up = depth ==
   const words = t.text.split(' '), length = words.find(w => /^l:\d/.test(w));
   const ctx = t.ctx.filter(c => !picked.some(p => p.toLowerCase() === c.toLowerCase()));
   const meta = [...ctx, t.rec && repeatLabel(t), length?.slice(2), up && '↳ ' + up.text].filter(Boolean);
-  return `<div class="task${t.done ? ' done' : ''}" data-i="${t.i}" style="--depth:${depth}">
-    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Not done' : 'Done'}"></button>
+  return `<div class="task${t.done ? ' done' : ''}" data-i="${t.i}" style="--depth:${depth}" tabindex="0">
+    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Not done' : 'Done'}" tabindex="-1"></button>
     <div class="body"><span class="title">${linked(words.filter(w => w !== length).join(' ') || t.line.trim())}</span>${meta.length ? `<span class="meta">${esc(meta.join(' · '))}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
     ${label ? `<span class="when${late ? ' late' : ''}">${esc(label)}</span>` : ''}
   </div>`;
@@ -411,9 +411,18 @@ $('sheet').addEventListener('keydown', e => {
   }
 });
 
+// On a laptop: n adds, / searches, j and k (or the arrows) move between tasks, Enter opens one, x marks it done.
 addEventListener('keydown', e => {
   if (e.target.closest('input, textarea') || document.querySelector('dialog[open]') || e.metaKey && e.key !== 'z' || e.ctrlKey && e.key !== 'z' || e.altKey) return;
-  if (e.key === 'n') { e.preventDefault(); $('add').task.focus(); }
+  const row = e.target.closest('#board .task'), rows = [...$('board').querySelectorAll('.task')].filter(el => el.offsetParent), at = rows.indexOf(row);
+  if (e.key === 'j' || e.key === 'k' || row && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    rows[at < 0 ? 0 : Math.max(0, Math.min(rows.length - 1, at + (e.key === 'j' || e.key === 'ArrowDown' ? 1 : -1)))]?.focus();
+  } else if (row && e.key === 'Enter') open(+row.dataset.i);
+  else if (row && e.key === 'x') {
+    row.querySelector('.check').click();
+    [...$('board').querySelectorAll('.task')].filter(el => el.offsetParent)[at]?.focus(); // the task that took its place
+  } else if (e.key === 'n') { e.preventDefault(); $('add').task.focus(); }
   else if (e.key === '/') { e.preventDefault(); if (query === null) $('find').onclick(); else $('search').firstChild.focus(); }
   else if (e.key === 'z' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); undo(); }
 });

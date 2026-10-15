@@ -105,7 +105,8 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   display: grid; grid-template-columns: 22px 1fr auto; gap: 0 10px; align-items: start;
   padding: 8px 2px 9px calc(2px + var(--depth, 0) * 28px); border-bottom: 1px solid var(--rule); cursor: pointer;
 }
-.task:hover { background: linear-gradient(90deg, transparent, var(--shade) 30%, var(--shade) 70%, transparent); }
+.task:hover, .task:focus-visible { background: linear-gradient(90deg, transparent, var(--shade) 30%, var(--shade) 70%, transparent); }
+.task:focus-visible { outline: none; box-shadow: inset 2px 0 var(--ink-3); }
 .check {
   width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--c, var(--ink-3));
   position: relative; transition: background-color .15s;
