@@ -36,8 +36,9 @@ shared from another app open in its add box.
 ## Appearance
 
 Libron type, warm paper and a pinwheel of six coloured feathers. Categories take a stable muted colour from
-their name, shared by filters, task labels and the picker. The same palette accents views, counts, priorities
-and capture. The phone has a sticky header,
+their name, shared by filters, task titles and the picker. The first category colours a task's title;
+categories and repeat settings stay in task details, without taking a separate row in the list.
+The same palette accents views, counts, priorities and capture. The phone has a sticky header,
 a floating capture box and a bottom task sheet; desktop keeps Soon and Later side by side. Task movement,
 view changes and sheets use short native animations and respect reduced motion. Typing saves immediately
 on the device; the list redraw and sync wait until typing pauses or the sheet closes. The small version beside

@@ -141,13 +141,12 @@ function categoryColor(name) {
 }
 const category = name => `<span class="category" style="--category:${categoryColor(name)}">${esc(name)}</span>`;
 
-// One task row. Categories shown by the filter, group or parent aren't repeated on it.
-function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up, hide = [] } = {}) {
-  const ctx = t.ctx.filter(c => ![...picked, ...hide, ...(depth ? t.up.ctx : [])].some(p => same(p, c)));
-  const meta = [t.conflict && 'Conflict: review both versions', ...ctx.map(category), t.rec && esc(repeatLabel(t)), up && esc('↳ ' + up.text)].filter(Boolean);
-  return `<div class="task${depth ? ' step' : ''}${t.done ? ' done' : ''}" data-i="${t.i}" data-uid="${esc(t.uid)}" style="--depth:${depth}" tabindex="0">
+// The first category colours the title; only conflicts and a detached step's parent need an extra label.
+function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up } = {}) {
+  const meta = [t.conflict && 'Conflict: review both versions', up && esc('↳ ' + up.text)].filter(Boolean);
+  return `<div class="task${depth ? ' step' : ''}${t.done ? ' done' : ''}" data-i="${t.i}" data-uid="${esc(t.uid)}" style="--depth:${depth};--category:${t.ctx.length ? categoryColor(t.ctx[0]) : 'var(--ink)'}" tabindex="0">
     <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}${!t.done && t.pri ? ', priority ' + t.pri : ''}" aria-pressed="${t.done}" title="${t.done ? 'Reopen' : t.pri ? 'Priority ' + t.pri : 'Complete'}" tabindex="-1"><span aria-hidden="true">${!t.done && t.pri || ''}</span></button>
-    <div class="body"><span class="title">${linked(t.text || t.line.trim())}</span>${meta.length ? `<span class="meta">${meta.join(' · ')}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
+    <div class="body"><span class="title" title="${esc(t.ctx.join(' · '))}">${linked(t.text || t.line.trim())}</span>${meta.length ? `<span class="meta">${meta.join(' · ')}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
     ${label ? `<span class="when${late ? ' late' : ''}">${esc(label)}</span>` : ''}
   </div>`;
 }
@@ -229,7 +228,7 @@ function render(animate = false) {
   const group = x => x.t.ctx.find(c => !picked.length || picked.some(p => same(p, c))) || '';
   const placed = c => c ? names.findIndex(n => same(n, c)) : names.length;
   const later = tops.filter(x => !x.due).sort((a, b) => placed(group(a)) - placed(group(b)) || RANK(a.t.pri) - RANK(b.t.pri) || (b.t.created || '').localeCompare(a.t.created || '') || b.t.i - a.t.i);
-  patch('later-list', list(groups(later, x => names[placed(group(x))] || 'No category'), x => rows(x, m => ({ label: m === x.t && m.created ? age(m.created) : '', hide: [group(x)] })),
+  patch('later-list', list(groups(later, x => names[placed(group(x))] || 'No category'), x => rows(x, m => ({ label: m === x.t && m.created ? age(m.created) : '' })),
     'No undated tasks. Leave off the date to keep a task here.', (l, xs) => group(xs[0]) ? category(l) : esc(l)));
 
   $('later-count').textContent = later.reduce((n, x) => n + x.members.length, 0);
@@ -337,7 +336,7 @@ function fill() {
     + (t.rec && !Object.values(repeats).includes(t.rec) ? chip(repeatLabel(t), true, `data-rec="${t.rec}"`) : ''));
   patch('pris', ['A', 'B', 'C'].map(p => chip(p, t.pri === p, `data-pri="${p}"`)).join('') + chip('None', !['A', 'B', 'C'].includes(t.pri), 'data-pri=""'));
   patch('tags', [...new Set([...names, ...t.ctx])].map(c => chip(c, t.ctx.some(x => same(x, c)), `data-ctx="${esc(c)}" style="--category:${categoryColor(c)}"`)).join(''));
-  patch('kids', t.kids.map(k => row(k, { up: null, hide: t.ctx, label: k.due ? dayName(k.due) : '', late: !k.done && k.due < today })).join(''));
+  patch('kids', t.kids.map(k => row(k, { up: null, label: k.due ? dayName(k.due) : '', late: !k.done && k.due < today })).join(''));
   $('stamp').textContent = [t.created && 'Added ' + short(t.created) + (t.created.slice(0, 4) === today.slice(0, 4) ? '' : ' ' + t.created.slice(0, 4)), t.doneDate && 'done ' + short(t.doneDate)].filter(Boolean).join(', ');
 }
 function commit() {

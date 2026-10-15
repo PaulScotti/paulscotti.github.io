@@ -50,11 +50,12 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .filters { margin: 14px 0 0; min-height: 34px; }
 .chips { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 3px 1px; }
 .chips::-webkit-scrollbar { display: none; }
-.chips button { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 6px 11px; min-height: 32px; border: 1px solid transparent; border-radius: 8px; font: 12px var(--ui); color: var(--category); white-space: nowrap; }
+.chips button { display: inline-flex; align-items: center; gap: 7px; flex: none; padding: 6px 12px; min-height: 34px; border: 1px solid var(--rule); border-radius: 999px; background: var(--surface); font: 12px var(--ui); color: var(--ink-2); white-space: nowrap; }
 .chips button[data-ctx=""] { --category: var(--ink-2); }
-.chips button.on { background: color-mix(in srgb, var(--category) 9%, var(--surface)); border-color: color-mix(in srgb, var(--category) 22%, transparent); }
-.chips small { font-size: 10px; opacity: .8; font-variant-numeric: tabular-nums; }
-@media (hover: hover) { .chips button:hover { background: var(--tint); } }
+.chips button.on, #tags button.on { color: var(--category); background: color-mix(in srgb, var(--category) 11%, var(--surface)); border-color: color-mix(in srgb, var(--category) 45%, var(--rule)); }
+.chips button[data-ctx]:not([data-ctx=""])::before, #tags button::before { content: ""; width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--category); }
+.chips small { font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums; }
+@media (hover: hover) { .chips button:not(.on):hover, #tags button:not(.on):hover { background: color-mix(in srgb, var(--category) 6%, var(--surface)); } }
 .search { display: flex; align-items: center; gap: 8px; }
 .search input { flex: 1; min-width: 0; height: 38px; border: 0; border-bottom: 1px solid var(--accent); background: none; outline: none; font-size: 18px; padding: 0 3px; }
 .search input::-webkit-search-cancel-button { display: none; }
@@ -95,7 +96,7 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .task { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 0 10px; align-items: start; padding: 12px 5px 13px calc(4px + var(--depth, 0) * 26px); border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); border-radius: 5px; cursor: pointer; }
 .task:has(+ .step) { border-bottom-color: transparent; }
 .task.step { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
-.step .title { font-size: 17px; color: var(--ink-2); }
+.step .title { font-size: 17px; }
 @media (hover: hover) { .task:hover { background: var(--shade); } }
 .task:focus-visible { outline: none; background: var(--shade); box-shadow: inset 2px 0 var(--accent); }
 .check { display: grid; place-items: center; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; border: 1.25px solid var(--c, var(--ink-3)); color: var(--c, var(--ink-3)); position: relative; font: 9px var(--ui); transition: background-color 160ms, border-color 160ms, transform 160ms; }
@@ -106,8 +107,8 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .check.px span { visibility: hidden; }
 .check.px::before { content: ""; position: absolute; left: 5px; top: 3px; width: 5px; height: 8px; border: solid var(--surface); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
 .body { min-width: 0; overflow-wrap: anywhere; }
-.title { font-size: 18px; line-height: 1.4; }
-.task.done .title { color: var(--ink-3); }
+.title { font-size: 18px; line-height: 1.4; color: var(--category); }
+.task.done .title { color: color-mix(in srgb, var(--category) 65%, var(--ink-3)); }
 .meta, .note { display: block; margin-top: 4px; color: var(--ink-3); }
 .meta { font: 12px/1.45 var(--ui); }
 .category { color: var(--category); }
@@ -143,7 +144,8 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .choices { display: flex; flex-wrap: wrap; gap: 7px; }
 .choices button, .choices label { display: inline-flex; align-items: center; flex: none; min-height: 34px; padding: 6px 11px; border: 1px solid var(--rule); border-radius: 8px; font: 12px var(--ui); color: var(--ink-2); white-space: nowrap; }
 .choices .on { color: var(--category); border-color: color-mix(in srgb, var(--category) 35%, var(--rule)); background: color-mix(in srgb, var(--category) 9%, var(--surface)); }
-.choices [data-ctx], #pris [data-pri]:not([data-pri=""]) { color: var(--category); }
+#tags button { gap: 7px; border-radius: 999px; background: var(--surface); color: var(--ink-2); }
+#pris [data-pri]:not([data-pri=""]) { color: var(--category); }
 #pris [data-pri=A] { --category: var(--pA); } #pris [data-pri=B] { --category: var(--pB); } #pris [data-pri=C] { --category: var(--pC); }
 .choices label { position: relative; cursor: pointer; }
 .choices label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
