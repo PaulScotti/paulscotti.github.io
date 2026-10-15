@@ -128,7 +128,7 @@
    ],
    "watch_outs": [
     "Utilities come on top of the $4,961.84 total, and parking is another $250–350",
-    "Only one 2-bed loft is listed; it may be gone before Oct 17",
+    "Only one 2-bed loft is listed; it may be gone before Oct 18",
     "Ask whether the '8 weeks free' special applies to W209 and the net rent per lease length",
     "Two levels: check the stairs and which floor the bedrooms are on"
    ],
@@ -141,8 +141,8 @@
    "lat": 47.664480299581,
    "lng": -122.300818625881,
    "status": "booked",
-   "tour_at": "2026-10-17T13:30",
-   "requested": "Confirmed by email (bring photo ID)"
+   "tour_at": "2026-10-18T14:00",
+   "requested": "Rescheduled to Sun Oct 18, 2:00–3:00 PM (Slopejet confirmation, Oct 15). Bring photo ID."
   },
   {
    "id": "modera-south-lake-union",
@@ -1147,10 +1147,23 @@
    "name": "1740 NW 63rd St",
    "address": "1740 NW 63rd St, Seattle, WA 98107",
    "neighborhood": "Ballard",
-   "available": "Unavailable for tours or leasing; owner is listing the home for sale",
-   "status": "contacted",
-   "hidden": true,
-   "requested": "Owner replied on Zillow (Oct 5) that the home is being listed for sale, so it's no longer available to tour or lease. Removed from shortlist."
+   "available": "Now; owner says the home is empty and ready to tour",
+   "status": "booked",
+   "requested": "Booked Sat Oct 17, 12:15 PM through Zillow messages with the owner; her husband will meet us there. They held off on selling after Oct 5 and added a discount for leases over 12 months.",
+   "ac": "Unknown; ask during the tour",
+   "highlights": [
+    "Owner decided not to sell and wants a long-term tenant",
+    "Owner offers a discount for leases longer than 12 months"
+   ],
+   "watch_outs": [
+    "AC not confirmed, and it's a must-have: ask first",
+    "Rent, size and fees weren't captured here; check the Zillow listing",
+    "Ask how big the long-lease discount is and what the base rent is"
+   ],
+   "listing_url": "https://www.zillow.com/homedetails/1740-Nw-63rd-St-Seattle-WA-98107/2094800356_zpid/",
+   "lat": 47.674607051515,
+   "lng": -122.379380063606,
+   "tour_at": "2026-10-17T12:15"
   },
   {
    "id": "the-olivian",
