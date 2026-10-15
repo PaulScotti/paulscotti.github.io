@@ -172,7 +172,6 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
   flex: 1; margin: 10px 0 12px; padding: 12px; border: 1px solid var(--rule); border-radius: 8px; overflow: auto;
   font: 13.5px/1.55 ui-monospace, Menlo, monospace; tab-size: 4; white-space: pre; color: var(--ink);
 }
-.note { color: var(--ink-3); }
 
 .toast {
   position: fixed; inset: auto 0 calc(env(safe-area-inset-bottom) + 24px); margin: 0 auto; width: max-content; max-width: calc(100vw - 32px);
@@ -182,9 +181,9 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .toast:popover-open { display: flex; }
 .toast button { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
-/* Medium screens: Later and Routines share the right column */
+/* Medium screens: Routines goes under Soon, which is usually the shorter list */
 @media (min-width: 760px) and (max-width: 1099px) {
-  .board { grid-template-columns: 1fr 1fr; grid-template-areas: "soon later" "soon routines"; }
+  .board { grid-template-columns: 1fr 1fr; grid-template-areas: "soon later" "routines later"; grid-template-rows: auto 1fr; }
   #soon { grid-area: soon; } #later { grid-area: later; } #routines { grid-area: routines; }
 }
 @media (min-width: 760px) {

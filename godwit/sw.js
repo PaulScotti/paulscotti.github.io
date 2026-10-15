@@ -1,5 +1,5 @@
 // Bump VERSION with every change to the app. An installed copy then offers "Update" and reloads into it.
-const VERSION = 1;
+const VERSION = 2;
 const CACHE = 'godwit-' + VERSION;
 const FILES = ['./', 'godwit.js', 'todo.js', 'godwit.css', 'manifest.webmanifest', 'icons/godwit.svg', 'icons/icon-192.png', '../ebis/fonts/Libron-Regular.woff2', '../ebis/fonts/Libron-Italic.woff2'];
 // The HTTP cache may still hold the previous release's files.
