@@ -2,16 +2,16 @@
 // No DOM here, so `node --test` can check it.
 
 // A task is one line: [tabs][x DONE ][(A) ][CREATED ]words @contexts key:value. Each leading tab nests it one level
-// under the task above. Metadata holds dates, repeats, notes, pins and stable identities; unknown tokens stay words.
+// under the task above. Metadata holds dates, repeats, notes and stable identities; unknown tokens stay words.
 export function parse(line) {
   const tabs = line.match(/^\t*/)[0].length;
   let rest = line.slice(tabs).trim(), m;
-  const t = { line, depth: tabs, done: false, doneDate: null, pri: null, created: null, text: '', ctx: [], due: null, rec: null, notes: null, pin: null, uid: null, rid: null, anchor: null, prev: null, conflict: null, meta: [] };
+  const t = { line, depth: tabs, done: false, doneDate: null, pri: null, created: null, text: '', ctx: [], due: null, rec: null, notes: null, uid: null, rid: null, anchor: null, prev: null, conflict: null, meta: [] };
   if ((m = rest.match(/^x\s+/))) { t.done = true; rest = rest.slice(m[0].length); }
   if (t.done && (m = rest.match(DAY)) && real(m[1])) { t.doneDate = m[1]; rest = rest.slice(m[0].length); }
   if ((m = rest.match(/^\(([A-Z])\)\s+/))) { t.pri = m[1]; rest = rest.slice(m[0].length); }
   if ((m = rest.match(DAY)) && real(m[1])) { t.created = m[1]; rest = rest.slice(m[0].length); }
-  t.tokens = tokens(rest);
+  t.tokens = tokens(rest).filter(tok => keyValue(tok)?.[0] !== 'pin'); // discard retired metadata
   const words = [];
   for (const tok of t.tokens) {
     const kv = keyValue(tok);
@@ -19,7 +19,6 @@ export function parse(line) {
     else if (kv?.[0] === 'due' && real(kv[1]) && !t.due) t.due = kv[1];
     else if (kv?.[0] === 'rec' && REC.test(kv[1]) && !t.rec) t.rec = kv[1];
     else if (kv?.[0] === 'notes' && t.notes === null) t.notes = kv[1];
-    else if (kv?.[0] === 'pin' && !t.pin) t.pin = kv[1];
     else if (kv && IDENTITY.includes(kv[0]) && !t[kv[0]]) t[kv[0]] = kv[1];
     else { words.push(tok); continue; }
     t.meta.push(tok); // what was understood, kept when the words change
@@ -32,7 +31,7 @@ const DAY = /^(\d{4}-\d\d-\d\d)(?:\s+|$)/;
 const real = d => /^\d{4}-\d\d-\d\d$/.test(d) && iso(date(d)) === d; // a calendar date: not 2026-02-30, which stays words
 const REC = /^\+?([1-9]\d*)([dbwmy])$/; // days, business days (Mon-Fri), weeks, months, years; + keeps the schedule
 const IDENTITY = ['uid', 'rid', 'anchor', 'prev', 'conflict'];
-const KEYS = ['due', 'rec', 'notes', 'pin', ...IDENTITY];
+const KEYS = ['due', 'rec', 'notes', ...IDENTITY];
 export const split = s => (s || '').replace(/\r\n?/g, '\n').split('\n').filter(line => line.trim());
 export const join = lines => lines.length ? lines.join('\n') + '\n' : '';
 const tokens = s => s.match(/[A-Za-z][\w-]*:"(?:[^"\\]|\\.)*"(?=\s|$)|\S+/g) || [];
@@ -51,6 +50,7 @@ export function prepare(lines) {
   const seen = new Set();
   return lines.filter(line => line.trim()).map(line => {
     let t = parse(line);
+    line = build(t);
     if (!t.uid || seen.has(t.uid)) {
       const copied = !!t.uid;
       line = setKey(line, 'uid', crypto.randomUUID());
@@ -136,8 +136,7 @@ export function subtree(lines, i) {
   while (end < lines.length && (!lines[end].trim() || parse(lines[end]).depth > depth)) end++;
   return end;
 }
-// Done marks the task and its open subtasks, and unpins them. A repeating task gets its next one right after it,
-// dated by next() and not pinned.
+// Done marks the task and its open subtasks. A repeating task gets its next one right after it, dated by next().
 export function complete(lines, i, today) {
   const t = parse(lines[i]), end = subtree(lines, i), out = [...lines];
   if (t.done) {
@@ -159,7 +158,7 @@ export function complete(lines, i, today) {
   const successors = [];
   for (let j = i; j < end; j++) {
     const s = parse(out[j]);
-    if (!s.done && out[j].trim()) out[j] = write({ ...s, done: true, doneDate: today, pin: null });
+    if (!s.done && out[j].trim()) out[j] = write({ ...s, done: true, doneDate: today });
     if (s.rec && !s.done) {
       const due = next(s, today), stop = subtree(lines, j);
       const templates = new Map();
@@ -170,11 +169,11 @@ export function complete(lines, i, today) {
       for (let k = j; k < stop; k++) {
         const child = parse(lines[k]), rid = child.rid || child.uid;
         if (k > j && child.rec && templates.get(child.rid).uid !== child.uid) { k = subtree(lines, k) - 1; continue; }
-        successors.push(write({ ...child, done: false, doneDate: null, pin: null, created: today, rid,
+        successors.push(write({ ...child, done: false, doneDate: null, created: today, rid,
           uid: (k === j ? rid : (s.rid || s.uid) + '/' + rid) + '/' + due, prev: child.uid, due: k === j ? due : child.rec ? next(child, today) : child.due }));
       }
       // The repeating parent's next checklist already contains its repeating descendants.
-      for (let k = j + 1; k < stop; k++) { const child = parse(out[k]); if (!child.done) out[k] = write({ ...child, done: true, doneDate: today, pin: null }); }
+      for (let k = j + 1; k < stop; k++) { const child = parse(out[k]); if (!child.done) out[k] = write({ ...child, done: true, doneDate: today }); }
       j = stop - 1;
     }
   }
@@ -195,7 +194,7 @@ export function addChild(lines, i, line) {
   return [...lines.slice(0, end), '\t'.repeat(parse(lines[i]).depth + 1) + line, ...lines.slice(end)];
 }
 // A routine keeps its history even when its words, categories or frequency change.
-export const routine = t => t.rid || t.tokens.filter(tok => !['due', 'notes', 'pin', ...IDENTITY].includes(keyValue(tok)?.[0])).join(' ').toLowerCase();
+export const routine = t => t.rid || t.tokens.filter(tok => !['due', 'notes', ...IDENTITY].includes(keyValue(tok)?.[0])).join(' ').toLowerCase();
 
 // Dates are YYYY-MM-DD strings in local time.
 export const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

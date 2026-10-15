@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#f7f4ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#181714" media="(prefers-color-scheme: dark)">
 <title>Pintail</title>
-<link rel="icon" href="icons/pintail.png?v=7" type="image/png">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=7">
+<link rel="icon" href="icons/pintail.png?v=8" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=8">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="../ebis/fonts/Libron-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="pintail.css">
@@ -28,7 +28,7 @@
 <div id="app" class="app" hidden>
   <div id="masthead" class="masthead">
   <header class="top">
-    <h1><span class="mark" aria-hidden="true"></span>pintail</h1>
+    <h1><span class="mark" aria-hidden="true"></span>pintail<small id="version">v8</small></h1>
     <nav id="views" class="views" aria-label="Task views">
       <button data-view="soon"><span class="desktop-label">Tasks</span><span class="phone-label">Soon</span></button><button data-view="later">Later</button><button data-view="routines">Routines</button><button data-view="done">Done</button>
     </nav>
@@ -55,7 +55,6 @@
       <button type="button" id="update" class="status" hidden>Update</button>
     </div>
   </form>
-  <section id="pins" class="pins" hidden><h2><svg aria-hidden="true"><use href="#i-pin"/></svg>Pinned<button id="pins-move" data-move hidden>Move overdue to today</button></h2><div id="pins-list" class="list"></div></section>
   <main id="board" class="board">
     <section id="soon" class="column"><h2>Soon<small id="soon-count"></small></h2><div id="soon-list" class="list"></div></section>
     <section id="later" class="column"><h2>Later<small id="later-count"></small></h2><div id="later-list" class="list"></div></section>
@@ -70,7 +69,6 @@
     <div class="head" tabindex="-1">
       <button type="button" id="sheet-check" class="check" aria-label="Done"></button>
       <textarea id="title" rows="1" aria-label="Task" enterkeyhint="done"></textarea>
-      <button type="button" id="pin" class="icon pin" aria-label="Pin" aria-pressed="false"><svg><use href="#i-pin"/></svg></button>
       <button class="icon x" aria-label="Close"><svg><use href="#i-close"/></svg></button>
     </div>
     <p id="parent" class="parent" hidden></p>
@@ -96,16 +94,15 @@
 <dialog id="help" class="sheet help">
   <form method="dialog">
     <div class="head"><h2>Pintail</h2><button class="icon x" aria-label="Close help"><svg><use href="#i-close"/></svg></button></div>
-    <p>Capture a task, give it a day when needed, and pin what matters now. Categories use @names. A tab in todo.txt makes a step.</p>
+    <p>Capture a task and give it a day when needed. Categories use @names. A tab in todo.txt makes a step.</p>
     <p>Try “Call Sam fri”, “Journal every weekday”, or “Rent monthly on the 31st”. “Next Friday” means Friday next week. Keep words cancels date recognition.</p>
-    <dl><dt>n</dt><dd>Add a task</dd><dt>/</dt><dd>Search everything</dd><dt>j / k, ↓ / ↑</dt><dd>Move between tasks</dd><dt>Enter</dt><dd>Open the focused task</dd><dt>x / p</dt><dd>Complete / pin it</dd><dt>⌘Z / Ctrl+Z</dt><dd>Undo the last change</dd><dt>?</dt><dd>Open this help</dd></dl>
+    <dl><dt>n</dt><dd>Add a task</dd><dt>/</dt><dd>Search everything</dd><dt>j / k, ↓ / ↑</dt><dd>Move between tasks</dd><dt>Enter</dt><dd>Open the focused task</dd><dt>x</dt><dd>Complete it</dd><dt>⌘Z / Ctrl+Z</dt><dd>Undo the last change</dd><dt>?</dt><dd>Open this help</dd></dl>
     <p>Edits save on this device immediately and sync when connected. Download makes a backup; previous versions let you preview and restore. Conflicting edits keep both copies, marked for review.</p>
   </form>
 </dialog>
 <div id="toast" class="toast" popover="manual" role="status" aria-live="polite"><span></span><button id="toast-undo" data-undo hidden>Undo</button><button id="toast-open" hidden>Open</button></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-pin" viewBox="0 0 24 24"><path transform="rotate(35 12 12)" d="M8 3h8l-1 7 4 4H5l4-4-1-7ZM12 14v7"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 11 6-6 6 6M12 5v14"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></symbol>

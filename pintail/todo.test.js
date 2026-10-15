@@ -92,13 +92,12 @@ test('field merges and undo keep newer edits, and conflicting titles retain comp
 });
 
 test('routine completion carries a checklist and reopening keeps edits without duplicate active copies', () => {
-  const lines = prepare(['(A) 2026-10-08 Journal due:2026-10-09 rec:+1b pin:2026-10-12 @Personal', '\tFind the notebook', 'Other']);
+  const lines = prepare(['(A) 2026-10-08 Journal due:2026-10-09 rec:+1b @Personal', '\tFind the notebook', 'Other']);
   let done = complete(lines, 0, WED);
   assert.deepEqual(done.map(l => [parse(l).text, parse(l).done, parse(l).depth]), [
     ['Journal', true, 0], ['Find the notebook', true, 1], ['Journal', false, 0], ['Find the notebook', false, 1], ['Other', false, 0],
   ]);
   assert.equal(parse(done[2]).due, '2026-10-15');
-  assert.equal(parse(done[2]).pin, null);
   assert.equal(routine(parse(done[0])), routine(parse(setText(done[2], 'New name'))));
   done[3] = setKey(done[3], 'notes', 'Keep these edits');
   const reopened = complete(done, 0, WED);

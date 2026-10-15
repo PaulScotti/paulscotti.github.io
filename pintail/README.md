@@ -3,17 +3,15 @@
 Paul's tasks as one todo.txt, at [paulscotti.com/pintail](https://www.paulscotti.com/pintail/), on a laptop and as an
 installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Worker keeping the list in sync.
 
-## Three horizons, and the pin
+## Three horizons
 
 - **Soon** is everything with a date: overdue, today, each of the next six days, then by month. **Move to today**
-  moves overdue one-off tasks, including pins, to today. Repeating schedules stay in place.
+  moves overdue one-off tasks to today. Repeating schedules stay in place.
 - **Later** is everything undated, by category, the most important and then the newest first. The age on the right
   shows how long a task has waited.
 - **Routines** are the repeating tasks, with their next date and a row of marks for when each was done lately: one
   per day for two weeks, or per week or month for slower ones.
 - **Done** is what's been finished, by day and then by month.
-- **Pinned** tasks sit above all of these, on every view and whatever the categories chosen, with the day each was
-  pinned. Done unpins, and a routine's next date comes back unpinned.
 
 On a laptop Soon and Later sit side by side, with a collapsible Routines history above them. Done replaces them; on a phone each is a tab. The
 categories along the top are the `@contexts`; any number can be chosen. A task added without a category gets the
@@ -25,10 +23,10 @@ saved shows under the box as it's typed, and **Keep words** keeps the words as w
 priority, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
 list bullets. The confirmation’s **Open** button opens the new task without moving your current view. “Next Friday” means Friday in the following week; “fri” means the next Friday on or after today. Impossible dates stay as words.
 
-Tap a task to open it: its words, notes, date, repeat, priority (A, B or C), categories, steps (subtasks) and pin,
+Tap a task to open it: its words, notes, date, repeat, priority (A, B or C), categories and steps (subtasks),
 each changed in place. Words and notes save locally as you type. **Skip** moves a routine to its next date without marking it done. Every change can be undone
 with **Undo** beside the add box, in the task sheet, or with Cmd/Ctrl+Z. The last 20 edits survive a reload in the same tab; undo preserves later edits from another device. On a laptop, `n` goes to the add box, `/` searches every task, open
-or done, `j` and `k` move between tasks, Enter opens one, `x` marks it done and `p` pins it. The lines button at the
+or done, `j` and `k` move between tasks, Enter opens one, `x` marks it done. The lines button at the
 top opens the whole todo.txt for editing by hand, where Tab makes a step and Cmd/Ctrl+Enter saves. **Download** exports a backup. The version menu previews earlier saves; **Restore** restores the preview as a new, undoable edit. **Help** or `?` shows the shortcuts.
 
 On the Pixel, open the page in Chrome itself, not in another app's in-app browser, and choose **Install app** from
@@ -37,17 +35,19 @@ shared from another app open in its add box.
 
 ## Appearance
 
-Libron type, warm paper, muted sienna and a colourful feather-shaped pinwheel mark. The phone has a sticky header,
+Libron type, warm paper and a pinwheel of six coloured feathers. Categories take a stable muted colour from
+their name, shared by filters, task labels and the picker. The same palette accents views, counts, priorities
+and capture. The phone has a sticky header,
 a floating capture box and a bottom task sheet; desktop keeps Soon and Later side by side. Task movement,
 view changes and sheets use short native animations and respect reduced motion. Typing saves immediately
-on the device; the list redraw and sync wait until typing pauses or the sheet closes.
+on the device; the list redraw and sync wait until typing pauses or the sheet closes. The small version beside
+the name identifies the installed release.
 
 The mark in `icons/pintail.png` was made with the built-in image-generation tool, then resized for the app.
 The tool does not expose a model selector. App icons render the same feather colours on warm paper.
-The colour-edit prompt preserved the six curved blades and negative space, and asked for peacock teal,
-emerald green, kingfisher blue, deep violet, warm copper and golden amber, with subtle tonal variation
-inspired by iridescent bird plumage. The background stays transparent; the header displays the colour
-image directly.
+The prompt called for six minimal feathers with open quills and sparse barb cuts, in muted teal, sage,
+slate blue, dusty plum, terracotta and ochre. It asked for flat fills without gradients, gloss or texture.
+The background stays transparent; the header displays the colour image directly.
 
 ## The format
 
@@ -55,13 +55,13 @@ Each line is a task, as in [todo.txt](https://github.com/todotxt/todo.txt), and 
 the task above:
 
 ```text
-(A) 2026-10-13 Send the grant budget @Work due:2026-10-15 pin:2026-10-14 notes:"Use the new template"
+(A) 2026-10-13 Send the grant budget @Work due:2026-10-15 notes:"Use the new template"
 	2026-10-13 Ask Sam for the numbers @Work
 x 2026-10-14 2026-10-08 Journal for 5 minutes @Personal due:2026-10-14 rec:+1b
 ```
 
 Pintail reads `x` and its date, the priority, the created date, `@contexts`, `due:`, `rec:`, `notes:` (quoted, with
-`\n` for new lines) and `pin:` (the day it was pinned). Anything else stays in the task's words as written, and so
+`\n` for new lines). Anything else stays in the task's words as written, and so
 does a date that isn't on the calendar. `rec:` takes a number and d, b (weekdays), w, m or y. With a `+` it keeps the
 schedule: the next date is the first one after today, so missed days are skipped, not owed. Without it, the next
 date counts from the day it's done. Done marks a task's open steps done too. A recurring parent brings its checklist forward. Reopening a completed routine folds its pending occurrence back into it, keeping subsequent checklist edits.
@@ -104,5 +104,5 @@ a throwaway in `worker/.dev.vars`. The first time, create the table with
 `npx wrangler d1 execute pintail --local --file schema.sql` from `worker/`. Two origins, localhost and 127.0.0.1,
 act as two devices.
 
-To release, raise `VERSION` in `sw.js`, so installed copies offer **Update**. Deploy the Worker with
+To release, raise `VERSION` in `sw.js` and the version label in `index.html`, so installed copies offer **Update**. Deploy the Worker with
 `npx wrangler deploy` from `worker/` before publishing the frontend when API endpoints change; its secret `KEY` is the password shared with ebis, myna and paisano.
