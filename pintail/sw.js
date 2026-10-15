@@ -1,5 +1,5 @@
 // Bump VERSION with every change to the app. An installed copy then offers "Update" and reloads into it.
-const VERSION = 1;
+const VERSION = 2;
 const CACHE = 'pintail-' + VERSION;
 const FILES = ['./', 'pintail.js', 'todo.js', 'pintail.css', 'manifest.webmanifest', 'icons/pintail.svg', 'icons/icon-192.png', '../ebis/fonts/Libron-Regular.woff2', '../ebis/fonts/Libron-Italic.woff2'];
 // The HTTP cache may still hold the previous release's files.

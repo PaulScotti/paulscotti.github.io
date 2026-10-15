@@ -498,6 +498,18 @@ if (params.size) {
   hint();
 }
 
+// On a phone, once Chrome counts Pintail as installable it offers to install it as an app with its own icon and
+// window, rather than a shortcut to a tab; Install asks for that here instead of in Chrome's menu.
+let installer = null;
+addEventListener('beforeinstallprompt', e => {
+  if (!matchMedia('(pointer: coarse)').matches) return; // a laptop keeps Chrome's own install icon
+  e.preventDefault();
+  installer = e;
+  $('install').hidden = false;
+});
+$('install').onclick = () => { installer.prompt(); $('install').hidden = true; };
+addEventListener('appinstalled', () => { $('install').hidden = true; });
+
 // Production opens offline after one visit. Local development always loads the current files.
 if ('serviceWorker' in navigator && !LOCAL) {
   let updating = false;

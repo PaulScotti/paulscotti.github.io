@@ -33,8 +33,10 @@ from the note at the bottom, or with Cmd/Ctrl+Z. On a laptop, `n` goes to the ad
 or done, `j` and `k` move between tasks, Enter opens one, `x` marks it done and `p` pins it. The lines button at the
 top opens the whole todo.txt for editing by hand, where Tab makes a step and Cmd/Ctrl+Enter saves.
 
-On the Pixel, Chrome's **Install app** puts Pintail on the home screen. Its icon's long-press has **Add task**, and
-text or links shared from another app open in the add box.
+On the Pixel, open the page in Chrome and tap **Install** at the end of the add box; it appears once Chrome counts
+Pintail as installable, after a little use, and Chrome's menu has **Install app** any time. Either installs Pintail
+as an app, with its own icon, window and place in the app list, rather than a shortcut to a Chrome tab. Its icon's
+long-press has **Add task**, and text or links shared from another app open in the add box.
 
 ## The format
 
