@@ -1,12 +1,13 @@
-// Godwit's todo.txt: reading and editing lines, dates, repeats, quick-add phrases and three-way merges.
+// Pintail's todo.txt: reading and editing lines, dates, repeats, quick-add phrases and three-way merges.
 // No DOM here, so `node --test` can check it.
 
 // A task is one line: [tabs][x DONE ][(A) ][CREATED ]words @contexts key:value. Each leading tab nests it one level
-// under the task above. Of the key:values, Godwit reads due:, rec: and notes:, and keeps every other token as words.
+// under the task above. Of the key:values, Pintail reads due:, rec:, notes: and pin: (the day it was pinned), and
+// keeps every other token as words.
 export function parse(line) {
   const tabs = line.match(/^\t*/)[0].length;
   let rest = line.slice(tabs).trim(), m;
-  const t = { line, depth: tabs, done: false, doneDate: null, pri: null, created: null, text: '', ctx: [], due: null, rec: null, notes: null };
+  const t = { line, depth: tabs, done: false, doneDate: null, pri: null, created: null, text: '', ctx: [], due: null, rec: null, notes: null, pin: null, meta: [] };
   if ((m = rest.match(/^x\s+/))) { t.done = true; rest = rest.slice(m[0].length); }
   if (t.done && (m = rest.match(DAY)) && real(m[1])) { t.doneDate = m[1]; rest = rest.slice(m[0].length); }
   if ((m = rest.match(/^\(([A-Z])\)\s+/))) { t.pri = m[1]; rest = rest.slice(m[0].length); }
@@ -19,7 +20,9 @@ export function parse(line) {
     else if (kv?.[0] === 'due' && real(kv[1]) && !t.due) t.due = kv[1];
     else if (kv?.[0] === 'rec' && REC.test(kv[1]) && !t.rec) t.rec = kv[1];
     else if (kv?.[0] === 'notes' && t.notes === null) t.notes = kv[1];
-    else words.push(tok);
+    else if (kv?.[0] === 'pin' && !t.pin) t.pin = kv[1];
+    else { words.push(tok); continue; }
+    t.meta.push(tok); // what was understood, kept when the words change
   }
   t.text = words.join(' ');
   return t;
@@ -40,14 +43,10 @@ const build = t => '\t'.repeat(t.depth) + [t.done && 'x', t.done && t.doneDate, 
 
 // Edits to one line. Tokens keep their places, so a changed date or context touches nothing else.
 export const setPri = (line, pri) => build({ ...parse(line), pri });
-export function setKey(line, key, value) {
-  const t = parse(line);
-  let i = t.tokens.findIndex(tok => keyValue(tok)?.[0] === key);
-  t.tokens = t.tokens.filter((tok, j) => j === i || keyValue(tok)?.[0] !== key);
-  i = t.tokens.findIndex(tok => keyValue(tok)?.[0] === key);
-  if (value === null || value === '') { if (i >= 0) t.tokens.splice(i, 1); }
-  else if (i >= 0) t.tokens[i] = token(key, value);
-  else t.tokens.push(token(key, value));
+export function setKey(line, key, value) { // in place of the first such token, or at the end; no value removes it
+  const t = parse(line), at = t.tokens.findIndex(tok => keyValue(tok)?.[0] === key);
+  t.tokens = t.tokens.filter(tok => keyValue(tok)?.[0] !== key);
+  if (value) t.tokens.splice(at >= 0 ? at : t.tokens.length, 0, token(key, value));
   return build(t);
 }
 export function toggleCtx(line, name) { // a new context goes after the others, or before the key:values
@@ -59,11 +58,10 @@ export function toggleCtx(line, name) { // a new context goes after the others, 
   }
   return build(t);
 }
-// New words go first; contexts and key:values stay after them in their order.
+// New words go first; the contexts and key:values that were understood stay after them in their order.
 export function setText(line, text) {
-  const t = parse(line), kept = t.tokens.filter(tok => tok[0] === '@' && tok.length > 1 || ['due', 'rec', 'notes'].includes(keyValue(tok)?.[0]));
-  t.tokens = [...tokens(text), ...kept];
-  return build(t);
+  const t = parse(line);
+  return build({ ...t, tokens: [...tokens(text).filter(tok => !t.meta.some(m => m.toLowerCase() === tok.toLowerCase())), ...t.meta] });
 }
 
 // Edits to the whole list, as an array of lines. A task's subtree is it and the deeper lines right below it.
@@ -73,15 +71,16 @@ export function subtree(lines, i) {
   while (end < lines.length && lines[end].trim() && parse(lines[end]).depth > depth) end++;
   return end;
 }
-// Done marks the task and its open subtasks. A repeating task gets its next one right after it, dated by next().
+// Done marks the task and its open subtasks, and unpins them. A repeating task gets its next one right after it,
+// dated by next() and not pinned.
 export function complete(lines, i, today) {
-  const t = parse(lines[i]), end = subtree(lines, i), out = [...lines];
+  const t = parse(lines[i]), end = subtree(lines, i), out = [...lines], unpinned = s => s.tokens.filter(tok => keyValue(tok)?.[0] !== 'pin');
   if (t.done) { out[i] = build({ ...t, done: false, doneDate: null }); return out; }
   for (let j = i; j < end; j++) {
     const s = parse(out[j]);
-    if (!s.done && out[j].trim()) out[j] = build({ ...s, done: true, doneDate: today });
+    if (!s.done && out[j].trim()) out[j] = build({ ...s, done: true, doneDate: today, tokens: unpinned(s) });
   }
-  if (t.rec) out.splice(end, 0, setKey(build({ ...t, created: today }), 'due', next(t, today)));
+  if (t.rec) out.splice(end, 0, setKey(build({ ...t, created: today, tokens: unpinned(t) }), 'due', next(t, today)));
   return out;
 }
 // A missed day or week is skipped rather than owed: the next date of a + schedule is the first one after today.
@@ -97,7 +96,7 @@ export function addChild(lines, i, line) {
   return [...lines.slice(0, end), '\t'.repeat(parse(lines[i]).depth + 1) + line, ...lines.slice(end)];
 }
 // Completed copies of a repeating task share its words, contexts and repeat, so they make its history.
-export const routine = t => t.tokens.filter(tok => !['due', 'notes'].includes(keyValue(tok)?.[0])).join(' ').toLowerCase();
+export const routine = t => t.tokens.filter(tok => !['due', 'notes', 'pin'].includes(keyValue(tok)?.[0])).join(' ').toLowerCase();
 
 // Dates are YYYY-MM-DD strings in local time.
 export const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

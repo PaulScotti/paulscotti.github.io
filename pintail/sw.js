@@ -1,12 +1,12 @@
 // Bump VERSION with every change to the app. An installed copy then offers "Update" and reloads into it.
-const VERSION = 4;
-const CACHE = 'godwit-' + VERSION;
-const FILES = ['./', 'godwit.js', 'todo.js', 'godwit.css', 'manifest.webmanifest', 'icons/godwit.svg', 'icons/icon-192.png', '../ebis/fonts/Libron-Regular.woff2', '../ebis/fonts/Libron-Italic.woff2'];
+const VERSION = 1;
+const CACHE = 'pintail-' + VERSION;
+const FILES = ['./', 'pintail.js', 'todo.js', 'pintail.css', 'manifest.webmanifest', 'icons/pintail.svg', 'icons/icon-192.png', '../ebis/fonts/Libron-Regular.woff2', '../ebis/fonts/Libron-Italic.woff2'];
 // The HTTP cache may still hold the previous release's files.
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(url => new Request(url, { cache: 'reload' }))))));
 self.addEventListener('message', e => { if (e.data === 'activate') self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil((async () => {
-  for (const key of await caches.keys()) if (key.startsWith('godwit-') && key !== CACHE) await caches.delete(key);
+  for (const key of await caches.keys()) if (key.startsWith('pintail-') && key !== CACHE) await caches.delete(key);
   await self.clients.claim();
 })()));
 self.addEventListener('fetch', e => {

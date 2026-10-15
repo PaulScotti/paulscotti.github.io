@@ -14,14 +14,16 @@ test('a line is read into its parts and edits keep the other tokens where they w
   assert.equal(setPri(toggleCtx(toggleCtx(line, 'personal'), 'Personal'), 'A'), line);
   assert.equal(toggleCtx(line, 'Personal'), line.replace('@Paul', '@Paul @Personal'));
   assert.equal(toggleCtx('2026-10-14 Call mom due:2026-10-15', 'Personal'), '2026-10-14 Call mom @Personal due:2026-10-15');
-  assert.equal(setText(line, 'Hand in the camera-ready l:30m'), '(A) 2026-10-06 Hand in the camera-ready l:30m @Paul due:2026-10-12 notes:"Check the \\"final\\" PDF"');
+  assert.equal(setText(line, 'Hand in the camera-ready l:30m @paul'), '(A) 2026-10-06 Hand in the camera-ready l:30m @Paul due:2026-10-12 notes:"Check the \\"final\\" PDF"');
+  assert.equal(setText('Pay rent due:2026-02-30 @Home', 'Pay the rent due:2026-03-01'), 'Pay the rent due:2026-03-01 @Home'); // only what was understood is kept
   assert.deepEqual([parse('Pay rent due:2026-02-30').due, parse('Pay rent due:2026-02-30').text], [null, 'Pay rent due:2026-02-30']); // not a date
   const done = parse('x 2026-07-21 2026-06-23 Age prediction @Chris');
   assert.deepEqual([done.done, done.doneDate, done.created, done.text], [true, '2026-07-21', '2026-06-23', 'Age prediction']);
 });
 
-test('done marks the subtasks too, and a repeat comes back after its missed days', () => {
-  const lines = ['(A) 2026-10-08 5-min journaling due:2026-10-09 rec:+1b @Personal', '\t2026-10-08 Find the notebook @Personal', 'Other'];
+test('done marks the steps too and unpins, and a repeat comes back after its missed days', () => {
+  const lines = ['(A) 2026-10-08 5-min journaling due:2026-10-09 rec:+1b pin:2026-10-12 @Personal', '\t2026-10-08 Find the notebook @Personal', 'Other'];
+  assert.equal(parse(lines[0]).pin, '2026-10-12');
   assert.deepEqual(complete(lines, 0, WED), [
     'x 2026-10-14 2026-10-08 5-min journaling due:2026-10-09 rec:+1b @Personal',
     '\tx 2026-10-14 2026-10-08 Find the notebook @Personal',
