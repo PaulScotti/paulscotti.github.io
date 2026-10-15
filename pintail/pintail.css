@@ -62,7 +62,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .views button.on { color: var(--ink); border-color: var(--ink); }
 .tools { display: flex; align-items: center; gap: 2px; }
 .status { font-size: 14px; color: var(--accent); padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
-#update, #install { color: var(--ink); border: 1px solid var(--rule); margin-right: 4px; }
+#update { color: var(--ink); border: 1px solid var(--rule); margin-right: 4px; }
 
 .filters { margin: 10px 0 2px; }
 .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -32px; padding: 2px 32px; }

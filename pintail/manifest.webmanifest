@@ -28,18 +28,6 @@
       "purpose": "maskable"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Add task",
-      "url": "/pintail/?add",
-      "icons": [
-        {
-          "src": "icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
   "share_target": {
     "action": "/pintail/",
     "method": "GET",
