@@ -1147,23 +1147,39 @@
    "name": "1740 NW 63rd St",
    "address": "1740 NW 63rd St, Seattle, WA 98107",
    "neighborhood": "Ballard",
-   "available": "Now; owner says the home is empty and ready to tour",
-   "status": "booked",
-   "requested": "Booked Sat Oct 17, 12:15 PM through Zillow messages with the owner; her husband will meet us there. They held off on selling after Oct 5 and added a discount for leases over 12 months.",
-   "ac": "Unknown; ask during the tour",
+   "type": "Single-family house",
+   "beds": 4,
+   "baths": 3,
+   "sqft": 1970,
+   "rent": "$4,750/mo (12-month lease)",
+   "fees": "Refundable security deposit $4,750 plus first month's rent at signing. Zillow says other fees may apply",
+   "lease": "Price is for 12 months; the owner offers a discount for longer leases",
+   "available": "Sun Oct 18, 2026 per Zillow; the owner says it's empty now",
+   "parking": "Off-street carport",
+   "laundry": "In-unit LG washer and dryer",
+   "ac": "2 wall-unit ACs, not central",
+   "pets": "No pets",
    "highlights": [
-    "Owner decided not to sell and wants a long-term tenant",
-    "Owner offers a discount for leases longer than 12 months"
+    "Standalone townhome where every bedroom has its own bathroom",
+    "Rooftop deck with views of Mt. Rainier and the Olympics",
+    "Open main floor with a gas fireplace, gas range, large island and slab counters",
+    "Primary suite with sunset views and a walk-in shower",
+    "Walk Score 92, Bike Score 94; Quantum Fiber; BBQ grill included"
    ],
    "watch_outs": [
-    "AC not confirmed, and it's a must-have: ask first",
-    "Rent, size and fees weren't captured here; check the Zillow listing",
-    "Ask how big the long-lease discount is and what the base rent is"
+    "AC is 2 wall units: check which rooms they actually cool",
+    "Carport only, no garage",
+    "Townhome with a rooftop deck: check how many flights of stairs",
+    "Transit Score 51 (buses only)",
+    "Available Oct 18: ask if they'd hold it for a mid-Nov to Dec start, and how big the long-lease discount is"
    ],
    "listing_url": "https://www.zillow.com/homedetails/1740-Nw-63rd-St-Seattle-WA-98107/2094800356_zpid/",
+   "photo_url": "photos/1740-nw-63rd-st.jpg",
+   "status": "booked",
+   "tour_at": "2026-10-17T12:15",
+   "requested": "Booked Sat Oct 17, 12:15 PM through Zillow messages with the owner; her husband will meet us there. They held off on selling after Oct 5 and added a discount for leases over 12 months.",
    "lat": 47.674607051515,
-   "lng": -122.379380063606,
-   "tour_at": "2026-10-17T12:15"
+   "lng": -122.379380063606
   },
   {
    "id": "the-olivian",
