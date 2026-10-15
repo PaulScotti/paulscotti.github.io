@@ -44,15 +44,16 @@
     <div id="hint" class="hint" hidden></div>
     <div class="line">
       <input name="task" placeholder="Add a task" aria-label="Add a task (n)" enterkeyhint="done" autocapitalize="sentences">
+      <button type="button" id="undo" class="status" data-undo hidden>Undo</button>
       <button type="button" id="status" class="status" hidden></button>
       <button type="button" id="update" class="status" hidden>Update</button>
     </div>
   </form>
-  <section id="pins" class="pins" hidden><h2><svg aria-hidden="true"><use href="#tail"/></svg>Pinned</h2><div class="list"></div></section>
+  <section id="pins" class="pins" hidden><h2><svg aria-hidden="true"><use href="#tail"/></svg>Pinned<button id="pins-move" data-move hidden>Move overdue to today</button></h2><div class="list"></div></section>
   <main id="board" class="board">
     <section id="soon" class="column"><h2>Soon</h2><div class="list"></div></section>
     <section id="later" class="column"><h2>Later</h2><div class="list"></div></section>
-    <section id="routines" class="column"><h2>Routines</h2><div class="list"></div></section>
+    <section id="routines" class="column"><h2><button type="button" id="routine-toggle" aria-expanded="false">Routines</button></h2><div class="list"></div></section>
     <section id="done" class="column"><h2>Done</h2><div class="list"></div></section>
     <section id="found" class="column"><h2>Found</h2><div class="list"></div></section>
   </main>
@@ -71,21 +72,31 @@
     <div class="row"><span>Date</span><div id="dates" class="choices"></div></div>
     <div class="row"><span>Repeat</span><div id="repeats" class="choices"></div></div>
     <div class="row"><span>Priority</span><div id="pris" class="choices"></div></div>
-    <div class="row"><span>Category</span><div id="tags" class="choices"></div></div>
+    <div class="row"><span>Category</span><div class="choices"><span id="tags" class="choices"></span><input id="new-tag" placeholder="New" aria-label="New category" enterkeyhint="done"></div></div>
     <div class="row kids"><span>Steps</span><div><div id="kids"></div><input id="kid" placeholder="Add a step" aria-label="Add a step" enterkeyhint="done"></div></div>
-    <footer><button type="button" id="delete" class="danger">Delete</button><span id="stamp"></span></footer>
+    <footer><button type="button" data-undo hidden>Undo</button><button type="button" id="resolve" hidden>Mark reviewed</button><button type="button" id="delete" class="danger">Delete</button><span id="stamp"></span></footer>
   </form>
 </dialog>
 
 <dialog id="text" class="sheet text">
   <form method="dialog">
     <div class="head"><h2>todo.txt</h2><button class="icon x" aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
+    <div class="file-tools"><button type="button" id="download">Download</button><select id="versions" aria-label="Previous versions"><option value="">Current version</option></select><button type="button" id="help-open">Help (?)</button></div>
     <textarea id="file" spellcheck="false" aria-label="todo.txt"></textarea>
     <footer><span>One task per line. A tab at the start makes a step of the task above.</span><button type="button" id="save" class="primary">Save</button></footer>
   </form>
 </dialog>
 
-<div id="toast" class="toast" popover="manual" role="status" aria-live="polite"><span></span><button hidden>Undo</button></div>
+<dialog id="help" class="sheet help">
+  <form method="dialog">
+    <div class="head"><h2>Pintail</h2><button class="icon x" aria-label="Close help"><svg><use href="#i-close"/></svg></button></div>
+    <p>Capture a task, give it a day when needed, and pin what matters now. Categories use @names. A tab in todo.txt makes a step.</p>
+    <p>Try “Call Sam fri”, “Journal every weekday”, or “Rent monthly on the 31st”. “Next Friday” means Friday next week. Keep words cancels date recognition.</p>
+    <dl><dt>n</dt><dd>Add a task</dd><dt>/</dt><dd>Search everything</dd><dt>j / k, ↓ / ↑</dt><dd>Move between tasks</dd><dt>Enter</dt><dd>Open the focused task</dd><dt>x / p</dt><dd>Complete / pin it</dd><dt>⌘Z / Ctrl+Z</dt><dd>Undo the last change</dd><dt>?</dt><dd>Open this help</dd></dl>
+    <p>Edits save on this device immediately and sync when connected. Download makes a backup; previous versions let you preview and restore. Conflicting edits keep both copies, marked for review.</p>
+  </form>
+</dialog>
+<div id="toast" class="toast" popover="manual" role="status" aria-live="polite"><span></span><button id="toast-undo" data-undo hidden>Undo</button><button id="toast-open" hidden>Open</button></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <!-- A northern pintail swimming. Its long tail is the pin: it takes the accent colour while a task is pinned. -->

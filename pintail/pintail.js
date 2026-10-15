@@ -1,7 +1,7 @@
 // Pintail: a todo.txt in three horizons, Soon (dated), Later (undated) and Routines (repeating), plus Done, with
 // pinned tasks kept above them all. The whole list is one todo.txt, kept on each device and synced with the worker,
-// merging edits line by line.
-import { parse, setPri, setKey, toggleCtx, setText, complete, remove, addChild, quick, merge, next, routine, repeatLabel, iso, addDays, weekday, DAYS, MONTHS } from './todo.js';
+// merging fields by task identity.
+import { parse, prepare, identify, split, join, setPri, setKey, toggleCtx, setText, complete, remove, addChild, quick, merge, next, routine, repeatLabel, iso, addDays, weekday, DAYS, MONTHS } from './todo.js';
 
 const $ = id => document.getElementById(id);
 const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
@@ -10,40 +10,43 @@ const API = (LOCAL ? 'http://localhost:8790' : 'https://pintail.scottibrain.work
 let password = localStorage.getItem('pintail.password'); // typed once on each device
 let view = localStorage.getItem('pintail.view') || 'soon';
 let picked = JSON.parse(localStorage.getItem('pintail.filter') || '[]');
-let query = null, literal = false, today = iso(new Date()), tasks = [], names = [], editing = null, opened = '';
-const undos = [];
+let query = null, literal = false, today = iso(new Date()), tasks = [], names = [], editing = null, opened = '', fileDraft = '', selectedVersion = '';
+const undos = JSON.parse(sessionStorage.getItem('pintail.undo') || '[]');
+let saveTimer;
 
 // The list on this device, and the copy the worker last had (`base`). They differ while edits wait to sync.
 const text = () => localStorage.getItem('pintail.text');
 const base = () => JSON.parse(localStorage.getItem('pintail.base'));
 const keep = s => localStorage.setItem('pintail.text', s);
-const split = s => s ? s.replace(/\r\n?/g, '\n').replace(/\n$/, '').split('\n') : [];
-const join = lines => lines.length ? lines.join('\n') + '\n' : '';
 
 // Every change is made to the lines as they are at that moment, so nothing from another tab or a sync is lost.
-function edit(f, note) {
-  const before = text(), after = join(f(split(before)));
+function edit(f, note, group = null) {
+  const before = text() || '', after = join(prepare(f(split(before))));
   if (after === before) return;
   keep(after);
-  if (undos.push({ before, after }) > 20) undos.shift(); // each holds two copies of the list
+  const previous = undos.at(-1), now = Date.now();
+  if (group && previous?.group === group && previous.after === before && now - previous.at < 1500) { previous.after = after; previous.at = now; }
+  else if (undos.push({ before, after, group, at: now }) > 20) undos.shift();
+  sessionStorage.setItem('pintail.undo', JSON.stringify(undos));
   if (note) toast(note, true);
   render();
-  sync();
+  clearTimeout(saveTimer);
+  if (group) saveTimer = setTimeout(sync, 500); else sync();
 }
-// Undo takes back one edit by merging it out, keeping whatever changed since.
 function undo() {
   const u = undos.pop();
   if (!u) return;
-  keep(merge(u.after, text(), u.before));
-  toast('Undone');
+  const result = merge(u.after, text(), u.before, { undo: true });
+  keep(result.text);
+  sessionStorage.setItem('pintail.undo', JSON.stringify(undos));
+  toast(result.conflicts ? 'Undone. Newer edits kept.' : 'Undone');
   render();
   sync();
 }
-// A task is found by its line: where it was, or wherever that exact line is now.
-const find = (i, line) => { const lines = split(text()); return lines[i] === line ? i : lines.indexOf(line); };
+const find = (i, line) => { const uid = parse(line).uid; return split(text()).findIndex(l => parse(l).uid === uid); };
 function act(i, line, f, note) {
   const at = find(i, line);
-  if (at < 0) return toast('That task just changed on another device.');
+  if (at < 0) return toast('That task was deleted on another device.');
   edit(lines => f(lines, at), note);
 }
 
@@ -72,15 +75,24 @@ async function exchange() {
     if (!res) throw new Error(); // offline: the edits wait here
     if (res.status === 401) return lock();
     if (res.status === 304) return;
+    if (![200, 204, 412].includes(res.status)) throw new Error(await res.text());
     const v = +res.headers.get('etag').match(/\d+/)[0]; // Cloudflare sends it as W/"7" when it compresses
     if (res.status === 204) {
       localStorage.setItem('pintail.base', JSON.stringify({ v, text: mine }));
       if (text() === mine) return;
       continue;
     }
-    if (res.status !== 200 && res.status !== 412) throw new Error(await res.text());
-    const theirs = await res.text(), now = text();
-    keep(merge(b ? b.text : '', now ?? '', theirs)); // a new device's first edits merge in too
+    const theirs = await identify(await res.text(), b?.text || ''), now = text();
+    const result = merge(b?.text || '', now || '', theirs);
+    keep(result.text);
+    if (editing && result.conflicts) {
+      const previous = parse(editing.line), fields = ['text', 'notes', 'due', 'rec', 'pri'];
+      const score = t => fields.filter(k => t[k] === previous[k]).length;
+      const candidates = split(result.text).map(parse).filter(t => t.uid === previous.uid || t.conflict === previous.uid);
+      candidates.sort((a, b) => score(b) - score(a));
+      if (candidates.length) editing.line = candidates[0].line;
+    }
+    if (result.conflicts) toast('Both versions kept. Search “conflict” to review.');
     localStorage.setItem('pintail.base', JSON.stringify({ v, text: theirs }));
     render();
     if (text() === theirs) return;
@@ -121,9 +133,9 @@ const linked = s => s.split(/(https?:\/\/[^\s<>"]*[^\s<>".,;:!?)\]'])/).map((par
 // One task row. Categories already chosen in the filter, or named by its group, aren't repeated on it.
 function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up, hide = [] } = {}) {
   const ctx = t.ctx.filter(c => ![...picked, ...hide].some(p => same(p, c)));
-  const meta = [...ctx, t.rec && repeatLabel(t), up && '↳ ' + up.text].filter(Boolean);
-  return `<div class="task${t.done ? ' done' : ''}" data-i="${t.i}" style="--depth:${depth}" tabindex="0">
-    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Not done' : 'Done'}" tabindex="-1"></button>
+  const meta = [t.conflict && 'Conflict: review both versions', t.pri && 'Priority ' + t.pri, ...ctx, t.rec && repeatLabel(t), up && '↳ ' + up.text].filter(Boolean);
+  return `<div class="task${t.done ? ' done' : ''}" data-i="${t.i}" data-uid="${esc(t.uid)}" style="--depth:${depth}" tabindex="0">
+    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}" aria-pressed="${t.done}" tabindex="-1"></button>
     <div class="body"><span class="title">${linked(t.text || t.line.trim())}</span>${meta.length ? `<span class="meta">${esc(meta.join(' · '))}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
     ${label ? `<span class="when${late ? ' late' : ''}">${esc(label)}</span>` : ''}
   </div>`;
@@ -137,7 +149,8 @@ const groups = (items, label) => items.reduce((out, x) => {
 const list = (gs, rows, empty, head = l => l) => gs.length ? gs.map(([l, xs]) => `<div class="group"><h3>${head(l, xs)}</h3>${xs.map(rows).join('')}</div>`).join('') : `<p class="empty">${empty}</p>`;
 
 function render() {
-  const raw = text(), focused = document.activeElement.closest('.pins .task, #board .task'), was = focused && tasks.find(t => t.i === +focused.dataset.i)?.line;
+  const raw = text(), focused = document.activeElement.closest('.pins .task, #board .task'), was = focused?.dataset.uid, section = focused?.closest('section');
+  for (const b of document.querySelectorAll('[data-undo]')) b.hidden = !undos.length;
   document.body.dataset.view = view;
   document.body.classList.toggle('finding', query !== null);
   for (const b of $('views').children) b.classList.toggle('on', b.dataset.view === view);
@@ -187,11 +200,13 @@ function render() {
   const rows = (x, label) => x.members.map(m => row(m, { depth: m.depth - x.t.depth, ...label(m) })).join('');
 
   const soon = tops.filter(x => x.due).sort((a, b) => a.due.localeCompare(b.due) || RANK(a.t.pri) - RANK(b.t.pri) || a.t.i - b.t.i);
+  const movable = tasks.filter(t => !t.done && !t.rec && t.due && t.due < today && (t.pin || shown(t) || tops.some(x => x.members.includes(t))));
+  $('pins-move').hidden = !pins.some(t => !t.rec && t.due && t.due < today) || soon.some(x => x.due < today);
   $('soon').lastChild.innerHTML = list(groups(soon, x => soonGroup(x.due)), x => rows(x, m => {
     const g = soonGroup(x.due);
     return { label: !m.due || g === dayName(m.due) ? '' : dayName(m.due), late: m.due < today };
   }), 'Nothing coming up. End a task with a day, like “Call the bank fri”, and it waits here.', (l, xs) =>
-    l === 'Overdue' ? `${l}<button class="move" data-move>Move to today</button>` : near(xs[0].due) || xs[0].due === today ? `${l} <small>${short(xs[0].due)}</small>` : l);
+    l === 'Overdue' ? `${l}${movable.length ? `<button class="move" data-move>Move ${movable.length} to today</button>` : ''}` : near(xs[0].due) || xs[0].due === today ? `${l} <small>${short(xs[0].due)}</small>` : l);
 
   // Later: what has no day, by category, the most important and then the newest first.
   const group = x => x.t.ctx.find(c => !picked.length || picked.some(p => same(p, c))) || '';
@@ -203,6 +218,9 @@ function render() {
   const history = new Map();
   for (const t of tasks) if (t.done && t.rec && t.doneDate) history.set(routine(t), (history.get(routine(t)) || new Set()).add(t.doneDate));
   const routines = tasks.filter(t => open(t) && t.rec && shown(t)).sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999') || a.i - b.i);
+  $('routine-toggle').textContent = `Routines · ${routines.length}`;
+  $('routine-toggle').setAttribute('aria-expanded', localStorage.getItem('pintail.routines') === 'open');
+  $('routines').classList.toggle('collapsed', localStorage.getItem('pintail.routines') !== 'open');
   $('routines').lastChild.innerHTML = routines.length ? routines.map(t => row(t, {
     label: t.due ? dayName(t.due) : '', late: t.due < today, extra: strip(t, history.get(routine(t)) || new Set()),
   })).join('') : '<p class="empty">Nothing repeats. End a task with how often, like “Journal every weekday” or “Water plants every 3 days”.</p>';
@@ -211,14 +229,13 @@ function render() {
   $('done').lastChild.innerHTML = list(groups(done, t => doneGroup(t.doneDate)), t => row(t, { label: t.doneDate && doneGroup(t.doneDate) === month(t.doneDate) ? short(t.doneDate) : '' }), 'Nothing done yet.');
 
   if (query !== null) {
-    const q = query.toLowerCase(), hit = t => [t.text, t.notes || '', ...t.ctx].join(' ').toLowerCase().includes(q);
+    const q = query.toLowerCase(), hit = t => [t.text, t.notes || '', t.conflict ? 'conflict' : '', ...t.ctx].join(' ').toLowerCase().includes(q);
     const found = q ? tasks.filter(hit).sort((a, b) => a.done - b.done || (a.done ? (b.doneDate || '').localeCompare(a.doneDate || '') : (a.due || '9999').localeCompare(b.due || '9999'))) : [];
     $('found').lastChild.innerHTML = q ? list(groups(found, t => t.done ? 'Done' : 'Open'), t => row(t, { label: t.done ? t.doneDate && short(t.doneDate) : t.due ? dayName(t.due) : '', late: !t.done && t.due < today }), 'No tasks match.') : '';
   }
   if (editing && $('sheet').open) fill();
   // Redrawing replaces the rows, so the task that had the keyboard's focus gets it back.
-  const again = was && tasks.find(t => t.line === was);
-  if (again) document.querySelector(`.pins .task[data-i="${again.i}"], #board .task[data-i="${again.i}"]`)?.focus();
+  if (was && section) [...section.querySelectorAll('.task')].find(el => el.dataset.uid === was && el.offsetParent)?.focus({ preventScroll: true });
 }
 
 // How steady a routine has been: one mark per day for the last two weeks (per week or month for slower ones),
@@ -237,30 +254,37 @@ function strip(t, dates) {
     const m = iso(new Date(+today.slice(0, 4), +today.slice(5, 7) - 1 - k, 1)).slice(0, 7);
     cells.push(`<i class="${[...dates].some(d => d.startsWith(m)) ? 'on' : ''}"></i>`);
   }
-  return `<span class="strip" aria-label="Done ${dates.size} times">${cells.join('')}</span>`;
+  const period = unit === 'd' || unit === 'b' ? '14 days' : unit === 'w' ? '12 weeks' : '12 months';
+  return `<span class="strip" role="img" aria-label="Last ${period}; ${dates.size} completion days in all" title="Last ${period}; ${dates.size} completion days in all">${cells.join('')}<small>${period}</small></span>`;
 }
 
 // The task sheet: everything about one task, changed in place.
 function open(i) {
+  $('new-tag').value = $('kid').value = '';
   editing = { i, line: split(text())[i] };
   if (!$('sheet').open) $('sheet').showModal();
   $('sheet').focus(); // not the first button, which would show a ring
   fill();
 }
-function change(f, note) { // the sheet follows the task's new line, so it's set before the list redraws
+function change(f, note, group) { // the sheet follows the task's new line, so it's set before the list redraws
   const at = find(editing.i, editing.line);
   if (at < 0) return $('sheet').close(), toast('That task just changed on another device.');
-  const line = f(editing.line);
+  const line = f(split(text())[at]);
   editing = { i: at, line };
-  edit(lines => { lines[at] = line; return lines; }, note);
+  edit(lines => { lines[at] = line; return lines; }, note, group);
 }
 const chip = (label, on, data) => `<button type="button" class="${on ? 'on' : ''}" aria-pressed="${on}" ${data}>${esc(label)}</button>`;
+function patch(id, html) { if ($(id).innerHTML !== html) $(id).innerHTML = html; }
 function fill() {
   const at = find(editing.i, editing.line);
   if (at < 0) return $('sheet').close();
   const t = tasks.find(x => x.i === at), soonest = ['Today', 'Tomorrow', 'Next week'];
   const dates = { Today: today, Tomorrow: addDays(today, 1), 'Next week': addDays(today, 7 - (weekday(today) + 6) % 7) };
   const other = t.due && !soonest.some(l => dates[l] === t.due);
+  editing = { i: at, line: t.line };
+  $('resolve').hidden = !t.conflict;
+  $('sheet-check').setAttribute('aria-label', (t.done ? 'Reopen ' : 'Complete ') + t.text);
+  $('sheet-check').setAttribute('aria-pressed', t.done);
   $('sheet-check').className = `check p${t.done ? 'x' : t.pri || ''}`;
   $('pin').setAttribute('aria-pressed', !!t.pin);
   $('pin').setAttribute('aria-label', t.pin ? 'Unpin' : 'Pin');
@@ -268,25 +292,25 @@ function fill() {
   if (document.activeElement !== $('notes')) $('notes').value = t.notes || '';
   for (const area of [$('title'), $('notes')]) { area.style.height = ''; area.style.height = area.scrollHeight + 'px'; }
   $('parent').hidden = !t.up;
-  $('parent').innerHTML = t.up ? `Step of <button type="button" data-i="${t.up.i}">${esc(t.up.text)}</button>` : '';
-  $('dates').innerHTML = soonest.map(l => chip(l, t.due === dates[l], `data-due="${dates[l]}"`)).join('')
+  patch('parent', t.up ? `Step of <button type="button" data-i="${t.up.i}">${esc(t.up.text)}</button>` : '');
+  patch('dates', soonest.map(l => chip(l, t.due === dates[l], `data-due="${dates[l]}"`)).join('')
     + `<label class="${other ? 'on' : ''}"><span>${other ? esc(long(t.due)) : 'Pick'}</span><input type="date" value="${t.due || ''}" aria-label="Pick a date"></label>`
-    + (t.due ? chip('None', false, 'data-due=""') : '') + (t.rec && t.due ? chip('Skip', false, 'data-skip') : '');
+    + (t.due ? chip('None', false, 'data-due=""') : '') + (t.rec && t.due ? chip('Skip', false, 'data-skip') : ''));
   const repeats = { None: '', Daily: '+1d', Weekdays: '+1b', Weekly: '+1w', Monthly: '+1m', Yearly: '+1y' };
-  $('repeats').innerHTML = Object.entries(repeats).map(([l, r]) => chip(l, (t.rec || '') === r, `data-rec="${r}"`)).join('')
-    + (t.rec && !Object.values(repeats).includes(t.rec) ? chip(repeatLabel(t), true, `data-rec="${t.rec}"`) : '');
-  $('pris').innerHTML = ['A', 'B', 'C'].map(p => chip(p, t.pri === p, `data-pri="${p}"`)).join('') + chip('None', !['A', 'B', 'C'].includes(t.pri), 'data-pri=""');
-  $('tags').innerHTML = [...new Set([...names, ...t.ctx])].map(c => chip(c, t.ctx.some(x => same(x, c)), `data-ctx="${esc(c)}"`)).join('')
-    + '<input id="new-tag" placeholder="New" aria-label="New category" enterkeyhint="done">';
-  $('kids').innerHTML = t.kids.map(k => row(k, { up: null, label: k.due ? dayName(k.due) : '', late: !k.done && k.due < today })).join('');
+  patch('repeats', Object.entries(repeats).map(([l, r]) => chip(l, (t.rec || '') === r, `data-rec="${r}"`)).join('')
+    + (t.rec && !Object.values(repeats).includes(t.rec) ? chip(repeatLabel(t), true, `data-rec="${t.rec}"`) : ''));
+  patch('pris', ['A', 'B', 'C'].map(p => chip(p, t.pri === p, `data-pri="${p}"`)).join('') + chip('None', !['A', 'B', 'C'].includes(t.pri), 'data-pri=""'));
+  patch('tags', [...new Set([...names, ...t.ctx])].map(c => chip(c, t.ctx.some(x => same(x, c)), `data-ctx="${esc(c)}"`)).join(''));
+  patch('kids', t.kids.map(k => row(k, { up: null, label: k.due ? dayName(k.due) : '', late: !k.done && k.due < today })).join(''));
   $('stamp').textContent = [t.created && 'Added ' + short(t.created) + (t.created.slice(0, 4) === today.slice(0, 4) ? '' : ' ' + t.created.slice(0, 4)), t.doneDate && 'done ' + short(t.doneDate)].filter(Boolean).join(', ');
 }
-function commit() { // the title and notes are saved when they lose focus, on Enter, and when the sheet closes
+function commit() {
   if (!editing) return;
-  const t = parse(editing.line), title = $('title').value.replace(/\s+/g, ' ').trim(), notes = $('notes').value.trim();
-  if (title && title !== t.text) change(line => setText(line, title));
-  if (notes !== (t.notes || '')) change(line => setKey(line, 'notes', notes));
+  const t = parse(editing.line), title = $('title').value.replace(/\s+/g, ' ').trim(), notes = $('notes').value;
+  if (title && title !== t.text) change(line => setText(line, title), null, t.uid + ':title');
+  if (notes !== (t.notes || '')) change(line => setKey(line, 'notes', notes), null, t.uid + ':notes');
 }
+const setDue = (line, due) => setKey(setKey(line, 'due', due), 'anchor', due && parse(line).rec ? due.slice(5) : null);
 const repin = line => setKey(line, 'pin', parse(line).pin ? null : today); // pinned today, or unpinned
 
 // Quick add: what will be added shows under the box as it's typed, and a date read from the words can be undone.
@@ -300,18 +324,20 @@ function hint() {
     return $('hint').hidden = !matches.length;
   }
   const line = quick(value, today, names, fallback(), !literal), t = parse(line), read = line !== quick(value, today, names, fallback(), false);
-  const parts = [t.pri && 'Priority ' + t.pri, t.due && long(t.due), t.rec && repeatLabel(t), ...t.ctx];
+  const parts = [read && t.text, t.pri && 'Priority ' + t.pri, t.due && long(t.due), t.rec && repeatLabel(t), ...t.ctx];
   $('hint').innerHTML = parts.filter(Boolean).map(p => `<span>${esc(p)}</span>`).join('') + (read ? '<button type="button" data-literal aria-label="Keep the words as written">Keep words</button>' : '');
   $('hint').hidden = false;
 }
 
-function toast(message, undoable = false) {
+function toast(message, undoable = false, uid = null) {
   const el = $('toast');
-  el.firstChild.textContent = message;
-  el.lastChild.hidden = !undoable;
+  el.querySelector('span').textContent = message;
+  $('toast-undo').hidden = !undoable;
+  $('toast-open').hidden = !uid;
+  $('toast-open').onclick = () => { const at = split(text()).findIndex(l => parse(l).uid === uid); if (at >= 0) open(at); el.hidePopover(); };
   if (!el.matches(':popover-open')) el.showPopover();
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.hidePopover(), undoable ? 6000 : 2500);
+  toast.timer = setTimeout(() => el.hidePopover(), undoable || uid ? 6000 : 3000);
 }
 
 function route() {
@@ -348,7 +374,7 @@ $('chips').onclick = e => {
 };
 $('app').addEventListener('click', e => { // rows in the pinned band and the columns, and Move to today
   if (e.target.closest('[data-move]')) {
-    const late = new Set([...$('soon').querySelectorAll('.task')].map(row => tasks.find(x => x.i === +row.dataset.i)).filter(t => t.due < today).map(t => t.line));
+    const late = new Set([...document.querySelectorAll('#pins .task, #soon .task')].map(row => tasks.find(x => x.i === +row.dataset.i)).filter(t => !t.rec && t.due && t.due < today).map(t => t.line));
     return edit(lines => lines.map(l => late.has(l) ? setKey(l, 'due', today) : l), `Moved ${late.size} to today`);
   }
   const el = e.target.closest('.pins .task, #board .task');
@@ -362,8 +388,9 @@ $('add').onsubmit = e => {
   e.preventDefault();
   const value = $('add').task.value.trim();
   if (!value) return;
-  const line = quick(value, today, names, fallback(), !literal), t = parse(line);
+  const line = prepare([quick(value, today, names, fallback(), !literal)])[0], t = parse(line);
   edit(lines => [...lines, line], 'Added to ' + (t.rec ? 'Routines' : t.due ? 'Soon, ' + dayName(t.due) : 'Later'));
+  toast('Added to ' + (t.rec ? 'Routines' : t.due ? 'Soon, ' + dayName(t.due) : 'Later'), true, t.uid);
   $('add').task.value = '';
   literal = false;
   hint();
@@ -397,59 +424,98 @@ $('search').firstChild.onkeydown = e => { if (e.key === 'Escape') $('find').oncl
 $('search').lastChild.onclick = () => $('find').onclick();
 // The whole todo.txt by hand. Saving merges with whatever synced in while it was open, rather than overwriting it.
 $('raw').onclick = () => {
-  $('file').value = opened = text() ?? '';
+  $('file').value = fileDraft = opened = text() ?? '';
+  selectedVersion = '';
+  $('versions').innerHTML = '<option value="">Current version</option>';
+  $('save').textContent = 'Save';
   $('text').showModal();
+  loadVersions();
 };
-$('save').onclick = () => {
-  edit(lines => split(merge(opened, $('file').value, join(lines))), 'Saved todo.txt');
+async function loadVersions(before = '') {
+  const res = await fetch(API.replace('/todo.txt', '/versions') + (before ? '?before=' + before : ''), { headers: { authorization: `Bearer ${password}` }, cache: 'no-store' }).catch(() => null);
+  if (!res) return toast('Offline. Previous versions need a connection.');
+  if (!res.ok) return toast(await res.text());
+  const versions = await res.json();
+  $('versions').querySelector('[data-older]')?.remove();
+  for (const v of versions) $('versions').add(new Option(`v${v.v} · ${new Date(v.at).toLocaleString()}`, v.v));
+  if (versions.length === 100) {
+    const option = new Option('Older versions…', 'older:' + versions.at(-1).v);
+    option.dataset.older = ''; $('versions').add(option);
+  }
+}
+$('versions').onchange = async () => {
+  const v = $('versions').value;
+  if (v.startsWith('older:')) { await loadVersions(v.slice(6)); $('versions').value = selectedVersion; return; }
+  if (!v) { $('file').value = fileDraft; selectedVersion = ''; $('save').textContent = 'Save'; return; }
+  const res = await fetch(API + '?version=' + v, { headers: { authorization: `Bearer ${password}` }, cache: 'no-store' }).catch(() => null);
+  if (!res || !res.ok) { $('versions').value = selectedVersion; return toast(res ? await res.text() : 'Offline. That version could not be loaded.'); }
+  const content = await res.text();
+  if ($('versions').value !== v) return;
+  selectedVersion = v;
+  $('file').value = content;
+  $('save').textContent = 'Restore';
+};
+$('download').onclick = () => {
+  const url = URL.createObjectURL(new Blob([$('file').value], { type: 'text/plain;charset=utf-8' })), link = document.createElement('a');
+  link.href = url; link.download = `pintail-${today}.txt`; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+$('save').onclick = async () => {
+  $('save').disabled = true;
+  const edited = await identify($('file').value, opened), result = merge(opened, edited, text() || '');
+  edit(() => split(result.text), result.conflicts ? 'Saved. Both conflicting versions kept.' : $('save').textContent === 'Restore' ? 'Restored previous version' : 'Saved todo.txt');
+  $('save').disabled = false;
   $('text').close();
 };
+$('file').oninput = () => { if (!selectedVersion) fileDraft = $('file').value; };
 $('file').onkeydown = e => {
   if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); document.execCommand('insertText', false, '\t'); } // a tab makes a step
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) $('save').click();
 };
-$('toast').lastChild.onclick = () => { undo(); $('toast').hidePopover(); };
+for (const b of document.querySelectorAll('[data-undo]')) b.onclick = () => { undo(); $('toast').hidePopover(); };
+$('routine-toggle').onclick = () => { localStorage.setItem('pintail.routines', $('routines').classList.contains('collapsed') ? 'open' : 'closed'); render(); };
+$('help-open').onclick = () => $('help').showModal();
 $('status').onclick = sync;
 
 // In the sheet
-$('sheet').addEventListener('close', () => { commit(); editing = null; });
+$('sheet').addEventListener('close', () => { editing = null; });
 $('sheet').onclick = e => {
   if (e.target === $('sheet')) return $('sheet').close(); // a tap outside
   const step = e.target.closest('#kids .task'), b = e.target.closest('button');
   if (step) { // a step: its circle completes it, its words open it
     const k = tasks.find(x => x.i === +step.dataset.i);
     if (b) act(k.i, k.line, (lines, at) => complete(lines, at, today));
-    else { commit(); open(k.i); }
+    else open(k.i);
     return;
   }
   if (!b || !editing) return;
   const d = b.dataset;
   if (b.id === 'sheet-check') {
     const t = parse(editing.line);
-    if (t.done) return change(line => complete([line], 0, today)[0], 'Not done');
-    act(editing.i, editing.line, (lines, at) => complete(lines, at, today), t.rec ? `Done. Next: ${dayName(next(t, today))}` : 'Done');
+    act(editing.i, editing.line, (lines, at) => complete(lines, at, today), t.done ? 'Reopened' : t.rec ? `Done. Next: ${dayName(next(t, today))}` : 'Done');
     $('sheet').close();
   } else if (b.id === 'pin') change(repin, parse(editing.line).pin ? 'Unpinned' : 'Pinned');
   else if (b.id === 'delete') {
     act(editing.i, editing.line, remove, 'Deleted');
     $('sheet').close();
-  } else if ('i' in d) { commit(); open(+d.i); }
-  else if ('due' in d) change(line => setKey(line, 'due', d.due));
+  } else if ('i' in d) open(+d.i);
+  else if ('due' in d) change(line => setDue(line, d.due));
   else if ('skip' in d) change(line => setKey(line, 'due', next(parse(line), today)), 'Skipped to ' + dayName(next(parse(editing.line), today)));
-  else if ('rec' in d) change(line => d.rec && !parse(line).due ? setKey(setKey(line, 'rec', d.rec), 'due', today) : setKey(line, 'rec', d.rec));
+  else if ('rec' in d) change(line => { const due = parse(line).due || today; return setDue(setKey(line, 'rec', d.rec), d.rec ? due : parse(line).due); });
+  else if (b.id === 'resolve') change(line => setKey(line, 'conflict', null), 'Marked reviewed');
   else if ('pri' in d) change(line => setPri(line, d.pri || null));
   else if ('ctx' in d) change(line => toggleCtx(line, d.ctx));
 };
 $('sheet').onchange = e => {
-  if (e.target.type === 'date') change(line => setKey(line, 'due', e.target.value));
-  else if (e.target.id === 'title' || e.target.id === 'notes') commit();
+  if (e.target.type === 'date') change(line => setDue(line, e.target.value));
 };
-$('sheet').oninput = e => { if (e.target.tagName === 'TEXTAREA') { e.target.style.height = ''; e.target.style.height = e.target.scrollHeight + 'px'; } };
+$('sheet').oninput = e => { if (e.target.tagName === 'TEXTAREA') { e.target.style.height = ''; e.target.style.height = e.target.scrollHeight + 'px'; if (!e.isComposing) commit(); } };
+$('sheet').addEventListener('compositionend', commit);
 $('sheet').addEventListener('keydown', e => {
   if (e.key !== 'Enter' || e.isComposing) return; // Enter that finishes a Korean or other IME word isn't a submit
   const value = e.target.value?.trim();
   if (e.target.id === 'title') { e.preventDefault(); e.target.blur(); }
-  if (e.target.id === 'new-tag' && value) { e.preventDefault(); change(line => toggleCtx(line, value.replace(/^@/, '').replace(/\s+/g, ''))); }
+  if (e.target.id === 'new-tag' && value) { e.preventDefault(); e.target.value = ''; change(line => toggleCtx(line, value.replace(/^@/, '').replace(/\s+/g, ''))); }
   if (e.target.id === 'kid' && value) {
     e.preventDefault();
     const line = quick(value, today, names, parse(editing.line).ctx);
@@ -461,7 +527,9 @@ $('sheet').addEventListener('keydown', e => {
 // On a laptop: n adds, / searches, j and k (or the arrows) move between tasks, Enter opens one, x marks it done, p
 // pins it, and Cmd or Ctrl+Z undoes.
 addEventListener('keydown', e => {
-  if (e.target.closest('input, textarea') || document.querySelector('dialog[open]') || e.metaKey && e.key !== 'z' || e.ctrlKey && e.key !== 'z' || e.altKey) return;
+  if (e.target.closest('input, textarea') || e.isComposing) return;
+  if (e.key === 'z' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); return undo(); }
+  if (document.querySelector('dialog[open]') || e.metaKey && e.key !== 'z' || e.ctrlKey && e.key !== 'z' || e.altKey) return;
   const rows = () => [...document.querySelectorAll('.pins .task, #board .task')].filter(el => el.offsetParent);
   const row = e.target.closest('.task'), at = rows().indexOf(row), task = row && tasks.find(x => x.i === +row.dataset.i);
   if (e.key === 'j' || e.key === 'k' || row && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
@@ -469,14 +537,19 @@ addEventListener('keydown', e => {
     const all = rows();
     all[at < 0 ? 0 : Math.max(0, Math.min(all.length - 1, at + (e.key === 'j' || e.key === 'ArrowDown' ? 1 : -1)))]?.focus();
   } else if (task && e.key === 'Enter') open(task.i);
-  else if (task && e.key === 'x') { row.querySelector('.check').click(); rows()[at]?.focus(); } // the task that took its place
+  else if (task && e.key === 'x') {
+    const section = row.closest('section'), index = [...section.querySelectorAll('.task')].indexOf(row);
+    row.querySelector('.check').click();
+    const remaining = [...section.querySelectorAll('.task')].filter(el => el.offsetParent);
+    remaining[Math.min(index, remaining.length - 1)]?.focus({ preventScroll: true });
+  } // the task that took its place
   else if (task && e.key === 'p') { // the same task keeps the focus, moved
     act(task.i, task.line, (lines, at) => { lines[at] = repin(lines[at]); return lines; }, task.pin ? 'Unpinned' : 'Pinned');
-    rows().find(el => +el.dataset.i === task.i)?.focus();
+    rows().find(el => el.dataset.uid === task.uid)?.focus({ preventScroll: true });
   }
+  else if (e.key === '?') $('help').showModal();
   else if (e.key === 'n') { e.preventDefault(); $('add').task.focus(); }
   else if (e.key === '/') { e.preventDefault(); if (query === null) $('find').onclick(); else $('search').firstChild.focus(); }
-  else if (e.key === 'z' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); undo(); }
 });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { render(); sync(); } });
 addEventListener('online', sync);
@@ -487,6 +560,15 @@ setInterval(() => {
   sync();
 }, 30e3);
 
+// Migrate cached files once, under the same lock as sync. Legacy devices derive the same task IDs.
+await navigator.locks.request('pintail-sync', async () => {
+  const b = base(), before = text();
+  const canonical = b ? await identify(b.text) : '';
+  const local = before === null ? null : await identify(before, canonical);
+  if (text() !== before) throw new Error('Another tab edited Pintail during the update. Reload to finish.');
+  if (b) localStorage.setItem('pintail.base', JSON.stringify({ v: b.v, text: canonical }));
+  if (local !== null) keep(local);
+});
 route();
 sync();
 // Opened with text or a link shared from another app.

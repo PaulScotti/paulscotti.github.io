@@ -2,8 +2,7 @@
 // No DOM here, so `node --test` can check it.
 
 // A task is one line: [tabs][x DONE ][(A) ][CREATED ]words @contexts key:value. Each leading tab nests it one level
-// under the task above. Of the key:values, Pintail reads due:, rec:, notes: and pin: (the day it was pinned), and
-// keeps every other token as words.
+// under the task above. Metadata holds dates, repeats, notes, pins and stable identities; unknown tokens stay words.
 export function parse(line) {
   const tabs = line.match(/^\t*/)[0].length;
   let rest = line.slice(tabs).trim(), m;
@@ -250,7 +249,7 @@ const PHRASES = [
   [`(?:every (day|weekday|workday|week|month|year)|(daily|weekdays|weekly|biweekly|fortnightly|monthly|yearly|annually))(?: on the (\\d{1,2})(?:st|nd|rd|th)?)?`, (m, today) => {
     const word = m[1] || m[2], rec = { day: '+1d', daily: '+1d', weekday: '+1b', workday: '+1b', weekdays: '+1b', week: '+1w', weekly: '+1w', biweekly: '+2w', fortnightly: '+2w', month: '+1m', monthly: '+1m', year: '+1y', yearly: '+1y', annually: '+1y' }[word];
     const y = +today.slice(0, 4), mo = +today.slice(5, 7) - 1, d = m[3] && inMonth(y, mo, +m[3]);
-    if (m[3]) return +m[3] < 1 || +m[3] > 31 ? null : { rec: '+1m', due: d >= today ? d : inMonth(y, mo + 1, +m[3]), anchor: `${today.slice(5, 7)}-${m[3].padStart(2, '0')}` };
+    if (m[3]) return !rec.endsWith('m') || +m[3] < 1 || +m[3] > 31 ? null : { rec: '+1m', due: d >= today ? d : inMonth(y, mo + 1, +m[3]), anchor: `${today.slice(5, 7)}-${m[3].padStart(2, '0')}` };
     return { rec, due: rec === '+1b' && [0, 6].includes(weekday(today)) ? step(today, '+1b') : today };
   }],
   [`every ${WEEKDAY}`, (m, today) => ({ rec: '+1w', due: onOrAfter(today, dayIndex(m[1])) })],
@@ -386,7 +385,7 @@ export function merge(base, mine, theirs, { undo = false } = {}) {
       if (seen.has(parent)) return;
       seen.add(parent);
       for (const uid of descendants.get(parent) || []) {
-        const copy = { ...out.get(uid), uid: crypto.randomUUID(), parent: target, conflict: source };
+        const copy = { ...out.get(uid), uid: crypto.randomUUID(), parent: target };
         out.set(copy.uid, copy); order.push(copy.uid); copyChildren(uid, copy.uid, seen);
       }
     };

@@ -27,13 +27,23 @@ async function route(request, env) {
   const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
   const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   if (!given || !crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY))) return new Response('Wrong password.', { status: 401 });
-  if (new URL(request.url).pathname !== '/todo.txt') return new Response('Not found.', { status: 404 });
+  const url = new URL(request.url);
+  if (url.pathname === '/versions' && request.method === 'GET') {
+    const before = url.searchParams.get('before');
+    if (before && !/^[1-9]\d*$/.test(before)) return new Response('Invalid version.', { status: 400 });
+    const { results } = await env.DB.prepare('SELECT v, at FROM versions WHERE v < ? ORDER BY v DESC LIMIT 100').bind(before ? +before : Number.MAX_SAFE_INTEGER).all();
+    return Response.json(results, { headers: { 'cache-control': 'no-store' } });
+  }
+  if (url.pathname !== '/todo.txt') return new Response('Not found.', { status: 404 });
   const head = async () => await env.DB.prepare('SELECT v, text FROM versions ORDER BY v DESC LIMIT 1').first() || { v: 0, text: '' };
   const send = (status, { v, text }) => new Response(text, { status, headers: { etag: `"${v}"`, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
   // Cloudflare turns the ETag into W/"7" when it compresses a response, so either form is taken back.
   const version = name => (request.headers.get(name) || '').match(/^(?:W\/)?"(\d+)"$/)?.[1];
   if (request.method === 'GET') {
-    const now = await head();
+    const v = url.searchParams.get('version');
+    if (v && !/^[1-9]\d*$/.test(v)) return new Response('Invalid version.', { status: 400 });
+    const now = v ? await env.DB.prepare('SELECT v, text FROM versions WHERE v = ?').bind(+v).first() : await head();
+    if (!now) return new Response('That version is no longer available.', { status: 404 });
     return version('if-none-match') === String(now.v) ? new Response(null, { status: 304, headers: { etag: `"${now.v}"` } }) : send(200, now);
   }
   if (request.method !== 'PUT') return new Response('Use GET or PUT.', { status: 405, headers: { allow: 'GET, PUT, OPTIONS' } });

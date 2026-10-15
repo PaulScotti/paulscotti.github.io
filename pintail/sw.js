@@ -1,5 +1,5 @@
 // Bump VERSION with every change to the app. An installed copy then offers "Update" and reloads into it.
-const VERSION = 4;
+const VERSION = 5;
 const CACHE = 'pintail-' + VERSION;
 // Not the manifest: Chrome reads it to install the app, so it always comes fresh from the network.
 const FILES = ['./', 'pintail.js', 'todo.js', 'pintail.css', 'icons/pintail.svg', 'icons/icon-192.png', '../ebis/fonts/Libron-Regular.woff2', '../ebis/fonts/Libron-Italic.woff2'];
