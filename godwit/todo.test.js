@@ -15,6 +15,7 @@ test('a line is read into its parts and edits keep the other tokens where they w
   assert.equal(toggleCtx(line, 'Personal'), line.replace('@Paul', '@Paul @Personal'));
   assert.equal(toggleCtx('2026-10-14 Call mom due:2026-10-15', 'Personal'), '2026-10-14 Call mom @Personal due:2026-10-15');
   assert.equal(setText(line, 'Hand in the camera-ready l:30m'), '(A) 2026-10-06 Hand in the camera-ready l:30m @Paul due:2026-10-12 notes:"Check the \\"final\\" PDF"');
+  assert.deepEqual([parse('Pay rent due:2026-02-30').due, parse('Pay rent due:2026-02-30').text], [null, 'Pay rent due:2026-02-30']); // not a date
   const done = parse('x 2026-07-21 2026-06-23 Age prediction @Chris');
   assert.deepEqual([done.done, done.doneDate, done.created, done.text], [true, '2026-07-21', '2026-06-23', 'Age prediction']);
 });

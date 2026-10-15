@@ -7,15 +7,16 @@ export function parse(line) {
   const tabs = line.match(/^\t*/)[0].length;
   let rest = line.slice(tabs).trim(), m;
   const t = { line, depth: tabs, done: false, doneDate: null, pri: null, created: null, text: '', ctx: [], due: null, rec: null, notes: null };
-  if ((m = rest.match(/^x\s+(?:(\d{4}-\d\d-\d\d)(?:\s+|$))?/))) { t.done = true; t.doneDate = m[1] || null; rest = rest.slice(m[0].length); }
+  if ((m = rest.match(/^x\s+/))) { t.done = true; rest = rest.slice(m[0].length); }
+  if (t.done && (m = rest.match(DAY)) && real(m[1])) { t.doneDate = m[1]; rest = rest.slice(m[0].length); }
   if ((m = rest.match(/^\(([A-Z])\)\s+/))) { t.pri = m[1]; rest = rest.slice(m[0].length); }
-  if ((m = rest.match(/^(\d{4}-\d\d-\d\d)(?:\s+|$)/))) { t.created = m[1]; rest = rest.slice(m[0].length); }
+  if ((m = rest.match(DAY)) && real(m[1])) { t.created = m[1]; rest = rest.slice(m[0].length); }
   t.tokens = tokens(rest);
   const words = [];
   for (const tok of t.tokens) {
     const kv = keyValue(tok);
     if (tok.length > 1 && tok[0] === '@') t.ctx.push(tok.slice(1));
-    else if (kv?.[0] === 'due' && DATE.test(kv[1]) && !t.due) t.due = kv[1];
+    else if (kv?.[0] === 'due' && real(kv[1]) && !t.due) t.due = kv[1];
     else if (kv?.[0] === 'rec' && REC.test(kv[1]) && !t.rec) t.rec = kv[1];
     else if (kv?.[0] === 'notes' && t.notes === null) t.notes = kv[1];
     else words.push(tok);
@@ -24,7 +25,8 @@ export function parse(line) {
   return t;
 }
 
-const DATE = /^\d{4}-\d\d-\d\d$/;
+const DAY = /^(\d{4}-\d\d-\d\d)(?:\s+|$)/;
+const real = d => /^\d{4}-\d\d-\d\d$/.test(d) && iso(date(d)) === d; // a calendar date: not 2026-02-30, which stays words
 const REC = /^\+?([1-9]\d*)([dbwmy])$/; // days, business days (Mon-Fri), weeks, months, years; + keeps the schedule
 const tokens = s => s.match(/[A-Za-z][\w-]*:"(?:[^"\\]|\\.)*"(?=\s|$)|\S+/g) || [];
 const keyValue = tok => {
@@ -166,8 +168,8 @@ const PHRASES = [
 // Returns what the words say: { words, due, rec } with the phrase cut from the words, or null when there's no phrase.
 function when(words, today) {
   for (const [re, f] of PHRASES) {
-    const m = words.match(re);
-    if (m?.index > 0) return { words: words.slice(0, m.index), ...f(m.slice(0).map(s => s?.toLowerCase()), today) };
+    const m = words.match(re), said = m?.index > 0 && f(m.map(s => s?.toLowerCase()), today);
+    if (said && real(said.due)) return { words: words.slice(0, m.index), ...said };
   }
   return null;
 }
