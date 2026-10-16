@@ -7,7 +7,7 @@ const desktop = matchMedia('(min-width: 760px)');
 const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const API = (LOCAL ? 'http://localhost:8790' : 'https://pintail.scottibrain.workers.dev') + '/todo.txt';
 
-let password = localStorage.getItem('pintail.password'); // typed once on each device
+let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, myna and paisano
 let view = localStorage.getItem('pintail.view') || 'soon';
 let picked = JSON.parse(localStorage.getItem('pintail.filter') || '[]');
 let query = null, literal = false, today = iso(new Date()), tasks = [], names = [], editing = null, opened = '', fileDraft = '', selectedVersion = '';
@@ -106,7 +106,7 @@ function status(message) {
   $('status').hidden = !message;
 }
 function lock() {
-  localStorage.removeItem('pintail.password');
+  localStorage.removeItem('password');
   password = null;
   route();
 }
@@ -390,7 +390,7 @@ function route() {
 $('lock').onsubmit = e => {
   e.preventDefault();
   password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
-  localStorage.setItem('pintail.password', password);
+  localStorage.setItem('password', password);
   e.target.reset();
   route();
   sync();

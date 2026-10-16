@@ -9,7 +9,7 @@ const LARGEST = 100e6; // the largest upload a worker accepts; a larger book sta
 const records = new Map(); // "kind/id" → { kind, id, data, updated, dirty }
 const listeners = new Set();
 const opened = new Map(); // id → unpacked package, for books open in tabs
-let password = localStorage.getItem('ebis.password'); // typed once on each device
+let password = localStorage.getItem('password'); // typed once on each device, and shared with myna, pintail and paisano
 let syncing = null, timer = 0;
 let last = { at: 0, error: '' }; // the last sync: when it finished, or why it didn't
 
@@ -119,11 +119,11 @@ export async function unlock(typed) {
   await idb('meta', 'readwrite', s => s.clear());
   await idb('records', 'readwrite', s => { for (const r of records.values()) r.dirty = true, s.put(r, `${r.kind}/${r.id}`); });
   password = typed;
-  localStorage.setItem('ebis.password', password);
+  localStorage.setItem('password', password);
 }
 function lock() {
   password = null;
-  localStorage.removeItem('ebis.password');
+  localStorage.removeItem('password');
   emit({ locked: true });
 }
 

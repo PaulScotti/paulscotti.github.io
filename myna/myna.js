@@ -12,7 +12,7 @@ const android = window.MynaAndroid; // the Android app's bridge; a browser has n
 const $ = id => document.getElementById(id);
 const audio = new AudioContext();
 const clips = new Map(); // "lang:text" → that line's mp3, fetched once
-let password = localStorage.getItem('myna.password'); // typed once on each device
+let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, pintail and paisano
 let day, levels, words = [], queue = [], at = 0, card = null, run = 0, shown = false, grace = 0, timer = 0, saving = false, sound = null, toasting = 0;
 let tally; // the session so far: when it began, its new words, each card's first answer and its level before and after, its sentences and how many are done
 
@@ -25,7 +25,7 @@ async function api(path, body) {
     method: 'POST', headers: { authorization: `Bearer ${password}`, 'content-type': 'application/json' }, body: JSON.stringify(body),
   });
   if (res.status === 401) { // the password changed: this device asks for it again
-    localStorage.removeItem('myna.password');
+    localStorage.removeItem('password');
     password = null;
     route();
   }
@@ -286,8 +286,8 @@ $('home').onclick = () => history.back();
 
 $('lock').onsubmit = e => {
   e.preventDefault();
-  password = new FormData(e.target).get('password');
-  localStorage.setItem('myna.password', password);
+  password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
+  localStorage.setItem('password', password);
   e.target.reset();
   route();
   load();

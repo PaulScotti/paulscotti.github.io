@@ -273,7 +273,7 @@ $('lock').onsubmit = async e => {
   e.preventDefault();
   e.target.inert = true;
   try {
-    await store.unlock(new FormData(e.target).get('password'));
+    await store.unlock(new FormData(e.target).get('password').trim()); // a phone keyboard may add a space after the word
     e.target.reset();
     route();
     store.sync();

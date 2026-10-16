@@ -1,8 +1,8 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=19';
-import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=19';
+import config from './config.js?v=20';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=20';
 
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
 const $ = id => document.getElementById(id);
@@ -14,7 +14,7 @@ const AREAS = Object.keys(config.areas);
 const GROUND = 118; // the garden's ground line
 const BIG = 1.7; // visitors are drawn larger than life beside Paisano, to be seen and tapped
 
-let password = localStorage.getItem('paisano.password'); // typed once on each device
+let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, myna and pintail
 // Confirmed events are cached; each unsent event has its own key so two tabs cannot overwrite each other's work.
 const cached = localStorage.getItem('paisano.log');
 let log = JSON.parse(cached || '[]'), syncing = Promise.resolve(), loaded = cached !== null;
@@ -345,7 +345,7 @@ function sync() {
       }).catch(() => null);
       if (!res) throw new Error(); // offline: the outbox waits, and only the status line says so
       if (res.status === 401) { // the password changed: this device asks for it again
-        localStorage.removeItem('paisano.password');
+        localStorage.removeItem('password');
         password = null;
         route();
       }
@@ -1025,8 +1025,8 @@ addEventListener('keydown', e => {
 });
 $('lock').onsubmit = e => {
   e.preventDefault();
-  password = new FormData(e.target).get('password');
-  localStorage.setItem('paisano.password', password);
+  password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
+  localStorage.setItem('password', password);
   e.target.reset();
   route();
   sync();
