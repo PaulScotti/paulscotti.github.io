@@ -8,7 +8,15 @@
   "main": "worker.js",
   "compatibility_date": "2026-10-16",
   "account_id": "bf4d563d019ba4efff46afba844e5163",
-  "workers_dev": true,
+  "workers_dev": false,
+  "preview_urls": false,
+  // Each app's own paths on the site; everything else goes on to GitHub Pages.
+  "routes": [
+    { "pattern": "www.paulscotti.com/ebis*", "zone_name": "paulscotti.com" },
+    { "pattern": "www.paulscotti.com/myna*", "zone_name": "paulscotti.com" },
+    { "pattern": "www.paulscotti.com/pintail*", "zone_name": "paulscotti.com" },
+    { "pattern": "www.paulscotti.com/paisano*", "zone_name": "paulscotti.com" }
+  ],
   // The Worker's files are the apps' folders, copied into .apps/ without their hidden files (the whole repo is too
   // big to serve or watch: mturk/ alone has 36,000 files).
   "build": {
