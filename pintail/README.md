@@ -112,5 +112,7 @@ a throwaway in `worker/.dev.vars`. The first time, create the table with
 `npx wrangler d1 execute pintail --local --file schema.sql` from `worker/`. Two origins, localhost and 127.0.0.1,
 act as two devices.
 
-To release, raise `VERSION` in `sw.js` and the version label in `index.html`, so installed copies offer **Update**. Deploy the Worker with
-`npx wrangler deploy` from `worker/` before publishing the frontend when API endpoints change; its secret `KEY` is the password shared with ebis, myna and paisano.
+To release, raise `VERSION` in `sw.js` and the version label in `index.html`, so installed copies offer **Update**. A push to master
+that changes `worker/` deploys the Worker before the page goes live (`.githooks/pre-push`). Its secret `KEY` is the
+password shared with ebis, myna and paisano, checked by `worker.js` at the top of the repo; typed once on a device, it
+opens all four.

@@ -1,5 +1,6 @@
 {
-  // Deploy from this folder: npx wrangler deploy. The password is the KEY secret; the table is in schema.sql.
+  // A push to master that changes this Worker deploys it (.githooks/pre-push). The password is the KEY secret, shared
+  // with myna, pintail and paisano and checked by worker.js at the top of the repo; the table is in schema.sql.
   // Margin notes need the ANTHROPIC_API_KEY secret (and ANTHROPIC_WORKSPACE, for a key that spans workspaces).
   "name": "ebis",
   "main": "src/index.js",

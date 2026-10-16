@@ -1,5 +1,5 @@
 {
-  // Deploy from this folder: npx wrangler deploy. The table is in schema.sql.
+  // A push to master that changes this Worker or ../config.js deploys it (.githooks/pre-push). The table is in schema.sql.
   // Secrets: KEY (the password, the same as ebis), OPENAI_API_KEY, AZURE_KEY (a Speech resource in eastus).
   "name": "myna",
   "main": "index.js",

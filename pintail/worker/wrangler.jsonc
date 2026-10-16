@@ -1,5 +1,5 @@
 {
-  // Deploy from this folder: npx wrangler deploy. The table is in schema.sql.
+  // A push to master that changes this Worker deploys it (.githooks/pre-push). The table is in schema.sql.
   // Secret: KEY (the password, the same as ebis, myna and paisano).
   "name": "pintail",
   "main": "index.js",

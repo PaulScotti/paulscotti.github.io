@@ -50,15 +50,17 @@ it opens ebis at `#/clip` and posts it the page's rendered HTML, which is read l
 
 ## Sync (Cloudflare, personal account)
 
-ebis is Paul's alone. It opens once its password has been typed on a device, and every request
-to the worker carries it. `worker/` is the `ebis` Worker at `ebis.scottibrain.workers.dev`:
-records replicate last-write-wins through D1, book packages live in R2, and
-`/fetch` reads web pages for the reader.
+ebis is Paul's alone. It opens once its password has been typed on a device, in ebis or in myna,
+pintail or paisano, which share it, and every request to the worker carries it. `worker/` is the
+`ebis` Worker at `ebis.scottibrain.workers.dev`: records replicate last-write-wins through D1, book
+packages live in R2, and `/fetch` reads web pages for the reader. `worker.js` at the top of the repo
+checks the password for it and the other apps' Workers. A push to master that changes `worker/`
+deploys it first (`.githooks/pre-push`).
 
 ```
 cd worker
-npm install && npx wrangler deploy   # after changing src/index.js (it uses Anthropic's SDK)
-npx wrangler secret put KEY      # to change the password
+npm install                      # once, for npx wrangler dev (the worker uses Anthropic's SDK)
+npx wrangler secret put KEY      # to change the password (then in myna, pintail and paisano's workers too)
 npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_WORKSPACE,
                                              # for a personal key that spans workspaces)
 ```

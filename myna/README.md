@@ -35,12 +35,14 @@ Named for the myna, the bird that learns to talk by copying what it hears.
 
 - `index.html`, `myna.css`, `myna.js`: the app. Libron comes from `../ebis/fonts`.
 - `worker/`: the `myna` Worker at `myna.scottibrain.workers.dev` on Paul's personal Cloudflare, with
-  the deck in D1 (`schema.sql`) and the audio in R2. The password is the same as ebis.
+  the deck in D1 (`schema.sql`) and the audio in R2. The password is the one ebis, pintail and paisano use,
+  checked by `worker.js` at the top of the repo; typed once in the browser, it opens all four (the Android app
+  keeps its own copy). A push to master that changes `worker/` or `config.js` deploys the Worker first
+  (`.githooks/pre-push`).
 - `android/`: the Android app, a WebView of this site that also turns the volume keys into answers,
   keeps the screen on during a session, and installs its own updates. Built without Gradle.
 
 ```
-cd worker && npx wrangler deploy        # after changing the worker
 android/build.sh                        # after changing android/: raise `apk` in config.js first
 ```
 
