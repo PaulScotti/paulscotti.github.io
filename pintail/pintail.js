@@ -1,6 +1,6 @@
-// Pintail: Soon (dated), Later (undated), Routines (repeating) and Done.
+// Pintail: All (by priority), Soon (dated), Later (undated), Routines (repeating) and Done.
 // One todo.txt, kept on each device and synced with the worker, merging fields by task identity.
-import { parse, prepare, identify, split, join, setPri, setKey, toggleCtx, setText, complete, remove, addChild, quick, merge, next, routine, repeatLabel, iso, addDays, weekday, DAYS, MONTHS } from './todo.js';
+import { parse, prepare, identify, split, join, setPri, setKey, toggleCtx, setText, complete, remove, addChild, subtree, quick, merge, next, routine, repeatLabel, iso, addDays, weekday, DAYS, MONTHS } from './todo.js';
 
 const $ = id => document.getElementById(id);
 const desktop = matchMedia('(min-width: 760px)');
@@ -8,11 +8,11 @@ const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const API = (LOCAL ? 'http://localhost:8790' : 'https://pintail.scottibrain.workers.dev') + '/todo.txt';
 
 let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, myna and paisano
-let view = localStorage.getItem('pintail.view') || 'soon';
+let view = 'all'; // every open of the app starts on All
 let picked = JSON.parse(localStorage.getItem('pintail.filter') || '[]');
 let query = null, literal = false, today = iso(new Date()), tasks = [], names = [], editing = null, opened = '', fileDraft = '', selectedVersion = '';
 const undos = JSON.parse(sessionStorage.getItem('pintail.undo') || '[]');
-let saveTimer;
+let saveTimer, dragging = null; // the card being dragged in All
 
 // The list on this device, and the copy the worker last had (`base`). They differ while edits wait to sync.
 const text = () => localStorage.getItem('pintail.text');
@@ -169,13 +169,14 @@ function rowRects() {
   return result;
 }
 function render(animate = false) {
+  if (dragging) return; // a redraw would drop the card being dragged; the drop redraws
   const before = animate && !motion.matches && !document.querySelector('dialog[open]') ? rowRects() : null;
   const raw = text(), focused = document.activeElement.closest('#board .task, #finished-list button'), was = focused?.dataset.uid, section = focused?.closest('section');
   for (const b of document.querySelectorAll('[data-undo]')) b.hidden = !undos.length;
   document.body.dataset.view = view;
   document.body.classList.toggle('finding', query !== null);
   for (const b of $('views').children) {
-    const on = b.dataset.view === view || b.dataset.view === 'soon' && view !== 'done' && desktop.matches;
+    const on = b.dataset.view === view || b.dataset.view === 'soon' && ['later', 'routines'].includes(view) && desktop.matches;
     b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
   }
   if (raw === null) return;
@@ -218,6 +219,13 @@ function render(animate = false) {
   const tops = tasks.filter(t => open(t) && !(t.up && open(t.up))).map(t => ({ t, members: tree(t) })).filter(x => x.members.some(shown));
   for (const x of tops) x.due = x.members.map(m => m.due).filter(Boolean).sort()[0] || null;
   const rows = (x, label) => x.members.map(m => row(m, { depth: m.depth - x.t.depth, ...label(m) })).join('');
+
+  // All: every open task by priority, A first, and within a priority in the file's order, which dragging changes.
+  const lanes = ['A', 'B', 'C', ''].map(p => [p, tops.filter(x => (RANK(x.t.pri) < 3 ? x.t.pri : '') === p)]);
+  patch('all-list', tops.length ? lanes.map(([p, xs]) => `<div class="group lane" data-pri="${p}"><h3>${p ? 'Priority ' + p : 'No priority'}<small>${xs.length}</small></h3>${xs.map(x =>
+    `<div class="card" data-card="${esc(x.t.uid)}" draggable="${desktop.matches}">${rows(x, m => ({ label: m.due ? dayName(m.due) : '', late: m.due < today }))}</div>`).join('')}</div>`).join('')
+    : '<p class="empty">Nothing to do. Add a task above, with a day or without.</p>');
+  $('all-count').textContent = tops.reduce((n, x) => n + x.members.length, 0);
 
   const soon = tops.filter(x => x.due).sort((a, b) => a.due.localeCompare(b.due) || RANK(a.t.pri) - RANK(b.t.pri) || a.t.i - b.t.i);
   const movable = tasks.filter(t => !t.done && !t.rec && t.due && t.due < today && tops.some(x => x.members.includes(t)));
@@ -398,8 +406,7 @@ $('lock').onsubmit = e => {
 $('views').onclick = e => {
   const v = e.target.closest('button')?.dataset.view;
   if (!v) return;
-  view = v === view && v === 'done' && desktop.matches ? 'soon' : v;
-  localStorage.setItem('pintail.view', view);
+  view = v === view && v === 'done' && desktop.matches ? 'all' : v;
   render(true);
   scrollTo(0, 0);
 };
@@ -429,7 +436,7 @@ $('add').onsubmit = e => {
   const value = $('add').task.value.trim();
   if (!value) return;
   const line = prepare([quick(value, today, names, fallback(), !literal)])[0], t = parse(line);
-  edit(lines => [...lines, line], 'Added to ' + (t.rec ? 'Routines' : t.due ? 'Soon, ' + dayName(t.due) : 'Later'));
+  edit(lines => [...lines, line]);
   toast('Added to ' + (t.rec ? 'Routines' : t.due ? 'Soon, ' + dayName(t.due) : 'Later'), true, t.uid);
   $('add').task.value = '';
   literal = false;
@@ -517,6 +524,39 @@ $('routine-toggle').onclick = () => { localStorage.setItem('pintail.routines', $
 $('help-open').onclick = () => $('help').showModal();
 $('status').onclick = sync;
 
+// On a laptop, tasks in All drag like cards: up or down to reorder, or into another priority. A task keeps its steps,
+// and its place is between the cards it was dropped between.
+$('all-list').addEventListener('dragstart', e => {
+  dragging = e.target.closest('.card');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragging.querySelector('.title').textContent);
+  setTimeout(() => dragging?.classList.add('dragging')); // after the browser has pictured the card it carries
+});
+$('all-list').addEventListener('dragover', e => {
+  const lane = dragging && e.target.closest('.lane');
+  if (!lane) return;
+  e.preventDefault();
+  const below = [...lane.querySelectorAll('.card:not(.dragging)')].find(card => { const r = card.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+  if (below ? dragging.nextElementSibling !== below : lane.lastElementChild !== dragging) lane.insertBefore(dragging, below || null);
+});
+$('all-list').addEventListener('drop', e => {
+  e.preventDefault();
+  const card = dragging, pri = card.closest('.lane').dataset.pri || null, t = tasks.find(x => x.uid === card.dataset.card);
+  const below = card.nextElementSibling?.dataset.card, above = card.previousElementSibling?.dataset.card;
+  dragging = null;
+  act(t.i, t.line, (lines, at) => {
+    const end = subtree(lines, at), depth = parse(lines[at]).depth;
+    const block = lines.slice(at, end).map(l => l.slice(depth)); // a step whose parent is done moves out as a task
+    block[0] = setPri(block[0], pri);
+    const rest = [...lines.slice(0, at), ...lines.slice(end)];
+    const root = uid => { let i = rest.findIndex(l => parse(l).uid === uid); while (i > 0 && parse(rest[i]).depth) i--; return i; };
+    const b = below ? root(below) : -1, a = above ? root(above) : -1;
+    rest.splice(b >= 0 ? b : a >= 0 ? subtree(rest, a) : rest.length, 0, ...block);
+    return rest;
+  }, (t.pri || null) === pri ? null : pri ? 'Priority ' + pri : 'No priority');
+});
+$('all-list').addEventListener('dragend', () => { dragging = null; render(); }); // dropped elsewhere, or where it was: back in place
+
 // In the sheet
 $('sheet').addEventListener('close', () => { editing = null; if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; render(); sync(); } });
 $('sheet').onclick = e => {
@@ -600,14 +640,18 @@ const sizes = new ResizeObserver(entries => {
 for (const id of ['add', 'masthead']) sizes.observe($(id));
 desktop.addEventListener('change', () => render());
 
-// Migrate cached files once, under the same lock as sync. Legacy devices derive the same task IDs.
+// Give cached files their task IDs, under the same lock as sync. Legacy devices derive the same IDs. If another tab
+// edits meanwhile, start again from its text.
 await navigator.locks.request('pintail-sync', async () => {
-  const b = base(), before = text();
-  const canonical = b ? await identify(b.text) : '';
-  const local = before === null ? null : await identify(before, canonical);
-  if (text() !== before) throw new Error('Another tab edited Pintail during the update. Reload to finish.');
-  if (b) localStorage.setItem('pintail.base', JSON.stringify({ v: b.v, text: canonical }));
-  if (local !== null) keep(local);
+  for (;;) {
+    const b = base(), before = text();
+    const canonical = b ? await identify(b.text) : '';
+    const local = before === null ? null : await identify(before, canonical);
+    if (text() !== before) continue;
+    if (b) localStorage.setItem('pintail.base', JSON.stringify({ v: b.v, text: canonical }));
+    if (local !== null) keep(local);
+    return;
+  }
 });
 route();
 sync();

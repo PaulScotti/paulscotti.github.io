@@ -41,12 +41,13 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .top h1 { display: flex; align-items: center; gap: 8px; font-size: 30px; letter-spacing: -.025em; }
 .top h1 small { align-self: flex-end; margin-bottom: 4px; font-size: 12px; color: var(--ink-3); letter-spacing: .03em; }
 .tools { display: flex; justify-self: end; gap: 4px; }
-.views { --tab: 0; --view-color: var(--teal); display: grid; position: relative; grid-template-columns: repeat(2, 1fr); width: 184px; isolation: isolate; }
-.views::after { content: ""; position: absolute; bottom: 1px; left: 0; height: 2px; width: 50%; background: var(--view-color); transform: translateX(calc(var(--tab) * 100%)); transition: transform 240ms var(--ease), background-color 240ms; pointer-events: none; }
+.views { --tab: 0; --view-color: var(--ink); display: grid; position: relative; grid-template-columns: repeat(3, 1fr); width: 276px; isolation: isolate; }
+.views::after { content: ""; position: absolute; bottom: 1px; left: 0; height: 2px; width: 33.334%; background: var(--view-color); transform: translateX(calc(var(--tab) * 100%)); transition: transform 240ms var(--ease), background-color 240ms; pointer-events: none; }
 .views button { min-height: 44px; padding: 8px 12px; font: 14px var(--ui); color: var(--ink-3); }
 .views button.on { color: var(--view-color); }
 .phone-label { display: none; }
-body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
+body:is([data-view=soon], [data-view=later], [data-view=routines]) .views { --tab: 1; --view-color: var(--teal); }
+body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
 .filters { margin: 14px 0 0; min-height: 34px; }
 .chips { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 3px 1px; }
 .chips::-webkit-scrollbar { display: none; }
@@ -95,7 +96,7 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 /* Quiet section headings and a little more space for the tasks themselves. */
 .board { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 48px; align-items: start; }
 .column { --section: var(--teal); }
-#later { --section: var(--blue); } #routines { --section: var(--plum); } #done { --section: var(--sage); }
+#all { --section: var(--ink-2); } #later { --section: var(--blue); } #routines { --section: var(--plum); } #done { --section: var(--sage); }
 #done, #found { display: none; }
 .column h2 { display: flex; align-items: baseline; gap: 8px; padding: 16px 0 10px; border-bottom: 1px solid color-mix(in srgb, var(--section) 20%, var(--rule)); font-size: 23px; letter-spacing: -.015em; }
 .column h2 small { font: 11px var(--ui); color: var(--section); background: color-mix(in srgb, var(--section) 8%, transparent); border-radius: 5px; padding: 2px 6px; }
@@ -135,6 +136,10 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 .strip i.off { background: none; box-shadow: inset 0 0 0 1px var(--rule); }
 .routine-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 220ms var(--ease), opacity 180ms; }
 .routine-body > .list { overflow: hidden; min-height: 0; }
+
+/* All: one list per priority, in the order dragging gives them. */
+.lane[data-pri=A] h3 { color: var(--pA); } .lane[data-pri=B] h3 { color: var(--pB); } .lane[data-pri=C] h3 { color: var(--pC); }
+.card.dragging { opacity: .35; }
 
 /* Native dialogs animate without delaying saves or changing keyboard behavior. */
 .sheet { width: min(590px, calc(100vw - 40px)); max-height: min(88dvh, 900px); padding: 0; border: 1px solid var(--rule); border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 80px rgb(0 0 0 / .18); overscroll-behavior: contain; opacity: 0; transform: translateY(14px) scale(.985); transition: opacity 180ms, transform 220ms var(--ease), display 220ms allow-discrete, overlay 220ms allow-discrete; }
@@ -199,7 +204,15 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
 
 @media (min-width: 760px) {
   .views button[data-view=later], .views button[data-view=routines] { display: none; }
-  body:not([data-view=done]) .views [data-view=soon] { color: var(--view-color); }
+  #all { display: none; grid-column: 1 / -1; }
+  body[data-view=all] .column { display: none; }
+  body[data-view=all] #all { display: block; }
+  #all-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
+  .lane { min-height: 180px; } /* an empty priority still takes a card */
+  #all-list > .empty { grid-column: 1 / -1; }
+  .card { margin-bottom: 8px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+  .card .task { border-bottom: 0; }
+  .card[draggable=true] { cursor: grab; }
   #routines { grid-column: 1 / -1; grid-row: 1; }
   #routines h2 { padding: 6px 0; border-bottom: 0; font: 13px var(--ui); color: var(--ink-2); letter-spacing: 0; }
   #routines .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0 32px; }
@@ -220,17 +233,18 @@ body[data-view=done] .views { --tab: 1; --view-color: var(--sage); }
   .top h1 { font-size: 28px; margin-right: auto; gap: 6px; }
   .top .mark { width: 36px; height: 36px; }
   .tools { gap: 0; }
-  .views { order: 3; width: 100%; grid-template-columns: repeat(4, 1fr); margin-top: 6px; }
+  .views { order: 3; width: 100%; grid-template-columns: repeat(5, 1fr); margin-top: 6px; }
   .views button { padding: 8px 4px; font-size: 13px; }
-  .views::after { width: 25%; }
-  body[data-view=later] .views { --tab: 1; --view-color: var(--blue); } body[data-view=routines] .views { --tab: 2; --view-color: var(--plum); } body[data-view=done] .views { --tab: 3; }
+  .views::after { width: 20%; }
+  body[data-view=later] .views { --tab: 2; --view-color: var(--blue); } body[data-view=routines] .views { --tab: 3; --view-color: var(--plum); } body[data-view=done] .views { --tab: 4; }
   .desktop-label { display: none; } .phone-label { display: inline; }
   .filters { margin-top: 9px; min-height: 0; }
   .filters:not(:has(> :not([hidden]))) { display: none; }
   .chips { margin: 0 -20px; padding: 2px 20px; }
   .board { display: block; }
   .column, .column h2 { display: none; }
-  body[data-view=soon] #soon, body[data-view=later] #later, body[data-view=routines] #routines, body[data-view=done] #done { display: block; }
+  body[data-view=all] #all, body[data-view=soon] #soon, body[data-view=later] #later, body[data-view=routines] #routines, body[data-view=done] #done { display: block; }
+  .lane:not(:has(.card)) { display: none; }
   body.finding .column { display: none !important; }
   body.finding #found { display: block !important; }
   .group { margin-top: 20px; }

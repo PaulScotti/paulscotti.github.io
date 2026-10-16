@@ -3,8 +3,11 @@
 Paul's tasks as one todo.txt, at [paulscotti.com/pintail](https://www.paulscotti.com/pintail/), on a laptop and as an
 installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Worker keeping the list in sync.
 
-## Three horizons
+## Views
 
+- **All** is where Pintail opens: every open task, by priority (A, B, C, then none), and within a priority in the
+  order of the file. On a laptop the four priorities sit side by side like Trello lists; drag a card up or down to
+  reorder it, or into another list to change its priority. A task moves with its steps, and Cmd/Ctrl+Z undoes a move.
 - **Soon** is everything with a date: overdue, today, each of the next six days, then by month. **Move to today**
   moves overdue one-off tasks to today. Repeating schedules stay in place.
 - **Later** is everything undated, by category, the most important and then the newest first. The age on the right
@@ -16,7 +19,8 @@ installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Wo
 Today's completed tasks also appear at the top in one compact, sideways-scrolling row, across all categories.
 Tap a name to open its details or reopen it. The row disappears when there's nothing completed today.
 
-On a laptop Soon and Later sit side by side, with a collapsible Routines history above them. Done replaces them; on a phone each is a tab. The
+On a laptop, **Schedule** puts Soon and Later side by side, with a collapsible Routines history above them, and Done
+replaces them; on a phone each view is a tab. The
 categories along the top are the `@contexts`; any number can be chosen. A task added without a category gets the
 first one chosen.
 
