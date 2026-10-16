@@ -19,6 +19,9 @@ export default {
     // The cookie holds a hash of the password, not the password, so a new password signs every device out.
     const session = [...new Uint8Array(await digest('session ' + env.KEY))].map(b => b.toString(16).padStart(2, '0')).join('');
     const login = path === '/login' && request.method === 'POST';
+    // Ten tries with a password a minute from one address, so the password can't be guessed quickly.
+    if ((login || request.headers.has('authorization')) && !(await env.TRIES.limit({ key: request.headers.get('cf-connecting-ip') })).success)
+      return new Response('Too many tries. Wait a minute.', { status: 429 });
     const ok = !!env.KEY && (login ? await same(await request.text(), env.KEY)
       : await same((request.headers.get('authorization') || '').replace(/^Bearer /, ''), env.KEY)
         || await same((request.headers.get('cookie') || '').match(/(?:^|;\s*)login=(\w+)/)?.[1], session));

@@ -34,5 +34,7 @@
     { "binding": "EBIS_FILES", "bucket_name": "ebis-library" },
     { "binding": "MYNA_AUDIO", "bucket_name": "myna-audio" }
   ],
+  // Password tries: ten a minute from one address (worker.js).
+  "ratelimits": [{ "name": "TRIES", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } }],
   "observability": { "enabled": true }
 }
