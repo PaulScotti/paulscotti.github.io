@@ -50,17 +50,15 @@ it opens ebis at `#/clip` and posts it the page's rendered HTML, which is read l
 
 ## Sync (Cloudflare, personal account)
 
-ebis is Paul's alone. It opens once its password has been typed on a device, in ebis or in myna,
-pintail or paisano, which share it, and every request to the worker carries it. `worker/` is the
-`ebis` Worker at `ebis.scottibrain.workers.dev`: records replicate last-write-wins through D1, book
-packages live in R2, and `/fetch` reads web pages for the reader. `worker.js` at the top of the repo
-checks the password for it and the other apps' Workers. A push to master that changes `worker/`
-deploys it first (`.githooks/pre-push`).
+ebis is Paul's alone. It opens once the password his apps share has been typed on a device, in ebis
+or in myna, pintail or paisano; the worker keeps it as a cookie page scripts can't read. `api.js` is
+ebis's part of the apps Worker (`wrangler.jsonc` and `worker.js` at the top of the repo), answering at
+`/ebis/api/`: records replicate last-write-wins through D1, book packages live in R2, `/fetch` reads
+web pages for the reader, and `/notes` has Claude write margin notes. A push to master deploys it with
+the app.
 
 ```
-cd worker
-npm install                      # once, for npx wrangler dev (the worker uses Anthropic's SDK)
-npx wrangler secret put KEY      # to change the password (then in myna, pintail and paisano's workers too)
+npx wrangler secret put KEY                  # at the top of the repo: to change the apps' password
 npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_WORKSPACE,
                                              # for a personal key that spans workspaces)
 ```
@@ -68,5 +66,5 @@ npx wrangler secret put ANTHROPIC_API_KEY    # for margin notes (and ANTHROPIC_W
 ## Changing the app
 
 Bump `VERSION` in `sw.js` whenever files change, so installed copies update; it's shown beside the logo (`ebis-26` as v26).
-Develop with any static server at the repository root; on `localhost` the app talks to
-`npx wrangler dev` (with `KEY=…` in `worker/.dev.vars`) instead of the deployed worker.
+Develop with `npx wrangler dev` at the top of the repo (after `npm install`, with a throwaway `KEY=…` in
+`.dev.vars` there): it serves the app and its API at `http://localhost:8787/ebis/`.

@@ -104,19 +104,17 @@ confirmation or travel doesn't move them or change their visitor. The Worker sti
 versions before 14, in case a device logs one before it updates.
 
 In production a service worker caches the app so it opens offline; a new version waits behind **Update ready**,
-which keeps an active snack. For a release, raise `version` in `config.js`, the `?v=` asset URLs and the service
-worker's cache name together. A push to master that changes `worker/` or `config.js` deploys the Worker before the
-app goes live (`.githooks/pre-push`). The password is the one ebis, myna and pintail use, checked by `worker.js` at
-the top of the repo; typed once on a device, it opens all four.
+which keeps an active snack. For a release, raise `version` in `config.js` and the service worker's cache name
+together. A push to master deploys the app and its API together (`.github/workflows/apps.yml`). The password is the
+one ebis, myna and pintail use, checked by `worker.js` at the top of the repo; typed once on a device, it opens all four.
 
-Serve the repository root so the font paths work, and run the Worker from `paisano/worker` with the password in
-`.dev.vars`:
+Run it from the top of the repo, with a throwaway password in `.dev.vars` there:
 
 ```sh
-python3 -m http.server 8766 --directory ..
-npx wrangler d1 execute paisano --local --file schema.sql
-npx wrangler dev --port 8789
+npm install
+npx wrangler d1 execute paisano --local --file paisano/schema.sql
+npx wrangler dev
 ```
 
-Then open `http://localhost:8766/paisano/`; on localhost the app talks to the local Worker and there is no service
-worker. Production uses `paisano.scottibrain.workers.dev`.
+Then open `http://localhost:8787/paisano/`; on localhost there is no service worker. In production the API is at
+`www.paulscotti.com/paisano/api/`.

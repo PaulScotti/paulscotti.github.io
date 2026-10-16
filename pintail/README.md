@@ -93,12 +93,12 @@ is tried again.
 Scripts and agents can use the same file with the password:
 
 ```sh
-curl -sD - -H "authorization: Bearer $KEY" https://pintail.scottibrain.workers.dev/todo.txt       # the ETag is the version
-curl -X PUT -H "authorization: Bearer $KEY" -H 'if-match: "42"' --data-binary @todo.txt https://pintail.scottibrain.workers.dev/todo.txt
+curl -sD - -H "authorization: Bearer $KEY" https://www.paulscotti.com/pintail/api/todo.txt       # the ETag is the version
+curl -X PUT -H "authorization: Bearer $KEY" -H 'if-match: "42"' --data-binary @todo.txt https://www.paulscotti.com/pintail/api/todo.txt
 ```
 
-`GET /versions` lists the latest 100 saved version numbers and timestamps; `?before=42` pages backward.
-`GET /todo.txt?version=42` reads a retained version. Both require the same authorization header.
+`GET /pintail/api/versions` lists the latest 100 saved version numbers and timestamps; `?before=42` pages backward.
+`GET /pintail/api/todo.txt?version=42` reads a retained version. Both require the same authorization header.
 
 A PUT is refused with 412 and the current text when the version has moved on. Read it again, redo the change, and
 send it with the new version. Cloudflare sends the ETag as `W/"42"` when it compresses a response; either form works.
@@ -106,13 +106,11 @@ send it with the new version. Cloudflare sends the ETag as `W/"42"` when it comp
 ## Development
 
 `todo.js` holds the format, dates, repeats, quick-add phrases and the merge; `node --test todo.test.js` checks them.
-`.claude/launch.json` at the repo root runs the page (`pintail`, port 8481) and the Worker (`pintail-worker`, port
-8790); on localhost the page talks to the local Worker and there's no service worker. The local Worker's password is
-a throwaway in `worker/.dev.vars`. The first time, create the table with
-`npx wrangler d1 execute pintail --local --file schema.sql` from `worker/`. Two origins, localhost and 127.0.0.1,
-act as two devices.
+`npx wrangler dev` at the top of the repo runs the page and its API at `http://localhost:8787/pintail/` (after
+`npm install`; the local password is a throwaway in `.dev.vars` there), with no service worker. The first time, create
+the table with `npx wrangler d1 execute pintail --local --file pintail/schema.sql`. Two origins, localhost and
+127.0.0.1, act as two devices.
 
 To release, raise `VERSION` in `sw.js` and the version label in `index.html`, so installed copies offer **Update**. A push to master
-that changes `worker/` deploys the Worker before the page goes live (`.githooks/pre-push`). Its secret `KEY` is the
-password shared with ebis, myna and paisano, checked by `worker.js` at the top of the repo; typed once on a device, it
-opens all four.
+deploys the page and its API together (`.github/workflows/apps.yml`). The password is the one ebis, myna and paisano
+use, checked by `worker.js` at the top of the repo; typed once on a device, it opens all four.

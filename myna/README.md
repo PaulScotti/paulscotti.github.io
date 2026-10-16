@@ -34,11 +34,10 @@ Named for the myna, the bird that learns to talk by copying what it hears.
 ## Pieces
 
 - `index.html`, `myna.css`, `myna.js`: the app. Libron comes from `../ebis/fonts`.
-- `worker/`: the `myna` Worker at `myna.scottibrain.workers.dev` on Paul's personal Cloudflare, with
-  the deck in D1 (`schema.sql`) and the audio in R2. The password is the one ebis, pintail and paisano use,
-  checked by `worker.js` at the top of the repo; typed once in the browser, it opens all four (the Android app
-  keeps its own copy). A push to master that changes `worker/` or `config.js` deploys the Worker first
-  (`.githooks/pre-push`).
+- `api.js`: myna's part of the apps Worker (`wrangler.jsonc` and `worker.js` at the top of the repo) on
+  Paul's personal Cloudflare, answering at `/myna/api/`, with the deck in D1 (`schema.sql`) and the audio in
+  R2. The password is the one ebis, pintail and paisano use; typed once in the browser, it opens all four
+  (the Android app keeps its own). A push to master deploys it with the app.
 - `android/`: the Android app, a WebView of this site that also turns the volume keys into answers,
   keeps the screen on during a session, and installs its own updates. Built without Gradle.
 
@@ -49,5 +48,5 @@ android/build.sh                        # after changing android/: raise `apk` i
 Raise `version` in `config.js` with every update; the app shows it beside the logo. The app updates itself when the site changes. When `apk` in `config.js` is higher than the installed
 app's version, the app offers to update; the first update asks to allow installs from Myna, later
 ones install without asking. The signing key is in `~/.config/myna`: keep a copy, since Android only
-accepts an update signed with the same key. On `localhost` the app talks to `npx wrangler dev --port 8788`
-(with `KEY`, `OPENAI_API_KEY` and `AZURE_KEY` in `worker/.dev.vars`).
+accepts an update signed with the same key. Locally, `npx wrangler dev` at the top of the repo runs
+the app and its API at `http://localhost:8787/myna/` (with `KEY`, `OPENAI_API_KEY` and `AZURE_KEY` in `.dev.vars` there).
