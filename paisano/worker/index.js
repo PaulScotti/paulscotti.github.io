@@ -1,33 +1,14 @@
 // Paisano's worker, on Paul's own Cloudflare: the log of snacks, feedings, hunts, plantings and resets, in D1. One
-// password opens it, the KEY secret, the same as ebis and myna. The app works out everything else from the log.
+// password opens it, the KEY secret, the same as ebis and myna, checked by worker.js at the top of the repo. The app
+// works out everything else from the log.
 
 import config from '../config.js';
+import worker from '../../worker.js';
 
-const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
-const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-
-export default {
-  async fetch(request, env) {
-    const origin = request.headers.get('origin') || '';
-    const cors = {
-      'access-control-allow-origin': ORIGINS.includes(origin) || LOCAL.test(origin) ? origin : ORIGINS[0],
-      'access-control-allow-methods': 'POST, OPTIONS',
-      'access-control-allow-headers': 'authorization, content-type',
-      'access-control-max-age': '86400',
-      vary: 'origin',
-    };
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    const res = await route(request, env);
-    for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
-    return res;
-  },
-};
+export default worker(route);
 
 async function route(request, env) {
   if (request.method !== 'POST') return new Response('Use POST.', { status: 405, headers: { allow: 'POST, OPTIONS' } });
-  const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
-  const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  if (!given || !crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY))) return new Response('Wrong password.', { status: 401 });
   if (new URL(request.url).pathname !== '/sync') return new Response('Not found.', { status: 404 });
   // A device's new events go in once each (one sent again is ignored), and every event after its cursor comes back.
   const body = await request.json();

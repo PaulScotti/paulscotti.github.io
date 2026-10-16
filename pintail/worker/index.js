@@ -1,32 +1,13 @@
 // Pintail's worker, on Paul's own Cloudflare: his todo.txt in D1. One password opens it, the KEY secret, the same as
-// ebis, myna and paisano. GET /todo.txt reads it with its version as the ETag; PUT /todo.txt writes it only with
-// If-Match set to the version it was edited from, so no device or script can overwrite a change it hasn't seen.
+// ebis, myna and paisano, checked by worker.js at the top of the repo. GET /todo.txt reads it with its version as the
+// ETag; PUT /todo.txt writes it only with If-Match set to the version it was edited from, so no device or script can
+// overwrite a change it hasn't seen.
 
-const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
-const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+import worker from '../../worker.js';
 
-export default {
-  async fetch(request, env) {
-    const origin = request.headers.get('origin') || '';
-    const cors = {
-      'access-control-allow-origin': ORIGINS.includes(origin) || LOCAL.test(origin) ? origin : ORIGINS[0],
-      'access-control-allow-methods': 'GET, PUT, OPTIONS',
-      'access-control-allow-headers': 'authorization, content-type, if-match, if-none-match',
-      'access-control-expose-headers': 'etag',
-      'access-control-max-age': '86400',
-      vary: 'origin',
-    };
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    const res = await route(request, env);
-    for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
-    return res;
-  },
-};
+export default worker(route);
 
 async function route(request, env) {
-  const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
-  const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  if (!given || !crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY))) return new Response('Wrong password.', { status: 401 });
   const url = new URL(request.url);
   if (url.pathname === '/versions' && request.method === 'GET') {
     const before = url.searchParams.get('before');

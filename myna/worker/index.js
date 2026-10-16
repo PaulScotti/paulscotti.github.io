@@ -1,11 +1,11 @@
 // Myna's worker, on Paul's own Cloudflare. The deck lives in D1 and every spoken card in R2. One password
-// opens it: the KEY secret, the same as ebis. OpenAI picks new words and writes how each card is asked as it
-// climbs; Azure Speech says them, in the voices set in config.js. Days are Paul's local dates, sent by the app.
+// opens it: the KEY secret, the same as ebis, checked by worker.js at the top of the repo. OpenAI picks new words
+// and writes how each card is asked as it climbs; Azure Speech says them, in the voices set in config.js. Days are
+// Paul's local dates, sent by the app.
 
 import config from '../config.js';
+import worker from '../../worker.js';
 
-const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
-const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 // FSRS-6 with its published default parameters (github.com/open-spaced-repetition/py-fsrs).
 const W = [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666, 0.796,
   1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.1542];
@@ -18,27 +18,9 @@ const CARD = { type: 'object', additionalProperties: false, required: ['ko', 'en
 const WORDS = { type: 'object', additionalProperties: false, required: ['words'], properties: { words: { type: 'array', items: CARD } } };
 const LINE = { ...CARD, required: ['ko', 'en', 'uses'], properties: { ...CARD.properties, uses: { type: 'array', items: { type: 'string' } } } };
 
-export default {
-  async fetch(request, env, ctx) {
-    const origin = request.headers.get('origin') || '';
-    const cors = {
-      'access-control-allow-origin': ORIGINS.includes(origin) || LOCAL.test(origin) ? origin : ORIGINS[0],
-      'access-control-allow-methods': 'POST, OPTIONS',
-      'access-control-allow-headers': 'authorization, content-type',
-      'access-control-max-age': '86400',
-      vary: 'origin',
-    };
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    const res = await route(request, env, ctx).catch(e => new Response(e.message, { status: 500 }));
-    for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
-    return res;
-  },
-};
+export default worker(route);
 
 async function route(request, env, ctx) {
-  const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
-  const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  if (!given || !crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY))) return new Response('Wrong password.', { status: 401 });
   const body = await request.json();
   const path = new URL(request.url).pathname;
   if (path === '/today') return Response.json(await today(env, ctx, body.day, body.early));

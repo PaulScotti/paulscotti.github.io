@@ -1,13 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
+import worker from '../../../worker.js';
 
-// ebis sync, on Paul's own Cloudflare account. One library, opened by one password: the KEY secret.
+// ebis sync, on Paul's own Cloudflare account. One library, opened by one password: the KEY secret,
+// checked by worker.js at the top of the repo, which every app Worker shares.
 // Records (books, reading positions, highlights, margin notes, tabs) replicate last-write-wins through
 // D1; book packages live in R2; /fetch reads web pages for the reader, which browsers can't do
 // directly; /notes has Claude write margin notes (the ANTHROPIC_API_KEY secret, and for a personal
 // key that spans workspaces, ANTHROPIC_WORKSPACE).
 
-const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
-const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const PAGE = 50; // records per response; book records carry a cover, so each request stays small
 const BROWSER = {
   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36',
@@ -15,26 +15,9 @@ const BROWSER = {
   'accept-language': 'en-US,en;q=0.9',
 };
 
-export default {
-  async fetch(request, env) {
-    const origin = request.headers.get('origin') || '';
-    const cors = {
-      'access-control-allow-origin': ORIGINS.includes(origin) || LOCAL.test(origin) ? origin : ORIGINS[0],
-      'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
-      'access-control-allow-headers': 'authorization, content-type',
-      'access-control-expose-headers': 'x-final-url, content-length',
-      'access-control-max-age': '86400',
-      vary: 'origin',
-    };
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    const res = await route(request, env).catch(e => new Response(e.message, { status: 500 }));
-    for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
-    return res;
-  },
-};
+export default worker(route);
 
 async function route(request, env) {
-  if (!(await authorized(request, env))) return new Response('Wrong password.', { status: 401 });
   const url = new URL(request.url);
   const file = url.pathname.match(/^\/files\/([\w-]{1,40})$/)?.[1];
   if (url.pathname === '/sync' && request.method === 'POST') return sync(await request.json(), env);
@@ -50,13 +33,6 @@ async function route(request, env) {
   if (url.pathname === '/fetch' && request.method === 'POST') return proxy(await request.text());
   if (url.pathname === '/notes' && request.method === 'POST') return annotate(await request.json(), env);
   return new Response('Not found.', { status: 404 });
-}
-
-async function authorized(request, env) {
-  const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
-  const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  const [a, b] = await Promise.all([digest(given), digest(env.KEY)]);
-  return given.length > 0 && crypto.subtle.timingSafeEqual(a, b); // a missing secret opens nothing
 }
 
 // Push what changed here, pull what changed elsewhere. The database writes the JSON.
