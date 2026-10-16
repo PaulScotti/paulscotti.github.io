@@ -1,10 +1,9 @@
 // Myna's worker, on Paul's own Cloudflare. The deck lives in D1 and every spoken card in R2. One password
-// opens it: the KEY secret, the same as ebis, checked by worker.js at the top of the repo. OpenAI picks new words
+// opens it, the apps' one password, which worker.js at the top of the repo checks first. OpenAI picks new words
 // and writes how each card is asked as it climbs; Azure Speech says them, in the voices set in config.js. Days are
 // Paul's local dates, sent by the app.
 
-import config from '../config.js';
-import worker from '../../worker.js';
+import config from './config.js';
 
 // FSRS-6 with its published default parameters (github.com/open-spaced-repetition/py-fsrs).
 const W = [0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666, 0.796,
@@ -18,17 +17,14 @@ const CARD = { type: 'object', additionalProperties: false, required: ['ko', 'en
 const WORDS = { type: 'object', additionalProperties: false, required: ['words'], properties: { words: { type: 'array', items: CARD } } };
 const LINE = { ...CARD, required: ['ko', 'en', 'uses'], properties: { ...CARD.properties, uses: { type: 'array', items: { type: 'string' } } } };
 
-export default worker(route);
-
-async function route(request, env, ctx) {
+export default async function route(request, env, ctx, path) {
   const body = await request.json();
-  const path = new URL(request.url).pathname;
   if (path === '/today') return Response.json(await today(env, ctx, body.day, body.early));
   if (path === '/grade') return Response.json(await grade(env, ctx, body));
   if (path === '/add') return Response.json(await add(env, body));
   if (path === '/sentences') return Response.json(await sentences(env, body));
   if (path === '/speak') return speak(env, body);
-  if (path === '/words') return Response.json((await env.DB.prepare('SELECT ko, en, level FROM cards ORDER BY level, ko').all()).results);
+  if (path === '/words') return Response.json((await env.MYNA.prepare('SELECT ko, en, level FROM cards ORDER BY level, ko').all()).results);
   return new Response('Not found.', { status: 404 });
 }
 
@@ -36,7 +32,7 @@ async function route(request, env, ctx) {
 // session counts what was already answered and met that day, so it holds steady as the day goes on; a session
 // started early takes the cards of the next day that has any due, and counts only itself.
 async function today(env, ctx, day, early) {
-  const db = env.DB;
+  const db = env.MYNA;
   const until = early ? (await db.prepare('SELECT min(due) AS due FROM cards WHERE level BETWEEN 1 AND 8 AND due > ?').bind(day).first()).due || day : day;
   // Words shown on an earlier day but never answered are today's new words again, and count as today's.
   if (!early) await db.prepare('UPDATE cards SET intro = ?1 WHERE s IS NULL AND intro < ?1').bind(day).run();
@@ -70,7 +66,7 @@ const shape = (c, day) => ({
 // FSRS-6 with two grades, Again and Good. A card's level follows its stability, the days it can be remembered,
 // but it is only mastered once it has also been answered right as a sentence.
 async function grade(env, ctx, { id, good, day }) {
-  const db = env.DB;
+  const db = env.MYNA;
   const c = await db.prepare('SELECT * FROM cards WHERE id = ?').bind(id).first();
   const g = good ? 3 : 1, d0 = g => W[4] - Math.exp(W[5] * (g - 1)) + 1;
   let s = W[g - 1], d = d0(g);
@@ -112,9 +108,9 @@ async function vary(env, c) {
   const forms = config.levels[c.level], form = forms[Math.floor(Math.random() * forms.length)];
   let ask = { ko: c.ko, en: c.en, form: 'word' };
   if (form !== 'word') {
-    const [{ results: stronger }, { results: nearby }] = await env.DB.batch([
-      env.DB.prepare('SELECT ko, en, s FROM cards WHERE level >= ?1 AND id != ?2').bind(c.level, c.id),
-      env.DB.prepare('SELECT ask_ko FROM cards WHERE ask_ko != ko AND id != ?1 ORDER BY abs(julianday(due) - julianday(?2)) LIMIT 20').bind(c.id, c.due),
+    const [{ results: stronger }, { results: nearby }] = await env.MYNA.batch([
+      env.MYNA.prepare('SELECT ko, en, s FROM cards WHERE level >= ?1 AND id != ?2').bind(c.level, c.id),
+      env.MYNA.prepare('SELECT ask_ko FROM cards WHERE ask_ko != ko AND id != ?1 ORDER BY abs(julianday(due) - julianday(?2)) LIMIT 20').bind(c.id, c.due),
     ]);
     // A weighted draw (Efraimidis-Spirakis): a word known twice as long as this one counts twice, four times as long, three times.
     const known = stronger.map(k => [Math.random() ** (1 / (1 + Math.max(0, Math.log2(k.s / c.s)))), k]).sort((a, b) => b[0] - a[0]).slice(0, 40)
@@ -125,12 +121,12 @@ async function vary(env, c) {
       if (line.uses.every(w => w === c.ko || known.some(k => k.ko === w))) { ask = { ...line, form: line.uses.length ? form : 'inflected' }; break; }
     }
   }
-  await env.DB.prepare('UPDATE cards SET ask_ko = ?, ask_en = ?, form = ? WHERE id = ?').bind(ask.ko, ask.en, ask.form, c.id).run();
+  await env.MYNA.prepare('UPDATE cards SET ask_ko = ?, ask_en = ?, form = ? WHERE id = ?').bind(ask.ko, ask.en, ask.form, c.id).run();
 }
 
 // New words for the pool, chosen against everything already in the deck. Returns how many were new.
 async function invent(env, n) {
-  const db = env.DB;
+  const db = env.MYNA;
   const { results: have } = await db.prepare('SELECT ko, en FROM cards').all();
   const { words } = await gpt(env, `You choose vocabulary for an English speaker learning Korean from spoken flashcards. Choose the words or set expressions they should learn next: the ones heard most often in real everyday conversation, spread across the situations of daily life rather than one topic, and for each meaning the most common way to say it. Never repeat a word they have, or give one that means nearly the same as one they have. Most useful first. Verbs and adjectives in dictionary form. ${SAID} ${NOTE}`,
     `They have: ${have.map(w => `${w.ko} (${w.en})`).join(', ')}\n\nChoose ${n}.`, WORDS);
@@ -140,7 +136,7 @@ async function invent(env, n) {
 
 // Words Paul adds join today's session. One already waiting in the pool is brought forward instead.
 async function add(env, { text, day }) {
-  const db = env.DB;
+  const db = env.MYNA;
   const { words } = await gpt(env, `You turn what an English speaker learning Korean typed into flashcards, one for each word or phrase they listed. If they wrote Korean, keep their wording, fixing only clear typos. If they wrote English, give the most common natural Korean for it in everyday speech, verbs and adjectives in dictionary form. ${SAID} ${NOTE}`, text, WORDS);
   const done = await db.batch(words.map(w => db.prepare(`INSERT INTO cards (ko, en, ask_ko, ask_en, intro) VALUES (?1, ?2, ?1, ?2, ?3)
     ON CONFLICT (ko) DO UPDATE SET intro = ?3 WHERE intro IS NULL RETURNING *`).bind(w.ko, w.en, day)));
@@ -150,7 +146,7 @@ async function add(env, { text, day }) {
 // The sentences a session ends with: its words joined into fuller Korean, to put into English. Paul marks them only
 // to keep the task active; they change no card.
 async function sentences(env, { words }) {
-  const { results: known } = await env.DB.prepare('SELECT ko, en FROM cards WHERE level >= 1').all();
+  const { results: known } = await env.MYNA.prepare('SELECT ko, en FROM cards WHERE level >= 1').all();
   const { words: lines } = await gpt(env, `You write sentences for an English speaker learning Korean, to translate into English at the end of a flashcard session. Each joins two to four of the session's words into one natural, everyday spoken Korean sentence, polite, and fuller than a flashcard: two ideas joined, another tense, a question. Spread them over as many different session words as you can. Every other word must be one the learner knows; particles, endings and pointing words like 이거 or 저기 are fine. en is its natural English translation. ${SAID}`,
     `Words from this session: ${words.map(([ko, en]) => `${ko} (${en})`).join(', ')}\nOther words the learner knows: ${known.map(k => `${k.ko} (${k.en})`).join(', ')}\n\nWrite ${config.sentences.count}.`, WORDS);
   return lines;
@@ -183,7 +179,7 @@ async function speak(env, { text, lang }) {
   const voice = config.voices[lang];
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   const key = `${voice}/${[...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('')}.mp3`;
-  let mp3 = await env.AUDIO.get(key).then(o => o?.arrayBuffer());
+  let mp3 = await env.MYNA_AUDIO.get(key).then(o => o?.arrayBuffer());
   if (!mp3) {
     const xml = text.replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[c]);
     const res = await busy('https://eastus.tts.speech.microsoft.com/cognitiveservices/v1', {
@@ -193,7 +189,7 @@ async function speak(env, { text, lang }) {
     });
     if (!res.ok) throw new Error(`Azure Speech: ${res.status} ${await res.text()}`);
     mp3 = await res.arrayBuffer();
-    await env.AUDIO.put(key, mp3);
+    await env.MYNA_AUDIO.put(key, mp3);
   }
   return new Response(mp3, { headers: { 'content-type': 'audio/mpeg' } });
 }

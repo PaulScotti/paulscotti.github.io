@@ -1,7 +1,7 @@
 // Keeps ebis on the device so it opens without a connection, and receives what Android
 // shares to it. Change VERSION whenever the app's files change.
 
-const VERSION = 'ebis-30';
+const VERSION = 'ebis-31';
 const APP = [
   './', 'ebis.css', 'manifest.webmanifest', 'icons/ibis.svg', 'icons/icon-192.png',
   'js/app.js', 'js/reader.js', 'js/notes.js', 'js/store.js', 'js/convert.js', 'js/sources.js', 'js/pdf.js', 'js/settings.js', 'js/ui.js',
@@ -26,7 +26,7 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
-  if (url.origin !== location.origin) return;
+  if (url.origin !== location.origin || url.pathname.startsWith('/ebis/api/')) return; // the worker's answers are never kept
   if (request.method === 'POST' && url.pathname.endsWith('/share')) return event.respondWith(receive(request));
   if (request.method !== 'GET') return;
   // The app's own files come from the cache; anything else it asks for is kept once fetched.

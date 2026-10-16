@@ -1,0 +1,30 @@
+{
+  // Paul's apps on www.paulscotti.com (ebis, myna, pintail and paisano) as one Worker. Cloudflare serves each app's
+  // files, and /<app>/api/... runs worker.js; the rest of the site is GitHub Pages. A push to master
+  // deploys it (.github/workflows/apps.yml). Each app's tables are in its schema.sql.
+  // Secrets: KEY (the apps' password), ANTHROPIC_API_KEY and ANTHROPIC_WORKSPACE (ebis's margin notes), OPENAI_API_KEY
+  // and AZURE_KEY (myna; a Speech resource in eastus).
+  "name": "apps",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-16",
+  "account_id": "bf4d563d019ba4efff46afba844e5163",
+  "workers_dev": true,
+  // The Worker's files are the apps' folders, copied into .apps/ without their hidden files (the whole repo is too
+  // big to serve or watch: mturk/ alone has 36,000 files).
+  "build": {
+    "command": "rsync -a --delete --exclude '.*' ebis myna pintail paisano .apps/",
+    "watch_dir": ["ebis", "myna", "pintail", "paisano"]
+  },
+  "assets": { "directory": ".apps" },
+  "d1_databases": [
+    { "binding": "EBIS", "database_name": "ebis", "database_id": "728f1f49-a8c0-4a7e-a95b-5e37c226be74" },
+    { "binding": "MYNA", "database_name": "myna", "database_id": "5b1c5ad2-77a7-4cfc-be19-5467b1eaa32b" },
+    { "binding": "PINTAIL", "database_name": "pintail", "database_id": "b5069364-8e3a-4e26-8522-91bcc7270005" },
+    { "binding": "PAISANO", "database_name": "paisano", "database_id": "b5111491-f8b2-4143-bba8-25df3d004b88" }
+  ],
+  "r2_buckets": [
+    { "binding": "EBIS_FILES", "bucket_name": "ebis-library" },
+    { "binding": "MYNA_AUDIO", "bucket_name": "myna-audio" }
+  ],
+  "observability": { "enabled": true }
+}

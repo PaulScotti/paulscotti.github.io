@@ -1,8 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
-import worker from '../../../worker.js';
 
-// ebis sync, on Paul's own Cloudflare account. One library, opened by one password: the KEY secret,
-// checked by worker.js at the top of the repo, which every app Worker shares.
+// ebis sync, on Paul's own Cloudflare account. One library, opened by the apps' one password, which worker.js at the
+// top of the repo checks before a request reaches this file.
 // Records (books, reading positions, highlights, margin notes, tabs) replicate last-write-wins through
 // D1; book packages live in R2; /fetch reads web pages for the reader, which browsers can't do
 // directly; /notes has Claude write margin notes (the ANTHROPIC_API_KEY secret, and for a personal
@@ -15,29 +14,26 @@ const BROWSER = {
   'accept-language': 'en-US,en;q=0.9',
 };
 
-export default worker(route);
-
-async function route(request, env) {
-  const url = new URL(request.url);
-  const file = url.pathname.match(/^\/files\/([\w-]{1,40})$/)?.[1];
-  if (url.pathname === '/sync' && request.method === 'POST') return sync(await request.json(), env);
+export default async function route(request, env, ctx, path) {
+  const file = path.match(/^\/files\/([\w-]{1,40})$/)?.[1];
+  if (path === '/sync' && request.method === 'POST') return sync(await request.json(), env);
   if (file && request.method === 'PUT') {
-    await env.FILES.put(file, request.body, { httpMetadata: { contentType: 'application/zip' } });
+    await env.EBIS_FILES.put(file, request.body, { httpMetadata: { contentType: 'application/zip' } });
     return new Response('Stored.');
   }
   if (file && request.method === 'GET') {
-    const obj = await env.FILES.get(file);
+    const obj = await env.EBIS_FILES.get(file);
     return obj ? new Response(obj.body, { headers: { 'content-type': 'application/zip', 'content-length': obj.size } })
       : new Response('This book hasn’t finished uploading from your other device yet.', { status: 404 });
   }
-  if (url.pathname === '/fetch' && request.method === 'POST') return proxy(await request.text());
-  if (url.pathname === '/notes' && request.method === 'POST') return annotate(await request.json(), env);
+  if (path === '/fetch' && request.method === 'POST') return proxy(await request.text());
+  if (path === '/notes' && request.method === 'POST') return annotate(await request.json(), env);
   return new Response('Not found.', { status: 404 });
 }
 
 // Push what changed here, pull what changed elsewhere. The database writes the JSON.
 async function sync({ since = 0, records = [] }, env) {
-  const db = env.DB;
+  const db = env.EBIS;
   if (records.length) {
     await db.batch(records.map(r => db.prepare(
       `INSERT INTO records (kind, id, data, updated, seq)
@@ -46,7 +42,7 @@ async function sync({ since = 0, records = [] }, env) {
        WHERE excluded.updated > records.updated`,
     ).bind(r.kind, r.id, JSON.stringify(r.data), r.updated)));
     const gone = records.filter(r => r.kind === 'book' && r.data.deleted).map(r => r.id);
-    if (gone.length) await env.FILES.delete(gone);
+    if (gone.length) await env.EBIS_FILES.delete(gone);
   }
   const { results } = await db.prepare(
     `SELECT seq, json_object('kind', kind, 'id', id, 'updated', updated, 'data', json(data)) AS r

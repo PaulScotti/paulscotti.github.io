@@ -4,12 +4,12 @@
 
 import { unzipSync, strFromU8 } from '../vendor/fflate.js';
 
-const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8787' : 'https://ebis.scottibrain.workers.dev';
+const API = '/ebis/api';
 const LARGEST = 100e6; // the largest upload a worker accepts; a larger book stays on the device it was added on
 const records = new Map(); // "kind/id" → { kind, id, data, updated, dirty }
 const listeners = new Set();
 const opened = new Map(); // id → unpacked package, for books open in tabs
-let password = localStorage.getItem('password'); // typed once on each device, and shared with myna, pintail and paisano
+let signedIn = !!localStorage.getItem('signedIn'); // the login itself is a cookie page scripts can't read, shared with myna, pintail and paisano
 let syncing = null, timer = 0;
 let last = { at: 0, error: '' }; // the last sync: when it finished, or why it didn't
 
@@ -36,7 +36,7 @@ export const ready = idb('records', 'readonly', s => s.getAll()).then(all => {
   for (const r of all) records.set(`${r.kind}/${r.id}`, r);
 });
 
-export const unlocked = () => !!password;
+export const unlocked = () => signedIn;
 export const syncStatus = () => last;
 export const onChange = fn => listeners.add(fn);
 const emit = change => listeners.forEach(fn => fn(change));
@@ -111,19 +111,20 @@ export function close(id) {
   opened.delete(id);
 }
 
-// ebis is Paul's alone: its password is typed once on each device, and the worker checks it on
-// every request. If the worker stops accepting it (the password changed), the device asks again.
+// ebis is Paul's alone: the password his apps share is typed once on each device, into any of them, and the worker
+// checks the cookie it gives on every request. If the worker stops accepting it (the password changed), the device asks again.
 export async function unlock(typed) {
-  await api('/sync', { method: 'POST', body: '{"since":0,"records":[]}' }, typed);
+  await api('/login', { method: 'POST', body: typed });
   // The device joins the library afresh: all it holds goes up once, and all the library holds comes down.
   await idb('meta', 'readwrite', s => s.clear());
   await idb('records', 'readwrite', s => { for (const r of records.values()) r.dirty = true, s.put(r, `${r.kind}/${r.id}`); });
-  password = typed;
-  localStorage.setItem('password', password);
+  signedIn = true;
+  localStorage.setItem('signedIn', '1');
+  for (const k of ['password', 'ebis.password', 'myna.password', 'pintail.password', 'paisano.password']) localStorage.removeItem(k); // older versions kept the password itself
 }
 function lock() {
-  password = null;
-  localStorage.removeItem('password');
+  signedIn = false;
+  localStorage.removeItem('signedIn');
   emit({ locked: true });
 }
 
@@ -134,7 +135,7 @@ function schedule(ms) {
 }
 
 export function sync() {
-  if (!password) return Promise.resolve();
+  if (!signedIn) return Promise.resolve();
   syncing ||= run().then(() => { last = { at: Date.now(), error: '' }; }, e => { last = { ...last, error: e.message }; })
     .finally(() => { syncing = null; emit({ syncing: false }); });
   return syncing;
@@ -209,8 +210,8 @@ export const fetchBlob = async url => (await fetchPage(url)).blob;
 export const annotate = async passage => (await api('/notes', { method: 'POST', body: JSON.stringify(passage) })).json();
 
 // The worker answers in words a reader can be shown.
-async function api(path, init = {}, key = password) {
-  const res = await fetch(API + path, { ...init, headers: { authorization: `Bearer ${key}` } })
+async function api(path, init = {}) {
+  const res = await fetch(API + path, init)
     .catch(() => { throw new Error('ebis can’t reach your library right now.'); });
   if (res.status === 401) lock();
   if (!res.ok) throw new Error(await res.text());

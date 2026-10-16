@@ -1,10 +1,10 @@
 // One set at a time, as many reps as you can, a pachinko board to choose it, and a roadrunner to keep you company.
 // Workouts, rewards and the garden are replayed from the same synced event log.
 
-import config from './config.js?v=20';
-import { dividers, dt, launch, layout, step as bounce } from './pachinko.js?v=20';
+import config from './config.js';
+import { dividers, dt, launch, layout, step as bounce } from './pachinko.js';
 
-const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8789' : 'https://paisano.scottibrain.workers.dev';
+const API = '/paisano/api';
 const $ = id => document.getElementById(id);
 const audio = new AudioContext();
 const X = Object.fromEntries(config.exercises.map(x => [x.id, x]));
@@ -14,7 +14,7 @@ const AREAS = Object.keys(config.areas);
 const GROUND = 118; // the garden's ground line
 const BIG = 1.7; // visitors are drawn larger than life beside Paisano, to be seen and tapped
 
-let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, myna and pintail
+let signedIn = !!localStorage.getItem('signedIn'); // the login itself is a cookie page scripts can't read, shared with ebis, myna and pintail
 // Confirmed events are cached; each unsent event has its own key so two tabs cannot overwrite each other's work.
 const cached = localStorage.getItem('paisano.log');
 let log = JSON.parse(cached || '[]'), syncing = Promise.resolve(), loaded = cached !== null;
@@ -341,12 +341,12 @@ function sync() {
       // Workouts must arrive before their hunts, even when the outbox spans several batches.
       const sent = outbox().sort((a, b) => (b.kind === 'snack') - (a.kind === 'snack') || a.at - b.at).slice(0, 40), since = log.at(-1)?.seq ?? 0;
       const res = await fetch(API + '/sync', {
-        method: 'POST', headers: { authorization: `Bearer ${password}`, 'content-type': 'application/json' }, body: JSON.stringify({ since, events: sent }),
+        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ since, events: sent }),
       }).catch(() => null);
       if (!res) throw new Error(); // offline: the outbox waits, and only the status line says so
       if (res.status === 401) { // the password changed: this device asks for it again
-        localStorage.removeItem('password');
-        password = null;
+        localStorage.removeItem('signedIn');
+        signedIn = false;
         route();
       }
       if (!res.ok) throw new Error(await res.text());
@@ -504,21 +504,21 @@ function chronicle() {
 // Back leaves each screen. A running drop is cancelled; a workout is saved for later.
 function route() {
   const hash = location.hash.slice(1);
-  if (!password && hash) { history.replaceState(null, '', location.pathname); return route(); }
-  if (hunt && (!password || hash)) end();
-  if (!password || hash) goodbye();
+  if (!signedIn && hash) { history.replaceState(null, '', location.pathname); return route(); }
+  if (hunt && (!signedIn || hash)) end();
+  if (!signedIn || hash) goodbye();
   if (hash !== 'pachinko' && board) { cancelAnimationFrame(board.frame); board = null; }
   if (hash !== 'snack' && snack) stop();
   if ((hash === 'pachinko' && !board) || (hash === 'snack' && !snack)) return history.replaceState(null, '', location.pathname), route();
-  $('lock').hidden = !!password;
-  $('home').hidden = !password;
+  $('lock').hidden = signedIn;
+  $('home').hidden = !signedIn;
   $('home').inert = ['pachinko', 'snack', 'history', 'desert', 'settings'].includes(hash);
-  if (!hash && password) { render(); $('choose').focus({ preventScroll: true }); }
+  if (!hash && signedIn) { render(); $('choose').focus({ preventScroll: true }); }
   $('pachinko').hidden = hash !== 'pachinko';
   $('snack').hidden = hash !== 'snack';
-  $('history').hidden = hash !== 'history' || !password;
-  $('desert').hidden = hash !== 'desert' || !password;
-  $('settings').hidden = hash !== 'settings' || !password;
+  $('history').hidden = hash !== 'history' || !signedIn;
+  $('desert').hidden = hash !== 'desert' || !signedIn;
+  $('settings').hidden = hash !== 'settings' || !signedIn;
   if (hash === 'pachinko') { $('pachinko').scrollTop = 0; $('board').focus({ preventScroll: true }); }
   if (hash === 'snack') $('name').focus({ preventScroll: true });
   if (hash === 'history') { chronicle(); $('history').querySelector('.x').focus(); }
@@ -1023,10 +1023,13 @@ addEventListener('keydown', e => {
   else if (e.key === 'Escape' && hunt) end();
   if (e.key === ' ' && hunt && !location.hash) { e.preventDefault(); step(); }
 });
-$('lock').onsubmit = e => {
+$('lock').onsubmit = async e => {
   e.preventDefault();
-  password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
-  localStorage.setItem('password', password);
+  const res = await fetch(API + '/login', { method: 'POST', body: new FormData(e.target).get('password').trim() }).catch(() => null); // a phone keyboard may add a space after the word
+  if (!res?.ok) return toast(res ? await res.text() : 'Offline. Signing in needs a connection.');
+  signedIn = true;
+  localStorage.setItem('signedIn', '1');
+  for (const k of ['password', 'ebis.password', 'myna.password', 'pintail.password', 'paisano.password']) localStorage.removeItem(k); // older versions kept the password itself
   e.target.reset();
   route();
   sync();
@@ -1038,9 +1041,9 @@ $('sync').hidden = loaded; // until the log first loads
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) goodbye();
   if (document.hidden && hunt) end();
-  if (!document.hidden && password) { sync(); stayAwake(); }
+  if (!document.hidden && signedIn) { sync(); stayAwake(); }
 });
-addEventListener('online', () => { if (password) sync(); });
+addEventListener('online', () => { if (signedIn) sync(); });
 addEventListener('storage', e => {
   if (e.key === 'paisano.log' || e.key?.startsWith('paisano.outbox.')) {
     log = JSON.parse(localStorage.getItem('paisano.log') || '[]');
@@ -1058,12 +1061,12 @@ route();
 render();
 idle();
 const saved = sessionStorage.getItem('paisano.snack');
-if (saved && password) {
+if (saved && signedIn) {
   const data = JSON.parse(saved);
   if ([...log, ...pending].some(e => e.id === data.id)) sessionStorage.removeItem('paisano.snack');
   else begin(X[data.x], data);
 }
-if (password) sync();
+if (signedIn) sync();
 
 // Production can open offline after one visit. Local development always loads the current files.
 if ('serviceWorker' in navigator && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {

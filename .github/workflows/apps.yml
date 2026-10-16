@@ -1,0 +1,42 @@
+# Deploys the apps Worker (wrangler.jsonc) on every push to master, so each app's pages and API go live together.
+# Needs the CLOUDFLARE_API_TOKEN secret: Edit Cloudflare Workers plus D1 Edit, for Paul's account and paulscotti.com.
+name: apps
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Each run deploys all of master, so a newer push makes an older run unnecessary.
+concurrency:
+  group: apps
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Just the apps and the files at the top of the repo; mturk/ alone is most of it.
+          filter: blob:none
+          sparse-checkout: |
+            ebis
+            myna
+            pintail
+            paisano
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler@4 deploy --message "$(git log -1 --format='%h %s')"

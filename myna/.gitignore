@@ -1,4 +1,2 @@
 .claude/
-worker/.wrangler/
-worker/.dev.vars
 android/build/

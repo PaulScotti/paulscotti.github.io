@@ -1,15 +1,11 @@
-// Paisano's worker, on Paul's own Cloudflare: the log of snacks, feedings, hunts, plantings and resets, in D1. One
-// password opens it, the KEY secret, the same as ebis and myna, checked by worker.js at the top of the repo. The app
-// works out everything else from the log.
+// Paisano's worker, on Paul's own Cloudflare: the log of snacks, feedings, hunts, plantings and resets, in D1. The
+// apps' one password opens it, checked by worker.js at the top of the repo. The app works out everything else from the log.
 
-import config from '../config.js';
-import worker from '../../worker.js';
+import config from './config.js';
 
-export default worker(route);
-
-async function route(request, env) {
+export default async function route(request, env, ctx, path) {
   if (request.method !== 'POST') return new Response('Use POST.', { status: 405, headers: { allow: 'POST, OPTIONS' } });
-  if (new URL(request.url).pathname !== '/sync') return new Response('Not found.', { status: 404 });
+  if (path !== '/sync') return new Response('Not found.', { status: 404 });
   // A device's new events go in once each (one sent again is ignored), and every event after its cursor comes back.
   const body = await request.json();
   if (!body || !Number.isSafeInteger(body.since) || body.since < 0 || !Array.isArray(body.events) || body.events.length > 40)
@@ -41,10 +37,10 @@ async function route(request, env) {
   const targets = new Set(events.filter(e => e.kind === 'snack').map(e => e.id));
   const missing = [...new Set(events.filter(e => e.kind === 'hunt' && !targets.has(e.data.v)).map(e => e.data.v))];
   if (missing.length) {
-    const { results } = await env.DB.prepare(`SELECT id FROM events WHERE kind = 'snack' AND id IN (${missing.map(() => '?').join(',')})`).bind(...missing).all();
+    const { results } = await env.PAISANO.prepare(`SELECT id FROM events WHERE kind = 'snack' AND id IN (${missing.map(() => '?').join(',')})`).bind(...missing).all();
     if (results.length !== missing.length) return new Response('Hunt has no snack.', { status: 400 });
   }
-  if (events.length) await env.DB.batch(events.map(e => env.DB.prepare('INSERT OR IGNORE INTO events (id, at, kind, data) VALUES (?, ?, ?, ?)').bind(e.id, e.at, e.kind, JSON.stringify(e.data))));
-  const { results } = await env.DB.prepare('SELECT seq, id, at, kind, data FROM events WHERE seq > ? ORDER BY seq').bind(since).all();
+  if (events.length) await env.PAISANO.batch(events.map(e => env.PAISANO.prepare('INSERT OR IGNORE INTO events (id, at, kind, data) VALUES (?, ?, ?, ?)').bind(e.id, e.at, e.kind, JSON.stringify(e.data))));
+  const { results } = await env.PAISANO.prepare('SELECT seq, id, at, kind, data FROM events WHERE seq > ? ORDER BY seq').bind(since).all();
   return Response.json(results.map(e => ({ ...e, data: JSON.parse(e.data) })));
 }

@@ -1,29 +1,31 @@
-// What every app Worker of Paul's has in common (ebis, myna, pintail and paisano), kept in one place so they can't drift:
-// one password, the KEY secret, checked on every request, and CORS for paulscotti.com and local copies. Each Worker
-// exports worker(route). route only sees requests that carry the password, and an error it throws goes back as text
-// the app can show; thrown out of the Worker, it would reach the browser without CORS and look like being offline.
+// Paul's apps on www.paulscotti.com, as one Worker. Cloudflare serves each app's files from the repo; a request to
+// /<app>/api/... comes here and goes to that app's api.js. The apps share one password, the KEY secret. Typed once
+// into any of them (POST /<app>/api/login), it becomes HttpOnly cookies, one per app's API, that page scripts can't
+// read; a script can send the password as a Bearer token instead. An error an app throws goes back as text it can show.
 
-const ORIGINS = ['https://www.paulscotti.com', 'https://paulscotti.com', 'https://paulscotti.github.io'];
-const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+import ebis from './ebis/api.js';
+import myna from './myna/api.js';
+import pintail from './pintail/api.js';
+import paisano from './paisano/api.js';
 
-export default route => ({
+const APPS = { ebis, myna, pintail, paisano };
+
+export default {
   async fetch(request, env, ctx) {
-    const origin = request.headers.get('origin') || '';
-    const cors = {
-      'access-control-allow-origin': ORIGINS.includes(origin) || LOCAL.test(origin) ? origin : ORIGINS[0],
-      'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
-      'access-control-allow-headers': 'authorization, content-type, if-match, if-none-match',
-      'access-control-expose-headers': 'etag, x-final-url, content-length',
-      'access-control-max-age': '86400',
-      vary: 'origin',
-    };
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    const given = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
+    const [, app, path] = new URL(request.url).pathname.match(/^\/(\w+)\/api(\/.*)$/) || [];
+    if (!APPS[app]) return new Response('Not found.', { status: 404 });
     const digest = s => crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-    const res = given && crypto.subtle.timingSafeEqual(await digest(given), await digest(env.KEY)) // a missing secret opens nothing
-      ? await route(request, env, ctx).catch(e => new Response(e.message, { status: 500 }))
-      : new Response('Wrong password.', { status: 401 });
-    for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
+    const same = async (a, b) => !!a && crypto.subtle.timingSafeEqual(await digest(a), await digest(b));
+    // The cookie holds a hash of the password, not the password, so a new password signs every device out.
+    const session = [...new Uint8Array(await digest('session ' + env.KEY))].map(b => b.toString(16).padStart(2, '0')).join('');
+    const login = path === '/login' && request.method === 'POST';
+    const ok = !!env.KEY && (login ? await same(await request.text(), env.KEY)
+      : await same((request.headers.get('authorization') || '').replace(/^Bearer /, ''), env.KEY)
+        || await same((request.headers.get('cookie') || '').match(/(?:^|;\s*)login=(\w+)/)?.[1], session));
+    if (!ok) return new Response('Wrong password.', { status: 401 });
+    const res = login ? new Response(null, { status: 204 }) : await APPS[app](request, env, ctx, path).catch(e => new Response(e.message, { status: 500 }));
+    // Every answer renews the cookies for 400 days, the longest a browser keeps one.
+    for (const name in APPS) res.headers.append('set-cookie', `login=${session}; Path=/${name}/api; Max-Age=34560000; HttpOnly; Secure; SameSite=Strict`);
     return res;
   },
-});
+};

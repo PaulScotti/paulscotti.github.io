@@ -5,9 +5,9 @@ import { parse, prepare, identify, split, join, setPri, setKey, toggleCtx, setTe
 const $ = id => document.getElementById(id);
 const desktop = matchMedia('(min-width: 760px)');
 const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-const API = (LOCAL ? 'http://localhost:8790' : 'https://pintail.scottibrain.workers.dev') + '/todo.txt';
+const API = '/pintail/api';
 
-let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, myna and paisano
+let signedIn = !!localStorage.getItem('signedIn'); // the login itself is a cookie page scripts can't read, shared with ebis, myna and paisano
 let view = 'all'; // every open of the app starts on All
 let picked = JSON.parse(localStorage.getItem('pintail.filter') || '[]');
 let query = null, literal = false, today = iso(new Date()), tasks = [], names = [], editing = null, opened = '', fileDraft = '', selectedVersion = '';
@@ -57,7 +57,7 @@ function act(i, line, f, note) {
 // which is merged with the edits here and sent again. One sync at a time across tabs, and one more queued behind it.
 let syncing = null, again = false;
 function sync() {
-  if (!password) return;
+  if (!signedIn) return;
   if (syncing) return void (again = true);
   syncing = navigator.locks.request('pintail-sync', exchange).then(() => status(''), e => {
     status(e.message ? 'Not synced' : 'Offline');
@@ -69,11 +69,11 @@ function sync() {
 }
 async function exchange() {
   for (;;) {
-    const b = base(), mine = text(), auth = { authorization: `Bearer ${password}` }, put = b && mine !== b.text;
-    const res = await fetch(API, {
+    const b = base(), mine = text(), put = b && mine !== b.text;
+    const res = await fetch(API + '/todo.txt', {
       signal: AbortSignal.timeout(20e3), // a stalled connection counts as offline and is tried again later
-      ...put ? { method: 'PUT', headers: { ...auth, 'if-match': `"${b.v}"`, 'content-type': 'text/plain; charset=utf-8' }, body: mine }
-        : { headers: b ? { ...auth, 'if-none-match': `"${b.v}"` } : auth, cache: 'no-store' },
+      ...put ? { method: 'PUT', headers: { 'if-match': `"${b.v}"`, 'content-type': 'text/plain; charset=utf-8' }, body: mine }
+        : { headers: b ? { 'if-none-match': `"${b.v}"` } : {}, cache: 'no-store' },
     }).catch(() => null);
     if (!res) throw new Error(); // offline: the edits wait here
     if (res.status === 401) return lock();
@@ -106,8 +106,8 @@ function status(message) {
   $('status').hidden = !message;
 }
 function lock() {
-  localStorage.removeItem('password');
-  password = null;
+  localStorage.removeItem('signedIn');
+  signedIn = false;
   route();
 }
 
@@ -389,16 +389,19 @@ function toast(message, undoable = false, uid = null) {
 }
 
 function route() {
-  $('lock').hidden = !!password;
-  $('app').hidden = !password;
-  if (password) render();
+  $('lock').hidden = signedIn;
+  $('app').hidden = !signedIn;
+  if (signedIn) render();
 }
 
 // Events
-$('lock').onsubmit = e => {
+$('lock').onsubmit = async e => {
   e.preventDefault();
-  password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
-  localStorage.setItem('password', password);
+  const res = await fetch(API + '/login', { method: 'POST', body: new FormData(e.target).get('password').trim() }).catch(() => null); // a phone keyboard may add a space after the word
+  if (!res?.ok) return toast(res ? await res.text() : 'Offline. Signing in needs a connection.');
+  signedIn = true;
+  localStorage.setItem('signedIn', '1');
+  for (const k of ['password', 'ebis.password', 'myna.password', 'pintail.password', 'paisano.password']) localStorage.removeItem(k); // older versions kept the password itself
   e.target.reset();
   route();
   sync();
@@ -479,7 +482,7 @@ $('raw').onclick = () => {
   loadVersions();
 };
 async function loadVersions(before = '') {
-  const res = await fetch(API.replace('/todo.txt', '/versions') + (before ? '?before=' + before : ''), { headers: { authorization: `Bearer ${password}` }, cache: 'no-store' }).catch(() => null);
+  const res = await fetch(API + '/versions' + (before ? '?before=' + before : ''), { cache: 'no-store' }).catch(() => null);
   if (!res) return toast('Offline. Previous versions need a connection.');
   if (!res.ok) return toast(await res.text());
   const versions = await res.json();
@@ -494,7 +497,7 @@ $('versions').onchange = async () => {
   const v = $('versions').value;
   if (v.startsWith('older:')) { await loadVersions(v.slice(6)); $('versions').value = selectedVersion; return; }
   if (!v) { $('file').value = fileDraft; selectedVersion = ''; $('save').textContent = 'Save'; return; }
-  const res = await fetch(API + '?version=' + v, { headers: { authorization: `Bearer ${password}` }, cache: 'no-store' }).catch(() => null);
+  const res = await fetch(API + '/todo.txt?version=' + v, { cache: 'no-store' }).catch(() => null);
   if (!res || !res.ok) { $('versions').value = selectedVersion; return toast(res ? await res.text() : 'Offline. That version could not be loaded.'); }
   const content = await res.text();
   if ($('versions').value !== v) return;

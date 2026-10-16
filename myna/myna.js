@@ -5,14 +5,14 @@
 
 import config from './config.js';
 
-const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8788' : 'https://myna.scottibrain.workers.dev';
+const API = '/myna/api';
 const GAP = 4; // cards between missing a card and its next asking; new words are first asked among this many reviews
 const GRACE = 600; // ms after an answer comes by itself in which a key still only meant "show it"
 const android = window.MynaAndroid; // the Android app's bridge; a browser has none
 const $ = id => document.getElementById(id);
 const audio = new AudioContext();
 const clips = new Map(); // "lang:text" → that line's mp3, fetched once
-let password = localStorage.getItem('password'); // typed once on each device, and shared with ebis, pintail and paisano
+let signedIn = !!localStorage.getItem('signedIn'); // the login itself is a cookie page scripts can't read, shared with ebis, pintail and paisano
 let day, levels, words = [], queue = [], at = 0, card = null, run = 0, shown = false, grace = 0, timer = 0, saving = false, sound = null, toasting = 0;
 let tally; // the session so far: when it began, its new words, each card's first answer and its level before and after, its sentences and how many are done
 
@@ -22,11 +22,11 @@ const shuffle = list => list.map(c => [Math.random(), c]).sort((a, b) => a[0] - 
 
 async function api(path, body) {
   const res = await fetch(API + path, {
-    method: 'POST', headers: { authorization: `Bearer ${password}`, 'content-type': 'application/json' }, body: JSON.stringify(body),
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
   });
   if (res.status === 401) { // the password changed: this device asks for it again
-    localStorage.removeItem('password');
-    password = null;
+    localStorage.removeItem('signedIn');
+    signedIn = false;
     route();
   }
   if (!res.ok) throw new Error(await res.text());
@@ -66,10 +66,10 @@ function route() {
     load();
   }
   if (hash === '#words' && $('deck').hidden) deck();
-  $('lock').hidden = !!password;
-  $('desk').hidden = studying || !password;
-  $('study').hidden = !studying || !password;
-  $('deck').hidden = hash !== '#words' || !password;
+  $('lock').hidden = signedIn;
+  $('desk').hidden = studying || !signedIn;
+  $('study').hidden = !studying || !signedIn;
+  $('deck').hidden = hash !== '#words' || !signedIn;
   if (hash !== '#add') $('sheet').close();
   else if (!$('sheet').open) $('sheet').showModal();
   android?.keys(studying);
@@ -284,10 +284,13 @@ $('early').onclick = async () => {
 };
 $('home').onclick = () => history.back();
 
-$('lock').onsubmit = e => {
+$('lock').onsubmit = async e => {
   e.preventDefault();
-  password = new FormData(e.target).get('password').trim(); // a phone keyboard may add a space after the word
-  localStorage.setItem('password', password);
+  const res = await fetch(API + '/login', { method: 'POST', body: new FormData(e.target).get('password').trim() }); // a phone keyboard may add a space after the word
+  if (!res.ok) throw new Error(await res.text());
+  signedIn = true;
+  localStorage.setItem('signedIn', '1');
+  for (const k of ['password', 'ebis.password', 'myna.password', 'pintail.password', 'paisano.password']) localStorage.removeItem(k); // older versions kept the password itself
   e.target.reset();
   route();
   load();
@@ -310,20 +313,16 @@ $('update').hidden = !(android && android.version() < config.apk);
 $('update').onclick = () => { $('update').textContent = 'Updating…'; android.update(); };
 $('get').hidden = !!android || !/Android/.test(navigator.userAgent);
 
-// Opening Myna or coming back to it: a newer version is fetched past the browser's cache, which can hold the old
-// files for ten minutes, and opened; a new day brings its cards.
+// Opening Myna or coming back to it opens a newer version, or a new day's cards.
 async function fresh() {
-  const text = await (await fetch('config.js', { cache: 'reload' })).text();
+  const text = await (await fetch('config.js')).text();
   const live = (await import(URL.createObjectURL(new Blob([text], { type: 'text/javascript' })))).default;
-  if (live.version !== config.version) {
-    await Promise.all(['./', 'myna.js', 'myna.css'].map(file => fetch(file, { cache: 'reload' })));
-    location.reload();
-  } else if (day && today() !== day) location.reload();
+  if (live.version !== config.version || day && today() !== day) location.reload();
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) fresh(); });
 
 history.replaceState(null, '', location.pathname);
 addEventListener('hashchange', route);
 route();
-if (password) load();
+if (signedIn) load();
 fresh();

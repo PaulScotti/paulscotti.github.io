@@ -43,7 +43,7 @@ export default {
   sentences: { count: 3, think: 2 },
 
   // Myna's version, shown beside the logo so each device shows which code it is running. Raised with every update.
-  version: 17,
+  version: 18,
 
   // The Android app's version. Raise it after changing android/ and rebuilding; the app then offers the update.
   apk: 1,

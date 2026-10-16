@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "The apps Worker (wrangler.jsonc); ebis's margin notes call Claude through Anthropic's SDK",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0"
+  }
+}

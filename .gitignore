@@ -2,3 +2,8 @@ _site/
 .sass-cache/
 .jekyll-metadata
 *DS_Store
+# The apps Worker's copy of the apps, local state, local secrets and packages.
+.apps/
+.wrangler/
+.dev.vars
+node_modules/
