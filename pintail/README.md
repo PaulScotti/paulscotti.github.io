@@ -5,9 +5,11 @@ installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Wo
 
 ## Views
 
-- **All** is where Pintail opens: every open task, by priority (A, B, C, then none), and within a priority in the
-  order of the file. On a laptop the four priorities sit side by side like Trello lists; drag a card up or down to
-  reorder it, or into another list to change its priority. A task moves with its steps, and Cmd/Ctrl+Z undoes a move.
+- **All** is where Pintail opens: every open task, by priority (Urgent, Next, Later, then none), and within a
+  priority in the order of the file. A task due today or earlier shows as Urgent, and one due tomorrow as Next,
+  unless it's set higher; a step's date counts for its task. Only priorities that have tasks get a list. On a laptop
+  they sit side by side like Trello lists; drag a card up or down to reorder it, or into another list to change its
+  priority (not below what its date makes it). A task moves with its steps, and Cmd/Ctrl+Z undoes a move.
 - **Soon** is everything with a date: overdue, today, each of the next six days, then by month. **Move to today**
   moves overdue one-off tasks to today. Repeating schedules stay in place.
 - **Later** is everything undated, by category, the most important and then the newest first. The age on the right
@@ -26,11 +28,11 @@ first one chosen.
 
 Type a task in the box and press Enter or tap the arrow. A date or repeat said at the end becomes its date: "tomorrow", "fri", "next
 week", "oct 20", "in 3 days", "this weekend", "every weekday", "every monday", "monthly on the 1st". What will be
-saved shows under the box as it's typed, and **Keep words** keeps the words as written. `(A)` at the start sets a
-priority, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
+saved shows under the box as it's typed, and **Keep words** keeps the words as written. `(A)`, `(B)` or `(C)` at the
+start sets Urgent, Next or Later, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
 list bullets. The confirmation’s **Open** button opens the new task without moving your current view. “Next Friday” means Friday in the following week; “fri” means the next Friday on or after today. Impossible dates stay as words.
 
-Tap a task to open it: its words, notes, date, repeat, priority (A, B or C), categories and steps (subtasks),
+Tap a task to open it: its words, notes, date, repeat, priority (Urgent, Next or Later), categories and steps (subtasks),
 each changed in place. Words and notes save locally as you type. **Skip** moves a routine to its next date without marking it done. Every change can be undone
 with **Undo** beside the add box, in the task sheet, or with Cmd/Ctrl+Z. The last 20 edits survive a reload in the same tab; undo preserves later edits from another device. On a laptop, `n` goes to the add box, `/` searches every task, open
 or done, `j` and `k` move between tasks, Enter opens one, `x` marks it done. The lines button at the

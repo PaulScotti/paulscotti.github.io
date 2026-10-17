@@ -124,7 +124,10 @@ function age(d) {
   const n = Math.round((new Date(today) - new Date(d)) / 864e5);
   return n < 1 ? 'new' : n < 14 ? n + 'd' : n < 60 ? Math.round(n / 7) + 'w' : n < 700 ? Math.round(n / 30.4) + 'mo' : Math.round(n / 365) + 'y';
 }
-const RANK = p => ['A', 'B', 'C'].includes(p) ? 'ABC'.indexOf(p) : 3;
+const PRI = { A: 'Urgent', B: 'Next', C: 'Later' }; // todo.txt's (A), (B) and (C)
+const RANK = p => p in PRI ? 'ABC'.indexOf(p) : 3;
+// A task due today or earlier shows as Urgent, and one due tomorrow as Next, unless it's set higher.
+const urgency = (pri, due) => 'ABC'[Math.min(RANK(pri), !due ? 3 : due <= today ? 0 : due === addDays(today, 1) ? 1 : 3)] || null;
 const same = (a, b) => a.toLowerCase() === b.toLowerCase();
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -145,7 +148,7 @@ const category = name => `<span class="category" style="--category:${categoryCol
 function row(t, { depth = 0, label = '', late = false, extra = '', up = depth === 0 && t.up } = {}) {
   const meta = [t.conflict && 'Conflict: review both versions', up && esc('↳ ' + up.text)].filter(Boolean);
   return `<div class="task${depth ? ' step' : ''}${t.done ? ' done' : ''}" data-i="${t.i}" data-uid="${esc(t.uid)}" style="--depth:${depth};--category:${t.ctx.length ? categoryColor(t.ctx[0]) : 'var(--ink)'}" tabindex="0">
-    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}${!t.done && t.pri ? ', priority ' + t.pri : ''}" aria-pressed="${t.done}" title="${t.done ? 'Reopen' : t.pri ? 'Priority ' + t.pri : 'Complete'}" tabindex="-1"><span aria-hidden="true">${!t.done && t.pri || ''}</span></button>
+    <button class="check p${t.done ? 'x' : t.pri || ''}" aria-label="${t.done ? 'Reopen' : 'Complete'} ${esc(t.text)}${!t.done && t.pri ? ', ' + PRI[t.pri] : ''}" aria-pressed="${t.done}" title="${t.done ? 'Reopen' : PRI[t.pri] || 'Complete'}" tabindex="-1"><span aria-hidden="true">${!t.done && PRI[t.pri]?.[0] || ''}</span></button>
     <div class="body"><span class="title" title="${esc(t.ctx.join(' · '))}">${linked(t.text || t.line.trim())}</span>${meta.length ? `<span class="meta">${meta.join(' · ')}</span>` : ''}${t.notes ? `<span class="note">${linked(t.notes.split('\n')[0])}</span>` : ''}${extra}</div>
     ${label ? `<span class="when${late ? ' late' : ''}">${esc(label)}</span>` : ''}
   </div>`;
@@ -184,6 +187,7 @@ function render(animate = false) {
   tasks = split(raw).map((line, i) => line.trim() && Object.assign(parse(line), { i, kids: [], up: null })).filter(Boolean);
   const stack = [];
   for (const t of tasks) {
+    t.pri = urgency(t.pri, !t.done && t.due); // shown, not saved: the line keeps the priority that was set
     while (stack.length && stack.at(-1).depth >= t.depth) stack.pop();
     t.up = stack.at(-1) || null;
     t.up?.kids.push(t);
@@ -220,10 +224,11 @@ function render(animate = false) {
   for (const x of tops) x.due = x.members.map(m => m.due).filter(Boolean).sort()[0] || null;
   const rows = (x, label) => x.members.map(m => row(m, { depth: m.depth - x.t.depth, ...label(m) })).join('');
 
-  // All: every open task by priority, A first, and within a priority in the file's order, which dragging changes.
-  const lanes = ['A', 'B', 'C', ''].map(p => [p, tops.filter(x => (RANK(x.t.pri) < 3 ? x.t.pri : '') === p)]);
-  patch('all-list', tops.length ? lanes.map(([p, xs]) => `<div class="group lane" data-pri="${p}"><h3>${p ? 'Priority ' + p : 'No priority'}<small>${xs.length}</small></h3>${xs.map(x =>
-    `<div class="card" data-card="${esc(x.t.uid)}" draggable="${desktop.matches}">${rows(x, m => ({ label: m.due ? dayName(m.due) : '', late: m.due < today }))}</div>`).join('')}</div>`).join('')
+  // All: every open task by priority, Urgent first, and within a priority in the file's order, which dragging changes.
+  // A step due soon raises its whole task. Priorities with no tasks get no list.
+  const lanes = ['A', 'B', 'C', ''].map(p => [p, tops.filter(x => (urgency(x.t.pri, x.due) || '') === p)]).filter(([, xs]) => xs.length);
+  patch('all-list', tops.length ? lanes.map(([p, xs]) => `<div class="group lane" data-pri="${p}"><h3>${PRI[p] || 'No priority'}<small>${xs.length}</small></h3>${xs.map(x =>
+    `<div class="card" data-card="${esc(x.t.uid)}" data-due="${x.due || ''}" draggable="${desktop.matches}">${rows(x, m => ({ label: m.due ? dayName(m.due) : '', late: m.due < today }))}</div>`).join('')}</div>`).join('')
     : '<p class="empty">Nothing to do. Add a task above, with a day or without.</p>');
   $('all-count').textContent = tops.reduce((n, x) => n + x.members.length, 0);
 
@@ -335,7 +340,7 @@ function fill() {
   $('sheet-check').setAttribute('aria-label', (t.done ? 'Reopen ' : 'Complete ') + t.text);
   $('sheet-check').setAttribute('aria-pressed', t.done);
   $('sheet-check').className = `check p${t.done ? 'x' : t.pri || ''}`;
-  $('sheet-check').textContent = !t.done && t.pri || '';
+  $('sheet-check').textContent = !t.done && PRI[t.pri]?.[0] || '';
   if (document.activeElement !== $('title')) $('title').value = t.text;
   if (document.activeElement !== $('notes')) $('notes').value = t.notes || '';
   for (const area of [$('title'), $('notes')]) { area.style.height = ''; area.style.height = area.scrollHeight + 'px'; }
@@ -347,7 +352,8 @@ function fill() {
   const repeats = { None: '', Daily: '+1d', Weekdays: '+1b', Weekly: '+1w', Monthly: '+1m', Yearly: '+1y' };
   patch('repeats', Object.entries(repeats).map(([l, r]) => chip(l, (t.rec || '') === r, `data-rec="${r}"`)).join('')
     + (t.rec && !Object.values(repeats).includes(t.rec) ? chip(repeatLabel(t), true, `data-rec="${t.rec}"`) : ''));
-  patch('pris', ['A', 'B', 'C'].map(p => chip(p, t.pri === p, `data-pri="${p}"`)).join('') + chip('None', !['A', 'B', 'C'].includes(t.pri), 'data-pri=""'));
+  const floor = RANK(urgency(null, !t.done && t.due)); // the date already makes it at least this urgent
+  patch('pris', ['A', 'B', 'C', ''].map(p => chip(PRI[p] || 'None', (t.pri || '') === p, `data-pri="${p}"${RANK(p) > floor ? ' disabled' : ''}`)).join(''));
   patch('tags', [...new Set([...names, ...t.ctx])].map(c => chip(c, t.ctx.some(x => same(x, c)), `data-ctx="${esc(c)}" style="--category:${categoryColor(c)}"`)).join(''));
   patch('kids', t.kids.map(k => row(k, { up: null, label: k.due ? dayName(k.due) : '', late: !k.done && k.due < today })).join(''));
   $('stamp').textContent = [t.created && 'Added ' + short(t.created) + (t.created.slice(0, 4) === today.slice(0, 4) ? '' : ' ' + t.created.slice(0, 4)), t.doneDate && 'done ' + short(t.doneDate)].filter(Boolean).join(', ');
@@ -372,7 +378,7 @@ function hint() {
     return $('hint').hidden = !matches.length;
   }
   const line = quick(value, today, names, fallback(), !literal), t = parse(line), read = line !== quick(value, today, names, fallback(), false);
-  const parts = [read && t.text, t.pri && 'Priority ' + t.pri, t.due && long(t.due), t.rec && repeatLabel(t)];
+  const parts = [read && t.text, PRI[t.pri], t.due && long(t.due), t.rec && repeatLabel(t)];
   $('hint').innerHTML = parts.filter(Boolean).map(p => `<span>${esc(p)}</span>`).join('') + t.ctx.map(category).join('') + (read ? '<button type="button" data-literal aria-label="Keep the words as written">Keep words</button>' : '');
   $('hint').hidden = false;
 }
@@ -528,7 +534,7 @@ $('help-open').onclick = () => $('help').showModal();
 $('status').onclick = sync;
 
 // On a laptop, tasks in All drag like cards: up or down to reorder, or into another priority. A task keeps its steps,
-// and its place is between the cards it was dropped between.
+// and its place is between the cards it was dropped between. One due soon can't go below what its date makes it.
 $('all-list').addEventListener('dragstart', e => {
   dragging = e.target.closest('.card');
   e.dataTransfer.effectAllowed = 'move';
@@ -537,7 +543,7 @@ $('all-list').addEventListener('dragstart', e => {
 });
 $('all-list').addEventListener('dragover', e => {
   const lane = dragging && e.target.closest('.lane');
-  if (!lane) return;
+  if (!lane || RANK(lane.dataset.pri) > RANK(urgency(null, dragging.dataset.due))) return;
   e.preventDefault();
   const below = [...lane.querySelectorAll('.card:not(.dragging)')].find(card => { const r = card.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
   if (below ? dragging.nextElementSibling !== below : lane.lastElementChild !== dragging) lane.insertBefore(dragging, below || null);
@@ -546,17 +552,18 @@ $('all-list').addEventListener('drop', e => {
   e.preventDefault();
   const card = dragging, pri = card.closest('.lane').dataset.pri || null, t = tasks.find(x => x.uid === card.dataset.card);
   const below = card.nextElementSibling?.dataset.card, above = card.previousElementSibling?.dataset.card;
+  const moved = urgency(t.pri, card.dataset.due) !== pri; // reordering keeps the priority that was set
   dragging = null;
   act(t.i, t.line, (lines, at) => {
     const end = subtree(lines, at), depth = parse(lines[at]).depth;
     const block = lines.slice(at, end).map(l => l.slice(depth)); // a step whose parent is done moves out as a task
-    block[0] = setPri(block[0], pri);
+    if (moved) block[0] = setPri(block[0], pri);
     const rest = [...lines.slice(0, at), ...lines.slice(end)];
     const root = uid => { let i = rest.findIndex(l => parse(l).uid === uid); while (i > 0 && parse(rest[i]).depth) i--; return i; };
     const b = below ? root(below) : -1, a = above ? root(above) : -1;
     rest.splice(b >= 0 ? b : a >= 0 ? subtree(rest, a) : rest.length, 0, ...block);
     return rest;
-  }, (t.pri || null) === pri ? null : pri ? 'Priority ' + pri : 'No priority');
+  }, moved ? PRI[pri] || 'No priority' : null);
 });
 $('all-list').addEventListener('dragend', () => { dragging = null; render(); }); // dropped elsewhere, or where it was: back in place
 

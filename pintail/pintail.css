@@ -161,6 +161,7 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
 .choices { display: flex; flex-wrap: wrap; gap: 7px; }
 .choices button, .choices label { display: inline-flex; align-items: center; flex: none; min-height: 34px; padding: 6px 11px; border: 1px solid var(--rule); border-radius: 8px; font: 12px var(--ui); color: var(--ink-2); white-space: nowrap; }
 .choices .on { color: var(--category); border-color: color-mix(in srgb, var(--category) 35%, var(--rule)); background: color-mix(in srgb, var(--category) 9%, var(--surface)); }
+.choices button:disabled { opacity: .4; }
 #tags button { gap: 7px; border-radius: 999px; background: var(--surface); color: var(--ink-2); }
 #pris [data-pri]:not([data-pri=""]) { color: var(--category); }
 #pris [data-pri=A] { --category: var(--pA); } #pris [data-pri=B] { --category: var(--pB); } #pris [data-pri=C] { --category: var(--pC); }
@@ -207,9 +208,8 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
   #all { display: none; grid-column: 1 / -1; }
   body[data-view=all] .column { display: none; }
   body[data-view=all] #all { display: block; }
-  #all-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
-  .lane { min-height: 180px; } /* an empty priority still takes a card */
-  #all-list > .empty { grid-column: 1 / -1; }
+  #all-list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0 24px; align-items: start; }
+  .lane { min-height: 180px; } /* room to drop below a short list, or into one a drag just emptied */
   .card { margin-bottom: 8px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
   .card .task { border-bottom: 0; }
   .card[draggable=true] { cursor: grab; }
@@ -244,7 +244,6 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
   .board { display: block; }
   .column, .column h2 { display: none; }
   body[data-view=all] #all, body[data-view=soon] #soon, body[data-view=later] #later, body[data-view=routines] #routines, body[data-view=done] #done { display: block; }
-  .lane:not(:has(.card)) { display: none; }
   body.finding .column { display: none !important; }
   body.finding #found { display: block !important; }
   .group { margin-top: 20px; }
