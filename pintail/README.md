@@ -5,11 +5,15 @@ installed app on his Pixel. Plain HTML, CSS and JavaScript, with a Cloudflare Wo
 
 ## Views
 
-- **All** is where Pintail opens: every open task, by priority (Urgent, Next, Later, then none), and within a
-  priority in the order of the file. A task due today or earlier shows as Urgent, and one due tomorrow as Next,
-  unless it's set higher; a step's date counts for its task. Only priorities that have tasks get a list. On a laptop
-  they sit side by side like Trello lists; drag a card up or down to reorder it, or into another list to change its
-  priority (not below what its date makes it). A task moves with its steps, and Cmd/Ctrl+Z undoes a move.
+- **All** is where Pintail opens: **Now** across the top, what's being done right now, then every other open task
+  by priority (Urgent, Next, Later, then none), each in the order of the file. A task due today or earlier shows as
+  Urgent, and one due tomorrow as Next, unless it's set higher; a step's date counts for its task. Only priorities
+  that have tasks get a list. On a laptop Now is one row that stays at the top of the window as the page scrolls,
+  and the priorities sit below it side by side like Trello lists, each running the board's full height with its
+  heading pinned. Drag a card to reorder it (sideways in Now), or into another list to change its priority (not
+  below what its date makes it), from however far down the page; the list it would land in is tinted, and an empty
+  Now appears while dragging. A task moves with its steps, and Cmd/Ctrl+Z undoes a move. On a phone, Now is a
+  tinted panel above the priorities.
 - **Soon** is everything with a date: overdue, today, each of the next six days, then by month. **Move to today**
   moves overdue one-off tasks to today. Repeating schedules stay in place.
 - **Later** is everything undated, by category, the most important and then the newest first. The age on the right
@@ -28,11 +32,11 @@ first one chosen.
 
 Type a task in the box and press Enter or tap the arrow. A date or repeat said at the end becomes its date: "tomorrow", "fri", "next
 week", "oct 20", "in 3 days", "this weekend", "every weekday", "every monday", "monthly on the 1st". What will be
-saved shows under the box as it's typed, and **Keep words** keeps the words as written. `(A)`, `(B)` or `(C)` at the
-start sets Urgent, Next or Later, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
+saved shows under the box as it's typed, and **Keep words** keeps the words as written. `(N)`, `(A)`, `(B)` or `(C)`
+at the start sets Now, Urgent, Next or Later, and `@` suggests the categories that exist. Pasting several lines adds one task per line, without their
 list bullets. The confirmation’s **Open** button opens the new task without moving your current view. “Next Friday” means Friday in the following week; “fri” means the next Friday on or after today. Impossible dates stay as words.
 
-Tap a task to open it: its words, notes, date, repeat, priority (Urgent, Next or Later), categories and steps (subtasks),
+Tap a task to open it: its words, notes, date, repeat, priority (Now, Urgent, Next or Later), categories and steps (subtasks),
 each changed in place. Words and notes save locally as you type. **Skip** moves a routine to its next date without marking it done. Every change can be undone
 with **Undo** beside the add box, in the task sheet, or with Cmd/Ctrl+Z. The last 20 edits survive a reload in the same tab; undo preserves later edits from another device. On a laptop, `n` goes to the add box, `/` searches every task, open
 or done, `j` and `k` move between tasks, Enter opens one, `x` marks it done. The lines button at the
@@ -70,7 +74,7 @@ the task above:
 x 2026-10-14 2026-10-08 Journal for 5 minutes @Personal due:2026-10-14 rec:+1b
 ```
 
-Pintail reads `x` and its date, the priority, the created date, `@contexts`, `due:`, `rec:`, `notes:` (quoted, with
+Pintail reads `x` and its date, the priority (`(N)` Now, `(A)` Urgent, `(B)` Next, `(C)` Later), the created date, `@contexts`, `due:`, `rec:`, `notes:` (quoted, with
 `\n` for new lines). Anything else stays in the task's words as written, and so
 does a date that isn't on the calendar. `rec:` takes a number and d, b (weekdays), w, m or y. With a `+` it keeps the
 schedule: the next date is the first one after today, so missed days are skipped, not owed. Without it, the next

@@ -5,7 +5,7 @@
   --serif: Libron, Georgia, serif; --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --bg: #f7f4ef; --surface: #fffcf7; --tint: #eee8de; --ink: #292620; --ink-2: #615b51; --ink-3: #70685d;
   --rule: #e3ddd2; --teal: #2b727b; --sage: #526e46; --blue: #496a95; --plum: #85516b; --clay: #a65339; --ochre: #876313;
-  --accent: var(--teal); --category: var(--accent); --pA: var(--clay); --pB: var(--ochre); --pC: var(--blue); --shade: rgb(51 40 24 / .045);
+  --accent: var(--teal); --category: var(--accent); --pN: var(--teal); --pA: var(--clay); --pB: var(--ochre); --pC: var(--blue); --shade: rgb(51 40 24 / .045);
   --ease: cubic-bezier(.2, .8, .2, 1); --add-height: 80px;
   color-scheme: light dark;
 }
@@ -115,7 +115,7 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
 .check { display: grid; place-items: center; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; border: 1.25px solid var(--c, var(--ink-3)); color: var(--c, var(--ink-3)); position: relative; font: 9px var(--ui); transition: background-color 160ms, border-color 160ms, transform 160ms; }
 .check::after { content: ""; position: absolute; inset: -12px; }
 .check:active { transform: scale(.88); }
-.check.pA { --c: var(--pA); } .check.pB { --c: var(--pB); } .check.pC { --c: var(--pC); }
+.check.pN { --c: var(--pN); } .check.pA { --c: var(--pA); } .check.pB { --c: var(--pB); } .check.pC { --c: var(--pC); }
 .check.px { background: var(--sage); border-color: var(--sage); }
 .check.px span { visibility: hidden; }
 .check.px::before { content: ""; position: absolute; left: 5px; top: 3px; width: 5px; height: 8px; border: solid var(--surface); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
@@ -137,8 +137,10 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
 .routine-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 220ms var(--ease), opacity 180ms; }
 .routine-body > .list { overflow: hidden; min-height: 0; }
 
-/* All: one list per priority, in the order dragging gives them. */
-.lane[data-pri=A] h3 { color: var(--pA); } .lane[data-pri=B] h3 { color: var(--pB); } .lane[data-pri=C] h3 { color: var(--pC); }
+/* All: Now, then one list per priority, in the order dragging gives them. The list a dragged card would land in is tinted. */
+.lane { --lane: var(--ink-2); } .lane[data-pri=N] { --lane: var(--pN); } .lane[data-pri=A] { --lane: var(--pA); } .lane[data-pri=B] { --lane: var(--pB); } .lane[data-pri=C] { --lane: var(--pC); }
+.lane h3 { color: var(--lane); }
+#now:not(:has(.card)) { display: none; }
 .card.dragging { opacity: .35; }
 
 /* Native dialogs animate without delaying saves or changing keyboard behavior. */
@@ -164,7 +166,7 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
 .choices button:disabled { opacity: .4; }
 #tags button { gap: 7px; border-radius: 999px; background: var(--surface); color: var(--ink-2); }
 #pris [data-pri]:not([data-pri=""]) { color: var(--category); }
-#pris [data-pri=A] { --category: var(--pA); } #pris [data-pri=B] { --category: var(--pB); } #pris [data-pri=C] { --category: var(--pC); }
+#pris [data-pri=N] { --category: var(--pN); } #pris [data-pri=A] { --category: var(--pA); } #pris [data-pri=B] { --category: var(--pB); } #pris [data-pri=C] { --category: var(--pC); }
 .choices label { position: relative; cursor: pointer; }
 .choices label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .choices label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
@@ -208,8 +210,17 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
   #all { display: none; grid-column: 1 / -1; }
   body[data-view=all] .column { display: none; }
   body[data-view=all] #all { display: block; }
-  #all-list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0 24px; align-items: start; }
-  .lane { min-height: 180px; } /* room to drop below a short list, or into one a drag just emptied */
+  #all-list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0 24px; }
+  #all-list > .lane { min-height: 180px; } /* full height, so a drop lands even below a short list */
+  #all-list h3 { position: sticky; top: var(--now-height); z-index: 1; padding-top: 10px; background: var(--bg); }
+  /* Now: one row across the top that stays in sight, so a task can be dropped in from anywhere. It appears empty while dragging. */
+  #now { position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: max-content; grid-auto-flow: column; grid-auto-columns: minmax(200px, 280px); justify-content: start; align-items: start; gap: 10px; overflow-x: auto; max-height: 40dvh; margin: 16px 0 0; padding: 12px 0; background: var(--bg); border-bottom: 1px solid color-mix(in srgb, var(--pN) 30%, var(--rule)); }
+  #now h3 { align-self: center; padding: 0 10px 0 2px; }
+  #now .card { margin: 0; }
+  #all:has(.dragging) #now { display: grid; }
+  #now:not(:has(.card))::after { content: "Drop here to do it now"; align-self: center; font: 12px var(--ui); color: var(--ink-3); }
+  .lane:has(> .dragging), .lane:has(> .dragging) h3 { background-image: linear-gradient(color-mix(in srgb, var(--lane) 7%, transparent) 0 0); }
+  #all-list > .lane:has(> .dragging) { box-shadow: 0 0 0 8px color-mix(in srgb, var(--lane) 7%, transparent); border-radius: 2px; }
   .card { margin-bottom: 8px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
   .card .task { border-bottom: 0; }
   .card[draggable=true] { cursor: grab; }
@@ -247,6 +258,8 @@ body[data-view=done] .views { --tab: 2; --view-color: var(--sage); }
   body.finding .column { display: none !important; }
   body.finding #found { display: block !important; }
   .group { margin-top: 20px; }
+  #now { margin: 16px -12px 0; padding: 12px 12px 2px; border-radius: 14px; background: color-mix(in srgb, var(--pN) 7%, var(--surface)); }
+  #now .card:last-child .task:last-child { border-bottom: 0; }
   .task { padding-top: 12px; padding-bottom: 12px; }
   .title { font-size: 18px; }
   .routine-body { margin-top: 18px; }

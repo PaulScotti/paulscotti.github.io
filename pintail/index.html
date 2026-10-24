@@ -28,7 +28,7 @@
 <div id="app" class="app" hidden>
   <div id="masthead" class="masthead">
   <header class="top">
-    <h1><span class="mark" aria-hidden="true"></span>pintail<small id="version">v14</small></h1>
+    <h1><span class="mark" aria-hidden="true"></span>pintail<small id="version">v15</small></h1>
     <nav id="views" class="views" aria-label="Task views">
       <button data-view="all">All</button><button data-view="soon"><span class="desktop-label">Schedule</span><span class="phone-label">Soon</span></button><button data-view="later">Later</button><button data-view="routines">Routines</button><button data-view="done">Done</button>
     </nav>
@@ -60,7 +60,7 @@
     </div>
   </form>
   <main id="board" class="board">
-    <section id="all" class="column"><h2>All<small id="all-count"></small></h2><div id="all-list" class="list"></div></section>
+    <section id="all" class="column"><h2>All<small id="all-count"></small></h2><div id="now" class="group lane" data-pri="N"></div><div id="all-list" class="list"></div></section>
     <section id="soon" class="column"><h2>Soon<small id="soon-count"></small></h2><div id="soon-list" class="list"></div></section>
     <section id="later" class="column"><h2>Later<small id="later-count"></small></h2><div id="later-list" class="list"></div></section>
     <section id="routines" class="column"><h2><button type="button" id="routine-toggle" aria-expanded="false">Routines</button></h2><div class="routine-body"><div id="routines-list" class="list"></div></div></section>
@@ -101,7 +101,7 @@
     <div class="head"><h2>Pintail</h2><button class="icon x" aria-label="Close help"><svg><use href="#i-close"/></svg></button></div>
     <p>Capture a task and give it a day when needed. Categories use @names. A tab in todo.txt makes a step.</p>
     <p>Try “Call Sam fri”, “Journal every weekday”, or “Rent monthly on the 31st”. “Next Friday” means Friday next week. Keep words cancels date recognition.</p>
-    <dl><dt>n</dt><dd>Add a task</dd><dt>/</dt><dd>Search everything</dd><dt>j / k, ↓ / ↑</dt><dd>Move between tasks</dd><dt>Enter</dt><dd>Open the focused task</dd><dt>x</dt><dd>Complete it</dd><dt>Drag</dt><dd>On a laptop, move a task in All: up or down to reorder, or to another priority</dd><dt>⌘Z / Ctrl+Z</dt><dd>Undo the last change</dd><dt>?</dt><dd>Open this help</dd></dl>
+    <dl><dt>n</dt><dd>Add a task</dd><dt>/</dt><dd>Search everything</dd><dt>j / k, ↓ / ↑</dt><dd>Move between tasks</dd><dt>Enter</dt><dd>Open the focused task</dd><dt>x</dt><dd>Complete it</dd><dt>Drag</dt><dd>On a laptop, move a task in All: to reorder it, into another priority, or up into Now</dd><dt>⌘Z / Ctrl+Z</dt><dd>Undo the last change</dd><dt>?</dt><dd>Open this help</dd></dl>
     <p>Edits save on this device immediately and sync when connected. Download makes a backup; previous versions let you preview and restore. Conflicting edits keep both copies, marked for review.</p>
   </form>
 </dialog>
